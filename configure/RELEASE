@@ -1,0 +1,22 @@
+#RELEASE Location of external products
+# Run "gnumake clean uninstall install" in the application
+# top directory each time this file is changed.
+#
+# NOTE: The build does not check dependancies on files
+# external to this application. Thus you should run
+# "gnumake clean uninstall install" in the top directory
+# each time EPICS_BASE, SNCSEQ, or any other external
+# module defined in the RELEASE file is rebuilt.
+
+PYTHON = python2.4
+PYTHON_BASE = /dls_sw/tools/python2.4
+# PYTHON = python2.5
+# PYTHON_BASE = /home/share/embedded/local
+
+# PYTHON_BASE = /dls_sw/tools/python2.4-debug
+
+
+# EPICS_BASE usually appears last so other apps can override stuff:
+EPICS_BASE=/dls_sw/epics/R3.14.8.2/base
+
+-include $(TOP)/configure/RELEASE.private

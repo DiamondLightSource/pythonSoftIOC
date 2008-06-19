@@ -1,0 +1,37 @@
+Overview of structure of Python support in this directory.
+
+
+versions.py
+    Default versions definitions, executed first before anything else is
+    loaded.  Should only configure with pkg_resources.require and sys.path.
+        This script is designed to be overridden on the command line.
+
+startup.py
+    Executed directly after loading versions.py
+
+interactive_ioc.py
+    Imported immediately before running the interactive Python script.  Places
+    all the definitions from softioc.py in the environment before running the
+    interactive shell.
+
+softioc.py
+    This defines all the imports required for an interactive IOC shell.
+
+
+alarm.py
+    Alarm definitions from EPICS alarm.h.
+
+fields.py
+    Defines the field level interface to fields within a record.
+
+imports.py
+    Defines DLL imports used throughout this system.
+
+device_core.py
+device.py
+    Implementation of Python record support for a sensible set of records.
+
+builder.py
+    Wrapper around builder and device records: records that are automatically
+    created, so no .db file ever needs to be created!
+

@@ -1,0 +1,67 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 53
+y 178
+w 971
+h 610
+font "arial-medium-r-18.0"
+ctlFont "arial-medium-r-18.0"
+btnFont "arial-medium-r-18.0"
+fgColor index 14
+bgColor index 0
+textColor index 14
+ctlFgColor1 index 14
+ctlFgColor2 index 0
+ctlBgColor1 index 0
+ctlBgColor2 index 14
+topShadowColor index 0
+botShadowColor index 14
+endScreenProperties
+
+# (X-Y Graph)
+object xyGraphClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+# Geometry
+x 26
+y 59
+w 875
+h 462
+# Appearance
+border
+fgColor index 14
+bgColor index 0
+gridColor index 14
+font "arial-medium-r-18.0"
+# Operating Modes
+nPts 2
+# X axis properties
+showXAxis
+xAxisSrc "AutoScale"
+xMax 1
+# Y axis properties
+showYAxis
+yAxisSrc "AutoScale"
+yMax 1
+# Y2 axis properties
+showY2Axis
+y2AxisSrc "AutoScale"
+y2Max 1
+# Trace Properties
+numTraces 1
+yPv {
+  0 "hello"
+}
+ySigned {
+  0 1
+}
+plotColor {
+  0 index 21
+}
+endObjectProperties
+

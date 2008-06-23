@@ -7,7 +7,7 @@ SetDeviceName('TS-DI-TEST-01')
 
 
 def on_update(value):
-    print 'on_update', value
+    print 'on_update', repr(value)
 
 
 t_ai        = aIn('AI')

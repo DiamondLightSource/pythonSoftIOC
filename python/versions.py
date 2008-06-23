@@ -4,5 +4,5 @@ imported, and should only be used to establish module versions.'''
 import sys
 from pkg_resources import require
 
-require('cothread==1.6')
+require('cothread==1.7')
 require('dls.builder==1.3')

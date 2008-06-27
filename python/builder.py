@@ -326,7 +326,7 @@ __all__ = [
     'longIn',   'longOut',
     'stringIn', 'stringOut',
     'mbbIn',    'mbbOut',
-    'Waveform',
+    'Waveform', 'WaveformOut',
     # Other builder support functions
     'PythonDevice',
     'LoadDatabase',

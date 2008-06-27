@@ -38,11 +38,9 @@ t_mbbi.set(2)
 
 
 wf = numpy.sin(numpy.linspace(0, 2*numpy.pi, 32))
-t_waveform_in  = Waveform('WAVEFORM', 32, 'FLOAT', PINI = 'YES')
-t_waveform_out = Waveform('WAVEFORM_OUT', 32, 'FLOAT',
-    out = True, on_update = on_update, initial_value = wf)
+t_waveform_in  = Waveform('WAVEFORM', wf)
+t_waveform_out = WaveformOut('WAVEFORM_OUT', wf, on_update = on_update)
 
-t_waveform_in.set(wf)
 
 
 def Update():

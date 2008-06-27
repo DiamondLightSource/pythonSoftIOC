@@ -73,9 +73,6 @@ dbLoadDatabase = libdbIoc.dbLoadDatabase
 dbLoadDatabase.argtypes = (c_char_p, c_char_p, c_char_p)
 dbLoadDatabase.errcheck = expect_success
 
-dbl = libdbIoc.dbl
-dbl.argtypes = (c_char_p, c_char_p)
-
 
 # unsigned short recGblResetAlarms(void *precord)
 #

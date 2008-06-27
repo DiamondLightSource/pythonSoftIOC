@@ -27,13 +27,18 @@ DBF_NOACCESS    = 15
 
 # Mapping from record field type to ctypes type.  Type STRING is handled
 # specially, and types ENUM, MENU, DEVICE and FWDLINK aren't supported.
+#
+# (The translation for DBF_ULONG is c_int32 rather than c_uint32 because this
+# gets turned into the long Python type, and this ends up causing grief
+# downstream for no good purpose -- for example, enums are of type DBF_ULONG,
+# but this cannot be written with caput.)
 DbfCodeToCtypes = {
     DBF_CHAR :      c_byte,
     DBF_UCHAR :     c_ubyte,
     DBF_SHORT :     c_int16,
     DBF_USHORT :    c_uint16,
     DBF_LONG :      c_int32,
-    DBF_ULONG :     c_uint32,
+    DBF_ULONG :     c_int32,    # Should be uint32, but causes trouble later.
     DBF_FLOAT :     c_float,
     DBF_DOUBLE :    c_double,
     DBF_MENU :      c_uint16,

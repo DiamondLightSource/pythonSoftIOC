@@ -1,7 +1,9 @@
 import os
 import time
+import traceback
 from ctypes import *
 import numpy
+
 import cothread
 
 import alarm
@@ -28,8 +30,14 @@ class ProcessDeviceSupport(DeviceSupportCore, RecordLookup):
     @classmethod
     def DeviceCallbackDispatcher(cls):
         while True:
-            callback, value = cls._DeviceCallbackQueue.Wait()
-            callback(value)
+            try:
+                callback, value = cls._DeviceCallbackQueue.Wait()
+                callback(value)
+            except:
+                # As ever: if an exception occurs within a dispatcher we have
+                # to report it and carry on.
+                print 'Device callback raised exception'
+                traceback.print_exc()
             
     def __init__(self, name, **kargs):
         # Note that update and validate methods are only valid for input
@@ -78,7 +86,7 @@ class ProcessDeviceSupport(DeviceSupportCore, RecordLookup):
             # Asynchronous validation rejects value.  It's up to the
             # validation routine to do any logging.
             return 1
-        self.value = value
+        self._value = (value, alarm.NO_ALARM, alarm.UDF_ALARM, record.TIME)
         if self.__on_update:
             self._DeviceCallbackQueue.Signal((self.__on_update, value))
         return 0
@@ -126,12 +134,15 @@ class ProcessDeviceSupport(DeviceSupportCore, RecordLookup):
         '''Updates the stored value and triggers an update.  The alarm
         severity and timestamp can also be specified if appropriate.'''
         self._value = (value, severity, alarm, timestamp)
-        self.value = value
         self.trigger()
 
     def get(self):
         '''Returns the last written value.'''
-        return self.value
+        return self._value[0]
+    def get_time(self):
+        '''Returns the last written value together with its timestamp.'''
+        value, _, _, timestamp = self._value
+        return value, timestamp
 
 cothread.Spawn(ProcessDeviceSupport.DeviceCallbackDispatcher)
 

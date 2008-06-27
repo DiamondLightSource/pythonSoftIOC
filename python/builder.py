@@ -2,6 +2,7 @@
 
 import os
 import device
+import numpy
 from softioc import dbLoadDatabase
 
 import dls.builder
@@ -65,7 +66,7 @@ class RecordWrapper(object):
             return getattr(self.__device, field)
         except AttributeError:
             if self.__builder is None:
-                raise AttributeError('builder has been written')
+                raise 
             else:
                 return getattr(self.__builder, field)
 
@@ -130,9 +131,18 @@ def SetAddressPrefix(prefix):
 # The SCAN field for all input records defaults to I/O Intr.
 
 
-def aIn(name, LOPR=None, HOPR=None, **fields):
+def _in_record(record, name, **fields):
+    '''For input records we provide some automatic extra features: scanning
+    and initialisation as appropriate.'''
+    
     fields.setdefault('SCAN', 'I/O Intr')
-    return PythonDevice.ai(name,
+    if 'initial_value' in fields:
+        fields.setdefault('PINI', 'YES')
+    return getattr(PythonDevice, record)(name, **fields)
+
+
+def aIn(name, LOPR=None, HOPR=None, **fields):
+    return _in_record('ai', name, 
         LOPR = LOPR,    HOPR = HOPR,
         EGUL = LOPR,    EGUF = HOPR, **fields)
 
@@ -143,8 +153,7 @@ def aOut(name, LOPR=None, HOPR=None, **fields):
 
     
 def boolIn(name, ZNAM=None, ONAM=None, **fields):
-    fields.setdefault('SCAN', 'I/O Intr')
-    return PythonDevice.bi(name, ZNAM = ZNAM, ONAM = ONAM, **fields)
+    return _in_record('bi', name, ZNAM = ZNAM, ONAM = ONAM, **fields)
 
 def boolOut(name, ZNAM=None, ONAM=None, **fields):
     return PythonDevice.bo(name,
@@ -153,8 +162,7 @@ def boolOut(name, ZNAM=None, ONAM=None, **fields):
 
 
 def longIn(name, LOPR=None, HOPR=None, EGU=None, MDEL=-1, **fields):
-    fields.setdefault('SCAN', 'I/O Intr')
-    return PythonDevice.longin(name,
+    return _in_record('longin', name,
         MDEL = MDEL,  EGU  = EGU,
         LOPR = LOPR,  HOPR = HOPR, **fields)
 
@@ -171,7 +179,7 @@ _mbbPrefixes = [
 
 # Adds a list of (option, value [,severity]) tuples into field settings
 # suitable for mbbi and mbbo records.
-def _process_mbb_values(fields, option_values):
+def _process_mbb_values(option_values, fields):
     def process_value(prefix, option, value, severity=None):
         fields[prefix + 'ST'] = option
         fields[prefix + 'VL'] = value
@@ -189,28 +197,93 @@ def _process_mbb_values(fields, option_values):
             process_value(prefix, *value)
         
 def mbbIn(name, *option_values, **fields):
-    fields.setdefault('SCAN', 'I/O Intr')
-    _process_mbb_values(fields, option_values)
-    return PythonDevice.mbbi(name, **fields)
+    _process_mbb_values(option_values, fields)
+    return _in_record('mbbi', name, **fields)
 
 def mbbOut(name, *option_values, **fields):
-    _process_mbb_values(fields, option_values)
+    _process_mbb_values(option_values, fields)
     return PythonDevice.mbbo(name, OMSL = 'supervisory', **fields)
 
 
 def stringIn(name, **fields):
-    fields.setdefault('SCAN', 'I/O Intr')
-    return PythonDevice.stringin(name, **fields)
+    return _in_record('stringin', name, **fields)
     
 def stringOut(name, **fields):
     return PythonDevice.stringout(name, **fields)
-    
 
-def Waveform(name, length, FTVL='FLOAT', **fields):
-    if not fields.get('out', False):
-        fields.setdefault('SCAN', 'I/O Intr')
-    return PythonDevice.waveform(name,
-        NELM = length, FTVL = FTVL, **fields)
+
+# Converts numpy character code to FTVL value.
+NumpyCharCodeToFtvl = {
+    # The following type codes are supported directly:
+    'B':    'UCHAR',        # ubyte
+    'b':    'CHAR',         # byte
+    'H':    'USHORT',       # ushort
+    'h':    'SHORT',        # short
+    'i':    'LONG',         # intc
+    'L':    'ULONG',        # uint
+    'l':    'LONG',         # int_
+    'f':    'FLOAT',        # single
+    'd':    'DOUBLE',       # float_
+    'S':    'STRING',       # str_
+    
+    # The following type codes are weakly supported by pretending that
+    # they're related types.
+    '?':    'CHAR',         # bool_
+    'p':    'LONG',         # intp
+    'I':    'ULONG',        # uintc
+    'P':    'ULONG',        # uintp
+    
+    # The following type codes are not supported at all:
+    #   q   longlong        Q   ulonglong       g   longfloat
+    #   F   csingle         D   complex_        G   clongfloat
+    #   O   object_         U   unicode_        V   void
+}
+
+
+def _waveform(value, fields):
+    '''Helper routine for waveform construction.  If a value is given it is
+    interpreted as an initial value and used to configure length and datatype
+    (unless these are overridden), otherwise length and datatype must be
+    specified.'''
+
+    if 'initial_value' in fields:
+        assert not value, 'Can\'t specify initial value twice!'
+        value = (fields.pop('initial_value'),)
+
+    if value:
+        # If a value is specified it should be the *only* non keyword
+        # argument.
+        value, = value
+        value = numpy.array(value)
+        fields['initial_value'] = value
+        
+        # Pick up default length and datatype from initial value
+        length = len(value)
+        FTVL = NumpyCharCodeToFtvl[value.dtype.char]
+    else:
+        # No value specified, so require length and datatype to be specified.
+        length = fields.pop('length')
+        FTVL = 'FLOAT'
+
+    datatype = fields.pop('datatype', None)
+    if datatype is not None:
+        assert 'FTVL' not in fields, \
+            'Can\'t specify FTVL and datatype together'
+        FTVL = NumpyCharCodeToFtvl[numpy.dtype(datatype).char]
+
+    fields['NELM'] = length
+    fields.setdefault('FTVL', FTVL)
+        
+
+def Waveform(name, *value, **fields):
+    _waveform(value, fields)
+    return _in_record('waveform', name, out = False, **fields)
+
+WaveformIn = Waveform
+
+def WaveformOut(name, *value, **fields):
+    _waveform(value, fields)
+    return PythonDevice.waveform(name, out = True, **fields)
 
 
 

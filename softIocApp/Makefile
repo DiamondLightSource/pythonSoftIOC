@@ -30,9 +30,9 @@ softIoc_SRCS += softIoc_registerRecordDeviceDriver.cpp
 softIoc_SRCS += softMain.c
 
 # We need to link against the EPICS Base libraries and Python
-softIoc_LIBS += $(EPICS_BASE_IOC_LIBS) PythonSupport $(PYTHON)
+softIoc_LIBS += $(EPICS_BASE_IOC_LIBS) PythonSupport $(PYTHON) 
 # The following libraries appear to be required for Python 2.5
-#softIoc_SYS_LIBS += util dl
+softIoc_SYS_LIBS += util dl 
 softIoc_LDFLAGS += -Wl,--rpath=$($(PYTHON)_DIR)
 
 # Location of the python libraries

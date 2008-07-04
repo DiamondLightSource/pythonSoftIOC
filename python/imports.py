@@ -73,6 +73,16 @@ dbLoadDatabase = libdbIoc.dbLoadDatabase
 dbLoadDatabase.argtypes = (c_char_p, c_char_p, c_char_p)
 dbLoadDatabase.errcheck = expect_success
 
+# dbProcess = libdbIoc.dbProcess
+# dbScanPassive = libdbIoc.dbScanPassive
+# dbPut = libdbIoc.dbPut
+
+dbNameToAddr = libdbIoc.dbNameToAddr
+dbNameToAddr.errcheck = expect_success
+
+dbPutField = libdbIoc.dbPutField
+dbPutField.errcheck = expect_success
+    
 
 # unsigned short recGblResetAlarms(void *precord)
 #

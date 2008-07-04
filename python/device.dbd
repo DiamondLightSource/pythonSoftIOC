@@ -9,3 +9,6 @@ device(stringout, INST_IO, devPython_stringout, "Python")
 device(waveform,  INST_IO, devPython_waveform,  "Python")
 device(mbbi,      INST_IO, devPython_mbbi,      "Python")
 device(mbbo,      INST_IO, devPython_mbbo,      "Python")
+
+# Waveforms as "out" devices need special treatment.
+device(waveform,  INST_IO, devPython_waveform_out, "PythonWfOut")

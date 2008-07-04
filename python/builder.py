@@ -34,8 +34,10 @@ class RecordWrapper(object):
         assert not self.__builder_reset, \
             'It\'s too late to create records'
         # List of keyword arguments expected by the device constructor.  The
-        # remaining arguments are passed to the builder.
-        DeviceKeywords = ['on_update', 'validate', 'initial_value', 'out']
+        # remaining arguments are passed to the builder.  It's a shame we
+        # have to maintain this separately from the corresponding device list.
+        DeviceKeywords = [
+            'on_update', 'validate', 'initial_value', 'out', 'always_update']
         device_kargs = {}
         for keyword in DeviceKeywords:
             if keyword in fields:
@@ -99,19 +101,24 @@ class PythonDevice(Device):
                 ('mbbi',      'INP'), ('mbbo',      'OUT'),
                 ('stringin',  'INP'), ('stringout', 'OUT'),
                 ('waveform',  'INP')]:
-            setattr(cls, name, cls.makeRecord(name, link))
+            builder = getattr(records, name)
+            record  = getattr(device, name)
+            setattr(cls, name, cls.makeRecord(builder, record, link))
+        cls.waveform_out = cls.makeRecord(
+            records.waveform, device.waveform_out, 'INP', 'PythonWfOut')
 
     class makeRecord:
-        def __init__(self, name, link):
-            self.builder = getattr(records, name)
-            self.device  = getattr(device, name)
+        def __init__(self, builder, record, link, dtyp = 'Python'):
+            self.builder = builder
+            self.record  = record
             self.link = link
+            self.dtyp = dtyp
 
         def __call__(self, name, **fields):
             address = _AddressPrefix + fields.pop('address', name)
             record = RecordWrapper(
-                self.builder, self.device, name, address,
-                DTYP = 'Python', **fields)
+                self.builder, self.record, name, address,
+                DTYP = self.dtyp, **fields)
             setattr(record, self.link, '@' + address)
             return record
 
@@ -211,6 +218,9 @@ def stringIn(name, **fields):
 def stringOut(name, **fields):
     return PythonDevice.stringout(name, **fields)
 
+def Action(name, value = None, **fields):
+    return boolOut(name, value, always_update = True, **fields)
+
 
 # Converts numpy character code to FTVL value.
 NumpyCharCodeToFtvl = {
@@ -277,13 +287,13 @@ def _waveform(value, fields):
 
 def Waveform(name, *value, **fields):
     _waveform(value, fields)
-    return _in_record('waveform', name, out = False, **fields)
+    return _in_record('waveform', name, **fields)
 
 WaveformIn = Waveform
 
 def WaveformOut(name, *value, **fields):
     _waveform(value, fields)
-    return PythonDevice.waveform(name, out = True, **fields)
+    return PythonDevice.waveform_out(name, **fields)
 
 
 

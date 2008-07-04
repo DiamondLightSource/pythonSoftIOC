@@ -171,6 +171,8 @@ class DeviceSupportCore(DeviceCommon):
         self = cls.ParseRecordLink(getattr(record, cls._link_))
         if self:
             record.DPVT = id(self)
+            self._record = record
+            self.name = record.NAME
             return self.init_record(record)
         else:
             print 'record not defined', link
@@ -242,6 +244,7 @@ class RecordLookup(DeviceCommon):
     def __init__(self, name, **kargs):
         assert name not in self._RecordDirectory, \
             'Record %s already registered' % name
+        self._name = name
         self._RecordDirectory[name] = self
         self.__super.__init__(name, **kargs)
 

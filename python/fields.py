@@ -4,6 +4,7 @@ from ctypes import *
 from imports import get_field_offsets
 import numpy
 
+from cothread.dbr import *
 from cothread.dbr import ca_timestamp, EPICS_epoch
 
 
@@ -29,7 +30,7 @@ DBF_NOACCESS    = 15
 # specially, and types ENUM, MENU, DEVICE and FWDLINK aren't supported.
 #
 # (The translation for DBF_ULONG is c_int32 rather than c_uint32 because this
-# gets turned into the long Python type, and this ends up causing grief
+# gets turned into the long Python type, which ends up causing grief
 # downstream for no good purpose -- for example, enums are of type DBF_ULONG,
 # but this cannot be written with caput.)
 DbfCodeToCtypes = {
@@ -59,6 +60,16 @@ DbfCodeToNumpy = {
     DBF_DOUBLE :    numpy.float64,
 }
 
+# Mapping from basic DBR_ codes to DBF_ values
+DbrToDbfCode = {
+    DBR_STRING :    DBF_STRING,
+    DBR_SHORT :     DBF_SHORT,
+    DBR_FLOAT :     DBF_FLOAT,
+    DBR_ENUM :      DBF_ENUM,
+    DBR_CHAR :      DBF_CHAR,
+    DBR_LONG :      DBF_LONG,
+    DBR_DOUBLE :    DBF_DOUBLE
+}
 
 
 class RecordFactory(object):

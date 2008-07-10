@@ -12,9 +12,7 @@ PYTHON = python2.4
 PYTHON_BASE = /dls_sw/tools/python2.4
 # PYTHON = python2.5
 # PYTHON_BASE = /home/share/embedded/local
-
-PYTHON_BASE = /dls_sw/tools/python2.4-debug
-
+# PYTHON_BASE = /dls_sw/tools/python2.4-debug
 
 # EPICS_BASE usually appears last so other apps can override stuff:
 EPICS_BASE=/dls_sw/epics/R3.14.8.2/base

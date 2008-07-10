@@ -231,6 +231,7 @@ class WaveformBase(ProcessDeviceSupportCore):
 
     def init_record(self, record):
         self.dtype = DbfCodeToNumpy[record.FTVL]
+        self.itemsize = self.dtype().itemsize
         return self.__super.init_record(record)
 
     def _read_value(self, record):
@@ -248,8 +249,8 @@ class WaveformBase(ProcessDeviceSupportCore):
         nelm = record.NELM
         nord = len(value)
         if nord > nelm:  nord = nelm
-        memmove(record.BPTR, value.ctypes.data_as(c_void_p),
-            self.dtype().itemsize * nord)
+        memmove(
+            record.BPTR, value.ctypes.data_as(c_void_p), self.itemsize * nord)
         record.NORD = nord
 
         

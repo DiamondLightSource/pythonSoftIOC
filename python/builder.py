@@ -5,13 +5,12 @@ import device
 import numpy
 from softioc import dbLoadDatabase
 
-import dls.builder
-dls.builder.Configure(
-    recordnames = dls.builder.DiamondRecordNames(version = '3.14'),
-    iocwriter = dls.builder.SimpleIocWriter())
+import iocbuilder
+iocbuilder.ConfigureTemplate(
+    record_names = iocbuilder.DiamondRecordNames(version = '3.14'))
 
 
-from dls.builder import *
+from iocbuilder import *
 
 ModuleVersion('PythonDevice',
     home = os.path.join(os.path.dirname(__file__), '..'),
@@ -90,7 +89,7 @@ class RecordWrapper(object):
 
 
 class PythonDevice(Device):
-    DbdFileList = ['device.dbd']
+    DbdFileList = ['device']
 
     @classmethod
     def __init_class__(cls):
@@ -326,7 +325,7 @@ def SetDeviceName(device_name):
 
 
 __all__ = [
-    # Re-exports from dls.builder
+    # Re-exports from iocbuilder
     'records',
     'PP', 'CP', 'MS', 'NP',
     'SetDomain', 'SetDevice', 'GetDevice', 'UnsetDevice',

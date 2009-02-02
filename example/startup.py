@@ -5,7 +5,7 @@ DEBUG = 'D' in sys.argv[1:]
 if DEBUG:
     sys.path.append('/scratch/local/python-debug')
     sys.path.append('/home/mga83/epics/cothread')
-    sys.path.append('/home/mga83/epics/builder/build/lib')
+    sys.path.append('/home/mga83/epics/iocbuilder')
 else:
     import versions
 

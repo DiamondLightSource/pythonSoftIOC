@@ -5,5 +5,5 @@ import sys
 from pkg_resources import require
 
 require('numpy==1.1.0')
-require('cothread==1.8')
-require('dls.builder==1.3')
+require('cothread==1.11')
+require('iocbuilder==1.7')

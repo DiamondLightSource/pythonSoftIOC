@@ -7,7 +7,7 @@ from ctypes import *
 class DeviceCommon(object):
     '''Adds support for an __init_class__ method called when the class or any
     of its subclasses is constructed.  Also adds auto-super functionality
-    (see dls.builder.support.autosuper).'''
+    (see iocbuilder.support.autosuper).'''
     
     class InitClass(type):
         def __new__(cls, name, bases, dict):

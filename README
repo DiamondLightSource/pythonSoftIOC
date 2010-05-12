@@ -1,0 +1,81 @@
+Using `pythonSoftIoc`
+======================
+
+Probably the best way to use `pythonSoftIoc` is to start by copying fragments
+of a simple example such as `CS-DI-IOC-02`.  This consists of the following
+elements:
+
+1. A startup shell script `start-ioc` which launches the soft IOC using a
+production build of `pythonSoftIoc`.  This script typically looks like this:
++
+----
+#!/bin/sh
+
+PYIOC_VERSION=1-2
+
+PYIOC=/dls_sw/prod/R3.14.8.2/support/pythonSoftIoc/$PYIOC_VERSION/pythonIoc
+
+cd "$(dirname "$0")"
+export EPICS_CA_MAX_ARRAY_BYTES=1000000
+$PYIOC start_ioc.py "$@"
+----
+
+2. The startup Python script.  This establishes the essential component
+versions (apart from the `pythonSoftIoc` version), performs the appropriate
+initialisation and starts the IOC running.  The following template is a useful
+starting point:
++
+----
+from pkg_resources import require
+require('numpy==1.1.0')         # Important to avoid memory leaks
+require('cothread==1.9')
+require('dls.builder==1.4')
+
+# Import the basic framework components.
+import softioc
+import builder
+import cothread
+
+# Import any modules required to run the IOC
+import ...
+
+# Boilerplate get the IOC started
+builder.LoadDatabase()
+softioc.iocInit()
+
+# Start processes required to be run after iocInit
+...
+
+# Finally leave the IOC running with an interactive shell.
+from softioc import *
+interactive_ioc(globals())
+----
++
+Note that `pythonSoftIoc` uses the old `dls.builder` rather than
+`iocbuilder`.  This will will be fixed as soon as possible.
+
+
+Using `Python` command in IOCs
+------------------------------
+
+The `pyDrv` module gives the ability to run a python interpreter inside your
+soft IOC.
+
+To use `pyDrv` to call a python function:
+
+* In your `src/Makefile`:
++
+----
+<IOC>_DBD += pyDrv.dbd
+<IOC>_LIB += pyDrv
+----
+
+* In your startup script:
++
+----
+Python("<python code>")
+----
+
+You can also create an asyn port in python, effectively allowing you to write
+device support in python. See the documentation in the pyDrv module for more
+details

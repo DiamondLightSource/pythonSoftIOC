@@ -8,13 +8,11 @@
 # each time EPICS_BASE, SNCSEQ, or any other external
 # module defined in the RELEASE file is rebuilt.
 
-PYTHON = python2.4
-PYTHON_BASE = /dls_sw/tools/python2.4
-# PYTHON = python2.5
-# PYTHON_BASE = /home/share/embedded/local
-# PYTHON_BASE = /dls_sw/tools/python2.4-debug
+PYTHON = python2.6
+PYTHON_BASE = /dls_sw/prod/tools/RHEL5
 
 # EPICS_BASE usually appears last so other apps can override stuff:
-EPICS_BASE=/dls_sw/epics/R3.14.8.2/base
+# EPICS_BASE=/dls_sw/epics/R3.14.11/base
+EPICS_BASE = /home/mga83/codeathon/epics-base/base-3.14
 
 -include $(TOP)/configure/RELEASE.private

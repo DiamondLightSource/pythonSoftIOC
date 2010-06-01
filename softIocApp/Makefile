@@ -23,16 +23,18 @@ PROD_IOC_vxWorks = -nil-
 DBD += softIoc.dbd
 softIoc_DBD += base.dbd
 
-# USR_CXXFLAGS += -DEPICS_BASE=$(shell cd $(TOP) && pwd)
 USR_CFLAGS += -DEPICS_BASE='"$(shell cd "$(EPICS_BASE)" && pwd)"'
+# The following LDFLAGS are required so that dynamically loaded Python modules
+# can see the symbols exported by the linked Python interpreter.
+USR_LDFLAGS += -Xlinker -export-dynamic
 
 softIoc_SRCS += softIoc_registerRecordDeviceDriver.cpp
 softIoc_SRCS += softMain.c
 
 # We need to link against the EPICS Base libraries and Python
-softIoc_LIBS += $(EPICS_BASE_IOC_LIBS) PythonSupport $(PYTHON) 
+softIoc_LIBS += $(EPICS_BASE_IOC_LIBS) PythonSupport $(PYTHON)
 # The following libraries appear to be required for Python 2.5
-softIoc_SYS_LIBS += util dl 
+softIoc_SYS_LIBS += util dl
 softIoc_LDFLAGS += -Wl,--rpath=$($(PYTHON)_DIR)
 
 # Location of the python libraries
@@ -50,7 +52,7 @@ LIBRARY_IOC += PythonSupport
 # The following are compiled and added to the support library
 PythonSupport_SRCS += PythonSupport.c
 
-PythonSupport_LIBS += $(EPICS_BASE_IOC_LIBS) 
+PythonSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 
 # include $(TOP)/configure/RULES_TOP

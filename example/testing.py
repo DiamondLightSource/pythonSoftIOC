@@ -27,6 +27,14 @@ t_stringout = stringOut ('STRINGOUT',
 t_mbbo      = mbbOut    ('MBBO', 'Ein', 'Zwei', 'Drei',
     initial_value = 1, on_update = on_update)
 
+def update_sin_wf(value):
+    print 'update_sin_wf', value
+    sin_wf.set(numpy.sin(
+        numpy.linspace(0, 2*numpy.pi*sin_ph.get(), sin_len.get())))
+sin_wf = Waveform('SIN', datatype = float, length = 1024)
+sin_len = longOut('SINN', 0, 1024,
+    initial_value = 1024, on_update = update_sin_wf)
+sin_ph = aOut('SINP', initial_value = 0.0, on_update = update_sin_wf)
 
 t_ai.set(12.34)
 t_boolin.set(False)

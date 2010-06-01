@@ -160,6 +160,7 @@ class DeviceSupportCore(DeviceCommon):
     def _init(cls, after):
         '''This routine is called by the record support layer during both
         before and after device initialisation.'''
+        return 0
         
     @classmethod
     def _init_record(cls, record):

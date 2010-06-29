@@ -12,7 +12,6 @@ PYTHON = python2.6
 PYTHON_BASE = /dls_sw/prod/tools/RHEL5
 
 # EPICS_BASE usually appears last so other apps can override stuff:
-# EPICS_BASE=/dls_sw/epics/R3.14.11/base
-EPICS_BASE = /home/mga83/codeathon/epics-base/base-3.14
+EPICS_BASE=/dls_sw/epics/R3.14.11/base
 
 -include $(TOP)/configure/RELEASE.private

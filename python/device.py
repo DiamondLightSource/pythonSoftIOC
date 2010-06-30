@@ -43,7 +43,7 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
         return getattr(record, self._val_field_)
     def _write_value(self, record, value):
         setattr(record, self._val_field_, value)
-        
+
 
 class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
     _link_ = 'INP'
@@ -60,7 +60,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
             kargs.pop('initial_value', None),
             alarm.NO_ALARM, alarm.UDF_ALARM, None)
         self.__super.__init__(name, **kargs)
-        
+
     def _process(self, record, _value=None):
         # For input process we copy the value stored in the instance to the
         # record.  The alarm status is also updated, and a custom timestamp
@@ -86,7 +86,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         '''Returns the last written value.'''
         return self._value[0]
 
-    
+
 class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
     _link_ = 'OUT'
 
@@ -105,14 +105,14 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
                 # to report it and carry on.
                 print 'Device callback raised exception'
                 traceback.print_exc()
-            
+
     def __init__(self, name, **kargs):
         self.__on_update = kargs.pop('on_update', None)
         self.__validate  = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
         self._value = kargs.pop('initial_value', None)
         self.__super.__init__(name, **kargs)
-        
+
     def init_record(self, record):
         '''Special record initialisation for out records only: implements
         special record initialisation if an initial value has been specified,
@@ -135,7 +135,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             # Asynchronous validation rejects value.  It's up to the
             # validation routine to do any logging.
             return 1
-            
+
         self._value = value
         if self.__on_update:
             self._DeviceCallbackQueue.Signal((self.__on_update, value))
@@ -145,14 +145,14 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         '''Special routine to set the value directly.'''
         dbaddr = dbAddr()
         imports.dbNameToAddr(self._record.NAME, byref(dbaddr))
-        datatype, length, array = value_to_dbr(value)
+        datatype, length, data, array = value_to_dbr(value, None)
         imports.dbPutField(
-            byref(dbaddr), DbrToDbfCode[datatype], array.ctypes.data, length)
+            byref(dbaddr), DbrToDbfCode[datatype], data, length)
 
     def get(self):
         return self._value
 
-        
+
 cothread.Spawn(ProcessDeviceSupportOut.DeviceCallbackDispatcher)
 
 
@@ -205,7 +205,7 @@ class ai(ProcessDeviceSupportIn):
         # ourself (otherwise the record support layer does this).
         record.UDF = int(numpy.isnan(_value[0]))
         return NO_CONVERT
-        
+
 
 class ao(ProcessDeviceSupportOut):
     _record_type_ = 'ao'
@@ -253,7 +253,7 @@ class WaveformBase(ProcessDeviceSupportCore):
             record.BPTR, value.ctypes.data_as(c_void_p), self.itemsize * nord)
         record.NORD = nord
 
-        
+
 class waveform(WaveformBase, ProcessDeviceSupportIn):
     _record_type_ = 'waveform'
     _device_name_ = 'devPython_waveform'

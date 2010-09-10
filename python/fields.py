@@ -78,12 +78,16 @@ class RecordFactory(object):
         type and the size of each of the specified fields.'''
         length = len(fields)
         field_name_strings = map(create_string_buffer, fields)
-        field_names   = numpy.array(map(addressof, field_name_strings))
+
+        field_names = (c_void_p * len(field_name_strings))()
+        field_names[:] = map(addressof, field_name_strings)
+        
         field_offsets = numpy.empty(length, dtype = numpy.int16)
         field_sizes   = numpy.zeros(length, dtype = numpy.int16)
         field_types   = numpy.empty(length, dtype = numpy.int16)
+
         get_field_offsets(
-            record_type, field_names.ctypes.data_as(c_void_p), length,
+            record_type, field_names, length,
             field_offsets.ctypes.data_as(c_void_p),
             field_sizes.ctypes.data_as(c_void_p),
             field_types.ctypes.data_as(c_void_p))

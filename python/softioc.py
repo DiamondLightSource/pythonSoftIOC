@@ -3,7 +3,6 @@
 from ctypes import *
 
 import imports
-import cothread
 
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
@@ -110,6 +109,8 @@ ExportTest('scanpel', (c_int,), (0,),
 ExportTest('scanpiol', (), (),
     '''Prints all records in the I/O event scan lists.''')
 
+ExportTest('generalTimeReport', (c_int,), (0,),
+    '''Displays time providers and their status''')
 
 
 

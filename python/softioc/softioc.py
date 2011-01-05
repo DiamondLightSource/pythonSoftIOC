@@ -10,7 +10,7 @@ iocInit = imports.iocInit
 
 
 # IOC Test facilities
-def ExportTest(name, argtypes, defaults=(), description='not yet'):
+def ExportTest(name, argtypes, defaults=(), description='no description yet'):
     f = getattr(imports.libdbIoc, name)
     f.argtypes = argtypes
     f.restype = None
@@ -119,9 +119,9 @@ def dbLoadDatabase(database, path = None, substitutions = None):
     imports.dbLoadDatabase(database, path, substitutions)
 
 
-def interactive_ioc(context = None):
-    '''Fires up the interactive IOC prompt with the given set of globals.'''
+def interactive_ioc(context = {}):
+    '''Fires up the interactive IOC prompt with the given context.'''
+    # Add all our exported symbols to the given context.
+    exports = dict((key, globals()[key]) for key in __all__)
     import code
-    if context == None:
-        context = globals()
-    code.interact(local = context)
+    code.interact(local = dict(exports, **context))

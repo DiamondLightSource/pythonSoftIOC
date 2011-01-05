@@ -8,7 +8,7 @@ class DeviceCommon(object):
     '''Adds support for an __init_class__ method called when the class or any
     of its subclasses is constructed.  Also adds auto-super functionality
     (see iocbuilder.support.autosuper).'''
-    
+
     class InitClass(type):
         def __new__(cls, name, bases, dict):
             if '__init_class__' in dict:
@@ -37,7 +37,7 @@ class DeviceCommon(object):
         assert not kargs, \
             'Unused keyword arguments for %s: %s' % (
                 name, ', '.join(kargs.keys()))
-    
+
 
 
 # Basic dset template used for all record types.  Note that the process
@@ -71,7 +71,7 @@ class DeviceSupportCore(DeviceCommon):
     # are record specific (apart from init_record which needs special
     # treatment) are then bound to the appropriate class instance and the
     # appropriate method is invoked.
-    
+
     def __init_class__(cls):
         '''Record support initialisation, called once during class
         initialisation for each sub-class.  This registers record support for
@@ -152,7 +152,7 @@ class DeviceSupportCore(DeviceCommon):
             return method(self, *args)
 
 
-            
+
     # ------------------------------------------------------------------------
     # Device support: implementations of the generic dset entries.
 
@@ -161,7 +161,7 @@ class DeviceSupportCore(DeviceCommon):
         '''This routine is called by the record support layer during both
         before and after device initialisation.'''
         return 0
-        
+
     @classmethod
     def _init_record(cls, record):
         '''This is called for each new record.  We bind the record to its
@@ -185,14 +185,14 @@ class DeviceSupportCore(DeviceCommon):
         # reduce resource consumption.
         self.__ioscanpvt = imports.IOSCANPVT()
         self.__super.__init__(name, **kargs)
-        
+
 
     def init_record(self, record):
         '''Default record initialisation finalisation.  This can be overridden
         to provide a different return value, or to perform further work on
         record initialisation.'''
         return 0
-        
+
     def _get_ioinit_info(self, cmd, record, ppvt):
         '''Implements support for I/O Intr scan type.'''
         if not self.__ioscanpvt:
@@ -215,7 +215,7 @@ class DeviceSupportCore(DeviceCommon):
         if self.__ioscanpvt:
             imports.scanIoRequest(self.__ioscanpvt)
 
-        
+
 
 class RecordLookup(DeviceCommon):
     '''This class implements automatic record registration: if a record

@@ -1,6 +1,6 @@
 # Simple script for build a set of test PVs.
 
-from builder import *
+from softioc.builder import *
 import numpy
 
 SetDeviceName('TS-DI-TEST-01')
@@ -56,14 +56,14 @@ def Update():
     t_longin.set(365)
     t_stringin.set('Another different string')
     t_mbbi.set(0)
-    
+
 def UpdateOut():
     t_ao.set(3.14159)
     t_boolout.set(True)
     t_longout.set(365)
     t_stringout.set('Another different string')
     t_mbbo.set(2)
-    
+
 
 __all__ = [
     't_ai', 't_boolin',  't_longin',  't_stringin',  't_mbbi',

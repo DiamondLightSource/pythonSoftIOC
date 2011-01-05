@@ -5,5 +5,5 @@ import sys
 import versions
 import testing
 
-from builder import WriteRecords
+from softioc.builder import WriteRecords
 WriteRecords(sys.argv[1])

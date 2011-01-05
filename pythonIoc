@@ -4,9 +4,7 @@
 # complete path and with PYTHONPATH set up correctly.  It's easier to
 # configure this here in shell script than in the program itself!
 
-HERE="$(readlink -fn "$(dirname "$0")")"
+export HERE="$(readlink -fn "$(dirname "$0")")"
+export PYTHONPATH="$PYTHONPATH${PYTHONPATH:+:}$HERE/python"
 
-[ -n "$PYTHONPATH" ]  &&  PYTHONPATH="$PYTHONPATH:"
-export PYTHONPATH="$PYTHONPATH""$HERE/python"
-
-"$HERE/bin/linux-x86/softIoc" "$@"
+exec "$HERE/bin/linux-x86/softIoc" "$@"

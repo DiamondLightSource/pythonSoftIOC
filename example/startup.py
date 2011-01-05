@@ -10,10 +10,10 @@ else:
     import versions
 
 import cothread
-from softioc import *
-from builder import LoadDatabase
+from softioc.builder import LoadDatabase
 
 from testing import *
+from softioc.softioc import *
 
 LoadDatabase()
 iocInit()

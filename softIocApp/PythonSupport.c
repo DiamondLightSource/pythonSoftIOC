@@ -23,7 +23,7 @@ void get_field_offsets(
     int status;
     DBENTRY dbentry;
     dbInitEntry(pdbbase, &dbentry);
-    
+
     status = dbFindRecordType(&dbentry, record_type);
     if (status != 0)
         printf("Unable to find record type \"%s\" (error %d)\n",
@@ -45,6 +45,6 @@ void get_field_offsets(
         }
         status = dbNextField(&dbentry, 0);
     }
-    
+
     dbFinishEntry(&dbentry);
 }

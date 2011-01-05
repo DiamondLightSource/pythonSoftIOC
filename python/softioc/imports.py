@@ -32,7 +32,7 @@ EPICS_BASE = get_EPICS_BASE()
 def EpicsDll(dll):
     return CDLL(os.path.join(EPICS_BASE, 'lib/linux-x86', 'lib%s.so' % dll))
 
-    
+
 libregistryIoc = EpicsDll('registryIoc')
 libdbIoc = EpicsDll('dbIoc')
 libmiscIoc = EpicsDll('miscIoc')
@@ -44,7 +44,7 @@ def expect_success(status, function, args):
 def expect_true(status, function, args):
     assert status, 'Expected True'
 
-    
+
 # int registryDeviceSupportAdd(
 #     const char *name,const struct dset *pdset);
 #
@@ -82,7 +82,7 @@ dbNameToAddr.errcheck = expect_success
 
 dbPutField = libdbIoc.dbPutField
 dbPutField.errcheck = expect_success
-    
+
 
 # unsigned short recGblResetAlarms(void *precord)
 #

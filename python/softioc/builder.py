@@ -12,123 +12,14 @@ iocbuilder.ConfigureTemplate(
 
 from iocbuilder import *
 
-ModuleVersion('PythonDevice',
-    home = os.path.join(os.path.dirname(__file__), '..'),
-    use_name = False)
+ModuleVersion('pythonSoftIoc',
+    home = os.environ['HERE'], use_name = False,
+    load_path = os.path.dirname(__file__))
 
+from iocbuilder.modules import pythonSoftIoc as _pythonSoftIoc
 
-# ----------------------------------------------------------------------------
-#  PythonDevice core definitions
+PythonDevice = _pythonSoftIoc.PythonDevice()
 
-
-class RecordWrapper(object):
-    '''This class wraps both a builder and a Python device record instance.
-    From the outside it looks like a builder record until the database is
-    written.'''
-
-    __Instances = []
-    __builder_reset = False
-
-    def __init__(self, builder, device, name, address, **fields):
-        assert not self.__builder_reset, \
-            'It\'s too late to create records'
-        # List of keyword arguments expected by the device constructor.  The
-        # remaining arguments are passed to the builder.  It's a shame we
-        # have to maintain this separately from the corresponding device list.
-        DeviceKeywords = [
-            'on_update', 'validate', 'initial_value', 'out', 'always_update']
-        device_kargs = {}
-        for keyword in DeviceKeywords:
-            if keyword in fields:
-                device_kargs[keyword] = fields.pop(keyword)
-        
-        self.__set('__builder', builder(name, **fields))
-        self.__set('__device',  device(address, **device_kargs))
-        self.__Instances.append(self)
-
-    def __set(self, field, value):
-        if field[:2] == '__' and field[-2:] != '__':
-            field = '_' + self.__class__.__name__ + field
-        self.__dict__[field] = value
-
-    @classmethod
-    def reset_builder(cls):
-        cls.__builder_reset = True
-        for instance in cls.__Instances:
-            instance.__set('__builder', None)
-
-            
-    # Most attributes delegate directly to the builder instance until the
-    # database has been written.  At this point the builder instance has been
-    # deleted, and an attribute error will be raised instead.
-            
-    def __getattr__(self, field):
-        try:
-            return getattr(self.__device, field)
-        except AttributeError:
-            if self.__builder is None:
-                raise 
-            else:
-                return getattr(self.__builder, field)
-
-    def __setattr__(self, field, value):
-        if self.__builder is None:
-            raise AttributeError('builder has been written')
-        else:
-            return setattr(self.__builder, field, value)
-
-    # Some further "Duck typing" for the builder: the following are required
-    # for links to work properly.
-    
-    def __call__(self, *specifiers):
-        return self.__builder(*specifiers)
-
-    def __str__(self):
-        return str(self.__builder)
-        
-
-
-class PythonDevice(Device):
-    DbdFileList = ['device']
-
-    @classmethod
-    def __init_class__(cls):
-        for name, link in [
-                ('ai',        'INP'), ('ao',        'OUT'),
-                ('bi',        'INP'), ('bo',        'OUT'),
-                ('longin',    'INP'), ('longout',   'OUT'),
-                ('mbbi',      'INP'), ('mbbo',      'OUT'),
-                ('stringin',  'INP'), ('stringout', 'OUT'),
-                ('waveform',  'INP')]:
-            builder = getattr(records, name)
-            record  = getattr(device, name)
-            setattr(cls, name, cls.makeRecord(builder, record, link))
-        cls.waveform_out = cls.makeRecord(
-            records.waveform, device.waveform_out, 'INP', 'PythonWfOut')
-
-    class makeRecord:
-        def __init__(self, builder, record, link, dtyp = 'Python'):
-            self.builder = builder
-            self.record  = record
-            self.link = link
-            self.dtyp = dtyp
-
-        def __call__(self, name, **fields):
-            address = _AddressPrefix + fields.pop('address', name)
-            record = RecordWrapper(
-                self.builder, self.record, name, address,
-                DTYP = self.dtyp, **fields)
-            setattr(record, self.link, '@' + address)
-            return record
-
-PythonDevice.__init_class__()
-PythonDevice()
-
-_AddressPrefix = ''
-def SetAddressPrefix(prefix):
-    '''This routine sets a prefix which is added to each record name.'''
-    global _AddressPrefix
-    _AddressPrefix = prefix
 
 
 # ----------------------------------------------------------------------------
@@ -140,7 +31,7 @@ def SetAddressPrefix(prefix):
 def _in_record(record, name, **fields):
     '''For input records we provide some automatic extra features: scanning
     and initialisation as appropriate.'''
-    
+
     fields.setdefault('SCAN', 'I/O Intr')
     if 'initial_value' in fields:
         fields.setdefault('PINI', 'YES')
@@ -148,7 +39,7 @@ def _in_record(record, name, **fields):
 
 
 def aIn(name, LOPR=None, HOPR=None, **fields):
-    return _in_record('ai', name, 
+    return _in_record('ai', name,
         LOPR = LOPR,    HOPR = HOPR,
         EGUL = LOPR,    EGUF = HOPR, **fields)
 
@@ -157,13 +48,13 @@ def aOut(name, LOPR=None, HOPR=None, **fields):
         LOPR = LOPR,    HOPR = HOPR,
         EGUL = LOPR,    EGUF = HOPR, **fields)
 
-    
+
 def boolIn(name, ZNAM=None, ONAM=None, **fields):
     return _in_record('bi', name, ZNAM = ZNAM, ONAM = ONAM, **fields)
 
 def boolOut(name, ZNAM=None, ONAM=None, **fields):
     return PythonDevice.bo(name,
-        OMSL = 'supervisory', 
+        OMSL = 'supervisory',
         ZNAM = ZNAM, ONAM = ONAM, **fields)
 
 
@@ -201,7 +92,7 @@ def _process_mbb_values(option_values, fields):
             # The value is two- or three-tuple consisting of an option name, a
             # corresponding numerical value and an alarm severity.
             process_value(prefix, *value)
-        
+
 def mbbIn(name, *option_values, **fields):
     _process_mbb_values(option_values, fields)
     return _in_record('mbbi', name, **fields)
@@ -213,7 +104,7 @@ def mbbOut(name, *option_values, **fields):
 
 def stringIn(name, **fields):
     return _in_record('stringin', name, **fields)
-    
+
 def stringOut(name, **fields):
     return PythonDevice.stringout(name, **fields)
 
@@ -234,14 +125,14 @@ NumpyCharCodeToFtvl = {
     'f':    'FLOAT',        # single
     'd':    'DOUBLE',       # float_
     'S':    'STRING',       # str_
-    
+
     # The following type codes are weakly supported by pretending that
     # they're related types.
     '?':    'CHAR',         # bool_
     'p':    'LONG',         # intp
     'I':    'ULONG',        # uintc
     'P':    'ULONG',        # uintp
-    
+
     # The following type codes are not supported at all:
     #   q   longlong        Q   ulonglong       g   longfloat
     #   F   csingle         D   complex_        G   clongfloat
@@ -265,7 +156,7 @@ def _waveform(value, fields):
         value, = value
         value = numpy.array(value)
         fields['initial_value'] = value
-        
+
         # Pick up default length and datatype from initial value
         length = len(value)
         FTVL = NumpyCharCodeToFtvl[value.dtype.char]
@@ -282,7 +173,7 @@ def _waveform(value, fields):
 
     fields['NELM'] = length
     fields.setdefault('FTVL', FTVL)
-        
+
 
 def Waveform(name, *value, **fields):
     _waveform(value, fields)
@@ -313,7 +204,7 @@ def LoadDatabase():
     dbLoadDatabase(database)
     os.unlink(database)
 
-    RecordWrapper.reset_builder()
+    _pythonSoftIoc.RecordWrapper.reset_builder()
 
 
 def SetDeviceName(device_name):
@@ -321,7 +212,7 @@ def SetDeviceName(device_name):
     domain, area, component, id = device_name.split('-')
     SetDomain(domain, area)
     SetDevice(component, int(id, 10))
-    
+
 
 
 __all__ = [

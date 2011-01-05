@@ -271,5 +271,5 @@ class waveform_out(WaveformBase, ProcessDeviceSupportOut):
     _device_name_ = 'devPython_waveform_out'
 
 
-dbLoadDatabase(
-    os.path.join(os.path.split(__file__)[0], 'device.dbd'), None, None)
+# Ensure the .dbd file is loaded.
+dbLoadDatabase(os.path.join(os.environ['HERE'], 'dbd/device.dbd'), None, None)

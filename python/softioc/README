@@ -1,0 +1,25 @@
+Overview of structure of Python support in this directory.
+
+__init__.py
+    Ensures that this directory is a Python module package.
+
+softioc.py
+    This defines all the imports required for an interactive IOC shell.
+
+builder.py
+    Wrapper around builder and device records: records that are automatically
+    created, so no .db file ever needs to be created!
+
+
+alarm.py
+    Alarm definitions from EPICS alarm.h.
+
+fields.py
+    Defines the field level interface to fields within a record.
+
+imports.py
+    Defines DLL imports used throughout this system.
+
+device_core.py
+device.py
+    Implementation of Python record support for a sensible set of records.

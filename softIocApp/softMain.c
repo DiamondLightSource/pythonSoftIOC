@@ -54,7 +54,7 @@ static bool ProcessOptions(int *pargc, char ***pargv)
                 return true;
             default:
                 /* Invalid flag or too few arguments. */
-                printf("Try `softIoc -h` for usage\n");
+                fprintf(stderr, "Try `softIoc -h` for usage\n");
                 return false;
         }
     }
@@ -64,20 +64,27 @@ static bool ProcessOptions(int *pargc, char ***pargv)
 
 /* Loads the global IOC dbd definitions and registers them. */
 
-static bool LoadAndRegisterDbd(char *argv0)
+static bool LoadAndRegisterDbd()
 {
+    const char *here = getenv("HERE");
+    if (here == NULL)
+    {
+        fprintf(stderr, "Environment variable HERE must be defined\n");
+        return false;
+    }
     char softIoc_dbd[PATH_MAX];
-    bool Ok = snprintf(softIoc_dbd, PATH_MAX,
-        "%s/../../dbd/softIoc.dbd", dirname(argv0)) < PATH_MAX;
+    bool Ok = snprintf(
+        softIoc_dbd, PATH_MAX, "%s/dbd/softIoc.dbd", here) < PATH_MAX;
     if (!Ok)
     {
-        printf("Path to dbd too long.\n");
+        fprintf(stderr, "Path to dbd too long.\n");
         return false;
     }
 
     int status = dbLoadDatabase(softIoc_dbd, NULL, NULL);
     if (status != 0)
-        printf("Error (%d) loading dbd file \"%s\"\n", status, softIoc_dbd);
+        fprintf(stderr,
+            "Error (%d) loading dbd file \"%s\"\n", status, softIoc_dbd);
     if (status == 0)
         softIoc_registerRecordDeviceDriver(pdbbase);
     return status == 0;
@@ -87,13 +94,13 @@ static bool LoadAndRegisterDbd(char *argv0)
 int main(int argc, char *argv[])
 {
     char * argv0 = argv[0];
-    bool Ok = 
+    bool Ok =
         /* The first thing we do is parse and consume the command line options
          * and check that we have a script to execute.  On return argc counts
          * the arguments and argv[0] is the first argument. */
         ProcessOptions(&argc, &argv)  &&
         /* Perform the basic IOC initialisation. */
-        LoadAndRegisterDbd(argv0);
+        LoadAndRegisterDbd();
 
     if (Ok)
     {

@@ -81,7 +81,7 @@ class RecordFactory(object):
 
         field_names = (c_void_p * len(field_name_strings))()
         field_names[:] = map(addressof, field_name_strings)
-        
+
         field_offsets = numpy.empty(length, dtype = numpy.int16)
         field_sizes   = numpy.zeros(length, dtype = numpy.int16)
         field_types   = numpy.empty(length, dtype = numpy.int16)

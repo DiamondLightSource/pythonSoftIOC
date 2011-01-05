@@ -143,11 +143,18 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
     def set(self, value):
         '''Special routine to set the value directly.'''
-        dbaddr = dbAddr()
-        imports.dbNameToAddr(self._record.NAME, byref(dbaddr))
-        datatype, length, data, array = value_to_dbr(value, None)
-        imports.dbPutField(
-            byref(dbaddr), DbrToDbfCode[datatype], data, length)
+        try:
+            _record = self._record
+        except AttributeError:
+            # Record not initialised yet.  Record the value for when
+            # initialisation occurs
+            self._value = value
+        else:
+            dbaddr = dbAddr()
+            imports.dbNameToAddr(self._record.NAME, byref(dbaddr))
+            datatype, length, data, array = value_to_dbr(value, None)
+            imports.dbPutField(
+                byref(dbaddr), DbrToDbfCode[datatype], data, length)
 
     def get(self):
         return self._value

@@ -68,6 +68,12 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         self._value = (value, severity, alarm, timestamp)
         self.trigger()
 
+    def set_alarm(self, severity, alarm, timestamp=None):
+        '''Updates the alarm status without changing the stored value.  An
+        update is triggered, and a timestamp can optionally be specified.'''
+        self._value = (self._value[0], severity, alarm, timestamp)
+        self.trigger()
+
     def get(self):
         '''Returns the last written value.'''
         return self._value[0]

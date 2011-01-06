@@ -48,6 +48,7 @@ wf_len = 2
 wf = numpy.sin(numpy.linspace(0, 2*numpy.pi, wf_len))
 t_waveform_in  = Waveform('WAVEFORM', wf)
 t_waveform_out = WaveformOut('WAVEFORM_OUT', wf, on_update = on_update)
+t_waveform_in2 = Waveform('WAVEFORM2', length = 10)
 
 
 def Update():
@@ -68,6 +69,6 @@ def UpdateOut():
 __all__ = [
     't_ai', 't_boolin',  't_longin',  't_stringin',  't_mbbi',
     't_ao', 't_boolout', 't_longout', 't_stringout', 't_mbbo',
-    't_waveform_in', 't_waveform_out', 'wf_len',
+    't_waveform_in', 't_waveform_in2', 't_waveform_out', 'wf_len',
     'Update', 'UpdateOut'
 ]

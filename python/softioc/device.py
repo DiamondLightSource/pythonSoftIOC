@@ -44,7 +44,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         #    The tuple contains everything needed to be written: the value,
         # severity, alarm and optional timestamp.
         self._value = (
-            kargs.pop('initial_value', None),
+            kargs.pop('initial_value', self._default_),
             alarm.NO_ALARM, alarm.UDF_ALARM, None)
         self.__super.__init__(name, **kargs)
 
@@ -66,7 +66,6 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         '''Updates the stored value and triggers an update.  The alarm
         severity and timestamp can also be specified if appropriate.'''
         self._value = (value, severity, alarm, timestamp)
-        self._writing_out = True
         self.trigger()
 
     def get(self):
@@ -149,12 +148,13 @@ cothread.Spawn(ProcessDeviceSupportOut.DeviceCallbackDispatcher)
 
 
 
-def _Device(Base, record_type, val_field, **extras):
+def _Device(Base, record_type, val_field, default=0):
     '''Wrapper for generating simple records.'''
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type
         _val_field_   = val_field
+        _default_     = default
         _fields_      = ['UDF', val_field]
 
     GenericDevice.__name__ = record_type
@@ -162,15 +162,17 @@ def _Device(Base, record_type, val_field, **extras):
 
 _In  = ProcessDeviceSupportIn
 _Out = ProcessDeviceSupportOut
+def _Device_In(*args):  return _Device(_In,  *args)
+def _Device_Out(*args): return _Device(_Out, *args, default=None)
 
-longin      = _Device(_In,  'longin',    'VAL')
-longout     = _Device(_Out, 'longout',   'VAL')
-bi          = _Device(_In,  'bi',        'RVAL')
-bo          = _Device(_Out, 'bo',        'RVAL')
-stringin    = _Device(_In,  'stringin',  'VAL')
-stringout   = _Device(_Out, 'stringout', 'VAL')
-mbbi        = _Device(_In,  'mbbi',      'RVAL')
-mbbo        = _Device(_Out, 'mbbo',      'RVAL')
+longin      = _Device_In ('longin',    'VAL')
+longout     = _Device_Out('longout',   'VAL')
+bi          = _Device_In ('bi',        'RVAL')
+bo          = _Device_Out('bo',        'RVAL')
+stringin    = _Device_In ('stringin',  'VAL', '')
+stringout   = _Device_Out('stringout', 'VAL')
+mbbi        = _Device_In ('mbbi',      'RVAL')
+mbbo        = _Device_Out('mbbo',      'RVAL')
 
 
 NO_CONVERT = 2
@@ -187,6 +189,7 @@ class ai(ProcessDeviceSupportIn):
     _record_type_ = 'ai'
     _device_name_ = 'devPython_ai'
     _val_field_   = 'VAL'
+    _default_     = 0.0
     _fields_      = ['UDF', 'VAL']
     _dset_extra_  = dset_process_linconv
 
@@ -249,6 +252,7 @@ class WaveformBase(ProcessDeviceSupportCore):
 class waveform(WaveformBase, ProcessDeviceSupportIn):
     _record_type_ = 'waveform'
     _device_name_ = 'devPython_waveform'
+    _default_     = ()
 
 
 class waveform_out(WaveformBase, ProcessDeviceSupportOut):

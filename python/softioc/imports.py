@@ -5,6 +5,13 @@ import os.path
 from ctypes import *
 
 
+def expect_success(status, function, args):
+    assert status == 0, 'Expected success'
+
+def expect_true(status, function, args):
+    assert status, 'Expected True'
+
+
 libPythonSupport = CDLL('libPythonSupport.so')
 
 # void get_field_offsets(
@@ -17,6 +24,13 @@ get_field_offsets = libPythonSupport.get_field_offsets
 get_field_offsets.restype = None
 # get_field_offsets.argtypes = (
 #     c_char_p, c_void_p, c_int, c_void_p, c_void_p, c_void_p)
+
+# int db_put_field(const char *name, short dbrType, void *pbuffer, long length)
+#
+# Updates value in given field through channel access, so notifications are
+# generated as appropriate.
+db_put_field = libPythonSupport.db_put_field
+db_put_field.errcheck = expect_success
 
 
 # char * get_EPICS_BASE()
@@ -36,13 +50,6 @@ def EpicsDll(dll):
 libregistryIoc = EpicsDll('registryIoc')
 libdbIoc = EpicsDll('dbIoc')
 libmiscIoc = EpicsDll('miscIoc')
-
-
-def expect_success(status, function, args):
-    assert status == 0, 'Expected success'
-
-def expect_true(status, function, args):
-    assert status, 'Expected True'
 
 
 # int registryDeviceSupportAdd(
@@ -72,16 +79,6 @@ scanIoRequest.restype = None
 dbLoadDatabase = libdbIoc.dbLoadDatabase
 dbLoadDatabase.argtypes = (c_char_p, c_char_p, c_char_p)
 dbLoadDatabase.errcheck = expect_success
-
-# dbProcess = libdbIoc.dbProcess
-# dbScanPassive = libdbIoc.dbScanPassive
-# dbPut = libdbIoc.dbPut
-
-dbNameToAddr = libdbIoc.dbNameToAddr
-dbNameToAddr.errcheck = expect_success
-
-dbPutField = libdbIoc.dbPutField
-dbPutField.errcheck = expect_success
 
 
 # unsigned short recGblResetAlarms(void *precord)

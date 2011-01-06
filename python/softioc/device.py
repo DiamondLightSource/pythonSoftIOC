@@ -15,19 +15,6 @@ from device_core import DeviceSupportCore, RecordLookup
 import imports
 
 
-class dbAddr(Structure):
-    _fields_ = (
-        ("precord", c_void_p),
-        ("pfield", c_void_p),
-        ("pfldDes", c_void_p),
-        ("asPvt", c_void_p),
-        ("no_elements", c_long),
-        ("field_type", c_short),
-        ("field_size", c_short),
-        ("special", c_short),
-        ("dbr_field_type", c_short))
-
-
 class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     '''Implements canonical default processing for records with a _process
     method.  Processing typically either copies a locally set value into the
@@ -150,11 +137,9 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             # initialisation occurs
             self._value = value
         else:
-            dbaddr = dbAddr()
-            imports.dbNameToAddr(self._record.NAME, byref(dbaddr))
             datatype, length, data, array = value_to_dbr(value, None)
-            imports.dbPutField(
-                byref(dbaddr), DbrToDbfCode[datatype], data, length)
+            imports.db_put_field(
+                _record.NAME, DbrToDbfCode[datatype], data, length)
 
     def get(self):
         return self._value

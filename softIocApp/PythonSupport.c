@@ -48,3 +48,16 @@ void get_field_offsets(
 
     dbFinishEntry(&dbentry);
 }
+
+
+/* Updates PV field with integrated db lookup.  Safer to do this in C as we need
+ * an intermediate copy of the dbAddr structure, which changes size between
+ * EPICS releases. */
+int db_put_field(const char *name, short dbrType, void *pbuffer, long length)
+{
+    struct dbAddr dbAddr;
+    int rc = dbNameToAddr(name, &dbAddr);
+    if (rc == 0)
+        rc = dbPutField(&dbAddr, dbrType, pbuffer, length);
+    return rc;
+}

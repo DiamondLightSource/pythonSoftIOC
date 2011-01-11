@@ -18,11 +18,11 @@ class DeviceCommon(object):
         def __init__(cls, name, bases, dict):
             type.__init__(cls, name, bases, dict)
             # Binds self.__super.method to the appropriate superclass method
-            setattr(cls, "_%s__super" % name.lstrip('_'), super(cls))
+            setattr(cls, '_%s__super' % name.lstrip('_'), super(cls))
             # Binds cls.__super_cls().method to the appropriate superclass
             # class method.  Unfortunately the .__super form doesn't work
             # with class methods, only instance methods.
-            setattr(cls, "_%s__super_cls" % name,
+            setattr(cls, '_%s__super_cls' % name,
                 classmethod(lambda child: super(cls, child)))
             # Finally call the class initialisatio nmethod.
             cls.__init_class__()

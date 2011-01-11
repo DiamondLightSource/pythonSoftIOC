@@ -111,6 +111,8 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         allowing out records to have a sensible initial value.'''
         if self._value is not None:
             self._write_value(record, self._value)
+            if 'MLST' in self._fields_:
+                record.MLST = self._value
             record.TIME = time.time()
             record.UDF = 0
             recGblResetAlarms(record)
@@ -154,31 +156,35 @@ cothread.Spawn(ProcessDeviceSupportOut.DeviceCallbackDispatcher)
 
 
 
-def _Device(Base, record_type, val_field, default=0):
+def _Device(Base, record_type, rval=False, mlst=False, default=0):
     '''Wrapper for generating simple records.'''
+    val_field = rval and 'RVAL' or 'VAL'
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type
         _val_field_   = val_field
         _default_     = default
         _fields_      = ['UDF', val_field]
+        if mlst: _fields_.append('MLST')
 
     GenericDevice.__name__ = record_type
     return GenericDevice
 
 _In  = ProcessDeviceSupportIn
 _Out = ProcessDeviceSupportOut
-def _Device_In(*args):  return _Device(_In,  *args)
-def _Device_Out(*args): return _Device(_Out, *args, default=None)
+def _Device_In (type, **kargs):
+    return _Device(_In,  type, **kargs)
+def _Device_Out(type, rval=False, mlst=True):
+    return _Device(_Out, type, rval=rval, mlst=mlst, default=None)
 
-longin      = _Device_In ('longin',    'VAL')
-longout     = _Device_Out('longout',   'VAL')
-bi          = _Device_In ('bi',        'RVAL')
-bo          = _Device_Out('bo',        'RVAL')
-stringin    = _Device_In ('stringin',  'VAL', '')
-stringout   = _Device_Out('stringout', 'VAL')
-mbbi        = _Device_In ('mbbi',      'RVAL')
-mbbo        = _Device_Out('mbbo',      'RVAL')
+longin      = _Device_In ('longin')
+longout     = _Device_Out('longout')
+bi          = _Device_In ('bi', rval=True)
+bo          = _Device_Out('bo', rval=True)
+stringin    = _Device_In ('stringin', mlst=False, default='')
+stringout   = _Device_Out('stringout', mlst=False)
+mbbi        = _Device_In ('mbbi', rval=True)
+mbbo        = _Device_Out('mbbo', rval=True)
 
 
 NO_CONVERT = 2
@@ -212,7 +218,7 @@ class ao(ProcessDeviceSupportOut):
     _record_type_ = 'ao'
     _device_name_ = 'devPython_ao'
     _val_field_   = 'VAL'
-    _fields_      = ['UDF', 'VAL']
+    _fields_      = ['UDF', 'VAL', 'MLST']
     _dset_extra_  = dset_process_linconv
 
     def init_record(self, record):

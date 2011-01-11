@@ -42,6 +42,7 @@ DbfCodeToCtypes = {
     DBF_ULONG :     c_int32,    # Should be uint32, but causes trouble later.
     DBF_FLOAT :     c_float,
     DBF_DOUBLE :    c_double,
+    DBF_ENUM :      c_uint16,
     DBF_MENU :      c_uint16,
     DBF_INLINK :    c_char_p,
     DBF_OUTLINK :   c_char_p,

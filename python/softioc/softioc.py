@@ -113,6 +113,17 @@ ExportTest('generalTimeReport', (c_int,), (0,),
     '''Displays time providers and their status''')
 
 
+# Hacked up exit object so that when soft IOC framework sends us an exit command
+# we actually exit.
+class Exiter:
+    def __repr__(self):
+        import sys
+        sys.stdin.close()
+        sys.exit(0)
+
+exit = Exiter()
+__all__.append('exit')
+
 
 def dbLoadDatabase(database, path = None, substitutions = None):
     '''Loads a database file and applies any given substitutions.'''

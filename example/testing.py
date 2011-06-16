@@ -44,7 +44,6 @@ t_mbbi.set(2)
 
 
 wf_len = 32
-wf_len = 2
 wf = numpy.sin(numpy.linspace(0, 2*numpy.pi, wf_len))
 t_waveform_in  = Waveform('WAVEFORM', wf)
 t_waveform_out = WaveformOut('WAVEFORM_OUT', wf, on_update = on_update)

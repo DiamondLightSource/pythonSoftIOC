@@ -10,7 +10,7 @@ else:
     import versions
 
 import cothread
-from softioc import softioc, builder
+from softioc import softioc, builder, pvlog
 
 from testing import *
 

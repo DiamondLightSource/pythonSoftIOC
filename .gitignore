@@ -1,5 +1,6 @@
 /bin
 /dbd
 /lib
+/pythonIoc
 *.pyc
 O.*

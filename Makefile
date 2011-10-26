@@ -5,3 +5,19 @@ DIRS += configure
 DIRS += softIocApp
 DIRS += python
 include $(TOP)/configure/RULES_TOP
+
+
+install: pythonIoc
+
+clean: clean-pythonIoc
+
+
+# Ensure we get the build time EPICS_BASE into the executable
+pythonIoc: pythonIoc.in
+	sed 's:@@EPICS_BASE@@:$(EPICS_BASE):' $^ >$@
+	chmod +x $@
+
+clean-pythonIoc:
+	rm -f pythonIoc
+
+.PHONY: clean-pythonIoc

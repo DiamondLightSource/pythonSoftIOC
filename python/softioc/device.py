@@ -125,9 +125,12 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if numpy.all(value == self._value) and not self.__always_update:
             # If the value isn't making a change then don't do anything.
             return 0
-        if self.__validate and not self.__validate(self, value):
+        if self.__validate and not self.__validate(value):
             # Asynchronous validation rejects value.  It's up to the
-            # validation routine to do any logging.
+            # validation routine to do any logging.  In this case restore the
+            # last good value.
+            if self._value is not None:
+                self._write_value(record, self._value)
             return 1
 
         self._value = value

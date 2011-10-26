@@ -3,5 +3,5 @@ imported, and should only be used to establish module versions.'''
 
 from pkg_resources import require
 
-require('cothread==1.17')
-require('iocbuilder==3.6')
+require('cothread==2.0')
+require('iocbuilder==3.18')

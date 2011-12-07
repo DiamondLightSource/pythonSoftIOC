@@ -269,6 +269,17 @@ class waveform(WaveformBase, ProcessDeviceSupportIn):
     _device_name_ = 'devPython_waveform'
     _default_     = ()
 
+    # Because arrays are mutable values it's ever so easy to accidentially call
+    # set() with a value which subsequently changes.  To avoid this common class
+    # of bug, at the cost of duplicated code and data, here we ensure a copy is
+    # taken of the value.
+    def set(self, value,
+            severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM, timestamp=None):
+        '''Updates the stored value and triggers an update.  The alarm
+        severity and timestamp can also be specified if appropriate.'''
+        self._value = (+value, severity, alarm, timestamp)
+        self.trigger()
+
 
 class waveform_out(WaveformBase, ProcessDeviceSupportOut):
     _record_type_ = 'waveform'

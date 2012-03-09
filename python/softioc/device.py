@@ -5,7 +5,6 @@ from ctypes import *
 import numpy
 
 import cothread
-from cothread.dbr import value_to_dbr
 
 import alarm
 from fields import DbfCodeToNumpy, DbrToDbfCode
@@ -138,6 +137,61 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self._DeviceCallbackQueue.Signal((self.__on_update, value))
         return 0
 
+
+    NumpyCharCodeToDbr = {
+        # The following type codes are supported directly:
+        'S':    0,  # DBR_STRING     str_
+        'h':    1,  # DBR_SHORT      short  = int16
+        'f':    2,  # DBR_FLOAT      single = float32
+        'b':    4,  # DBR_CHAR       byte   = int8
+        'i':    5,  # DBR_LONG       intc   = int32
+        'd':    6,  # DBR_DOUBLE     float_ = float64
+        # These are supported as related types
+        'H':    1,  # DBR_SHORT      ushort = uint16
+        '?':    4,  # DBR_CHAR       bool_
+        'B':    4,  # DBR_CHAR       ubyte  = uint8
+        'I':    5,  # DBR_LONG       uintc  = uint32
+    }
+    if numpy.int_().itemsize == 4:
+        NumpyCharCodeToDbr.update({'l': 5, 'L': 5})   # int_, uint
+
+    # Converts a Python value into a form suitable for sending over channel
+    # access.  Derived from the corresponding cothread implementation.  Returns
+    # computed dbrcode, waveform length, raw data pointer and pointer to
+    # underlying data (for lifetime management).
+    def value_to_dbr(self, value):
+        # First convert the data directly into an array.  This will help in
+        # subsequent processing: this does most of the type coercion.
+        value = numpy.require(value, requirements = 'C')
+        if value.shape == ():
+            value.shape = (1,)
+        assert value.ndim == 1, 'Can\'t put multidimensional arrays!'
+
+        if value.dtype.char == 'S':
+            # Need special processing to hack the array so that strings are
+            # actually 40 characters long.
+            new_value = numpy.empty(value.shape, 'S40')
+            new_value[:] = value
+            value = new_value
+
+        try:
+            dbrtype = self.NumpyCharCodeToDbr[value.dtype]
+        except:
+            # One more special case.  caput() of a list of integers on a 64-bit
+            # system will fail at this point because they were automatically
+            # converted to 64-bit integers.  Catch this special case and fix it
+            # up by silently converting to 32-bit integers.  Not really the
+            # right thing to do (as data can be quietly lost), but the
+            # alternative isn't nice to use either.
+            if value.dtype.char == 'l':
+                value = numpy.require(value, dtype = numpy.int32)
+                dbrtype = 5
+            else:
+                raise
+
+        return dbrtype, len(value), value.ctypes.data, value
+
+
     def set(self, value):
         '''Special routine to set the value directly.'''
         try:
@@ -147,7 +201,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             # initialisation occurs
             self._value = value
         else:
-            datatype, length, data, array = value_to_dbr(value, None)
+            datatype, length, data, array = self.value_to_dbr(value)
             imports.db_put_field(
                 _record.NAME, DbrToDbfCode[datatype], data, length)
 

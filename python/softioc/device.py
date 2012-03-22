@@ -175,8 +175,8 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             value = new_value
 
         try:
-            dbrtype = self.NumpyCharCodeToDbr[value.dtype]
-        except:
+            dbrtype = self.NumpyCharCodeToDbr[value.dtype.char]
+        except KeyError:
             # One more special case.  caput() of a list of integers on a 64-bit
             # system will fail at this point because they were automatically
             # converted to 64-bit integers.  Catch this special case and fix it

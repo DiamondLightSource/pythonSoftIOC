@@ -51,14 +51,15 @@ DbfCodeToCtypes = {
 
 # Mapping for record field type to numpy type.
 DbfCodeToNumpy = {
-    DBF_CHAR :      numpy.int8,
-    DBF_UCHAR :     numpy.uint8,
-    DBF_SHORT :     numpy.int16,
-    DBF_USHORT :    numpy.uint16,
-    DBF_LONG :      numpy.int32,
-    DBF_ULONG :     numpy.uint32,
-    DBF_FLOAT :     numpy.float32,
-    DBF_DOUBLE :    numpy.float64,
+    DBF_STRING :    numpy.dtype('S40'),
+    DBF_CHAR :      numpy.dtype('int8'),
+    DBF_UCHAR :     numpy.dtype('uint8'),
+    DBF_SHORT :     numpy.dtype('int16'),
+    DBF_USHORT :    numpy.dtype('uint16'),
+    DBF_LONG :      numpy.dtype('int32'),
+    DBF_ULONG :     numpy.dtype('uint32'),
+    DBF_FLOAT :     numpy.dtype('float32'),
+    DBF_DOUBLE :    numpy.dtype('float64'),
 }
 
 # Mapping from basic DBR_ codes to DBF_ values

@@ -6,7 +6,9 @@ import imports
 
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
+
 iocInit = imports.iocInit
+epicsExit = imports.epicsExit
 
 
 # IOC Test facilities
@@ -112,6 +114,9 @@ ExportTest('scanpiol', (), (),
 ExportTest('generalTimeReport', (c_int,), (0,),
     '''Displays time providers and their status''')
 
+ExportTest('eltc', (c_int,), (),
+    '''Turn EPICS logging on or off.''')
+
 
 # Hacked up exit object so that when soft IOC framework sends us an exit command
 # we actually exit.
@@ -119,7 +124,7 @@ class Exiter:
     def __repr__(self):
         import sys
         sys.stdin.close()
-        sys.exit(0)
+        epicsExit()
 
 exit = Exiter()
 __all__.append('exit')
@@ -130,9 +135,12 @@ def dbLoadDatabase(database, path = None, substitutions = None):
     imports.dbLoadDatabase(database, path, substitutions)
 
 
-def interactive_ioc(context = {}):
+def interactive_ioc(context = {}, call_exit = True):
     '''Fires up the interactive IOC prompt with the given context.'''
     # Add all our exported symbols to the given context.
     exports = dict((key, globals()[key]) for key in __all__)
     import code
     code.interact(local = dict(exports, **context))
+
+    if call_exit:
+        epicsExit()

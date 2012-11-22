@@ -93,6 +93,9 @@ recGblResetAlarms.restype = c_short
 iocInit = libmiscIoc.iocInit
 iocInit.argtypes = ()
 
+epicsExit = libmiscIoc.epicsExit
+epicsExit.argtypes = ()
+
 
 __all__ = [
     'get_field_offsets',

@@ -31,37 +31,6 @@ extern int softIoc_registerRecordDeviceDriver(struct dbBase *pdbbase);
 
 
 
-
-static void Usage()
-{
-    printf("Usage: softIoc [<ioc-script> [<script-args>]]\n");
-}
-
-static bool ProcessOptions(int *pargc, char ***pargv)
-{
-    int Ok = true;
-    while (Ok)
-    {
-        switch (getopt(*pargc, *pargv, "+h"))
-        {
-            case 'h':
-                Usage();
-                return false;
-            case -1:
-                // End of flags
-                *pargc -= optind;
-                *pargv += optind;
-                return true;
-            default:
-                /* Invalid flag or too few arguments. */
-                fprintf(stderr, "Try `softIoc -h` for usage\n");
-                return false;
-        }
-    }
-    return false;
-}
-
-
 /* Loads the global IOC dbd definitions and registers them. */
 
 static bool LoadAndRegisterDbd()
@@ -93,24 +62,8 @@ static bool LoadAndRegisterDbd()
 
 int main(int argc, char *argv[])
 {
-    char * argv0 = argv[0];
-    bool Ok =
-        /* The first thing we do is parse and consume the command line options
-         * and check that we have a script to execute.  On return argc counts
-         * the arguments and argv[0] is the first argument. */
-        ProcessOptions(&argc, &argv)  &&
-        /* Perform the basic IOC initialisation. */
-        LoadAndRegisterDbd();
-
-    if (Ok)
-    {
-        /* Need to fix up the arguments passed to Py_Main to compensate for
-         * the adjustment made by ProcessOptions. */
-        argc += 1;
-        argv -= 1;
-        argv[0] = argv0;
+    if (LoadAndRegisterDbd())
         return Py_Main(argc, argv);
-    }
     else
         return 3;
 }

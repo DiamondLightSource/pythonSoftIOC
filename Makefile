@@ -14,7 +14,7 @@ clean: clean-pythonIoc
 
 # Ensure we get the build time EPICS_BASE into the executable
 pythonIoc: pythonIoc.in
-	sed 's:@@EPICS_BASE@@:$(EPICS_BASE):' $^ >$@
+	sed 's:@@EPICS_BASE@@:$(EPICS_BASE):;s:@@EPICS_HOST_ARCH@@:$(EPICS_HOST_ARCH):' $^ >$@
 	chmod +x $@
 
 clean-pythonIoc:

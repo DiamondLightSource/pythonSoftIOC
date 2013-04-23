@@ -7,6 +7,14 @@ include $(TOP)/configure/RELEASE
 
 CONFIG=$(EPICS_BASE)/configure
 include $(CONFIG)/CONFIG
+
+ifeq ($(POSIX),YES)
+SYS_VER := RHEL$(shell lsb_release -rs | sed 's/\..*//')-$(shell uname -m)
+else
+SYS_VER := $(error windows stuff here instead)
+endif
+include $(TOP)/configure/RELEASE.$(SYS_VER)
+
 -include $(CONFIG)/CONFIG.Dls
 
 INSTALL_LOCATION = $(TOP)

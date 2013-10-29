@@ -10,7 +10,7 @@
 
 /* Returns the EPICS_BASE path used to build this IOC. */
 
-char * get_EPICS_BASE()
+char * get_EPICS_BASE(void)
 {
     return EPICS_BASE;
 }

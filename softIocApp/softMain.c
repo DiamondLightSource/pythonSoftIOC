@@ -33,7 +33,7 @@ extern int softIoc_registerRecordDeviceDriver(struct dbBase *pdbbase);
 
 /* Loads the global IOC dbd definitions and registers them. */
 
-static bool LoadAndRegisterDbd()
+static bool LoadAndRegisterDbd(void)
 {
     const char *here = getenv("HERE");
     if (here == NULL)

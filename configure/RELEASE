@@ -8,8 +8,8 @@
 # each time EPICS_BASE, SNCSEQ, or any other external
 # module defined in the RELEASE file is rebuilt.
 
+PYTHON_CONFIG = $(PYTHON)-config
 
-# EPICS_BASE usually appears last so other apps can override stuff:
-EPICS_BASE=/dls_sw/epics/R3.14.11/base
+EPICS_BASE=/dls_sw/epics/R3.14.12.3/base
 
 -include $(TOP)/configure/RELEASE.private

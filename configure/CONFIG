@@ -1,24 +1,30 @@
-# CONFIG
-include $(TOP)/configure/CONFIG_APP
+# CONFIG - Load build configuration data
+#
+# Do not make changes to this file!
 
-# Make any application-specific changes to the EPICS build
-# configuration variables in this file.
+# Allow user to override where the build rules come from
+RULES = $(EPICS_BASE)
 
-# Set this when you only want to compile this application
-# for a subset of the cross-compiled target architectures
-# that Base is built for.
-CROSS_COMPILER_TARGET_ARCHS = 
-#vxWorks-ppc604_long
+# RELEASE files point to other application tops
+include $(TOP)/configure/RELEASE
+-include $(TOP)/configure/RELEASE.$(EPICS_HOST_ARCH).Common
+ifdef T_A
+-include $(TOP)/configure/RELEASE.Common.$(T_A)
+-include $(TOP)/configure/RELEASE.$(EPICS_HOST_ARCH).$(T_A)
+endif
 
-# To restrict the build to a list *without* the host arch,
-# redefine BUILD_ARCHS here, to included only those archs to build
-#BUILD_ARCHS = vxWorks-ppc604_long 
-#linux-x86
+CONFIG = $(RULES)/configure
+include $(CONFIG)/CONFIG
+-include $(CONFIG)/CONFIG.Dls
 
-# Set this when your IOC and the host use different paths
-# to access the application. This will be needed to boot
-# from a Microsoft FTP server or with some NFS mounts.
-# You must rebuild in the iocBoot directory for this to
-# take effect.
-#IOCS_APPL_TOP = <path to application top as seen by IOC>
+# Override the Base definition:
+INSTALL_LOCATION = $(TOP)
+
+# CONFIG_SITE files contain other build configuration settings
+include $(TOP)/configure/CONFIG_SITE
+-include $(TOP)/configure/CONFIG_SITE.$(EPICS_HOST_ARCH).Common
+ifdef T_A
+ -include $(TOP)/configure/CONFIG_SITE.Common.$(T_A)
+ -include $(TOP)/configure/CONFIG_SITE.$(EPICS_HOST_ARCH).$(T_A)
+endif
 

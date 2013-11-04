@@ -12,6 +12,12 @@ TOP=..
 
 include $(TOP)/configure/CONFIG
 
+
+# Discover the correct name for the python library
+PYTHON_LIB := python$(shell $(PYTHON) -c 'from distutils import sysconfig; \
+    print sysconfig.get_config_var("VERSION")')
+
+
 USR_CFLAGS += -std=gnu99 -Werror
 
 USR_CFLAGS += $(shell $(PYTHON_CONFIG) --cflags)
@@ -28,14 +34,17 @@ DBD += softIoc.dbd
 softIoc_DBD += base.dbd
 
 USR_CFLAGS += -DEPICS_BASE='"$(shell cd "$(EPICS_BASE)" && pwd)"'
-USR_LDFLAGS += $(shell $(PYTHON_CONFIG) --ldflags)
-
 
 softIoc_SRCS += softIoc_registerRecordDeviceDriver.cpp
 softIoc_SRCS += softMain.c
 
 softIoc_LIBS += $(EPICS_BASE_IOC_LIBS) PythonSupport
-softIoc_SYS_LIBS += $(patsubst -l%,%,$(shell $(PYTHON_CONFIG) --libs))
+
+# The following definitions of Python libraries works for both static and
+# dynamic Python.
+softIoc_LIBS += $(PYTHON_LIB)
+softIoc_SYS_LIBS += util
+$(PYTHON_LIB)_DIR = $(shell $(PYTHON_CONFIG) --exec-prefix)/lib
 
 
 # ----------------------------------------------------------------------

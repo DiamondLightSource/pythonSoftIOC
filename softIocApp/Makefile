@@ -41,9 +41,11 @@ softIoc_SRCS += softMain.c
 softIoc_LIBS += $(EPICS_BASE_IOC_LIBS) PythonSupport
 
 # The following definitions of Python libraries works for both static and
-# dynamic Python.
+# dynamic Python.  Note that we need to move the $(PYTHON_LIB) definition from
+# LDFLAGS to _LIBS so we can configure the library directory.
+softIoc_LDFLAGS += \
+    $(filter-out -l$(PYTHON_LIB),$(shell $(PYTHON_CONFIG) --ldflags))
 softIoc_LIBS += $(PYTHON_LIB)
-softIoc_SYS_LIBS += util
 $(PYTHON_LIB)_DIR = $(shell $(PYTHON_CONFIG) --exec-prefix)/lib
 
 

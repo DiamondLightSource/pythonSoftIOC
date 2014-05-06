@@ -81,21 +81,9 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
 class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
     _link_ = 'OUT'
 
-    # This queue is used to communicate process update events to a receiving
-    # cothread.  A single dispatching process is spawned to consume updates
-    # and convert them into synchronous method calls.
-    _DeviceCallbackQueue = cothread.ThreadedEventQueue()
-    @classmethod
-    def DeviceCallbackDispatcher(cls):
-        while True:
-            try:
-                callback, value = cls._DeviceCallbackQueue.Wait()
-                callback(value)
-            except:
-                # As ever: if an exception occurs within a dispatcher we have
-                # to report it and carry on.
-                print 'Device callback raised exception'
-                traceback.print_exc()
+    # Create our own cothread callback queue so that our callbacks processing
+    # doesn't interfere with other callback processing.
+    __Callback = cothread.cothread._Callback()
 
     def __init__(self, name, **kargs):
         self.__on_update = kargs.pop('on_update', None)
@@ -134,7 +122,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self._value = value
         if self.__on_update:
-            self._DeviceCallbackQueue.Signal((self.__on_update, value))
+            self.__Callback(self.__on_update, value)
         return 0
 
 
@@ -209,13 +197,9 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return self._value
 
 
-cothread.Spawn(ProcessDeviceSupportOut.DeviceCallbackDispatcher)
-
-
-
 def _Device(Base, record_type, rval=False, mlst=False, default=0):
     '''Wrapper for generating simple records.'''
-    val_field = rval and 'RVAL' or 'VAL'
+    val_field = 'RVAL' if rval else 'VAL'
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type

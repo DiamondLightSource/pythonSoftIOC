@@ -3,6 +3,10 @@
 Record Support in the Python Soft IOC
 =====================================
 
+..  module:: softioc.device
+    :synopsis: Implementation of Python Device support
+
+
 The Python soft IOC implements EPICS device support (almost) entirely in Python.
 This is used to invoke Python processing in response to record processing,
 making it easy to integrate Python into the EPICS IOC layer.
@@ -37,36 +41,43 @@ records value on startup.
 Working with IN records
 -----------------------
 
-All IN records support the following methods:
+EPICS IN records are implemented as subclasses of the
+:class:`ProcessDeviceSupportIn` class which provides the methods documented
+below.
 
-..  method:: set(value, severity=NO_ALARM, alarm=UDF_ALARM, timestamp=None)
+..  class:: ProcessDeviceSupportIn
 
-    Updates the stored value and severity status and triggers an update.  If
-    ``SCAN`` has been set to ``'I/O Intr'`` (which is the default if the
-    :mod:`~softioc.builder` methods have been used) then the record will be
-    processed by EPICS and the given value will be published to all users.
+    This class is used to implement Python device support for the record types
+    ``ai``, ``bi``, ``longin``, ``mbbi`` and IN ``waveform`` records.
 
-    Optionally an explicit timestamp can be set.  This is a value in seconds in
-    the Unix epoch, as returned by :func:`time.time`.  This argument only has
-    any effect if ``TSE = -2`` was set when the record was created.
+    ..  method:: set(value, severity=NO_ALARM, alarm=UDF_ALARM, timestamp=None)
 
-    Note that when calling :func:`set` for a waveform record the value is always
-    copied immediately -- this avoids accidents with mutable values.
+        Updates the stored value and severity status and triggers an update.  If
+        ``SCAN`` has been set to ``'I/O Intr'`` (which is the default if the
+        :mod:`~softioc.builder` methods have been used) then the record will be
+        processed by EPICS and the given value will be published to all users.
 
-..  method:: set_alarm(severity, alarm, timestamp=None)
+        Optionally an explicit timestamp can be set.  This is a value in seconds
+        in the Unix epoch, as returned by :func:`time.time`.  This argument only
+        has any effect if ``TSE = -2`` was set when the record was created.
 
-    This is exactly equivalent to calling::
+        Note that when calling :func:`set` for a waveform record the value is
+        always copied immediately -- this avoids accidents with mutable values.
 
-        rec.set(rec.get(), severity, alarm, timestamp)
+    ..  method:: set_alarm(severity, alarm, timestamp=None)
 
-    and triggers an alarm status change without changing the value.
+        This is exactly equivalent to calling::
 
-..  method:: get()
+            rec.set(rec.get(), severity, alarm, timestamp)
 
-    This returns the value last written to this record with :func:`set`.
+        and triggers an alarm status change without changing the value.
 
-    Note that channel access puts to a Python soft IOC input record are
-    completely ineffective, and this includes waveform records.
+    ..  method:: get()
+
+        This returns the value last written to this record with :func:`set`.
+
+        Note that channel access puts to a Python soft IOC input record are
+        completely ineffective, and this includes waveform records.
 
 
 Working with OUT records
@@ -105,14 +116,18 @@ specified:
     which don't change its value will be discarded.  In particular this means
     that such updates don't call `validate` or `on_update`.
 
-All OUT records support the following mehtods:
+..  class:: ProcessDeviceSupportOut
 
-..  method:: set(value)
+    This class is used to implement Python device support for the record types
+    ``ao``, ``bo``, ``longout``, ``mbbo`` and OUT ``waveform`` records.  All OUT
+    records support the following methods.
 
-    Updates the value associated with the record.  This will trigger record
-    processing, and so will cause any associated `on_update` method to be
-    called.
+    ..  method:: set(value)
 
-..  method:: get()
+        Updates the value associated with the record.  This will trigger record
+        processing, and so will cause any associated `on_update` method to be
+        called.
 
-    Returns the value associated with the record.
+    ..  method:: get()
+
+        Returns the value associated with the record.

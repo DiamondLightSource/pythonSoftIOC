@@ -19,9 +19,9 @@ when ``pythonIoc`` is run it behaves the same as running ``dls-python``.
 Scripts run from within ``pythonIoc`` differ from standard Python scripts in one
 detail: they have the ability to create and publish PVs through the
 :mod:`softioc` library.  Typically both :mod:`cothread` and :mod:`iocbuilder`
-will be recruited to help, but strictly speaking IOCs can be created without
-either of these modules -- the documentation for :mod:`softioc` identifies
-where these dependencies occur.
+will be recruited to help: :mod:`cothread` is used for dispatching OUT record
+processing callback methods, :mod:`iocbuilder` is used for constructing records
+during IOC initialisation.
 
 An EPICS IOC created with the help of ``pythonIoc`` and :mod:`softioc` is
 referred to as a "Python soft IOC".  The code below illustrates a simple IOC
@@ -66,11 +66,12 @@ This example script illustrates the following points.
   and loaded into the IOC and then the IOC can be started.
 
 - Finally the application must refrain from exiting until the IOC is no longer
-  needed.  The :func:`interactive_ioc` runs a Python interpreter shell with a
-  number of useful EPICS functions in scope, and passing ``globals()`` through
-  can allow interactive interaction with the internals of the IOC while it's
-  running.  The alternative is to call something like
-  :func:`cothread.WaitForQuit` or some other :mod:`cothread` blocking action.
+  needed.  The :func:`~softioc.softioc.interactive_ioc` runs a Python
+  interpreter shell with a number of useful EPICS functions in scope, and
+  passing ``globals()`` through can allow interactive interaction with the
+  internals of the IOC while it's running.  The alternative is to call something
+  like :func:`cothread.WaitForQuit` or some other :mod:`cothread` blocking
+  action.
 
 
 Creating a Publishable IOC
@@ -106,10 +107,10 @@ bit more structure is needed.  I recommend at least four files as shown:
 
 ``ioc_entry.py``
     I recommend that the top level Python script used to launch the IOC contain
-    only :func:`require` statements, simple code to start the body of the IOC,
-    and it should end with standard code to start the IOC.  The following
-    structure can be followed (here I've assumed that the rest of the IOC is in
-    a single file called ``ioc_body.py``::
+    only :func:`pkg_resources.require` statements, simple code to start the body
+    of the IOC, and it should end with standard code to start the IOC.  The
+    following structure can be followed (here I've assumed that the rest of the
+    IOC is in a single file called ``ioc_body.py``::
 
         from pkg_resources import require
 
@@ -153,15 +154,24 @@ special ``Python`` device -- this allows PV processing to be hooked into Python
 support.
 
 PV creation must be done in two stages: first the device name must be set by
-calling :func:`SetDeviceName`.  After this PVs can be created by calling any of
-the following PV creation functions:
+calling :func:`~softioc.builder.SetDeviceName`.  After this PVs can be created
+by calling any of the following PV creation functions:
 
-    :func:`aIn`, :func:`aOut`, :func:`boolIn`, :func:`boolOut`, :func:`longIn`,
-    :func:`longOut`, :func:`stringIn`, :func:`stringOut`, :func:`mbbIn`,
-    :func:`mbbOut`, :func:`Waveform`, :func:`WaveformOut`.
+    :func:`~softioc.builder.aIn`, :func:`~softioc.builder.aOut`,
+    :func:`~softioc.builder.boolIn`, :func:`~softioc.builder.boolOut`,
+    :func:`~softioc.builder.longIn`, :func:`~softioc.builder.longOut`,
+    :func:`~softioc.builder.stringIn`, :func:`~softioc.builder.stringOut`,
+    :func:`~softioc.builder.mbbIn`, :func:`~softioc.builder.mbbOut`,
+    :func:`~softioc.builder.Waveform`, :func:`~softioc.builder.WaveformOut`.
+
+These functions create, respectively, ``Python`` device bound records of the
+following types:
+
+     ``ai``, ``ao``, ``bi``, ``bo``, ``longin``, ``longout``, ``mbbi``,
+     ``mbbo``, ``stringin``, ``stringout``, ``waveform``
 
 Occasionally it may be desirable to create a soft record without ``Python``
-device support.  This can be done using the corresponding record creation
+device support, particularly if any other record type is required.  This can be done using the corresponding record creation
 functions provided as methods of :attr:`records`.  For example, if a ``calc``
 record is required then this can be created by calling
 :func:`softioc.builder.records.calc`.
@@ -175,15 +185,16 @@ are by default created with ``SCAN='I/O Intr'``).
 Initialising the IOC
 --------------------
 
-This is simply a matter of calling two functions: :func:`LoadDatabase` and
-:func:`iocInit`, which must be called in this order.  After calling
-:func:`LoadDatabase` it is no longer possible to create PVs.
+This is simply a matter of calling two functions:
+:func:`~softioc.builder.LoadDatabase` and :func:`~softioc.softioc.iocInit`,
+which must be called in this order.  After calling
+:func:`~softioc.builder.LoadDatabase` it is no longer possible to create PVs.
 
 It is sensible to start any server background activity after the IOC has been
-initialised by calling :func:`iocInit`.  After this has been done
-(:func:`cothread.Spawn` is recommended for initiating persistent background
+initialised by calling :func:`~softioc.softioc.iocInit`.  After this has been
+done (:func:`cothread.Spawn` is recommended for initiating persistent background
 activity) the top level script must pause, as as soon as it exits the IOC will
-exit.  Calling :func:`interactive_ioc` is recommended for this as the last
-statement in the top level script.
+exit.  Calling :func:`~softioc.softioc.interactive_ioc` is recommended for this
+as the last statement in the top level script.
 
 

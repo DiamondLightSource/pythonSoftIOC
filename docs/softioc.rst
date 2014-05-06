@@ -3,7 +3,9 @@
 Soft IOC Python Module
 ======================
 
-.. module:: softioc
+..  module:: softioc
+    :synopsis: Top level module of Python Soft IOC facilities
+
 
 The :mod:`softioc` module is an integral part of the Python soft IOC server
 ``pythonIoc``.  Its path is automatically available to the interpreter and the
@@ -49,7 +51,9 @@ at directly:
 Top Level IOC Interface: :mod:`softioc.softioc`
 -----------------------------------------------
 
-.. module:: softioc.softioc
+..  module:: softioc.softioc
+    :synopsis: Interface to IOC creation and startup functionality
+
 
 This module provides the following functions for general use (available by
 importing ``*``):
@@ -63,8 +67,8 @@ importing ``*``):
 
     This loads the specified EPICS database into the IOC with any given
     substitutions.  Note that this function is not normally called directly,
-    instead :mod:`softioc.builder` and its :func:`LoadDatabase` method is
-    normally used to create and load the EPICS database on the fly.
+    instead :mod:`softioc.builder` and its :func:`~softioc.builder.LoadDatabase`
+    method is normally used to create and load the EPICS database on the fly.
 
     However, if required, an existing EPICS database can be loaded explicitly
     using this method.  Note that :func:`dbLoadDatabase` cannot be called after
@@ -76,12 +80,14 @@ importing ``*``):
     The `context` argument is a dictionary of values that will be made available
     to the interactive Python shell together with a number of EPICS test
     functions.  By default, if `call_exit` is :const:`True`, the IOC will be
-    terminated by calling :func:`epicsExit` when the interpreter exits.
+    terminated by calling :func:`epicsExit` when the interpreter exits, which
+    means that :func:`interactive_ioc` will not return.
 
-    While the interactive shell is running a number of EPICS test functions
-    are made available for use together with the constant value :const:`exit`
-    with special behaviour: typing ``exit`` at the interpreter prompt will
-    immediately call :func:`epicsExit`.
+    While the interactive shell is running a number of EPICS test functions are
+    made available for use together with the constant value :const:`exit` with
+    special behaviour: typing :const:`exit` at the interpreter prompt will
+    immediately call :func:`epicsExit` causing the Python interpreter and IOC to
+    terminate.
 
 This module provides Python wrappers for the following EPICS test functions and
 makes them available to the :func:`interactive_ioc` interpreter shell.  See the
@@ -159,14 +165,16 @@ EPICS documentation for more details of each function.
 
     Turn EPICS logging on or off.
 
-..  function:: dbLockShowLocked()
-..  function:: dblsr()
-..  function:: dbtgf()
-..  function:: dbtpf()
-..  function:: dbtpn()
-..  function:: gft()
-..  function:: pft()
-..  function:: tpn()
+..  function::
+        dbLockShowLocked()
+        dblsr()
+        dblsr()
+        dbtgf()
+        dbtpf()
+        dbtpn()
+        gft()
+        pft()
+        tpn()
 
     These are all wrappers around the corresponding EPICS function, see the
     EPICS documentation for details of their meaning and behaviour.
@@ -180,7 +188,9 @@ EPICS documentation for more details of each function.
 Creating Records: :mod:`softioc.builder`
 ----------------------------------------
 
-.. module:: softioc.builder
+..  module:: softioc.builder
+    :synopsis: Tools for building Python bound PVs
+
 
 This module publishes functions for creating records.  All of the other methods
 in this module must be called before calling :func:`LoadDatabase`, after which
@@ -220,32 +230,39 @@ functions:
 For all of these functions any EPICS database field can be assigned a value by
 passing it as a keyword argument for the corresponding field name (in upper
 case) or by assigning to the corresponding field of the returned record object.
+Thus the `**fields` argument in all of the definitions below refers to both the
+optional keyword arguments listed above and record field names.
 
-..  function:: aIn(name, LOPR=None, HOPR=None, **fields)
-..  function:: aOut(name, LOPR=None, HOPR=None, **fields)
+..  function::
+        aIn(name, LOPR=None, HOPR=None, **fields)
+        aOut(name, LOPR=None, HOPR=None, **fields)
 
     Create ``ai`` and ``ao`` records.  The lower and upper limits for the
     record can be specified, and if specified these will also be used to set the
     ``EGUL`` and ``EGUF`` fields.
 
-..  function:: boolIn(name, ZNAM=None, ONAM=None, **fields)
-..  function:: boolOut(name, ZNAM=None, ONAM=None, **fields)
+..  function::
+        boolIn(name, ZNAM=None, ONAM=None, **fields)
+        boolOut(name, ZNAM=None, ONAM=None, **fields)
 
     Create ``bi`` and ``bo`` records with the specified names for false (zero)
     and true (one).
 
-..  function:: longIn(name, LOPR=None, HOPR=None, EGU=None, **fields)
-..  function:: longOut(name, DRVL=None, DRVH=None, EGU=None, **fields)
+..  function::
+        longIn(name, LOPR=None, HOPR=None, EGU=None, **fields)
+        longOut(name, DRVL=None, DRVH=None, EGU=None, **fields)
 
     Create ``longin`` and ``longout`` records with specified limits and units.
 
-..  function:: stringIn(name, **fields)
-..  function:: stringOut(name, **fields)
+..  function::
+        stringIn(name, **fields)
+        stringOut(name, **fields)
 
     Create ``stringin`` and ``stringout`` records.
 
-..  function:: mbbIn(name, *option_values, **fields)
-..  function:: mbbOut(name, *option_values, **fields)
+..  function::
+        mbbIn(name, *option_values, **fields)
+        mbbOut(name, *option_values, **fields)
 
     Create ``mbbi`` and ``mbbo`` records.  Up to 16 options can be specified as
     a list of two or three field tuples.  The first field of each tuple is the
@@ -257,8 +274,9 @@ case) or by assigning to the corresponding field of the returned record object.
             ('FAILING', 1, alarm.MINOR_ALARM),
             ('FAILED', 2, alarm.MAJOR_ALARM))
 
-..  function:: Waveform(name, [value,] **fields)
-..  function:: WaveformOut(name, [value,] **fields)
+..  function::
+        Waveform(name, [value,] **fields)
+        WaveformOut(name, [value,] **fields)
 
     Create ``waveform`` records.  Depending on whether :func:`Waveform` or
     :func:`WaveformOut` is called the record is configured to behave as an IN or
@@ -279,7 +297,7 @@ case) or by assigning to the corresponding field of the returned record object.
 
 The following function generates a specialised record.
 
-..  function:: Action(name, **kargs)
+..  function:: Action(name, **fields)
 
     Creates a record (using :func:`boolOut`) which will always call the
     `on_update` method when processed.  Used for action records.  The
@@ -321,10 +339,11 @@ record creation function.
 The following helper functions are useful when constructing links between
 records.
 
-..  function:: PP(record)
-..  function:: CP(record)
-..  function:: NP(record)
-..  function:: MS(record)
+..  function::
+        PP(record)
+        CP(record)
+        NP(record)
+        MS(record)
 
     When assigned to a link field in a record these functions add the
     appropriate processing attributes to the link.  These are not normally used.
@@ -355,5 +374,62 @@ starting the IOC.
 ..  function:: LoadDatabase()
 
     This must be called exactly once after creating all the records required by
-    the IOC and before calling :func:`iocInit`.  After this function has been
-    called none of the functions provided by :mod:`softioc.builder` are usable.
+    the IOC and before calling :func:`~softioc.softioc.iocInit`.  After this
+    function has been called none of the functions provided by
+    :mod:`softioc.builder` are usable.
+
+
+Alarm Value Definitions
+-----------------------
+
+..  module:: softioc.alarm
+    :synopsis: Constant definitions for EPICS severity and alarm values
+
+The following values can be passed to IN record :meth:`set` and
+:meth:`set_alarm` methods.
+
+..  attribute::
+        NO_ALARM = 0
+        MINOR_ALARM = 1
+        MAJOR_ALARM = 2
+        INVALID_ALARM = 3
+
+    These are severity values.  The default severity is :attr:`NO_ALARM`.
+
+..  attribute::
+        READ_ALARM
+        WRITE_ALARM
+        HIHI_ALARM
+        HIGH_ALARM
+        LOLO_ALARM
+        LOW_ALARM
+        STATE_ALARM
+        COS_ALARM
+        COMM_ALARM
+        TIMEOUT_ALARM
+        HW_LIMIT_ALARM
+        CALC_ALARM
+        SCAN_ALARM
+        LINK_ALARM
+        SOFT_ALARM
+        BAD_SUB_ALARM
+        UDF_ALARM
+        DISABLE_ALARM
+        SIMM_ALARM
+        READ_ACCESS_ALARM
+        WRITE_ACCESS_ALARM
+
+    Alarm code definitions.  Frankly these values aren't terribly useful, only
+    the severity is used for most notifications, but an alarm code needs to be
+    specified when specifying a non zero severity.
+
+
+Automatic PV logging
+--------------------
+
+..  module:: softioc.pvlog
+    :synopsis: Enables logging of CA puts to PVs
+
+Once this module has been imported all channel access writes to any PV published
+by this IOC will be logged by writing a suitable message to stdout.  There is
+currently no control or customisation of this feature.

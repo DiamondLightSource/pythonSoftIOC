@@ -46,7 +46,8 @@ EPICS_BASE = get_EPICS_BASE()
 EPICS_HOST_ARCH=os.environ['EPICS_HOST_ARCH']
 
 def EpicsDll(dll):
-    return CDLL(os.path.join(EPICS_BASE, 'lib', EPICS_HOST_ARCH, 'lib%s.so' % dll))
+    return CDLL(
+        os.path.join(EPICS_BASE, 'lib', EPICS_HOST_ARCH, 'lib%s.so' % dll))
 
 
 libregistryIoc = EpicsDll('registryIoc')

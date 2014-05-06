@@ -58,15 +58,15 @@ def boolOut(name, ZNAM=None, ONAM=None, **fields):
         ZNAM = ZNAM, ONAM = ONAM, **fields)
 
 
-def longIn(name, LOPR=None, HOPR=None, EGU=None, MDEL=-1, **fields):
+def longIn(name, LOPR=None, HOPR=None, EGU=None, **fields):
+    fields.setdefault('MDEL', -1)
     return _in_record('longin', name,
-        MDEL = MDEL,  EGU  = EGU,
-        LOPR = LOPR,  HOPR = HOPR, **fields)
+        EGU  = EGU, LOPR = LOPR,  HOPR = HOPR, **fields)
 
-def longOut(name, DRVL=None, DRVH=None, **fields):
+def longOut(name, DRVL=None, DRVH=None, EGU=None, **fields):
     return PythonDevice.longout(name,
         OMSL = 'supervisory',
-        DRVL = DRVL, DRVH = DRVH, **fields)
+        DRVL = DRVL, DRVH = DRVH, EGU = EGU, **fields)
 
 
 # Field name prefixes for mbbi/mbbo records.
@@ -108,8 +108,8 @@ def stringIn(name, **fields):
 def stringOut(name, **fields):
     return PythonDevice.stringout(name, **fields)
 
-def Action(name, value = None, **fields):
-    return boolOut(name, value, always_update = True, **fields)
+def Action(name, **fields):
+    return boolOut(name, always_update = True, **fields)
 
 
 # Converts numpy character code to FTVL value.
@@ -227,8 +227,8 @@ __all__ = [
     'stringIn', 'stringOut',
     'mbbIn',    'mbbOut',
     'Waveform', 'WaveformOut',
+    'Action',
     # Other builder support functions
-    'PythonDevice',
     'LoadDatabase',
     'SetDeviceName',
 ]

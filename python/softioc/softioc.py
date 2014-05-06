@@ -11,6 +11,10 @@ iocInit = imports.iocInit
 epicsExit = imports.epicsExit
 
 
+# The following identifiers will be exported to interactive shell.
+command_names = []
+
+
 # IOC Test facilities
 def ExportTest(name, argtypes, defaults=(), description='no description yet'):
     f = getattr(imports.libdbIoc, name)
@@ -28,7 +32,7 @@ def ExportTest(name, argtypes, defaults=(), description='no description yet'):
     call_f.__doc__ = description
     call_f.__name__ = name
     globals()[name] = call_f
-    __all__.append(name)
+    command_names.append(name)
 
 
 ExportTest('dba', (c_char_p,), (),
@@ -65,7 +69,7 @@ ExportTest('dbpf', (c_char_p, c_char_p,), (),
     Writes the given value into the field.''')
 
 ExportTest('dbpr', (c_char_p, c_int,), (0,),
-    '''dbpr(record, interest=2)
+    '''dbpr(record, interest=0)
 
     Prints all the fields in record up to the indicated interest level:
 
@@ -122,12 +126,12 @@ ExportTest('eltc', (c_int,), (),
 # we actually exit.
 class Exiter:
     def __repr__(self):
-        import sys
-        sys.stdin.close()
+        epicsExit()
+    def __call__(self):
         epicsExit()
 
 exit = Exiter()
-__all__.append('exit')
+command_names.append('exit')
 
 
 def dbLoadDatabase(database, path = None, substitutions = None):
@@ -137,8 +141,8 @@ def dbLoadDatabase(database, path = None, substitutions = None):
 
 def interactive_ioc(context = {}, call_exit = True):
     '''Fires up the interactive IOC prompt with the given context.'''
-    # Add all our exported symbols to the given context.
-    exports = dict((key, globals()[key]) for key in __all__)
+    # Add all our commands to the given context.
+    exports = dict((key, globals()[key]) for key in command_names)
     import code
     code.interact(local = dict(exports, **context))
 

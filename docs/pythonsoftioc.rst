@@ -176,10 +176,12 @@ functions provided as methods of :attr:`records`.  For example, if a ``calc``
 record is required then this can be created by calling
 :func:`softioc.builder.records.calc`.
 
-For all records created by these methods both :meth:`get` and :meth:`set`
-methods are available for reading and writing the current value of the record.
-For IN records calling :meth:`set` will trigger a record update (all IN records
-are by default created with ``SCAN='I/O Intr'``).
+For all records created by these methods both
+:meth:`~softioc.device.ProcessDeviceSupportIn.get` and
+:meth:`~softioc.device.ProcessDeviceSupportIn.set` methods are available for
+reading and writing the current value of the record.  For IN records calling
+:meth:`~softioc.device.ProcessDeviceSupportIn.set` will trigger a record update
+(all IN records are by default created with ``SCAN='I/O Intr'``).
 
 
 Initialising the IOC
@@ -196,5 +198,3 @@ done (:func:`cothread.Spawn` is recommended for initiating persistent background
 activity) the top level script must pause, as as soon as it exits the IOC will
 exit.  Calling :func:`~softioc.softioc.interactive_ioc` is recommended for this
 as the last statement in the top level script.
-
-

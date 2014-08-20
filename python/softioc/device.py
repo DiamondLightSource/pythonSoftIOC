@@ -90,6 +90,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         self.__validate  = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
         self._value = kargs.pop('initial_value', None)
+        self.__enable_write = True
         self.__super.__init__(name, **kargs)
 
     def init_record(self, record):
@@ -112,7 +113,8 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if numpy.all(value == self._value) and not self.__always_update:
             # If the value isn't making a change then don't do anything.
             return 0
-        if self.__validate and not self.__validate(self, value):
+        if self.__enable_write and self.__validate and \
+                not self.__validate(self, value):
             # Asynchronous validation rejects value.  It's up to the
             # validation routine to do any logging.  In this case restore the
             # last good value.
@@ -121,7 +123,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             return 1
 
         self._value = value
-        if self.__on_update:
+        if self.__on_update and self.__enable_write:
             self.__Callback(self.__on_update, value)
         return 0
 
@@ -180,7 +182,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return dbrtype, len(value), value.ctypes.data, value
 
 
-    def set(self, value):
+    def set(self, value, process=True):
         '''Special routine to set the value directly.'''
         try:
             _record = self._record
@@ -190,8 +192,10 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self._value = value
         else:
             datatype, length, data, array = self.value_to_dbr(value)
+            self.__enable_write = process
             imports.db_put_field(
                 _record.NAME, DbrToDbfCode[datatype], data, length)
+            self.__enable_write = True
 
     def get(self):
         return self._value

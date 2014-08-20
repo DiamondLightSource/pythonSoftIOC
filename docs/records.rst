@@ -122,11 +122,13 @@ specified:
     ``ao``, ``bo``, ``longout``, ``mbbo`` and OUT ``waveform`` records.  All OUT
     records support the following methods.
 
-    ..  method:: set(value)
+    ..  method:: set(value, process=True)
 
-        Updates the value associated with the record.  This will trigger record
-        processing, and so will cause any associated `on_update` method to be
-        called.
+        Updates the value associated with the record.  By default this will
+        trigger record processing, and so will cause any associated `on_update`
+        and `validate` methods to be called.  If `process` is :const:`False`
+        then neither of these methods will be called, but the value will still
+        be updated.
 
     ..  method:: get()
 

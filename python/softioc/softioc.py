@@ -1,5 +1,6 @@
 '''Top level import script for soft IOC support.'''
 
+import os
 from ctypes import *
 
 import imports
@@ -137,6 +138,10 @@ command_names.append('exit')
 def dbLoadDatabase(database, path = None, substitutions = None):
     '''Loads a database file and applies any given substitutions.'''
     imports.dbLoadDatabase(database, path, substitutions)
+
+def devIocStats(ioc_name):
+    dbLoadDatabase(
+        'db/ioc.db', os.getenv('HERE'), 'IOCNAME=%s,name=' % ioc_name)
 
 
 def interactive_ioc(context = {}, call_exit = True):

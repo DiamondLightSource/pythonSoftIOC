@@ -74,6 +74,11 @@ importing ``*``):
     using this method.  Note that :func:`dbLoadDatabase` cannot be called after
     :func:`iocInit`.
 
+..  function:: devIocStats(ioc_name)
+
+    This will load a template for the devIocStats library with the specified IOC
+    name.  This should be called before :func:`iocInit`.
+
 ..  function:: interactive_ioc(context={}, call_exit=True)
 
     This is the normal way to run an interactive shell after starting the IOC.

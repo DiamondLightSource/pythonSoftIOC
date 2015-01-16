@@ -49,6 +49,12 @@ softIoc_LIBS += $(PYTHON_LIB)
 $(PYTHON_LIB)_DIR = $(shell $(PYTHON_CONFIG) --exec-prefix)/lib
 
 
+# Support for devIocStats
+softIoc_DBD += devIocStats.dbd
+softIoc_LIBS += devIocStats
+DB += $(DEVIOCSTATS)/db/ioc.db
+
+
 # ----------------------------------------------------------------------
 # Support library for python component, dynamically loaded to assist with
 # access to record fields.

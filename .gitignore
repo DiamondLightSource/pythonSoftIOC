@@ -1,6 +1,7 @@
 /bin
 /dbd
 /lib
+/db
 /docs/html
 /pythonIoc
 *.pyc

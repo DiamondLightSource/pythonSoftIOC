@@ -1,3 +1,5 @@
+..  default-role:: literal
+
 Using `pythonSoftIoc`
 =====================
 
@@ -6,9 +8,8 @@ of a simple example such as `CS-DI-IOC-02`.  This consists of the following
 elements:
 
 1. A startup shell script `start-ioc` which launches the soft IOC using a
-production build of `pythonSoftIoc`.  This script typically looks like this:
+production build of `pythonSoftIoc`.  This script typically looks like this::
 
-    ```
     #!/bin/sh
 
     PYIOC_VERSION=2-0
@@ -18,14 +19,12 @@ production build of `pythonSoftIoc`.  This script typically looks like this:
     cd "$(dirname "$0")"
     export EPICS_CA_MAX_ARRAY_BYTES=1000000
     exec $PYIOC start_ioc.py "$@"
-    ```
 
 2. The startup Python script.  This establishes the essential component
 versions (apart from the `pythonSoftIoc` version), performs the appropriate
 initialisation and starts the IOC running.  The following template is a useful
-starting point:
+starting point::
 
-    ```
     from pkg_resources import require
     require('cothread==1.17')
     require('iocbuilder==3.6')
@@ -46,4 +45,3 @@ starting point:
 
     # Finally leave the IOC running with an interactive shell.
     interactive_ioc(globals())
-    ```

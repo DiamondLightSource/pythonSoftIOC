@@ -6,3 +6,11 @@
 /pythonIoc
 *.pyc
 O.*
+
+/docs/papers/*/*.aux
+/docs/papers/*/*.pdf
+/docs/papers/*/*.nav
+/docs/papers/*/*.out
+/docs/papers/*/*.snm
+/docs/papers/*/*.toc
+/docs/papers/*/*.vrb

@@ -4,4 +4,4 @@ imported, and should only be used to establish module versions.'''
 from pkg_resources import require
 
 require('cothread==2.9')
-require('iocbuilder==3.45')
+require('epicsdbbuilder==1.0')

@@ -4,8 +4,8 @@ Note that these definitions don't strictly need to be loaded through the
 iocbuilder in this way, but it makes structural sense this way.'''
 
 
-import iocbuilder
-import softioc
+import epicsdbbuilder
+from . import device
 
 
 class RecordWrapper(object):
@@ -16,7 +16,7 @@ class RecordWrapper(object):
     __Instances = []
     __builder_reset = False
 
-    def __init__(self, builder, device, name, link, **fields):
+    def __init__(self, builder, device, name, **fields):
         assert not self.__builder_reset, \
             'It\'s too late to create records'
         # List of keyword arguments expected by the device constructor.  The
@@ -30,7 +30,7 @@ class RecordWrapper(object):
                 device_kargs[keyword] = fields.pop(keyword)
 
         record = builder(name, **fields)
-        setattr(record, link, '@' + record.name)
+        record.address = '@' + record.name
         self.__set('__builder', record)
         self.__set('__device',  device(record.name, **device_kargs))
         self.__Instances.append(self)
@@ -77,35 +77,30 @@ class RecordWrapper(object):
 
 
 
-class PythonDevice(iocbuilder.Device):
+class PythonDevice(object):
     DbdFileList = ['device']
 
     @classmethod
     def __init_class__(cls):
-        for name, link in [
-                ('ai',        'INP'), ('ao',        'OUT'),
-                ('bi',        'INP'), ('bo',        'OUT'),
-                ('longin',    'INP'), ('longout',   'OUT'),
-                ('mbbi',      'INP'), ('mbbo',      'OUT'),
-                ('stringin',  'INP'), ('stringout', 'OUT'),
-                ('waveform',  'INP')]:
-            builder = getattr(iocbuilder.records, name)
-            record  = getattr(softioc.device, name)
-            setattr(cls, name, cls.makeRecord(builder, record, link))
+        for name in [
+                'ai', 'bi', 'longin',  'mbbi', 'stringin',
+                'ao', 'bo', 'longout', 'mbbo', 'stringout', 'waveform']:
+            builder = getattr(epicsdbbuilder.records, name)
+            record  = getattr(device, name)
+            setattr(cls, name, cls.makeRecord(builder, record))
         cls.waveform_out = cls.makeRecord(
-            iocbuilder.records.waveform, softioc.device.waveform_out,
-            'INP', 'PythonWfOut')
+            epicsdbbuilder.records.waveform, device.waveform_out,
+            'PythonWfOut')
 
     class makeRecord:
-        def __init__(self, builder, record, link, dtyp = 'Python'):
+        def __init__(self, builder, record, dtyp = 'Python'):
             self.builder = builder
             self.record  = record
-            self.link = link
             self.dtyp = dtyp
 
         def __call__(self, name, **fields):
             return RecordWrapper(
-                self.builder, self.record, name, self.link,
+                self.builder, self.record, name,
                 DTYP = self.dtyp, **fields)
 
 PythonDevice.__init_class__()

@@ -1,24 +1,15 @@
 '''Support for using the builder in cooperation with the python soft ioc.'''
 
 import os
-import device
 import numpy
 from softioc import dbLoadDatabase
 
-import iocbuilder
-iocbuilder.ConfigureTemplate(
-    record_names = iocbuilder.DiamondRecordNames(version = '3.14'))
+from epicsdbbuilder import *
+InitialiseDbd(os.environ['EPICS_BASE'], os.environ['EPICS_HOST_ARCH'])
+LoadDbdFile(os.path.join(os.environ['HERE'], 'dbd/device.dbd'))
 
-
-from iocbuilder import *
-
-ModuleVersion('pythonSoftIoc',
-    home = os.environ['HERE'], use_name = False,
-    load_path = os.path.dirname(__file__))
-
-from iocbuilder.modules import pythonSoftIoc as _pythonSoftIoc
-
-PythonDevice = _pythonSoftIoc.PythonDevice()
+import pythonSoftIoc
+PythonDevice = pythonSoftIoc.PythonDevice()
 
 
 
@@ -204,22 +195,26 @@ def LoadDatabase():
     dbLoadDatabase(database)
     os.unlink(database)
 
-    _pythonSoftIoc.RecordWrapper.reset_builder()
+    pythonSoftIoc.RecordWrapper.reset_builder()
 
 
-def SetDeviceName(device_name):
-    '''Wrapper for the builder SetDevice functionality.'''
-    domain, area, component, id = device_name.split('-')
-    SetDomain(domain, area)
-    SetDevice(component, int(id, 10))
+# ----------------------------------------------------------------------------
+# Record name configuration.  A device name prefix must be specified.
 
+SetSimpleRecordNames(None, ':')
+
+SetDeviceName = SetPrefix
+def SetDeviceName(name):
+    SetPrefix(name)
+
+def UnsetDevice():
+    SetPrefix(None)
 
 
 __all__ = [
-    # Re-exports from iocbuilder
+    # Re-exports from epicsdbbuilder
     'records',
     'PP', 'CP', 'MS', 'NP',
-    'SetDomain', 'SetDevice', 'GetDevice', 'UnsetDevice',
     # Wrappers for PythonDevice
     'aIn',      'aOut',
     'boolIn',   'boolOut',
@@ -230,5 +225,5 @@ __all__ = [
     'Action',
     # Other builder support functions
     'LoadDatabase',
-    'SetDeviceName',
+    'SetDeviceName', 'UnsetDevice'
 ]

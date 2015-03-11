@@ -18,10 +18,10 @@ when ``pythonIoc`` is run it behaves the same as running ``dls-python``.
 
 Scripts run from within ``pythonIoc`` differ from standard Python scripts in one
 detail: they have the ability to create and publish PVs through the
-:mod:`softioc` library.  Typically both :mod:`cothread` and :mod:`iocbuilder`
-will be recruited to help: :mod:`cothread` is used for dispatching OUT record
-processing callback methods, :mod:`iocbuilder` is used for constructing records
-during IOC initialisation.
+:mod:`softioc` library.  Typically both :mod:`cothread` and
+:mod:`epicsdbbuilder` will be recruited to help: :mod:`cothread` is used for
+dispatching OUT record processing callback methods, :mod:`epicsdbbuilder` is
+used for constructing records during IOC initialisation.
 
 An EPICS IOC created with the help of ``pythonIoc`` and :mod:`softioc` is
 referred to as a "Python soft IOC".  The code below illustrates a simple IOC
@@ -29,8 +29,8 @@ with one PV::
 
     # DLS requires
     from pkg_resources import require
-    require('cothread==2.11')
-    require('iocbuilder==3.47')
+    require('cothread==2.12')
+    require('epicsdbbuilder==1.0')
 
     # Import basic softioc framework
     from softioc import softioc, builder
@@ -50,7 +50,7 @@ This example script illustrates the following points.
 
 - The use of :func:`pkg_resources.require` is standard across all use of the
   ``dls-python`` Python interpreter at Diamond, and in this example we are using
-  both :mod:`cothread` and :mod:`iocbuilder`.  Of course, in an officially
+  both :mod:`cothread` and :mod:`epicsdbbuilder`.  Of course, in an officially
   published IOC specific versions must be specified, in this example I'm using
   the most recent versions at the time of writing.
 
@@ -114,8 +114,8 @@ bit more structure is needed.  I recommend at least four files as shown:
 
         from pkg_resources import require
 
-        require('cothread == 2.10')
-        require('iocbuilder == 3.45')
+        require('cothread==2.12')
+        require('epicsdbbuilder==1.0')
         # Any other requires needed by this IOC
 
         from softioc import softioc
@@ -148,10 +148,10 @@ See the documentation of :mod:`softioc.builder` for details, but an overview is
 provided here.
 
 PVs are created internally and dynamically using functionality provided by
-:mod:`iocbuilder`, which in this context simply provides mechanisms for creating
-``.db`` files, but :mod:`softioc.builder` also binds each created PV to a
-special ``Python`` device -- this allows PV processing to be hooked into Python
-support.
+:mod:`epicsdbbuilder`, which in this context simply provides mechanisms for
+creating ``.db`` files, but :mod:`softioc.builder` also binds each created PV to
+a special ``Python`` device -- this allows PV processing to be hooked into
+Python support.
 
 PV creation must be done in two stages: first the device name must be set by
 calling :func:`~softioc.builder.SetDeviceName`.  After this PVs can be created

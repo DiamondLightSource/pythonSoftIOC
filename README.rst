@@ -12,12 +12,11 @@ production build of `pythonSoftIoc`.  This script typically looks like this::
 
     #!/bin/sh
 
-    PYIOC_VERSION=2-0
+    PYIOC_VERSION=2-9
 
-    PYIOC=/dls_sw/prod/R3.14.11/support/pythonSoftIoc/$PYIOC_VERSION/pythonIoc
+    PYIOC=/dls_sw/prod/R3.14.12.3/support/pythonSoftIoc/$PYIOC_VERSION/pythonIoc
 
     cd "$(dirname "$0")"
-    export EPICS_CA_MAX_ARRAY_BYTES=1000000
     exec $PYIOC start_ioc.py "$@"
 
 2. The startup Python script.  This establishes the essential component
@@ -26,8 +25,8 @@ initialisation and starts the IOC running.  The following template is a useful
 starting point::
 
     from pkg_resources import require
-    require('cothread==1.17')
-    require('iocbuilder==3.6')
+    require('cothread==2.12')
+    require('epicsdbbuilder==1.0')
 
     # Import the basic framework components.
     from softioc import softioc, builder

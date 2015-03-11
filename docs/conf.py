@@ -20,7 +20,7 @@ import sys, os
 from pkg_resources import require
 require('numpy')
 require('cothread')
-require('iocbuilder')
+require('epicsdbbuilder')
 
 
 # -- General configuration -----------------------------------------------------

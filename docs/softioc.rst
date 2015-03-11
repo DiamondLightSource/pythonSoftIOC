@@ -317,28 +317,17 @@ record creation function.
 
 ..  function:: SetDeviceName(device_name)
 
-    Sets up the device part of a record name.  This function or its companions
-    :func:`SetDomain` and :func:`SetDevice` must be called before creating any
-    records.  Note that only this function need be used, the three other
-    functions below are entirely optional.
+    Sets up the prefix part of the record name, referred to here as the "device"
+    part.  This function must be called before creating any records.
+    Note that
+    only this function need be used, the three other functions below are
+    entirely optional.
 
 ..  function:: UnsetDevice()
 
     This can optionally be called after completing the creation of records to
     prevent the accidential creation of records with the currently set device
     name.
-
-..  function:: SetDomain(domain, area)
-
-    Sets the domain and area parts of the device name (physical location around
-    the machine and technical area).  These settings are not affected by
-    :func:`UnsetDevice`, but :func:`SetDevice` must be called before records can
-    be created.
-
-..  function:: SetDevice(component, id)
-
-    Sets the component and id parts of the device name, after which the complete
-    device name is now available for record creation.
 
 
 The following helper functions are useful when constructing links between

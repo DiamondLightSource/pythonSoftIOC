@@ -1,6 +1,7 @@
 '''Top level import script for soft IOC support.'''
 
 import os
+import sys
 from ctypes import *
 
 import imports
@@ -10,6 +11,18 @@ __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
 iocInit = imports.iocInit
 epicsExit = imports.epicsExit
+
+def safeEpicsExit():
+    '''Calls epicsExit() after ensuring Python exit handlers called.'''
+    if hasattr(sys, 'exitfunc'):
+        try:
+            # Calling epicsExit() will bypass any atexit exit handlers, so call
+            # them explicitly now.
+            sys.exitfunc()
+        finally:
+            # Make sure we don't try the exit handlers more than once!
+            del sys.exitfunc
+    epicsExit()
 
 
 # The following identifiers will be exported to interactive shell.
@@ -127,9 +140,9 @@ ExportTest('eltc', (c_int,), (),
 # we actually exit.
 class Exiter:
     def __repr__(self):
-        epicsExit()
+        safeEpicsExit()
     def __call__(self):
-        epicsExit()
+        safeEpicsExit()
 
 exit = Exiter()
 command_names.append('exit')
@@ -152,4 +165,4 @@ def interactive_ioc(context = {}, call_exit = True):
     code.interact(local = dict(exports, **context))
 
     if call_exit:
-        epicsExit()
+        safeEpicsExit()

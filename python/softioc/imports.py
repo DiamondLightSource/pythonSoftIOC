@@ -22,15 +22,16 @@ libPythonSupport = CDLL('libPythonSupport.so')
 # Looks up field offset, size and type values for the given record type and
 # the given list of field names.
 get_field_offsets = libPythonSupport.get_field_offsets
+get_field_offsets.argtypes = (
+    c_char_p, c_void_p, c_int, c_void_p, c_void_p, c_void_p)
 get_field_offsets.restype = None
-# get_field_offsets.argtypes = (
-#     c_char_p, c_void_p, c_int, c_void_p, c_void_p, c_void_p)
 
 # int db_put_field(const char *name, short dbrType, void *pbuffer, long length)
 #
 # Updates value in given field through channel access, so notifications are
 # generated as appropriate.
 db_put_field = libPythonSupport.db_put_field
+db_put_field.argtypes = (c_char_p, c_int, c_void_p, c_long)
 db_put_field.errcheck = expect_success
 
 
@@ -38,8 +39,8 @@ db_put_field.errcheck = expect_success
 #
 # Returns the path to EPICS_BASE
 get_EPICS_BASE = libPythonSupport.get_EPICS_BASE
-get_EPICS_BASE.restype = c_char_p
 get_EPICS_BASE.argtypes = ()
+get_EPICS_BASE.restype = c_char_p
 
 
 EPICS_BASE = get_EPICS_BASE()
@@ -60,8 +61,7 @@ libmiscIoc = EpicsDll('miscIoc')
 #
 # Registers device support.
 registryDeviceSupportAdd = libregistryIoc.registryDeviceSupportAdd
-registryDeviceSupportAdd.restype = c_int
-# registryDeviceSupportAdd.argtypes = (c_char_p, c_void_p)
+registryDeviceSupportAdd.argtypes = (c_char_p, c_void_p)
 registryDeviceSupportAdd.errcheck = expect_true
 
 
@@ -72,12 +72,12 @@ registryDeviceSupportAdd.errcheck = expect_true
 IOSCANPVT = c_void_p
 
 scanIoInit = libdbIoc.scanIoInit
+scanIoInit.argtypes = (IOSCANPVT,)
 scanIoInit.restype = None
-# scanIoInit.argtypes = (IOSCANPVT,)
 
 scanIoRequest = libdbIoc.scanIoRequest
+scanIoRequest.argtypes = (IOSCANPVT,)
 scanIoRequest.restype = None
-# scanIoRequest.argtypes = (IOSCANPVT,)
 
 dbLoadDatabase = libdbIoc.dbLoadDatabase
 dbLoadDatabase.argtypes = (c_char_p, c_char_p, c_char_p)
@@ -89,8 +89,8 @@ dbLoadDatabase.errcheck = expect_success
 # Raises event processing if any alarm status has changed, and resets NSTA
 # and NSEV fields for further processing.
 recGblResetAlarms = libdbIoc.recGblResetAlarms
+recGblResetAlarms.argtypes = (c_void_p,)
 recGblResetAlarms.restype = c_short
-# recGblResetAlarms.argtypes = (c_void_p,)
 
 
 iocInit = libmiscIoc.iocInit

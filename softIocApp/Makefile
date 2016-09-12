@@ -50,9 +50,11 @@ $(PYTHON_LIB)_DIR = $(shell $(PYTHON_CONFIG) --exec-prefix)/lib
 
 
 # Support for devIocStats
+ifdef DEVIOCSTATS
 softIoc_DBD += devIocStats.dbd
 softIoc_LIBS += devIocStats
 DB += $(DEVIOCSTATS)/db/ioc.db
+endif
 
 
 # ----------------------------------------------------------------------

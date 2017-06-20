@@ -11,6 +11,9 @@
 # Native build only for this application
 CROSS_COMPILER_TARGET_ARCHS =
 
+PYTHON = /scratch/local/prefix/python3/bin/python3
+# PYTHON = dls-python
+
 # Definition of python-config application.  This depends on PYTHON defined in
 # one of the host specific PYTHON_CONFIG files.
 PYTHON_CONFIG = $(PYTHON)-config

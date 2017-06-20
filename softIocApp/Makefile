@@ -14,8 +14,10 @@ include $(TOP)/configure/CONFIG
 
 
 # Discover the correct name for the python library
-PYTHON_LIB := python$(shell $(PYTHON) -c 'from distutils import sysconfig; \
-    print sysconfig.get_config_var("VERSION")')
+PYTHON_LIB := $(shell $(PYTHON) -c \
+    'from __future__ import print_function; \
+    from distutils import sysconfig; \
+    print(sysconfig.get_config_var("LIBRARY")[:-2][3:])')
 
 
 USR_CFLAGS += -std=gnu99 -Werror
@@ -43,11 +45,13 @@ softIoc_LIBS += $(EPICS_BASE_IOC_LIBS) PythonSupport
 # The following definitions of Python libraries works for both static and
 # dynamic Python.  Note that we need to move the $(PYTHON_LIB) definition from
 # LDFLAGS to _LIBS so we can configure the library directory.
-softIoc_LDFLAGS += \
-    $(filter-out -l$(PYTHON_LIB),$(shell $(PYTHON_CONFIG) --ldflags))
-softIoc_LIBS += $(PYTHON_LIB)
-$(PYTHON_LIB)_DIR = $(shell $(PYTHON_CONFIG) --exec-prefix)/lib
+# softIoc_LDFLAGS += \
+#     $(filter-out -l$(PYTHON_LIB),$(shell $(PYTHON_CONFIG) --ldflags))
+# softIoc_LIBS += $(PYTHON_LIB)
+# $(PYTHON_LIB)_DIR = $(shell $(PYTHON_CONFIG) --exec-prefix)/lib64
 
+softIoc_LDFLAGS += $(shell $(PYTHON_CONFIG) --ldflags)
+softIoc_SYS_LIBS += $(PYTHON_LIB)
 
 # Support for devIocStats
 ifdef DEVIOCSTATS

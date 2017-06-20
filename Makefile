@@ -12,7 +12,7 @@ include $(TOP)/configure/RULES_TOP
 SPHINX_BUILD := $(shell readlink -f $$(which sphinx-build))
 
 
-install: pythonIoc docs
+install: pythonIoc # docs
 
 clean: clean-pythonIoc
 

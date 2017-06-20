@@ -62,8 +62,17 @@ static bool LoadAndRegisterDbd(void)
 
 int main(int argc, char *argv[])
 {
+#if PY_MAJOR_VERSION == 2
+    char **python_argv = argv;
+#else
+    /* Alas, for Python3 we need convert argv from char** to wchar_t**. */
+    wchar_t **python_argv = PyMem_Malloc(sizeof(wchar_t *) * argc);
+    for (int i = 0; i < argc; i ++)
+        python_argv[i] = Py_DecodeLocale(argv[i], NULL);
+#endif
+
     if (LoadAndRegisterDbd())
-        return Py_Main(argc, argv);
+        return Py_Main(argc, python_argv);
     else
         return 3;
 }

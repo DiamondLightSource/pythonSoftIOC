@@ -2,13 +2,13 @@
 
 import os
 import numpy
-from softioc import dbLoadDatabase
+from .softioc import dbLoadDatabase
 
 from epicsdbbuilder import *
 InitialiseDbd(os.environ['EPICS_BASE'], os.environ['EPICS_HOST_ARCH'])
 LoadDbdFile(os.path.join(os.environ['HERE'], 'dbd/device.dbd'))
 
-import pythonSoftIoc
+from . import pythonSoftIoc
 PythonDevice = pythonSoftIoc.PythonDevice()
 
 

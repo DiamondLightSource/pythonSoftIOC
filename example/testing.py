@@ -1,5 +1,7 @@
 # Simple script for build a set of test PVs.
 
+from __future__ import print_function
+
 from softioc.builder import *
 import numpy
 
@@ -7,7 +9,7 @@ SetDeviceName('TS-DI-TEST-01')
 
 
 def on_update(value):
-    print 'on_update', repr(value)
+    print('on_update', repr(value))
 
 
 t_ai        = aIn('AI')
@@ -28,7 +30,7 @@ t_mbbo      = mbbOut    ('MBBO', 'Ein', 'Zwei', 'Drei',
     initial_value = 1, on_update = on_update)
 
 def update_sin_wf(value):
-    print 'update_sin_wf', value
+    print('update_sin_wf', value)
     sin_wf.set(numpy.sin(
         numpy.linspace(0, 2*numpy.pi*sin_ph.get(), sin_len.get())))
 sin_wf = Waveform('SIN', datatype = float, length = 1024)

@@ -6,12 +6,12 @@ import numpy
 
 import cothread
 
-import alarm
-from fields import DbfCodeToNumpy, DbrToDbfCode
-from imports import dbLoadDatabase, recGblResetAlarms
-from device_core import DeviceSupportCore, RecordLookup
+from . import alarm
+from .fields import DbfCodeToNumpy, DbrToDbfCode
+from .imports import dbLoadDatabase, recGblResetAlarms
+from .device_core import DeviceSupportCore, RecordLookup
 
-import imports
+from . import imports
 
 
 class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):

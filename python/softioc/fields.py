@@ -1,7 +1,7 @@
 '''Access to fields within a record structure.'''
 
 from ctypes import *
-from imports import get_field_offsets
+from .imports import get_field_offsets
 import numpy
 
 from cothread.dbr import *
@@ -79,10 +79,13 @@ class RecordFactory(object):
         '''Uses the EPICS static database to discover the offset in the record
         type and the size of each of the specified fields.'''
         length = len(fields)
-        field_name_strings = map(create_string_buffer, fields)
+        field_name_strings = [
+            create_string_buffer(field.encode())
+            for field in fields]
 
         field_names = (c_void_p * len(field_name_strings))()
-        field_names[:] = map(addressof, field_name_strings)
+        for i, field in enumerate(field_name_strings):
+            field_names[i] = addressof(field)
 
         field_offsets = numpy.empty(length, dtype = numpy.int16)
         field_sizes   = numpy.zeros(length, dtype = numpy.int16)

@@ -1,33 +1,43 @@
-import imports
-from fields import RecordFactory
+from __future__ import print_function
+
+import sys
+from . import imports
+from .fields import RecordFactory
 from ctypes import *
 
 
+# Black magic lifted from six.py (http://pypi.python.org/pypi/six/) to replace
+# use of __metaclass__ for metaclass definition
+def with_metaclass(meta, *bases):
+    class metaclass(meta):
+        def __new__(cls, name, this_bases, d):
+            return meta(name, bases, d)
+    return type.__new__(metaclass, 'temporary_class', (), {})
 
-class DeviceCommon(object):
+
+class InitClass(type):
+    def __new__(cls, name, bases, dict):
+        if '__init_class__' in dict:
+            dict['__init_class__'] = classmethod(dict['__init_class__'])
+        return type.__new__(cls, name, bases, dict)
+
+    def __init__(cls, name, bases, dict):
+        type.__init__(cls, name, bases, dict)
+        # Binds self.__super.method to the appropriate superclass method
+        setattr(cls, '_%s__super' % name.lstrip('_'), super(cls))
+        # Binds cls.__super_cls().method to the appropriate superclass
+        # class method.  Unfortunately the .__super form doesn't work
+        # with class methods, only instance methods.
+        setattr(cls, '_%s__super_cls' % name,
+            classmethod(lambda child: super(cls, child)))
+        # Finally call the class initialisatio nmethod.
+        cls.__init_class__()
+
+class DeviceCommon(with_metaclass(InitClass)):
     '''Adds support for an __init_class__ method called when the class or any
     of its subclasses is constructed.  Also adds auto-super functionality
     (see iocbuilder.support.autosuper).'''
 
-    class InitClass(type):
-        def __new__(cls, name, bases, dict):
-            if '__init_class__' in dict:
-                dict['__init_class__'] = classmethod(dict['__init_class__'])
-            return type.__new__(cls, name, bases, dict)
-
-        def __init__(cls, name, bases, dict):
-            type.__init__(cls, name, bases, dict)
-            # Binds self.__super.method to the appropriate superclass method
-            setattr(cls, '_%s__super' % name.lstrip('_'), super(cls))
-            # Binds cls.__super_cls().method to the appropriate superclass
-            # class method.  Unfortunately the .__super form doesn't work
-            # with class methods, only instance methods.
-            setattr(cls, '_%s__super_cls' % name,
-                classmethod(lambda child: super(cls, child)))
-            # Finally call the class initialisatio nmethod.
-            cls.__init_class__()
-
-    __metaclass__ = InitClass
     def __init_class__(cls): pass
 
     # By requiring that DeviceCommon be a common base class for the entire
@@ -100,9 +110,10 @@ class DeviceSupportCore(DeviceCommon):
             number = len(DSET_BASE._fields_) + len(DSET._fields_) - 1)
 
         # Check for implementations for all the dset methods.
-        for (method_name, method_type), record_offset in \
-                zip(DSET_BASE._fields_[1:], DSET_BASE._record_offsets_) + \
-                zip(DSET._fields_, DSET._record_offsets_):
+        zip_list = \
+            list(zip(DSET_BASE._fields_[1:], DSET_BASE._record_offsets_)) + \
+            list(zip(DSET._fields_, DSET._record_offsets_))
+        for (method_name, method_type), record_offset in zip_list:
             method = getattr(cls, '_' + method_name, None)
             if method:
                 # Convert each implemented method into a suitable callback
@@ -114,6 +125,8 @@ class DeviceSupportCore(DeviceCommon):
         # Hang onto the values we publish to EPICS to ensure that they
         # persist!
         cls.__dset = dset
+        if sys.version_info >= (3,):
+            cls._device_name_ = cls._device_name_.encode()
         imports.registryDeviceSupportAdd(cls._device_name_, byref(cls.__dset))
 
 
@@ -143,7 +156,7 @@ class DeviceSupportCore(DeviceCommon):
         record = cls.__fields(args[record_offset])
         self = record.DPVT
         if self is None:
-            print 'Record', record.NAME, 'called with no binding'
+            print('Record', record.NAME, 'called with no binding')
             return 1
         else:
             args = list(args)
@@ -176,7 +189,7 @@ class DeviceSupportCore(DeviceCommon):
             self.name = record.NAME
             return self.init_record(record)
         else:
-            print 'record not defined', link
+            print('record not defined', link)
             return 1
 
     def __init__(self, name, **kargs):
@@ -251,7 +264,7 @@ class RecordLookup(DeviceCommon):
 
 
 LookupRecord = RecordLookup.LookupRecord
-LookupRecordList = RecordLookup._RecordDirectory.iteritems
+LookupRecordList = RecordLookup._RecordDirectory.items
 
 
 __all__ = ['LookupRecord', 'LookupRecordList']

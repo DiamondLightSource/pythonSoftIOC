@@ -3,6 +3,7 @@
 
 import os
 import os.path
+import sys
 from ctypes import *
 
 
@@ -11,6 +12,29 @@ def expect_success(status, function, args):
 
 def expect_true(status, function, args):
     assert status, 'Expected True'
+
+
+if sys.version_info < (3,):
+    # Python 2
+    auto_encode = c_char_p
+    def auto_decode(result, func, args):
+        return result
+
+else:
+    # Python 3
+
+    # Encode all strings to c_char_p
+    class auto_encode(c_char_p):
+        encoded = []
+        @classmethod
+        def from_param(cls, value):
+            if value is None:
+                return value
+            else:
+                return value.encode()
+
+    def auto_decode(result, func, args):
+        return result.decode()
 
 
 libPythonSupport = CDLL('libPythonSupport.so')
@@ -23,7 +47,7 @@ libPythonSupport = CDLL('libPythonSupport.so')
 # the given list of field names.
 get_field_offsets = libPythonSupport.get_field_offsets
 get_field_offsets.argtypes = (
-    c_char_p, c_void_p, c_int, c_void_p, c_void_p, c_void_p)
+    auto_encode, c_void_p, c_int, c_void_p, c_void_p, c_void_p)
 get_field_offsets.restype = None
 
 # int db_put_field(const char *name, short dbrType, void *pbuffer, long length)
@@ -31,7 +55,7 @@ get_field_offsets.restype = None
 # Updates value in given field through channel access, so notifications are
 # generated as appropriate.
 db_put_field = libPythonSupport.db_put_field
-db_put_field.argtypes = (c_char_p, c_int, c_void_p, c_long)
+db_put_field.argtypes = (auto_encode, c_int, c_void_p, c_long)
 db_put_field.errcheck = expect_success
 
 
@@ -41,10 +65,17 @@ db_put_field.errcheck = expect_success
 get_EPICS_BASE = libPythonSupport.get_EPICS_BASE
 get_EPICS_BASE.argtypes = ()
 get_EPICS_BASE.restype = c_char_p
+get_EPICS_BASE.errcheck = auto_decode
+
+
+# void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
+#
+# Hook for logging EPICS caput events
+EpicsPvPutHook = libPythonSupport.EpicsPvPutHook
 
 
 EPICS_BASE = get_EPICS_BASE()
-EPICS_HOST_ARCH=os.environ['EPICS_HOST_ARCH']
+EPICS_HOST_ARCH = os.environ['EPICS_HOST_ARCH']
 
 def EpicsDll(dll):
     return CDLL(
@@ -80,7 +111,7 @@ scanIoRequest.argtypes = (IOSCANPVT,)
 scanIoRequest.restype = None
 
 dbLoadDatabase = libdbIoc.dbLoadDatabase
-dbLoadDatabase.argtypes = (c_char_p, c_char_p, c_char_p)
+dbLoadDatabase.argtypes = (auto_encode, auto_encode, auto_encode)
 dbLoadDatabase.errcheck = expect_success
 
 
@@ -98,6 +129,22 @@ iocInit.argtypes = ()
 
 epicsExit = libmiscIoc.epicsExit
 epicsExit.argtypes = ()
+
+
+# Import for libas
+
+libasIoc = EpicsDll('asIoc')
+
+# int asSetFilename(const char *acf)
+#
+# Set access control file
+asSetFilename = libasIoc.asSetFilename
+asSetFilename.argtypes = (auto_encode,)
+
+# asTrapWriteId asTrapWriteRegisterListener(asTrapWriteListener func)
+#
+# Install caput hook
+asTrapWriteRegisterListener = libasIoc.asTrapWriteRegisterListener
 
 
 __all__ = [

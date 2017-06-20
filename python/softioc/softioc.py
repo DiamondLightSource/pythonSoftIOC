@@ -4,7 +4,7 @@ import os
 import sys
 from ctypes import *
 
-import imports
+from . import imports
 
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
@@ -49,12 +49,15 @@ def ExportTest(name, argtypes, defaults=(), description='no description yet'):
     command_names.append(name)
 
 
-ExportTest('dba', (c_char_p,), (),
+auto_encode = imports.auto_encode
+
+
+ExportTest('dba', (auto_encode,), (),
     '''dba(field)
 
     Prints value of each field in dbAddr structure associated with field.''')
 
-ExportTest('dbl', (c_char_p, c_char_p,), ('', ''),
+ExportTest('dbl', (auto_encode, auto_encode,), ('', ''),
     '''dbl(pattern='', fields='')
 
     Prints the names of records in the database matching pattern.  If
@@ -66,23 +69,23 @@ ExportTest('dbnr', (c_int,), (0,),
 
     Print number of records of each record type.''')
 
-ExportTest('dbgrep', (c_char_p,), (),
+ExportTest('dbgrep', (auto_encode,), (),
     '''dbgrep(pattern)
 
     Lists all record names that match the pattern.  * matches any number of
     characters in a record name.''')
 
-ExportTest('dbgf', (c_char_p,), (),
+ExportTest('dbgf', (auto_encode,), (),
     '''dbgf(field)
 
     Prints field type and value.''')
 
-ExportTest('dbpf', (c_char_p, c_char_p,), (),
+ExportTest('dbpf', (auto_encode, auto_encode,), (),
     '''dbpf(field, value)
 
     Writes the given value into the field.''')
 
-ExportTest('dbpr', (c_char_p, c_int,), (0,),
+ExportTest('dbpr', (auto_encode, c_int,), (0,),
     '''dbpr(record, interest=0)
 
     Prints all the fields in record up to the indicated interest level:
@@ -93,15 +96,15 @@ ExportTest('dbpr', (c_char_p, c_int,), (0,),
     3 System developer fields of minor interest
     4 All other fields.''')
 
-ExportTest('dbtr', (c_char_p,), (),
+ExportTest('dbtr', (auto_encode,), (),
     '''dbtr(record)
 
     Tests processing of the specified record.''')
 
-ExportTest('dbtgf', (c_char_p,))
-ExportTest('dbtpf', (c_char_p, c_char_p,))
+ExportTest('dbtgf', (auto_encode,))
+ExportTest('dbtpf', (auto_encode, auto_encode,))
 
-ExportTest('dbior', (c_char_p, c_int,), ('', 0,),
+ExportTest('dbior', (auto_encode, c_int,), ('', 0,),
     '''dbior(driver='', interest=0)
 
     Prints driver reports for the selected driver (or all drivers if
@@ -109,11 +112,11 @@ ExportTest('dbior', (c_char_p, c_int,), ('', 0,),
 
 ExportTest('dbhcr', (), (), '''Prints hardware configuration report.''')
 
-ExportTest('gft', (c_char_p,))
-ExportTest('pft', (c_char_p,))
-ExportTest('dbtpn', (c_char_p, c_char_p,))
-ExportTest('tpn', (c_char_p, c_char_p,))
-ExportTest('dblsr', (c_char_p, c_int,))
+ExportTest('gft', (auto_encode,))
+ExportTest('pft', (auto_encode,))
+ExportTest('dbtpn', (auto_encode, auto_encode,))
+ExportTest('tpn', (auto_encode, auto_encode,))
+ExportTest('dblsr', (auto_encode, c_int,))
 ExportTest('dbLockShowLocked', (c_int,))
 
 ExportTest('scanppl', (c_double,), (0.0,),

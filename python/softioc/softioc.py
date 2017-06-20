@@ -165,7 +165,12 @@ def interactive_ioc(context = {}, call_exit = True):
     # Add all our commands to the given context.
     exports = dict((key, globals()[key]) for key in command_names)
     import code
-    code.interact(local = dict(exports, **context))
+
+    if sys.version_info < (3,):
+        interact_args = {}
+    else:
+        interact_args = dict(exitmsg = '')
+    code.interact(local = dict(exports, **context), **interact_args)
 
     if call_exit:
         safeEpicsExit()

@@ -122,8 +122,8 @@ class DeviceSupportCore(DeviceCommon):
                     cls.__create_method(method, record_offset))
                 setattr(dset, method_name, callback)
 
-        # Hang onto the values we publish to EPICS to ensure that they
-        # persist!
+        # Hang onto the values we publish to EPICS to ensure that they persist!
+        # We also need to ensure that the device name persits.
         cls.__dset = dset
         if sys.version_info >= (3,):
             cls._device_name_ = cls._device_name_.encode()
@@ -182,15 +182,12 @@ class DeviceSupportCore(DeviceCommon):
         record = cls.__fields(record)
         # Here we ask for an instance of the record.  It's the responsibility
         # of the subclass to provide a suitable implementation here.
-        self = cls.ParseRecordLink(getattr(record, cls._link_))
-        if self:
-            record.DPVT = id(self)
-            self._record = record
-            self.name = record.NAME
-            return self.init_record(record)
-        else:
-            print('record not defined', link)
-            return 1
+        self = cls.LookupRecord(getattr(record, cls._link_))
+
+        record.DPVT = id(self)
+        self._record = record
+        self.name = record.NAME
+        return self.init_record(record)
 
     def __init__(self, name, **kargs):
         # We won't initialise the IOSCANPVT until it's actually requested by
@@ -231,9 +228,7 @@ class DeviceSupportCore(DeviceCommon):
 
 
 class RecordLookup(DeviceCommon):
-    '''This class implements automatic record registration: if a record
-    instance does not already exist when the record is initialised a fresh
-    instance is automatically created and registered.'''
+    '''This class implements automatic record registration.'''
 
     # Directory of all records as they are created.  This is shared among all
     # subclasses.
@@ -244,16 +239,6 @@ class RecordLookup(DeviceCommon):
         '''Returns the registered record with given name, or raises KeyError
         if the record was never initialised.'''
         return cls._RecordDirectory[name]
-
-    @classmethod
-    def ParseRecordLink(cls, name):
-        '''Returns an instance for this record, creating a new instance if
-        necessary.'''
-        try:
-            return cls._RecordDirectory[name]
-        except KeyError:
-            # Creating the new record will automatically register it.
-            return cls(name)
 
     def __init__(self, name, **kargs):
         assert name not in self._RecordDirectory, \

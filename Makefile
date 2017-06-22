@@ -11,8 +11,12 @@ include $(TOP)/configure/RULES_TOP
 # succuessfully import the softioc library.
 SPHINX_BUILD := $(shell readlink -f $$(which sphinx-build))
 
+BUILD_DOCS ?= 1
 
-install: pythonIoc # docs
+install: pythonIoc
+ifeq ($(BUILD_DOCS),1)
+install: docs
+endif
 
 clean: clean-pythonIoc
 

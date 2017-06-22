@@ -166,9 +166,11 @@ def interactive_ioc(context = {}, call_exit = True):
     exports = dict((key, globals()[key]) for key in command_names)
     import code
 
-    if sys.version_info < (3,):
+    if sys.version_info < (3, 6):
         interact_args = {}
     else:
+        # This suppresses irritating exit message introduced by Python3.  Alas,
+        # this option is only available in Python 3.6!
         interact_args = dict(exitmsg = '')
     code.interact(local = dict(exports, **context), **interact_args)
 

@@ -13,11 +13,17 @@ TOP=..
 include $(TOP)/configure/CONFIG
 
 
-# Discover the correct name for the python library
+# Discover the correct name for the python library and its location.  This is
+# surprisingly tricky, as we want to support quite a number of different
+# configurations of Python interpreter.
 PYTHON_LIB := $(shell $(PYTHON) -c \
     'from __future__ import print_function; \
     from distutils import sysconfig; \
-    print(sysconfig.get_config_var("LIBRARY")[:-2][3:])')
+    print(sysconfig.get_config_var("LIBRARY")[3:-2])')
+PYTHON_LIB_DIR := $(shell $(PYTHON) -c \
+    'from __future__ import print_function; \
+    from distutils import sysconfig; \
+    print(sysconfig.get_config_var("LIBDIR"))')
 
 
 USR_CFLAGS += -std=gnu99 -Werror
@@ -40,18 +46,14 @@ USR_CFLAGS += -DEPICS_BASE='"$(shell cd "$(EPICS_BASE)" && pwd)"'
 softIoc_SRCS += softIoc_registerRecordDeviceDriver.cpp
 softIoc_SRCS += softMain.c
 
-softIoc_LIBS += $(EPICS_BASE_IOC_LIBS) PythonSupport
-
-# The following definitions of Python libraries works for both static and
-# dynamic Python.  Note that we need to move the $(PYTHON_LIB) definition from
-# LDFLAGS to _LIBS so we can configure the library directory.
-# softIoc_LDFLAGS += \
-#     $(filter-out -l$(PYTHON_LIB),$(shell $(PYTHON_CONFIG) --ldflags))
-# softIoc_LIBS += $(PYTHON_LIB)
-# $(PYTHON_LIB)_DIR = $(shell $(PYTHON_CONFIG) --exec-prefix)/lib64
+softIoc_LIBS += $(EPICS_BASE_IOC_LIBS)
+softIoc_LIBS += PythonSupport
+softIoc_LIBS += $(PYTHON_LIB)
 
 softIoc_LDFLAGS += $(shell $(PYTHON_CONFIG) --ldflags)
-softIoc_SYS_LIBS += $(PYTHON_LIB)
+# For some reason python-config --ldflags doesn't actually tell us where to find
+# the python library if we need telling, so this has to be computed here.
+$(PYTHON_LIB)_DIR = $(PYTHON_LIB_DIR)
 
 # Support for devIocStats
 ifdef DEVIOCSTATS

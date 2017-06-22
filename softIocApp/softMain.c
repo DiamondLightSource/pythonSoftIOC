@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <libgen.h>
+#include <locale.h>
 
 #include "dbAccess.h"
 #include "iocInit.h"
@@ -64,11 +65,29 @@ int main(int argc, char *argv[])
 {
 #if PY_MAJOR_VERSION == 2
     char **python_argv = argv;
+
 #else
     /* Alas, for Python3 we need convert argv from char** to wchar_t**. */
-    wchar_t **python_argv = PyMem_Malloc(sizeof(wchar_t *) * argc);
+    wchar_t **python_argv = PyMem_Malloc(sizeof(wchar_t *) * (argc + 1));
+    python_argv[argc] = NULL;
+
+#if PY_MINOR_VERSION < 5
+    /* This is a tricky space: we're supposed to use Py_DecodeLocale(), but
+     * these versions of Python3 don't implement it yet.  Do the simplest
+     * workaround we can.  This code is lifted from Python 3.4 Modules/python.c
+     * and simplified as much as possible. */
+    char *oldloc = strdup(setlocale(LC_ALL, NULL));
+    setlocale(LC_ALL, "");
+    for (int i = 0; i < argc; i ++)
+        python_argv[i] = _Py_char2wchar(argv[i], NULL);
+    setlocale(LC_ALL, oldloc);
+    free(oldloc);
+
+#else
+    /* This seems to be the "correct" Python 3 way. */
     for (int i = 0; i < argc; i ++)
         python_argv[i] = Py_DecodeLocale(argv[i], NULL);
+#endif
 #endif
 
     if (LoadAndRegisterDbd())

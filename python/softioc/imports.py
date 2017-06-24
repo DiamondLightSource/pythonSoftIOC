@@ -81,10 +81,22 @@ def EpicsDll(dll):
     return CDLL(
         os.path.join(EPICS_BASE, 'lib', EPICS_HOST_ARCH, 'lib%s.so' % dll))
 
+# A bit tricky: in more recent versions of EPICS all the entry points we want
+# have been gathered into a single .so, but previously they were split among
+# four different ones.  Just try both options.
+try:
+    libdbCore = EpicsDll('dbCore')
+    libregistryIoc = libdbCore
+    libdbIoc = libdbCore
+    libmiscIoc = libdbCore
+    libasIoc = libdbCore
+except OSError:
+    # Ok, no dbCore, then we should find everything in these four instead.
+    libregistryIoc = EpicsDll('registryIoc')
+    libdbIoc = EpicsDll('dbIoc')
+    libmiscIoc = EpicsDll('miscIoc')
+    libasIoc = EpicsDll('asIoc')
 
-libregistryIoc = EpicsDll('registryIoc')
-libdbIoc = EpicsDll('dbIoc')
-libmiscIoc = EpicsDll('miscIoc')
 
 
 # int registryDeviceSupportAdd(
@@ -132,8 +144,6 @@ epicsExit.argtypes = ()
 
 
 # Import for libas
-
-libasIoc = EpicsDll('asIoc')
 
 # int asSetFilename(const char *acf)
 #

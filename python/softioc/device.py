@@ -320,6 +320,12 @@ class waveform(WaveformBase, ProcessDeviceSupportIn):
             severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM, timestamp=None):
         '''Updates the stored value and triggers an update.  The alarm
         severity and timestamp can also be specified if appropriate.'''
+        if isinstance(value, str):
+            # Convert a string into an array of characters.  This will produce
+            # the correct behaviour when treating a character array as a string.
+            # Note that the trailing null is needed to work around problems with
+            # some clients.
+            value = numpy.fromstring(value + '\0', dtype = 'uint8')
         self._value = (+value, severity, alarm, timestamp)
         self.trigger()
 

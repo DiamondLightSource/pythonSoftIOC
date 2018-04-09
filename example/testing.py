@@ -51,6 +51,8 @@ t_waveform_in  = Waveform('WAVEFORM', wf)
 t_waveform_out = WaveformOut('WAVEFORM_OUT', wf, on_update = on_update)
 t_waveform_in2 = Waveform('WAVEFORM2', length = 10)
 
+t_longstring_in = Waveform('LONGSTRING', length = 256, datatype = numpy.uint8)
+
 
 def Update():
     t_ai.set(3.14159)
@@ -70,6 +72,7 @@ def UpdateOut():
 __all__ = [
     't_ai', 't_boolin',  't_longin',  't_stringin',  't_mbbi',
     't_ao', 't_boolout', 't_longout', 't_stringout', 't_mbbo',
-    't_waveform_in', 't_waveform_in2', 't_waveform_out', 'wf_len',
+    't_waveform_in', 't_waveform_in2', 't_waveform_out', 't_longstring_in',
+    'wf_len',
     'Update', 'UpdateOut'
 ]

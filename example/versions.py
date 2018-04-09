@@ -3,5 +3,6 @@ imported, and should only be used to establish module versions.'''
 
 from pkg_resources import require
 
-# require('cothread==2.13')
-# require('epicsdbbuilder==1.0')
+require('numpy==1.11.1')
+require('cothread==2.14')
+require('epicsdbbuilder==1.2')

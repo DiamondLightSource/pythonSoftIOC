@@ -157,7 +157,8 @@ def dbLoadDatabase(database, path = None, substitutions = None):
 
 def devIocStats(ioc_name):
     dbLoadDatabase(
-        'db/ioc.db', os.getenv('HERE'), 'IOCNAME=%s,name=' % ioc_name)
+        'ioc.db', os.path.join(os.getenv('HERE'), 'db'),
+        'IOCNAME=%s,name=' % ioc_name)
 
 
 def interactive_ioc(context = {}, call_exit = True):

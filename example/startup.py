@@ -7,6 +7,8 @@ from softioc import softioc, builder, pvlog
 
 from testing import *
 
+softioc.devIocStats('TS-DI-TEST-01')
+
 builder.LoadDatabase()
 softioc.iocInit()
 

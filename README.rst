@@ -79,7 +79,7 @@ elements:
         ...
 
         # Finally leave the IOC running with an interactive shell.
-        interactive_ioc(globals())
+        softioc.interactive_ioc(globals())
 
     Note that the use of `require` is specific to DLS, and you may have a
     different way of managing your installations.

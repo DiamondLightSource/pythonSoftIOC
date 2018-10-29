@@ -4,30 +4,19 @@ from __future__ import print_function
 
 import sys
 from ctypes import *
-from .imports import get_field_offsets
+from .imports import get_field_offsets, get_DBF_values
 import numpy
 
 from cothread.dbr import *
 from cothread.dbr import ca_timestamp, EPICS_epoch
 
 
-# Record field types, as defined in dbFldTypes.h
-DBF_STRING      = 0
-DBF_CHAR        = 1
-DBF_UCHAR       = 2
-DBF_SHORT       = 3
-DBF_USHORT      = 4
-DBF_LONG        = 5
-DBF_ULONG       = 6
-DBF_FLOAT       = 7
-DBF_DOUBLE      = 8
-DBF_ENUM        = 9
-DBF_MENU        = 10
-DBF_DEVICE      = 11
-DBF_INLINK      = 12
-DBF_OUTLINK     = 13
-DBF_FWDLINK     = 14
-DBF_NOACCESS    = 15
+# Pick up the DBF_ definitions from the C helper layer.  This is safer than
+# defining the values here, as unfortunately the values have been known to
+# change between EPICS releases.
+for name, value in get_DBF_values().items():
+    globals()[name] = value
+
 
 # Mapping from record field type to ctypes type.  Type STRING is handled
 # specially, and types ENUM, MENU, DEVICE and FWDLINK aren't supported.

@@ -59,13 +59,20 @@ db_put_field.argtypes = (auto_encode, c_int, c_void_p, c_long)
 db_put_field.errcheck = expect_success
 
 
-# char * get_EPICS_BASE()
+# const char *get_EPICS_BASE(void)
 #
 # Returns the path to EPICS_BASE
 get_EPICS_BASE = libPythonSupport.get_EPICS_BASE
 get_EPICS_BASE.argtypes = ()
 get_EPICS_BASE.restype = c_char_p
 get_EPICS_BASE.errcheck = auto_decode
+
+
+# PyObject *get_DBF_values(void)
+#
+# Returns dictionary mapping DBF_ enum names to values
+get_DBF_values = libPythonSupport.get_DBF_values
+get_DBF_values.restype = py_object
 
 
 # void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)

@@ -1,3 +1,4 @@
+#include <Python.h>
 #include <string.h>
 
 #define db_accessHFORdb_accessC     // Needed to get correct DBF_ values
@@ -9,12 +10,40 @@
 
 
 /* Returns the EPICS_BASE path used to build this IOC. */
-
-char * get_EPICS_BASE(void)
+const char *get_EPICS_BASE(void)
 {
-    return EPICS_BASE;
+    return EPICS_BASE;         // Passed as #define from Makefile
 }
 
+
+/* Helper for function below. */
+#define ADD_ENUM(dict, name) \
+    PyDict_SetItemString(dict, #name, PyInt_FromLong(name))
+
+/* Alas, EPICS has changed the numerical assignments of the DBF_ enums between
+ * versions, so to avoid unpleasant surprises, we compute thes values here in C
+ * and pass them back to the Python layer. */
+PyObject *get_DBF_values(void)
+{
+    PyObject *dict = PyDict_New();
+    ADD_ENUM(dict, DBF_STRING);
+    ADD_ENUM(dict, DBF_CHAR);
+    ADD_ENUM(dict, DBF_UCHAR);
+    ADD_ENUM(dict, DBF_SHORT);
+    ADD_ENUM(dict, DBF_USHORT);
+    ADD_ENUM(dict, DBF_LONG);
+    ADD_ENUM(dict, DBF_ULONG);
+    ADD_ENUM(dict, DBF_FLOAT);
+    ADD_ENUM(dict, DBF_DOUBLE);
+    ADD_ENUM(dict, DBF_ENUM);
+    ADD_ENUM(dict, DBF_MENU);
+    ADD_ENUM(dict, DBF_DEVICE);
+    ADD_ENUM(dict, DBF_INLINK);
+    ADD_ENUM(dict, DBF_OUTLINK);
+    ADD_ENUM(dict, DBF_FWDLINK);
+    ADD_ENUM(dict, DBF_NOACCESS);
+    return dict;
+}
 
 
 /* Given an array of field names, this routine looks up each field name in

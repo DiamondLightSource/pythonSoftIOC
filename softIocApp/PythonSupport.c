@@ -30,6 +30,7 @@ const char *get_EPICS_BASE(void)
  * and pass them back to the Python layer. */
 PyObject *get_DBF_values(void)
 {
+    PyGILState_STATE gstate = PyGILState_Ensure();
     PyObject *dict = PyDict_New();
     ADD_ENUM(dict, DBF_STRING);
     ADD_ENUM(dict, DBF_CHAR);
@@ -47,6 +48,7 @@ PyObject *get_DBF_values(void)
     ADD_ENUM(dict, DBF_OUTLINK);
     ADD_ENUM(dict, DBF_FWDLINK);
     ADD_ENUM(dict, DBF_NOACCESS);
+    PyGILState_Release(gstate);
     return dict;
 }
 

@@ -16,6 +16,11 @@ const char *get_EPICS_BASE(void)
 }
 
 
+/* In Python3 this function has been renamed. */
+#if PY_MAJOR_VERSION >= 3
+#define PyInt_FromLong(value)   PyLong_FromLong(value)
+#endif
+
 /* Helper for function below. */
 #define ADD_ENUM(dict, name) \
     PyDict_SetItemString(dict, #name, PyInt_FromLong(name))

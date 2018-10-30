@@ -19,6 +19,8 @@
 # Build settings that are NOT module paths should appear in a
 # CONFIG_SITE file.
 
+# Note that DEVIOCSTATS is entirely optional.  If not required, just leave this
+# symbol undefined.
 DEVIOCSTATS = /dls_sw/prod/R3.14.12.7/support/devIocStats/3-1-14dls3-0
 
 # EPICS_BASE usually appears last so other apps can override stuff:

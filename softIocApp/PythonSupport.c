@@ -1,3 +1,6 @@
+/* See note in softMain.c about these #undefs. */
+#undef _POSIX_C_SOURCE
+#undef _XOPEN_SOURCE
 #include <Python.h>
 #include <string.h>
 

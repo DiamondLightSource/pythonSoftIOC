@@ -11,6 +11,8 @@ SetDeviceName('TS-DI-TEST-01')
 def on_update(value):
     print('on_update', repr(value))
 
+def on_update_name(value, name):
+    print('on_update', name, ':', repr(value))
 
 t_ai        = aIn('AI')
 t_boolin    = boolIn('BOOLIN', 'True', 'False')
@@ -19,7 +21,7 @@ t_stringin  = stringIn('STRINGIN')
 t_mbbi      = mbbIn('MBBI', 'One', 'Two', 'Three')
 
 t_ao        = aOut      ('AO',
-    initial_value = 12.45, on_update = on_update)
+    initial_value = 12.45, on_update_name = on_update_name)
 t_boolout   = boolOut   ('BOOLOUT', 'Zero', 'One',
     initial_value = True, on_update = on_update)
 t_longout   = longOut   ('LONGOUT',

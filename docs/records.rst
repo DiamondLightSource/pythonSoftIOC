@@ -101,6 +101,12 @@ specified:
     one callback is dispatched at a time, so if a callback blocks it will delay
     `on_update` callbacks for other records.
 
+`on_update_name`
+    This is an alternative form of `on_update` with the same behaviour: note
+    that at most one of `on_update` and `on_update_name` may be passed.  The
+    difference is that `on_update_name` is called with the record name as its
+    second argument after the value as the first argument.
+
 `validate`
     If used this should be set to a callable taking two arguments.  The first
     argument will be the record object, and the second will be the new value

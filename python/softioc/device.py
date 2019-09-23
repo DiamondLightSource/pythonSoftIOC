@@ -86,7 +86,18 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
     __Callback = cothread.cothread._Callback()
 
     def __init__(self, name, **kargs):
-        self.__on_update = kargs.pop('on_update', None)
+        on_update = kargs.pop('on_update', None)
+        on_update_name = kargs.pop('on_update_name', None)
+        # At most one of on_update and on_update_name can be specified
+        assert on_update is None or on_update_name is None, \
+            'Cannot specify on_update and on_update_name together'
+        if on_update:
+            self.__on_update = on_update
+        elif on_update_name:
+            self.__on_update = lambda value: on_update_name(value, name)
+        else:
+            self.__on_update = None
+
         self.__validate  = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
         self._value = kargs.pop('initial_value', None)

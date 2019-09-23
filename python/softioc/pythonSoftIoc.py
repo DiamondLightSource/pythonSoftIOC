@@ -23,7 +23,8 @@ class RecordWrapper(object):
         # remaining arguments are passed to the builder.  It's a shame we
         # have to maintain this separately from the corresponding device list.
         DeviceKeywords = [
-            'on_update', 'validate', 'initial_value', 'always_update']
+            'on_update', 'on_update_name', 'validate',
+            'initial_value', 'always_update']
         device_kargs = {}
         for keyword in DeviceKeywords:
             if keyword in fields:

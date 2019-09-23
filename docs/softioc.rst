@@ -222,6 +222,10 @@ functions:
     :func:`WaveformOut`).  This specifies a function that will be called after
     record processing has completed.
 
+`on_update_name`
+    This is an alternative callback function to use instead of `on_update`.
+    This function will be passed the record name as well as updated value.
+
 `validate`
     Also only available on OUT records, specifies a function called during
     record processing.  Note that this function is not cothread safe, that is to

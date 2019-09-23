@@ -31,13 +31,13 @@ def _in_record(record, name, **fields):
 
 def aIn(name, LOPR=None, HOPR=None, **fields):
     return _in_record('ai', name,
-        LOPR = LOPR,    HOPR = HOPR,
-        EGUL = LOPR,    EGUF = HOPR, **fields)
+        LOPR = LOPR,    HOPR = HOPR, **fields)
 
 def aOut(name, LOPR=None, HOPR=None, **fields):
+    fields.setdefault('DRVL', LOPR)
+    fields.setdefault('DRVH', HOPR)
     return PythonDevice.ao(name,
-        LOPR = LOPR,    HOPR = HOPR,
-        EGUL = LOPR,    EGUF = HOPR, **fields)
+        LOPR = LOPR,    HOPR = HOPR, **fields)
 
 
 def boolIn(name, ZNAM=None, ONAM=None, **fields):

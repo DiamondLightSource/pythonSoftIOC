@@ -326,7 +326,12 @@ class waveform(WaveformBase, ProcessDeviceSupportIn):
             # Note that the trailing null is needed to work around problems with
             # some clients.
             value = numpy.fromstring(value + '\0', dtype = 'uint8')
+
+        value = numpy.require(value, dtype = self.dtype)
         self._value = (+value, severity, alarm, timestamp)
+        if value.shape == ():  value.shape = (1,)
+        assert value.ndim == 1, 'Can\'t write multidimensional arrays'
+
         self.trigger()
 
 

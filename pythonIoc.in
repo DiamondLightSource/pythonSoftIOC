@@ -8,6 +8,7 @@ export HERE="$(readlink -fn "$(dirname "$0")")"
 export PYTHONPATH="$PYTHONPATH${PYTHONPATH:+:}$HERE/python"
 export EPICS_BASE='@@EPICS_BASE@@'
 export EPICS_HOST_ARCH='@@EPICS_HOST_ARCH@@'
+export PYTHONHOME='@@PYTHONHOME@@'
 
 case "$1" in
     --debug)

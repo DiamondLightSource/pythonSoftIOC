@@ -17,12 +17,10 @@ include $(TOP)/configure/CONFIG
 # surprisingly tricky, as we want to support quite a number of different
 # configurations of Python interpreter.
 PYTHON_LIB := $(shell $(PYTHON) -c \
-    'from __future__ import print_function; \
-    from distutils import sysconfig; \
+    'from distutils import sysconfig; \
     print(sysconfig.get_config_var("LIBRARY")[3:-2])')
 PYTHON_LIB_DIR := $(shell $(PYTHON) -c \
-    'from __future__ import print_function; \
-    from distutils import sysconfig; \
+    'from distutils import sysconfig; \
     print(sysconfig.get_config_var("LIBDIR"))')
 
 

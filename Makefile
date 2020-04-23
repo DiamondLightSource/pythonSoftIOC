@@ -11,6 +11,8 @@ include $(TOP)/configure/RULES_TOP
 # succuessfully import the softioc library.
 SPHINX_BUILD := $(shell readlink -f $$(which sphinx-build))
 
+PYTHONHOME := $(shell $(PYTHON) -c 'import sys; print(sys.exec_prefix)')
+
 BUILD_DOCS ?= 1
 
 install: pythonIoc
@@ -23,7 +25,8 @@ clean: clean-pythonIoc
 # Commands for creating startup script with correct paths to EPICS.
 define SED_EDIT_COMMANDS
 s:@@EPICS_BASE@@:$(EPICS_BASE):; \
-s:@@EPICS_HOST_ARCH@@:$(EPICS_HOST_ARCH):
+s:@@EPICS_HOST_ARCH@@:$(EPICS_HOST_ARCH):; \
+s:@@PYTHONHOME@@:$(PYTHONHOME):
 endef
 
 # Ensure we get the build time EPICS_BASE into the executable

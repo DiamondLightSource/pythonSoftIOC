@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest-cov = "*"
+pytest-flake8 = "*"
+sphinx-rtd-theme = "*"
+# switch to main repo after PR https://github.com/Holzhaus/sphinx-multiversion/pull/60 is merged
+sphinx-multiversion = {editable = true,git = "https://github.com/dls-controls/sphinx-multiversion.git",ref = "only-arg"}
+setuptools-dso = "*"
+
+[packages]
+# All other package requirements from setup.py
+softioc = {editable = true,path = "."}
+
+[scripts]
+# Put coverage here so we don't interfere with debugging in the IDE
+tests = "python -m pytest --cov=epicsdbbuilder --cov-report term"
+docs = "sphinx-build -EWT --keep-going docs build/html"
+clean = "rm -rf build prefix */__pycache__ .coverage cov.xml *.egg-info .mypy_cache .pytest_cache"

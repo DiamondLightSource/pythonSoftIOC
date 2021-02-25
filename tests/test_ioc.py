@@ -1,11 +1,9 @@
 # Simple example script for building an example soft IOC.
 
-import versions
-
 import cothread
 from softioc import softioc, builder, pvlog
 
-from testing import *
+from sim_records import *
 
 softioc.devIocStats('TS-DI-TEST-01')
 

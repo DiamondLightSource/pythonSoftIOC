@@ -1,11 +1,17 @@
-/bin
-/dbd
-/lib
-/db
-/docs/html
-/pythonIoc
+/.vscode
+/venv
 *.pyc
-O.*
+/docs/html/
+/softioc/_extension.*
+
+# Dist build output
+/build
+/dist
+/softioc.egg-info/
+
+# Coverage reports
+.coverage
+cov.xml
 
 /docs/papers/*/*.aux
 /docs/papers/*/*.pdf

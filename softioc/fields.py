@@ -7,8 +7,8 @@ from ctypes import *
 from .imports import get_field_offsets, get_DBF_values
 import numpy
 
-from cothread.dbr import *
-from cothread.dbr import ca_timestamp, EPICS_epoch
+from epicscorelibs.ca.dbr import *
+from epicscorelibs.ca.dbr import ca_timestamp, EPICS_epoch
 
 
 # Pick up the DBF_ definitions from the C helper layer.  This is safer than
@@ -82,35 +82,10 @@ class RecordFactory(object):
     def __init__(self, record_type, fields):
         '''Uses the EPICS static database to discover the offset in the record
         type and the size of each of the specified fields.'''
-        length = len(fields)
-        field_name_strings = [
-            create_string_buffer(field.encode())
-            for field in fields]
-
-        field_names = (c_void_p * len(field_name_strings))()
-        for i, field in enumerate(field_name_strings):
-            field_names[i] = addressof(field)
-
-        field_offsets = numpy.empty(length, dtype = numpy.int16)
-        field_sizes   = numpy.zeros(length, dtype = numpy.int16)
-        field_types   = numpy.empty(length, dtype = numpy.int16)
-
-        get_field_offsets(
-            record_type, field_names, length,
-            field_offsets.ctypes.data_as(c_void_p),
-            field_sizes.ctypes.data_as(c_void_p),
-            field_types.ctypes.data_as(c_void_p))
-        assert field_sizes.all(), 'At least one field seems to be missing'
-
-        # The following rather convoluted expression converts the separate
-        # arrays of field names and attributes into a dictionary looking up
-        # each field and returning the appropriate list of attributes.
-        #     One final adjustment needed is that all the numpy.int16 values
-        # need to be converted back into regular integers to ensure good
-        # processing downstream.
-        self.fields = dict(zip(fields, zip(
-            *map(lambda l: map(int, l),
-                (field_offsets, field_sizes, field_types)))))
+        self.fields = get_field_offsets(record_type)
+        missing = set(fields) - set(self.fields)
+        assert not missing, \
+            "Fields not supported by %s: %s" % (record_type, sorted(missing))
 
     def __call__(self, record):
         '''Converts a raw pointer to a record structure into a _Record object

@@ -157,9 +157,9 @@ def dbLoadDatabase(database, path = None, substitutions = None):
 
 def devIocStats(ioc_name):
     dbLoadDatabase(
-        'ioc.db', os.path.join(os.getenv('HERE'), 'db'),
-        'IOCNAME=%s,name=' % ioc_name)
-
+        "ioc.template",
+        os.path.join(os.path.dirname(__file__), "iocStats", "iocAdmin", "Db"),
+        'IOCNAME=' + ioc_name + ',TODFORMAT=%m/%d/%Y %H:%M:%S')
 
 def interactive_ioc(context = {}, call_exit = True):
     '''Fires up the interactive IOC prompt with the given context.'''

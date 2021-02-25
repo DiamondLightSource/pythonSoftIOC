@@ -5,6 +5,5 @@
 import os
 from . import imports
 
-imports.asSetFilename(
-    os.path.join(os.path.dirname(__file__), '..', 'access.acf'))
-imports.asTrapWriteRegisterListener(imports.EpicsPvPutHook)
+imports.install_pv_logging(
+    os.path.join(os.path.dirname(__file__), 'access.acf'))

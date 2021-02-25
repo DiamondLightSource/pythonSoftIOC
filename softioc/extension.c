@@ -1,6 +1,5 @@
-/* See note in softMain.c about these #undefs. */
-#undef _POSIX_C_SOURCE
-#undef _XOPEN_SOURCE
+
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <string.h>
 
@@ -10,23 +9,9 @@
 #include <dbStaticLib.h>
 #include <asTrapWrite.h>
 #include <epicsVersion.h>
-
-
-/* The interface to the caput event callback has changed as of EPICS 3.15, and
- * we need to compile as appropriate. */
-#define BASE_3_15 (EPICS_VERSION * 100 + EPICS_REVISION >= 315)
-#if BASE_3_15
 #include <dbChannel.h>
-#endif
-
-
-
-/* Returns the EPICS_BASE path used to build this IOC. */
-const char *get_EPICS_BASE(void)
-{
-    return EPICS_BASE;         // Passed as #define from Makefile
-}
-
+#include <asTrapWrite.h>
+#include <asDbLib.h>
 
 /* In Python3 this function has been renamed. */
 #if PY_MAJOR_VERSION >= 3
@@ -40,9 +25,8 @@ const char *get_EPICS_BASE(void)
 /* Alas, EPICS has changed the numerical assignments of the DBF_ enums between
  * versions, so to avoid unpleasant surprises, we compute thes values here in C
  * and pass them back to the Python layer. */
-PyObject *get_DBF_values(void)
+static PyObject *get_DBF_values(PyObject *self, PyObject *args)
 {
-    PyGILState_STATE gstate = PyGILState_Ensure();
     PyObject *dict = PyDict_New();
     ADD_ENUM(dict, DBF_STRING);
     ADD_ENUM(dict, DBF_CHAR);
@@ -60,7 +44,6 @@ PyObject *get_DBF_values(void)
     ADD_ENUM(dict, DBF_OUTLINK);
     ADD_ENUM(dict, DBF_FWDLINK);
     ADD_ENUM(dict, DBF_NOACCESS);
-    PyGILState_Release(gstate);
     return dict;
 }
 
@@ -68,11 +51,15 @@ PyObject *get_DBF_values(void)
 /* Given an array of field names, this routine looks up each field name in
  * the EPICS database and returns the corresponding field offset. */
 
-void get_field_offsets(
-    const char * record_type, const char * field_names[], int field_count,
-    short field_offset[], short field_size[], short field_type[])
+static PyObject *get_field_offsets(PyObject *self, PyObject *args)
 {
     int status;
+    const char *record_type;
+    PyObject *dict = PyDict_New();
+
+    if (!PyArg_ParseTuple(args, "s", &record_type))
+        return NULL;
+
     DBENTRY dbentry;
     dbInitEntry(pdbbase, &dbentry);
 
@@ -85,33 +72,36 @@ void get_field_offsets(
     while (status == 0)
     {
         const char * field_name = dbGetFieldName(&dbentry);
-        int i;
-        for (i = 0; i < field_count; i ++)
-        {
-            if (strcmp(field_names[i], field_name) == 0)
-            {
-                field_offset[i] = dbentry.pflddes->offset;
-                field_size[i]   = dbentry.pflddes->size;
-                field_type[i]   = dbentry.pflddes->field_type;
-            }
-        }
+        PyObject *ost = Py_BuildValue("iii",
+            dbentry.pflddes->offset,
+            dbentry.pflddes->size,
+            dbentry.pflddes->field_type);
+        PyDict_SetItemString(dict, field_name, ost);
         status = dbNextField(&dbentry, 0);
     }
 
     dbFinishEntry(&dbentry);
+    return dict;
 }
 
 
 /* Updates PV field with integrated db lookup.  Safer to do this in C as we need
  * an intermediate copy of the dbAddr structure, which changes size between
  * EPICS releases. */
-int db_put_field(const char *name, short dbrType, void *pbuffer, long length)
+static PyObject *db_put_field(PyObject *self, PyObject *args)
 {
+    const char *name;
+    short dbrType;
+    void *pbuffer;
+    long length;
+    if (!PyArg_ParseTuple(args, "shnl", &name, &dbrType, &pbuffer, &length))
+        return NULL;
+
     struct dbAddr dbAddr;
     int rc = dbNameToAddr(name, &dbAddr);
     if (rc == 0)
         rc = dbPutField(&dbAddr, dbrType, pbuffer, length);
-    return rc;
+    return Py_BuildValue("i", rc);
 }
 
 
@@ -178,12 +168,8 @@ static void PrintValue(struct formatted *formatted)
 
 void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
 {
-#if BASE_3_15
     struct dbChannel *pchan = pmessage->serverSpecific;
     dbAddr *dbaddr = &pchan->addr;
-#else
-    dbAddr *dbaddr = pmessage->serverSpecific;
-#endif
     struct formatted *value = FormatValue(dbaddr);
 
     if (after)
@@ -204,4 +190,60 @@ void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
     else
         /* Just save the old value for logging after. */
         pmessage->userPvt = value;
+}
+
+static PyObject *install_pv_logging(PyObject *self, PyObject *args)
+{
+    const char *acf_file;
+
+    if (!PyArg_ParseTuple(args, "s", &acf_file))
+        return NULL;
+
+    asSetFilename(acf_file);
+    asTrapWriteRegisterListener(EpicsPvPutHook);
+    Py_RETURN_NONE;
+}
+
+static struct PyMethodDef softioc_methods[] = {
+    {"get_DBF_values",  get_DBF_values, METH_VARARGS,
+     "Get a map of DBF names to values"},
+    {"get_field_offsets",  get_field_offsets, METH_VARARGS,
+     "Get offset, size and type for each record field"},
+    {"db_put_field",  db_put_field, METH_VARARGS,
+     "Put a database field to a value"},
+    {"install_pv_logging",  install_pv_logging, METH_VARARGS,
+     "Install caput logging to stdout"},
+    {NULL, NULL, 0, NULL}        /* Sentinel */
+};
+
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef softioc_module = {
+  PyModuleDef_HEAD_INIT,
+    "softioc._extension",
+    NULL,
+    -1,
+    softioc_methods,
+};
+#endif
+
+#if PY_MAJOR_VERSION >= 3
+#  define PyMOD(NAME) PyObject* PyInit_##NAME (void)
+#else
+#  define PyMOD(NAME) void init##NAME (void)
+#endif
+
+PyMOD(_extension)
+{
+#if PY_MAJOR_VERSION >= 3
+        PyObject *mod = PyModule_Create(&softioc_module);
+#else
+        PyObject *mod = Py_InitModule("softioc._extension", softioc_methods);
+#endif
+        if(mod) {
+        }
+#if PY_MAJOR_VERSION >= 3
+    return mod;
+#else
+    (void)mod;
+#endif
 }

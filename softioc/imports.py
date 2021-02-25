@@ -6,6 +6,26 @@ import os.path
 import sys
 from ctypes import *
 
+from epicscorelibs import path
+
+from . import _extension
+
+# These are in the extension
+def get_DBF_values():
+    """Return {DBF_name: DBF_int_value} mapping"""
+    return _extension.get_DBF_values()
+
+def get_field_offsets(record_type):
+    """Return {field_name: (offset, size, field_type)}"""
+    return _extension.get_field_offsets(record_type)
+
+def db_put_field(name, dbr_type, pbuffer, length):
+    """Put field where pbuffer is void* pointer. Returns RC"""
+    return _extension.db_put_field(name, dbr_type, pbuffer, length)
+
+def install_pv_logging(acf_file):
+    """Install pv logging"""
+    _extension.install_pv_logging(acf_file)
 
 def expect_success(status, function, args):
     assert status == 0, 'Expected success'
@@ -37,56 +57,9 @@ else:
         return result.decode()
 
 
-libPythonSupport = CDLL('libPythonSupport.so')
-
-# void get_field_offsets(
-#     const char * record_type, const char * field_names[], int field_count,
-#     short field_offset[], short field_size[], short field_type[])
-#
-# Looks up field offset, size and type values for the given record type and
-# the given list of field names.
-get_field_offsets = libPythonSupport.get_field_offsets
-get_field_offsets.argtypes = (
-    auto_encode, c_void_p, c_int, c_void_p, c_void_p, c_void_p)
-get_field_offsets.restype = None
-
-# int db_put_field(const char *name, short dbrType, void *pbuffer, long length)
-#
-# Updates value in given field through channel access, so notifications are
-# generated as appropriate.
-db_put_field = libPythonSupport.db_put_field
-db_put_field.argtypes = (auto_encode, c_int, c_void_p, c_long)
-db_put_field.errcheck = expect_success
-
-
-# const char *get_EPICS_BASE(void)
-#
-# Returns the path to EPICS_BASE
-get_EPICS_BASE = libPythonSupport.get_EPICS_BASE
-get_EPICS_BASE.argtypes = ()
-get_EPICS_BASE.restype = c_char_p
-get_EPICS_BASE.errcheck = auto_decode
-
-
-# PyObject *get_DBF_values(void)
-#
-# Returns dictionary mapping DBF_ enum names to values
-get_DBF_values = libPythonSupport.get_DBF_values
-get_DBF_values.restype = py_object
-
-
-# void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
-#
-# Hook for logging EPICS caput events
-EpicsPvPutHook = libPythonSupport.EpicsPvPutHook
-
-
-EPICS_BASE = get_EPICS_BASE()
-EPICS_HOST_ARCH = os.environ['EPICS_HOST_ARCH']
-
 def EpicsDll(dll):
-    return CDLL(
-        os.path.join(EPICS_BASE, 'lib', EPICS_HOST_ARCH, 'lib%s.so' % dll))
+    return CDLL(path.get_lib(dll))
+
 
 # A bit tricky: in more recent versions of EPICS all the entry points we want
 # have been gathered into a single .so, but previously they were split among
@@ -96,14 +69,11 @@ try:
     libregistryIoc = libdbCore
     libdbIoc = libdbCore
     libmiscIoc = libdbCore
-    libasIoc = libdbCore
 except OSError:
     # Ok, no dbCore, then we should find everything in these four instead.
     libregistryIoc = EpicsDll('registryIoc')
     libdbIoc = EpicsDll('dbIoc')
     libmiscIoc = EpicsDll('miscIoc')
-    libasIoc = EpicsDll('asIoc')
-
 
 
 # int registryDeviceSupportAdd(
@@ -148,20 +118,6 @@ iocInit.argtypes = ()
 
 epicsExit = libmiscIoc.epicsExit
 epicsExit.argtypes = ()
-
-
-# Import for libas
-
-# int asSetFilename(const char *acf)
-#
-# Set access control file
-asSetFilename = libasIoc.asSetFilename
-asSetFilename.argtypes = (auto_encode,)
-
-# asTrapWriteId asTrapWriteRegisterListener(asTrapWriteListener func)
-#
-# Install caput hook
-asTrapWriteRegisterListener = libasIoc.asTrapWriteRegisterListener
 
 
 __all__ = [

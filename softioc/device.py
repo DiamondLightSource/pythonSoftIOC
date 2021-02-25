@@ -8,10 +8,8 @@ import cothread
 
 from . import alarm
 from .fields import DbfCodeToNumpy, DbrToDbfCode
-from .imports import dbLoadDatabase, recGblResetAlarms
+from .imports import dbLoadDatabase, recGblResetAlarms, db_put_field
 from .device_core import DeviceSupportCore, RecordLookup
-
-from . import imports
 
 
 class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
@@ -204,7 +202,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         else:
             datatype, length, data, array = self.value_to_dbr(value)
             self.__enable_write = process
-            imports.db_put_field(
+            db_put_field(
                 _record.NAME, DbrToDbfCode[datatype], data, length)
             self.__enable_write = True
 
@@ -352,4 +350,4 @@ class waveform_out(WaveformBase, ProcessDeviceSupportOut):
 
 
 # Ensure the .dbd file is loaded.
-dbLoadDatabase(os.path.join(os.environ['HERE'], 'dbd/device.dbd'), None, None)
+dbLoadDatabase("device.dbd", os.path.dirname(__file__), None)

@@ -18,9 +18,16 @@
 #define PyInt_FromLong(value)   PyLong_FromLong(value)
 #endif
 
+/* Reference stealing version of PyDict_SetItemString */
+static void set_dict_item_steal(PyObject *dict, const char *name, PyObject *py_value)
+{
+    PyDict_SetItemString(dict, name, py_value);
+    Py_DECREF(py_value);
+}
+
 /* Helper for function below. */
 #define ADD_ENUM(dict, name) \
-    PyDict_SetItemString(dict, #name, PyInt_FromLong(name))
+    set_dict_item_steal(dict, #name, PyInt_FromLong(name))
 
 /* Alas, EPICS has changed the numerical assignments of the DBF_ enums between
  * versions, so to avoid unpleasant surprises, we compute thes values here in C
@@ -76,7 +83,7 @@ static PyObject *get_field_offsets(PyObject *self, PyObject *args)
             dbentry.pflddes->offset,
             dbentry.pflddes->size,
             dbentry.pflddes->field_type);
-        PyDict_SetItemString(dict, field_name, ost);
+        set_dict_item_steal(dict, field_name, ost);
         status = dbNextField(&dbentry, 0);
     }
 

@@ -85,7 +85,7 @@ setup(
     version=__version__,
     ext_modules = [ext],
     install_requires = [
-        "epicscorelibs==7.0.4.99.0.0a1",
+        "epicscorelibs==7.0.4.99.1.0a1",
         #epicscorelibs.version.abi_requires(),
         "numpy>=1.18",
         "epicsdbbuilder>=1.4"

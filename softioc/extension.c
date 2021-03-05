@@ -105,10 +105,11 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
         return NULL;
 
     struct dbAddr dbAddr;
-    int rc = dbNameToAddr(name, &dbAddr);
-    if (rc == 0)
-        rc = dbPutField(&dbAddr, dbrType, pbuffer, length);
-    return Py_BuildValue("i", rc);
+    if (dbNameToAddr(name, &dbAddr))
+        return PyErr_Format(PyExc_RuntimeError, "dbNameToAddr failed for %s", name);
+    if (dbPutField(&dbAddr, dbrType, pbuffer, length))
+        return PyErr_Format(PyExc_RuntimeError, "dbPutField failed for %s", name);
+    Py_RETURN_NONE;
 }
 
 

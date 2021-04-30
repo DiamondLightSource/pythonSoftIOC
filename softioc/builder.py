@@ -10,9 +10,7 @@ from epicscorelibs.ioc import iocshRegisterCommon, registerRecordDeviceDriver, p
 
 iocshRegisterCommon()
 dbLoadDatabase("base.dbd", os.path.join(path.base_path, "dbd"))
-
-dbd_dir = os.path.join(os.path.dirname(__file__), "iocStats", "devIocStats")
-dbLoadDatabase("devIocStats.dbd", dbd_dir)
+dbLoadDatabase("devIocStats.dbd", os.path.dirname(__file__))
 
 if registerRecordDeviceDriver(pdbbase):
     raise RuntimeError('Error registering')

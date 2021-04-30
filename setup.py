@@ -4,7 +4,7 @@ import sys
 from setuptools.command.develop import develop
 import epicscorelibs.path
 import epicscorelibs.version
-from setuptools_dso import DSO, Extension, setup
+from setuptools_dso import Extension, setup
 from epicscorelibs.config import get_config_var
 
 # Place the directory containing _version_git on the path
@@ -15,12 +15,15 @@ for path, _, filenames in os.walk(os.path.dirname(os.path.abspath(__file__))):
 
 from _version_git import __version__, get_cmdclass  # noqa
 
+sources = ['softioc/extension.c']
+
 devIocStats_OSI = [
     "devIocStatsAnalog.c",
     "devIocStatsString.c",
     "devIocStatsWaveform.c",
     "devIocStatsSub.c",
-    "devIocStatsTest.c"
+    "devIocStatsTest.c",
+    "devIocStats.h",
 ]
 
 devIocStats_OSD = [
@@ -36,32 +39,35 @@ devIocStats_OSD = [
     "osdSystemInfo.c",
     "osdHostInfo.c",
     "osdPIDInfo.c",
+    "devIocStatsOSD.h",
 ]
 
-devIocStats_srcs = []
-devIocStats_src = os.path.join("softioc", "iocStats", "devIocStats")
-devIocStats_default = os.path.join(devIocStats_src, "os", "default")
+devIocStats_src = os.path.join("iocStats", "devIocStats")
 devIocStats_os = os.path.join(devIocStats_src, "os", get_config_var('OS_CLASS'))
+devIocStats_default = os.path.join(devIocStats_src, "os", "default")
+
+def _add_file(f):
+    if f.endswith(".h"):
+        # Only add header files if making an sdist
+        # https://github.com/pypa/packaging-problems/issues/84#issuecomment-383718492
+        should_add = "sdist" in sys.argv
+    else:
+        should_add = True
+    if should_add:
+        sources.append(f)
 
 for f in devIocStats_OSI:
-    devIocStats_srcs.append(os.path.join(devIocStats_src, f))
+    _add_file(os.path.join(devIocStats_src, f))
 for f in devIocStats_OSD:
     if os.path.exists(os.path.join(devIocStats_os, f)):
-        devIocStats_srcs.append(os.path.join(devIocStats_os, f))
+        _add_file(os.path.join(devIocStats_os, f))
     else:
-        devIocStats_srcs.append(os.path.join(devIocStats_default, f))
-
-#dso = DSO(
-#    'softioc.lib.devIocStats',
-#    devIocStats_srcs,
-#    include_dirs=[epicscorelibs.path.include_path, devIocStats_src, devIocStats_os, devIocStats_default],
-#    dsos=['epicscorelibs.lib.Com']
-#)
+        _add_file(os.path.join(devIocStats_default, f))
 
 # Extension with all our C code
 ext = Extension(
     name='softioc._extension',
-    sources = ['softioc/extension.c'] + devIocStats_srcs,
+    sources = sources,
     include_dirs=[epicscorelibs.path.include_path, devIocStats_src, devIocStats_os, devIocStats_default],
     dsos = ['epicscorelibs.lib.dbCore', 'epicscorelibs.lib.Com'],
     define_macros = get_config_var('CPPFLAGS'),
@@ -85,11 +91,10 @@ setup(
     version=__version__,
     ext_modules = [ext],
     install_requires = [
-        "epicscorelibs==7.0.4.99.1.0a1",
-        #epicscorelibs.version.abi_requires(),
+        # Dependency declared in pyproject.toml
+        epicscorelibs.version.abi_requires(),
         "numpy>=1.18",
         "epicsdbbuilder>=1.4"
     ],
-    #x_dsos = [dso],
     zip_safe = False, # setuptools_dso is not compatible with eggs!
 )

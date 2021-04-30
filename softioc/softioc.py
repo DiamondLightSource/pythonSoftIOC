@@ -4,6 +4,8 @@ import os
 import sys
 from ctypes import *
 
+from epicsdbbuilder.recordset import recordset
+
 from . import imports
 
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
@@ -155,11 +157,32 @@ def dbLoadDatabase(database, path = None, substitutions = None):
     '''Loads a database file and applies any given substitutions.'''
     imports.dbLoadDatabase(database, path, substitutions)
 
+def _add_records_from_file(dir, file, macros):
+    # This is very naive, for instance macros are added to but never removed,
+    # but it works well enough for devIocStats
+    with open(os.path.join(dir, file)) as f:
+        for line in f.readlines():
+            line = line.rstrip()
+            if line.startswith('substitute'):
+                # substitute "QUEUE=scanOnce, QUEUE_CAPS=SCANONCE
+                for sub in line.split('"')[1].split(','):
+                    k, v = sub.split('=')
+                    macros[k.strip()] = v.strip()
+            elif line.startswith('include'):
+                # include "iocQueue.db"
+                _add_records_from_file(dir, line.split('"')[1], macros)
+            else:
+                # A record line
+                for k, v in macros.items():
+                    line = line.replace('$(%s)' % k, v)
+                recordset.AddBodyLine(line)
+
+
 def devIocStats(ioc_name):
-    dbLoadDatabase(
-        "ioc.template",
-        os.path.join(os.path.dirname(__file__), "iocStats", "iocAdmin", "Db"),
-        'IOCNAME=' + ioc_name + ',TODFORMAT=%m/%d/%Y %H:%M:%S')
+    macros = dict(IOCNAME=ioc_name, TODFORMAT='%m/%d/%Y %H:%M:%S')
+    iocstats_dir = os.path.join(os.path.dirname(__file__), 'iocStatsDb')
+    _add_records_from_file(iocstats_dir, 'ioc.template', macros)
+
 
 def interactive_ioc(context = {}, call_exit = True):
     '''Fires up the interactive IOC prompt with the given context.'''

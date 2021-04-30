@@ -2,11 +2,18 @@
 
 from __future__ import print_function
 
+from epicsdbbuilder.recordnames import GetRecordNames
+
+from softioc import softioc
 from softioc.builder import *
 import numpy
 
-SetDeviceName('TS-DI-TEST-01')
-
+names = GetRecordNames()
+if names.prefix:
+    ioc_name = names.prefix[0]
+else:
+    ioc_name = 'TS-DI-TEST-01'
+    SetDeviceName(ioc_name)
 
 def on_update(value):
     print('on_update', repr(value))
@@ -14,11 +21,11 @@ def on_update(value):
 def on_update_name(value, name):
     print('on_update', name, ':', repr(value))
 
-t_ai        = aIn('AI')
-t_boolin    = boolIn('BOOLIN', 'True', 'False')
-t_longin    = longIn('LONGIN')
-t_stringin  = stringIn('STRINGIN')
-t_mbbi      = mbbIn('MBBI', 'One', 'Two', 'Three')
+t_ai        = aIn('AI', initial_value=12.34)
+t_boolin    = boolIn('BOOLIN', 'True', 'False', initial_value=False)
+t_longin    = longIn('LONGIN', initial_value=33)
+t_stringin  = stringIn('STRINGIN', initial_value="Testing string")
+t_mbbi      = mbbIn('MBBI', 'One', 'Two', 'Three', initial_value=2)
 
 t_ao        = aOut      ('AO',
     initial_value = 12.45, on_update_name = on_update_name)
@@ -39,12 +46,6 @@ sin_wf = Waveform('SIN', datatype = float, length = 1024)
 sin_len = longOut('SINN', 0, 1024,
     initial_value = 1024, on_update = update_sin_wf)
 sin_ph = aOut('SINP', initial_value = 0.0, on_update = update_sin_wf)
-
-t_ai.set(12.34)
-t_boolin.set(False)
-t_longin.set(33)
-t_stringin.set('Testing string')
-t_mbbi.set(2)
 
 
 wf_len = 32
@@ -70,6 +71,7 @@ def UpdateOut():
     t_stringout.set('Another different string')
     t_mbbo.set(2)
 
+softioc.devIocStats(ioc_name)
 
 __all__ = [
     't_ai', 't_boolin',  't_longin',  't_stringin',  't_mbbi',
@@ -78,3 +80,12 @@ __all__ = [
     'wf_len',
     'Update', 'UpdateOut'
 ]
+
+
+if __name__ == "__main__":
+    # Simple example script for building an example soft IOC.
+    from softioc import pvlog, builder
+    builder.WriteRecords("expected_records.db")
+    LoadDatabase()
+    softioc.iocInit()
+    softioc.interactive_ioc(globals())

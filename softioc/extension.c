@@ -19,7 +19,8 @@
 #endif
 
 /* Reference stealing version of PyDict_SetItemString */
-static void set_dict_item_steal(PyObject *dict, const char *name, PyObject *py_value)
+static void set_dict_item_steal(
+    PyObject *dict, const char *name, PyObject *py_value)
 {
     PyDict_SetItemString(dict, name, py_value);
     Py_DECREF(py_value);
@@ -57,25 +58,23 @@ static PyObject *get_DBF_values(PyObject *self, PyObject *args)
 
 /* Given an array of field names, this routine looks up each field name in
  * the EPICS database and returns the corresponding field offset. */
-
 static PyObject *get_field_offsets(PyObject *self, PyObject *args)
 {
-    int status;
     const char *record_type;
-    PyObject *dict = PyDict_New();
-
     if (!PyArg_ParseTuple(args, "s", &record_type))
         return NULL;
 
     DBENTRY dbentry;
     dbInitEntry(pdbbase, &dbentry);
 
-    status = dbFindRecordType(&dbentry, record_type);
+    int status = dbFindRecordType(&dbentry, record_type);
     if (status != 0)
         printf("Unable to find record type \"%s\" (error %d)\n",
             record_type, status);
     else
         status = dbFirstField(&dbentry, 0);
+
+    PyObject *dict = PyDict_New();
     while (status == 0)
     {
         const char * field_name = dbGetFieldName(&dbentry);
@@ -106,9 +105,11 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
 
     struct dbAddr dbAddr;
     if (dbNameToAddr(name, &dbAddr))
-        return PyErr_Format(PyExc_RuntimeError, "dbNameToAddr failed for %s", name);
+        return PyErr_Format(
+            PyExc_RuntimeError, "dbNameToAddr failed for %s", name);
     if (dbPutField(&dbAddr, dbrType, pbuffer, length))
-        return PyErr_Format(PyExc_RuntimeError, "dbPutField failed for %s", name);
+        return PyErr_Format(
+            PyExc_RuntimeError, "dbPutField failed for %s", name);
     Py_RETURN_NONE;
 }
 
@@ -199,6 +200,7 @@ void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
         /* Just save the old value for logging after. */
         pmessage->userPvt = value;
 }
+
 
 static PyObject *install_pv_logging(PyObject *self, PyObject *args)
 {

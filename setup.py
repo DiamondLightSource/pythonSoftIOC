@@ -68,7 +68,10 @@ for f in devIocStats_OSD:
 ext = Extension(
     name='softioc._extension',
     sources = sources,
-    include_dirs=[epicscorelibs.path.include_path, devIocStats_src, devIocStats_os, devIocStats_default],
+    include_dirs=[
+        epicscorelibs.path.include_path,
+        devIocStats_src, devIocStats_os, devIocStats_default
+    ],
     dsos = ['epicscorelibs.lib.dbCore', 'epicscorelibs.lib.Com'],
     define_macros = get_config_var('CPPFLAGS'),
     extra_compile_args = get_config_var('CXXFLAGS'),
@@ -96,5 +99,5 @@ setup(
         "numpy>=1.18",
         "epicsdbbuilder>=1.4"
     ],
-    zip_safe = False, # setuptools_dso is not compatible with eggs!
+    zip_safe = False,  # setuptools_dso is not compatible with eggs!
 )

@@ -28,7 +28,8 @@ class InitClass(type):
         # Binds cls.__super_cls().method to the appropriate superclass
         # class method.  Unfortunately the .__super form doesn't work
         # with class methods, only instance methods.
-        setattr(cls, '_%s__super_cls' % name,
+        setattr(
+            cls, '_%s__super_cls' % name,
             classmethod(lambda child: super(cls, child)))
         # Finally call the class initialisatio nmethod.
         cls.__init_class__()
@@ -104,7 +105,7 @@ class DeviceSupportCore(DeviceCommon):
         # Now construct the device support table.  We build on the common
         # base and add any device specific definitions here.
         class DSET(DSET_BASE):
-            _fields_         = cls._dset_extra_[0]
+            _fields_ = cls._dset_extra_[0]
             _record_offsets_ = cls._dset_extra_[1]
         dset = DSET(
             number = len(DSET_BASE._fields_) + len(DSET._fields_) - 1)

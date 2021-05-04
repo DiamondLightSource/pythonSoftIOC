@@ -96,7 +96,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         else:
             self.__on_update = None
 
-        self.__validate  = kargs.pop('validate', None)
+        self.__validate = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
         self._value = kargs.pop('initial_value', None)
         self.__enable_write = True
@@ -213,32 +213,36 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 def _Device(Base, record_type, rval=False, mlst=False, default=0):
     '''Wrapper for generating simple records.'''
     val_field = 'RVAL' if rval else 'VAL'
+
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type
-        _val_field_   = val_field
-        _default_     = default
-        _fields_      = ['UDF', val_field]
-        if mlst: _fields_.append('MLST')
+        _val_field_ = val_field
+        _default_ = default
+        _fields_ = ['UDF', val_field]
+        if mlst:
+            _fields_.append('MLST')
 
     GenericDevice.__name__ = record_type
     return GenericDevice
 
-_In  = ProcessDeviceSupportIn
+_In = ProcessDeviceSupportIn
 _Out = ProcessDeviceSupportOut
-def _Device_In (type, **kargs):
+
+def _Device_In(type, **kargs):
     return _Device(_In,  type, **kargs)
+
 def _Device_Out(type, rval=False, mlst=True):
     return _Device(_Out, type, rval=rval, mlst=mlst, default=None)
 
-longin      = _Device_In ('longin')
-longout     = _Device_Out('longout')
-bi          = _Device_In ('bi', rval=True)
-bo          = _Device_Out('bo', rval=True)
-stringin    = _Device_In ('stringin', mlst=False, default='')
-stringout   = _Device_Out('stringout', mlst=False)
-mbbi        = _Device_In ('mbbi', rval=True)
-mbbo        = _Device_Out('mbbo', rval=True)
+longin = _Device_In('longin')
+longout = _Device_Out('longout')
+bi = _Device_In('bi', rval=True)
+bo = _Device_Out('bo', rval=True)
+stringin = _Device_In('stringin', mlst=False, default='')
+stringout = _Device_Out('stringout', mlst=False)
+mbbi = _Device_In('mbbi', rval=True)
+mbbo = _Device_Out('mbbo', rval=True)
 
 
 NO_CONVERT = 2
@@ -254,10 +258,10 @@ dset_process_linconv = (
 class ai(ProcessDeviceSupportIn):
     _record_type_ = 'ai'
     _device_name_ = 'devPython_ai'
-    _val_field_   = 'VAL'
-    _default_     = 0.0
-    _fields_      = ['UDF', 'VAL']
-    _dset_extra_  = dset_process_linconv
+    _val_field_ = 'VAL'
+    _default_ = 0.0
+    _fields_ = ['UDF', 'VAL']
+    _dset_extra_ = dset_process_linconv
 
     def _process(self, record):
         _value = self._value
@@ -271,9 +275,9 @@ class ai(ProcessDeviceSupportIn):
 class ao(ProcessDeviceSupportOut):
     _record_type_ = 'ao'
     _device_name_ = 'devPython_ao'
-    _val_field_   = 'VAL'
-    _fields_      = ['UDF', 'VAL', 'MLST']
-    _dset_extra_  = dset_process_linconv
+    _val_field_ = 'VAL'
+    _fields_ = ['UDF', 'VAL', 'MLST']
+    _dset_extra_ = dset_process_linconv
 
     def init_record(self, record):
         self.__super.init_record(record)
@@ -304,12 +308,14 @@ class WaveformBase(ProcessDeviceSupportCore):
 
     def _write_value(self, record, value):
         value = numpy.require(value, dtype = self.dtype)
-        if value.shape == ():  value.shape = (1,)
+        if value.shape == ():
+            value.shape = (1,)
         assert value.ndim == 1, 'Can\'t write multidimensional arrays'
 
         nelm = record.NELM
         nord = len(value)
-        if nord > nelm:  nord = nelm
+        if nord > nelm:
+            nord = nelm
         memmove(
             record.BPTR, value.ctypes.data_as(c_void_p),
             self.dtype.itemsize * nord)
@@ -319,7 +325,7 @@ class WaveformBase(ProcessDeviceSupportCore):
 class waveform(WaveformBase, ProcessDeviceSupportIn):
     _record_type_ = 'waveform'
     _device_name_ = 'devPython_waveform'
-    _default_     = ()
+    _default_ = ()
 
     # Because arrays are mutable values it's ever so easy to accidentially call
     # set() with a value which subsequently changes.  To avoid this common class
@@ -338,7 +344,8 @@ class waveform(WaveformBase, ProcessDeviceSupportIn):
 
         value = numpy.require(value, dtype = self.dtype)
         self._value = (+value, severity, alarm, timestamp)
-        if value.shape == ():  value.shape = (1,)
+        if value.shape == ():
+            value.shape = (1,)
         assert value.ndim == 1, 'Can\'t write multidimensional arrays'
 
         self.trigger()

@@ -26,43 +26,43 @@ for name, value in get_DBF_values().items():
 # downstream for no good purpose -- for example, enums are of type DBF_ULONG,
 # but this cannot be written with caput.)
 DbfCodeToCtypes = {
-    DBF_CHAR :      c_byte,
-    DBF_UCHAR :     c_ubyte,
-    DBF_SHORT :     c_int16,
-    DBF_USHORT :    c_uint16,
-    DBF_LONG :      c_int32,
-    DBF_ULONG :     c_int32,    # Should be uint32, but causes trouble later.
-    DBF_FLOAT :     c_float,
-    DBF_DOUBLE :    c_double,
-    DBF_ENUM :      c_uint16,
-    DBF_MENU :      c_uint16,
-    DBF_INLINK :    c_char_p,
-    DBF_OUTLINK :   c_char_p,
-    DBF_NOACCESS :  c_void_p,
+    DBF_CHAR: c_byte,
+    DBF_UCHAR: c_ubyte,
+    DBF_SHORT: c_int16,
+    DBF_USHORT: c_uint16,
+    DBF_LONG: c_int32,
+    DBF_ULONG: c_int32,    # Should be uint32, but causes trouble later.
+    DBF_FLOAT: c_float,
+    DBF_DOUBLE: c_double,
+    DBF_ENUM: c_uint16,
+    DBF_MENU: c_uint16,
+    DBF_INLINK: c_char_p,
+    DBF_OUTLINK: c_char_p,
+    DBF_NOACCESS: c_void_p,
 }
 
 # Mapping for record field type to numpy type.
 DbfCodeToNumpy = {
-    DBF_STRING :    numpy.dtype('S40'),
-    DBF_CHAR :      numpy.dtype('int8'),
-    DBF_UCHAR :     numpy.dtype('uint8'),
-    DBF_SHORT :     numpy.dtype('int16'),
-    DBF_USHORT :    numpy.dtype('uint16'),
-    DBF_LONG :      numpy.dtype('int32'),
-    DBF_ULONG :     numpy.dtype('uint32'),
-    DBF_FLOAT :     numpy.dtype('float32'),
-    DBF_DOUBLE :    numpy.dtype('float64'),
+    DBF_STRING: numpy.dtype('S40'),
+    DBF_CHAR: numpy.dtype('int8'),
+    DBF_UCHAR: numpy.dtype('uint8'),
+    DBF_SHORT: numpy.dtype('int16'),
+    DBF_USHORT: numpy.dtype('uint16'),
+    DBF_LONG: numpy.dtype('int32'),
+    DBF_ULONG: numpy.dtype('uint32'),
+    DBF_FLOAT: numpy.dtype('float32'),
+    DBF_DOUBLE: numpy.dtype('float64'),
 }
 
 # Mapping from basic DBR_ codes to DBF_ values
 DbrToDbfCode = {
-    DBR_STRING :    DBF_STRING,
-    DBR_SHORT :     DBF_SHORT,
-    DBR_FLOAT :     DBF_FLOAT,
-    DBR_ENUM :      DBF_ENUM,
-    DBR_CHAR :      DBF_CHAR,
-    DBR_LONG :      DBF_LONG,
-    DBR_DOUBLE :    DBF_DOUBLE
+    DBR_STRING: DBF_STRING,
+    DBR_SHORT: DBF_SHORT,
+    DBR_FLOAT: DBF_FLOAT,
+    DBR_ENUM: DBF_ENUM,
+    DBR_CHAR: DBF_CHAR,
+    DBR_LONG: DBF_LONG,
+    DBR_DOUBLE: DBF_DOUBLE
 }
 
 

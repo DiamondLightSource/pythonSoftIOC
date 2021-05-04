@@ -6,7 +6,8 @@ from .softioc import dbLoadDatabase
 
 from epicsdbbuilder import *
 from epicscorelibs import path
-from epicscorelibs.ioc import iocshRegisterCommon, registerRecordDeviceDriver, pdbbase
+from epicscorelibs.ioc import \
+    iocshRegisterCommon, registerRecordDeviceDriver, pdbbase
 
 iocshRegisterCommon()
 dbLoadDatabase("base.dbd", os.path.join(path.base_path, "dbd"))
@@ -18,7 +19,7 @@ if registerRecordDeviceDriver(pdbbase):
 InitialiseDbd()
 LoadDbdFile(os.path.join(os.path.dirname(__file__), 'device.dbd'))
 
-from . import pythonSoftIoc
+from . import pythonSoftIoc  # noqa
 PythonDevice = pythonSoftIoc.PythonDevice()
 
 
@@ -40,34 +41,33 @@ def _in_record(record, name, **fields):
 
 
 def aIn(name, LOPR=None, HOPR=None, **fields):
-    return _in_record('ai', name,
-        LOPR = LOPR,    HOPR = HOPR, **fields)
+    return _in_record(
+        'ai', name, LOPR = LOPR, HOPR = HOPR, **fields)
 
 def aOut(name, LOPR=None, HOPR=None, **fields):
     fields.setdefault('DRVL', LOPR)
     fields.setdefault('DRVH', HOPR)
-    return PythonDevice.ao(name,
-        LOPR = LOPR,    HOPR = HOPR, **fields)
+    return PythonDevice.ao(
+        name, LOPR = LOPR, HOPR = HOPR, **fields)
 
 
 def boolIn(name, ZNAM=None, ONAM=None, **fields):
     return _in_record('bi', name, ZNAM = ZNAM, ONAM = ONAM, **fields)
 
 def boolOut(name, ZNAM=None, ONAM=None, **fields):
-    return PythonDevice.bo(name,
-        OMSL = 'supervisory',
-        ZNAM = ZNAM, ONAM = ONAM, **fields)
+    return PythonDevice.bo(
+        name, OMSL = 'supervisory', ZNAM = ZNAM, ONAM = ONAM, **fields)
 
 
 def longIn(name, LOPR=None, HOPR=None, EGU=None, **fields):
     fields.setdefault('MDEL', -1)
-    return _in_record('longin', name,
-        EGU  = EGU, LOPR = LOPR,  HOPR = HOPR, **fields)
+    return _in_record(
+        'longin', name, EGU = EGU, LOPR = LOPR, HOPR = HOPR, **fields)
 
 def longOut(name, DRVL=None, DRVH=None, EGU=None, **fields):
-    return PythonDevice.longout(name,
-        OMSL = 'supervisory',
-        DRVL = DRVL, DRVH = DRVH, EGU = EGU, **fields)
+    return PythonDevice.longout(
+        name, OMSL = 'supervisory', DRVL = DRVL, DRVH = DRVH, EGU = EGU,
+        **fields)
 
 
 # Field name prefixes for mbbi/mbbo records.

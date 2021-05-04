@@ -87,7 +87,7 @@ class PythonDevice(object):
                 'ai', 'bi', 'longin',  'mbbi', 'stringin',
                 'ao', 'bo', 'longout', 'mbbo', 'stringout', 'waveform']:
             builder = getattr(epicsdbbuilder.records, name)
-            record  = getattr(device, name)
+            record = getattr(device, name)
             setattr(cls, name, cls.makeRecord(builder, record))
         cls.waveform_out = cls.makeRecord(
             epicsdbbuilder.records.waveform, device.waveform_out,
@@ -96,7 +96,7 @@ class PythonDevice(object):
     class makeRecord:
         def __init__(self, builder, record, dtyp = 'Python'):
             self.builder = builder
-            self.record  = record
+            self.record = record
             self.dtyp = dtyp
 
         def __call__(self, name, **fields):

@@ -5,16 +5,6 @@ import numpy
 from .softioc import dbLoadDatabase
 
 from epicsdbbuilder import *
-from epicscorelibs import path
-from epicscorelibs.ioc import \
-    iocshRegisterCommon, registerRecordDeviceDriver, pdbbase
-
-iocshRegisterCommon()
-dbLoadDatabase("base.dbd", os.path.join(path.base_path, "dbd"))
-dbLoadDatabase("devIocStats.dbd", os.path.dirname(__file__))
-
-if registerRecordDeviceDriver(pdbbase):
-    raise RuntimeError('Error registering')
 
 InitialiseDbd()
 LoadDbdFile(os.path.join(os.path.dirname(__file__), 'device.dbd'))

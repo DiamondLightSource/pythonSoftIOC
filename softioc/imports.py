@@ -7,8 +7,11 @@ import sys
 from ctypes import *
 
 from epicscorelibs import path
+from epicscorelibs.ioc import \
+    iocshRegisterCommon, registerRecordDeviceDriver, pdbbase
 
 from . import _extension
+
 
 # These are in the extension
 def get_DBF_values():
@@ -118,6 +121,13 @@ iocInit.argtypes = ()
 
 epicsExit = libmiscIoc.epicsExit
 epicsExit.argtypes = ()
+
+iocshRegisterCommon()
+dbLoadDatabase("base.dbd", os.path.join(path.base_path, "dbd"), None)
+dbLoadDatabase("devIocStats.dbd", os.path.dirname(__file__), None)
+
+if registerRecordDeviceDriver(pdbbase):
+    raise RuntimeError('Error registering')
 
 
 __all__ = [

@@ -1,4 +1,3 @@
-from importlib import reload
 import random
 import string
 import os
@@ -9,11 +8,16 @@ from cothread.catools import caget, caput
 
 import sim_records
 
+
+if sys.version_info > (3,):
+    from importlib import reload
+
+
 PV_PREFIX = "".join(random.choice(string.ascii_uppercase) for _ in range(12))
 
 
 def test_records(tmp_path):
-    path = tmp_path / "records.db"
+    path = str(tmp_path / "records.db")
     builder.WriteRecords(path)
     expected = os.path.join(os.path.dirname(__file__), "expected_records.db")
     assert open(path).readlines()[4:] == open(expected).readlines()[4:]

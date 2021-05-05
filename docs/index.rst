@@ -1,9 +1,9 @@
 .. _index:
 
-Documentation for Python Soft IOC
-=================================
+.. include:: ../README.rst
+    :end-before: when included in index.rst
 
-Contents:
+.. rst-class:: no-margin-after-ul
 
 ..  toctree::
     :numbered:
@@ -12,10 +12,6 @@ Contents:
     pythonsoftioc
     records
     softioc
-
-
-Indices and tables
-==================
 
 * :ref:`genindex`
 * :ref:`modindex`

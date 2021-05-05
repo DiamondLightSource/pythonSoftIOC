@@ -1,89 +1,73 @@
-..  default-role:: literal
+PythonIOC
+=========
 
-Building `pythonSoftIoc`
-========================
-
-To build `pythonSoftIoc` follow these steps:
-
-1.  Edit the following files:
-
-    `configure/RELEASE`
-        Set `EPICS_BASE` to point to your local installation of EPICS.
-
-    `configure/CONFIG_SITE`
-        Set `PYTHON` to the executable name of your Python interpreter.
-
-2.  Build `pythonIoc` without documentation by running::
-
-        make BUILD_DOCS=
-
-    At this point you should be able to run `./pythonIoc` which will give you an
-    interative Python interpreter.
-
-3.  Now ensure that you have numpy_, cothread_, and epicsdbbuilder_ installed.  These can
-    be installed unversioned, or versioned (in which case
-    `pkg_resources.require` will need to be used), or just localling built and
-    added to your `PYTHONPATH`.
-
-4.  Now check that `pythonIoc` works by running `example/runtest`.  You may need
-    to edit `example/version.py` if you're using a versioned install of
-    `cothread` and `epicsdbbuilder`.
-
-5.  Finally build the documentation by running::
-
-        make docs
-
-    Again, if your installation of components is versioned you may need to edit
-    `docs/conf.py` as appropriate.
+|code_ci| |docs_ci| |coverage| |pypi_version| |license|
 
 
-Using `pythonSoftIoc`
-=====================
+This module allows an EPICS IOC with Python Device Support to be run from within
+the Python interpreter. Records can be programmatically created and arbitrary
+Python code run to updated them and respond to caputs. It supports cothread and
+asyncio for concurrency.
 
-Probably the best way to use `pythonSoftIoc` is to start by copying fragments
-of a simple example such as `CS-DI-IOC-02`.  This consists of the following
-elements:
+============== ==============================================================
+PyPI           ``pip install softioc``
+Source code    https://github.com/dls-controls/pythonIoc
+Documentation  https://dls-controls.github.io/pythonIoc
+============== ==============================================================
 
-1.  A startup shell script `start-ioc` which launches the soft IOC using a
-    production build of `pythonSoftIoc`.  This script typically looks like
-    this::
+A simple example of the use of this library is the following:
 
-        #!/bin/sh
+.. code:: python
 
-        PYIOC=/path/to/pythonSoftIoc/pythonIoc
+    # Import the basic framework components.
+    from softioc import softioc, builder
+    import cothread
 
-        cd "$(dirname "$0")"
-        exec $PYIOC start_ioc.py "$@"
+    # Set the record prefix
+    builder.SetDeviceName("MY-DEVICE-PREFIX")
 
-2.  The startup Python script.  This establishes the essential component
-    versions (apart from the `pythonSoftIoc` version), performs the appropriate
-    initialisation and starts the IOC running.  The following template is a
-    useful starting point::
+    # Create some records
+    ai = builder.aIn('AI', initial_value=5)
+    ao = builder.aOut('AO', initial_value=12.45, on_update=lambda v: ai.set(v))
 
-        from pkg_resources import require
-        require('cothread==2.12')
-        require('epicsdbbuilder==1.0')
+    # Boilerplate get the IOC started
+    builder.LoadDatabase()
+    softioc.iocInit()
 
-        # Import the basic framework components.
-        from softioc import softioc, builder
-        import cothread
+    # Start processes required to be run after iocInit
+    def update():
+        while True:
+            ai.set(ai.get() + 1)
+            cothread.Sleep(1)
 
-        # Import any modules required to run the IOC
-        import ...
+    cothread.Spawn(update)
 
-        # Boilerplate get the IOC started
-        builder.LoadDatabase()
-        softioc.iocInit()
+    # Finally leave the IOC running with an interactive shell.
+    softioc.interactive_ioc(globals())
 
-        # Start processes required to be run after iocInit
-        ...
 
-        # Finally leave the IOC running with an interactive shell.
-        softioc.interactive_ioc(globals())
+.. |code_ci| image:: https://github.com/dls-controls/pythonIoc/workflows/Code%20CI/badge.svg?branch=master
+    :target: https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Code+CI%22
+    :alt: Code CI
 
-    Note that the use of `require` is specific to DLS, and you may have a
-    different way of managing your installations.
+.. |docs_ci| image:: https://github.com/dls-controls/pythonIoc/workflows/Docs%20CI/badge.svg?branch=master
+    :target: https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Docs+CI%22
+    :alt: Docs CI
 
-..  _numpy: http://www.numpy.org/
-..  _cothread: https://github.com/dls-controls/cothread
-..  _epicsdbbuilder: https://github.com/Araneidae/epicsdbbuilder
+.. |coverage| image:: https://codecov.io/gh/dls-controls/pythonIoc/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/dls-controls/pythonIoc
+    :alt: Test Coverage
+
+.. |pypi_version| image:: https://img.shields.io/pypi/v/pythonIoc.svg
+    :target: https://pypi.org/project/pythonIoc
+    :alt: Latest PyPI version
+
+.. |license| image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
+    :target: https://opensource.org/licenses/Apache-2.0
+    :alt: Apache License
+
+..
+    Anything below this line is used when viewing README.rst and will be replaced
+    when included in index.rst
+
+See https://dls-controls.github.io/pythonIoc for more detailed documentation.

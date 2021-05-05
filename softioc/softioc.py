@@ -32,8 +32,9 @@ command_names = []
 
 
 # IOC Test facilities
-def ExportTest(name, argtypes, defaults=(), description='no description yet'):
-    f = getattr(imports.libdbIoc, name)
+def ExportTest(name, argtypes, defaults=(), description='no description yet',
+               lib=imports.dbCore):
+    f = getattr(lib, name)
     f.argtypes = argtypes
     f.restype = None
 
@@ -136,10 +137,10 @@ ExportTest('scanpiol', (), (), '''\
 Prints all records in the I/O event scan lists.''')
 
 ExportTest('generalTimeReport', (c_int,), (0,), '''\
-Displays time providers and their status''')
+Displays time providers and their status''', lib=imports.Com)
 
 ExportTest('eltc', (c_int,), (), '''\
-Turn EPICS logging on or off.''')
+Turn EPICS logging on or off.''', lib=imports.Com)
 
 
 # Hacked up exit object so that when soft IOC framework sends us an exit command

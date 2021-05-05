@@ -6,6 +6,95 @@ Python Soft IOC
 The ``pythonIoc`` command is a tool for creating and running an EPICS IOC
 entirely within Python.
 
+Building `pythonSoftIoc`
+========================
+
+To build `pythonSoftIoc` follow these steps:
+
+1.  Edit the following files:
+
+    `configure/RELEASE`
+        Set `EPICS_BASE` to point to your local installation of EPICS.
+
+    `configure/CONFIG_SITE`
+        Set `PYTHON` to the executable name of your Python interpreter.
+
+2.  Build `pythonIoc` without documentation by running::
+
+        make BUILD_DOCS=
+
+    At this point you should be able to run `./pythonIoc` which will give you an
+    interative Python interpreter.
+
+3.  Now ensure that you have numpy_, cothread_, and epicsdbbuilder_ installed.  These can
+    be installed unversioned, or versioned (in which case
+    `pkg_resources.require` will need to be used), or just localling built and
+    added to your `PYTHONPATH`.
+
+4.  Now check that `pythonIoc` works by running `example/runtest`.  You may need
+    to edit `example/version.py` if you're using a versioned install of
+    `cothread` and `epicsdbbuilder`.
+
+5.  Finally build the documentation by running::
+
+        make docs
+
+    Again, if your installation of components is versioned you may need to edit
+    `docs/conf.py` as appropriate.
+
+
+Using `pythonSoftIoc`
+=====================
+
+Probably the best way to use `pythonSoftIoc` is to start by copying fragments
+of a simple example such as `CS-DI-IOC-02`.  This consists of the following
+elements:
+
+1.  A startup shell script `start-ioc` which launches the soft IOC using a
+    production build of `pythonSoftIoc`.  This script typically looks like
+    this::
+
+        #!/bin/sh
+
+        PYIOC=/path/to/pythonSoftIoc/pythonIoc
+
+        cd "$(dirname "$0")"
+        exec $PYIOC start_ioc.py "$@"
+
+2.  The startup Python script.  This establishes the essential component
+    versions (apart from the `pythonSoftIoc` version), performs the appropriate
+    initialisation and starts the IOC running.  The following template is a
+    useful starting point::
+
+        from pkg_resources import require
+        require('cothread==2.12')
+        require('epicsdbbuilder==1.0')
+
+        # Import the basic framework components.
+        from softioc import softioc, builder
+        import cothread
+
+        # Import any modules required to run the IOC
+        import ...
+
+        # Boilerplate get the IOC started
+        builder.LoadDatabase()
+        softioc.iocInit()
+
+        # Start processes required to be run after iocInit
+        ...
+
+        # Finally leave the IOC running with an interactive shell.
+        softioc.interactive_ioc(globals())
+
+    Note that the use of `require` is specific to DLS, and you may have a
+    different way of managing your installations.
+
+..  _numpy: http://www.numpy.org/
+..  _cothread: https://github.com/dls-controls/cothread
+..  _epicsdbbuilder: https://github.com/Araneidae/epicsdbbuilder
+
+
 
 Introduction
 ------------
@@ -48,7 +137,7 @@ with one PV::
 
 This example script illustrates the following points.
 
-- The use of :func:`pkg_resources.require` is standard across all use of the
+- The use of ``pkg_resources.require`` is standard across all use of the
   ``dls-python`` Python interpreter at Diamond, and in this example we are using
   both :mod:`cothread` and :mod:`epicsdbbuilder`.  Of course, in an officially
   published IOC specific versions must be specified, in this example I'm using
@@ -107,7 +196,7 @@ bit more structure is needed.  I recommend at least four files as shown:
 
 ``ioc_entry.py``
     I recommend that the top level Python script used to launch the IOC contain
-    only :func:`pkg_resources.require` statements, simple code to start the body
+    only ``pkg_resources.require`` statements, simple code to start the body
     of the IOC, and it should end with standard code to start the IOC.  The
     following structure can be followed (here I've assumed that the rest of the
     IOC is in a single file called ``ioc_body.py``::
@@ -172,9 +261,9 @@ following types:
 
 Occasionally it may be desirable to create a soft record without ``Python``
 device support, particularly if any other record type is required.  This can be done using the corresponding record creation
-functions provided as methods of :attr:`records`.  For example, if a ``calc``
+functions provided as methods of :attr:`softioc.builder.records`.  For example, if a ``calc``
 record is required then this can be created by calling
-:func:`softioc.builder.records.calc`.
+``softioc.builder.records.calc``.
 
 For all records created by these methods both
 :meth:`~softioc.device.ProcessDeviceSupportIn.get` and
@@ -194,7 +283,7 @@ which must be called in this order.  After calling
 
 It is sensible to start any server background activity after the IOC has been
 initialised by calling :func:`~softioc.softioc.iocInit`.  After this has been
-done (:func:`cothread.Spawn` is recommended for initiating persistent background
+done (:class:`cothread.Spawn` is recommended for initiating persistent background
 activity) the top level script must pause, as as soon as it exits the IOC will
 exit.  Calling :func:`~softioc.softioc.interactive_ioc` is recommended for this
 as the last statement in the top level script.

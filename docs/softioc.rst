@@ -31,21 +31,21 @@ following submodules can be loaded:
 The following submodules implement internals and should not normally be looked
 at directly:
 
-:mod:`softioc.imports`
+``softioc.imports``
     Imports and wraps C functions from EPICS IOC support.
 
-:mod:`softioc.fields`
+``softioc.fields``
     Used internally as part of record support to implement access to EPICS
     record fields.
 
-:mod:`softioc.device_core`
+``softioc.device_core``
     Implements the basics of ``Python`` EPICS device support.
 
 :mod:`softioc.device`
     Implements ``Python`` device support for all the record types supported.
 
-:mod:`softioc.pythonSoftIoc`
-    Implements :mod:`iocbuilder` interface for all of the ``Python`` records.
+``softioc.pythonSoftIoc``
+    Implements ``iocbuilder`` interface for all of the ``Python`` records.
 
 
 Top Level IOC Interface: :mod:`softioc.softioc`
@@ -84,14 +84,14 @@ importing ``*``):
     This is the normal way to run an interactive shell after starting the IOC.
     The `context` argument is a dictionary of values that will be made available
     to the interactive Python shell together with a number of EPICS test
-    functions.  By default, if `call_exit` is :const:`True`, the IOC will be
-    terminated by calling :func:`epicsExit` when the interpreter exits, which
+    functions.  By default, if `call_exit` is `True`, the IOC will be
+    terminated by calling ``epicsExit()`` when the interpreter exits, which
     means that :func:`interactive_ioc` will not return.
 
     While the interactive shell is running a number of EPICS test functions are
     made available for use together with the constant value :const:`exit` with
     special behaviour: typing :const:`exit` at the interpreter prompt will
-    immediately call :func:`epicsExit` causing the Python interpreter and IOC to
+    immediately call ``epicsExit()`` causing the Python interpreter and IOC to
     terminate.
 
 This module provides Python wrappers for the following EPICS test functions and
@@ -186,7 +186,7 @@ EPICS documentation for more details of each function.
 
 ..  attribute:: exit
 
-    Displaying this value will invoke :func:`epicsExit` causing the IOC to
+    Displaying this value will invoke ``epicsExit()`` causing the IOC to
     terminate immediately.
 
 
@@ -351,7 +351,7 @@ The following attributes allow more direct access to record creation.
 
 ..  attribute:: records
 
-    This is the :mod:`iocbuilder` records object, and is populated with
+    This is the ``iocbuilder`` records object, and is populated with
     functions named after each available record type.  Records created with
     these calls are created with soft device support and Python is not involved
     in their processing.
@@ -383,8 +383,8 @@ Alarm Value Definitions
 ..  module:: softioc.alarm
     :synopsis: Constant definitions for EPICS severity and alarm values
 
-The following values can be passed to IN record :meth:`set` and
-:meth:`set_alarm` methods.
+The following values can be passed to IN record :meth:`~softioc.device.ProcessDeviceSupportIn.set` and
+:meth:`~softioc.device.ProcessDeviceSupportIn.set_alarm` methods.
 
 ..  attribute::
         NO_ALARM = 0
@@ -392,7 +392,7 @@ The following values can be passed to IN record :meth:`set` and
         MAJOR_ALARM = 2
         INVALID_ALARM = 3
 
-    These are severity values.  The default severity is :attr:`NO_ALARM`.
+    These are severity values.  The default severity is ``NO_ALARM``.
 
 ..  attribute::
         READ_ALARM

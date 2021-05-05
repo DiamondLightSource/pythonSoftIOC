@@ -12,10 +12,10 @@ This is used to invoke Python processing in response to record processing,
 making it easy to integrate Python into the EPICS IOC layer.
 
 Records are created dynamically during IOC startup before calling
-:func:`iocInit` and with the help of the :mod:`softioc.builder` module can be
+:func:`~softioc.softioc.iocInit` and with the help of the :mod:`softioc.builder` module can be
 loaded with :func:`~softioc.builder.LoadDatabase`.
 
-All records are created internally using methods of the :class:`PythonDevice`
+All records are created internally using methods of the ``PythonDevice``
 class, one method for each of the supported record types, however the
 corresponding wrapping functions published by :mod:`softioc.builder` should be
 used as they configure sensible defaults and are generally easier to use.
@@ -111,14 +111,14 @@ specified:
     If used this should be set to a callable taking two arguments.  The first
     argument will be the record object, and the second will be the new value
     being written.  The `validiate` function can reject the update by returning
-    :const:`False` or accept it by returning :const:`True`.
+    `False` or accept it by returning `True`.
 
     Note that this function is called asynchronously on a thread determined by
     EPICS and it is not safe to perform any cothread actions within this
     callback.
 
 `always_update`
-    This flag defaults to :const:`False`, in which case updates to the record
+    This flag defaults to `False`, in which case updates to the record
     which don't change its value will be discarded.  In particular this means
     that such updates don't call `validate` or `on_update`.
 
@@ -132,7 +132,7 @@ specified:
 
         Updates the value associated with the record.  By default this will
         trigger record processing, and so will cause any associated `on_update`
-        and `validate` methods to be called.  If `process` is :const:`False`
+        and `validate` methods to be called.  If `process` is `False`
         then neither of these methods will be called, but the value will still
         be updated.
 

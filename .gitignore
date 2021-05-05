@@ -1,18 +1,58 @@
-/.vscode
-/venv
-*.pyc
-/docs/html/
-/softioc/_extension.*
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
 
-# Dist build output
-/build
-/dist
-/softioc.egg-info/
+# C extensions
+*.so
 
-# Coverage reports
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
 .coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+*.mypy_cache
+*.pytest_cache
 cov.xml
 
+# DLS build dir and virtual environment
+/prefix/
+/venv/
+/lightweight-venv/
+/installed.files
+
+# Docs output
 /docs/papers/*/*.aux
 /docs/papers/*/*.pdf
 /docs/papers/*/*.nav
@@ -20,3 +60,8 @@ cov.xml
 /docs/papers/*/*.snm
 /docs/papers/*/*.toc
 /docs/papers/*/*.vrb
+
+# setup.py develop (via pipenv install) places this link here
+# so editable installs work. Related:
+# https://github.com/mdavidsaver/setuptools_dso/issues/11
+/epicscorelibs

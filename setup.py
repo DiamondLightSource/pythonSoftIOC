@@ -74,7 +74,7 @@ ext = Extension(
     ],
     dsos = ['epicscorelibs.lib.dbCore', 'epicscorelibs.lib.Com'],
     define_macros = get_config_var('CPPFLAGS'),
-    extra_compile_args = get_config_var('CXXFLAGS'),
+    extra_compile_args = get_config_var('CFLAGS'),
     extra_link_args = get_config_var('LDFLAGS'),
 )
 
@@ -94,9 +94,9 @@ setup(
     version=__version__,
     ext_modules = [ext],
     install_requires = [
-        # Dependency declared in pyproject.toml
+        # Dependency version declared in pyproject.toml
         epicscorelibs.version.abi_requires(),
-        "numpy>=1.18",
+        "numpy",
         "epicsdbbuilder>=1.4"
     ],
     zip_safe = False,  # setuptools_dso is not compatible with eggs!

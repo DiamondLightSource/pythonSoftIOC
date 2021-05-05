@@ -8,7 +8,7 @@ from ctypes import *
 
 from epicscorelibs import path
 from epicscorelibs.ioc import \
-    iocshRegisterCommon, registerRecordDeviceDriver, pdbbase
+    iocshRegisterCommon, registerRecordDeviceDriver, pdbbase, dbCore, Com
 
 from . import _extension
 
@@ -60,30 +60,11 @@ else:
         return result.decode()
 
 
-def EpicsDll(dll):
-    return CDLL(path.get_lib(dll))
-
-
-# A bit tricky: in more recent versions of EPICS all the entry points we want
-# have been gathered into a single .so, but previously they were split among
-# four different ones.  Just try both options.
-try:
-    libdbCore = EpicsDll('dbCore')
-    libregistryIoc = libdbCore
-    libdbIoc = libdbCore
-    libmiscIoc = libdbCore
-except OSError:
-    # Ok, no dbCore, then we should find everything in these four instead.
-    libregistryIoc = EpicsDll('registryIoc')
-    libdbIoc = EpicsDll('dbIoc')
-    libmiscIoc = EpicsDll('miscIoc')
-
-
 # int registryDeviceSupportAdd(
 #     const char *name,const struct dset *pdset);
 #
 # Registers device support.
-registryDeviceSupportAdd = libregistryIoc.registryDeviceSupportAdd
+registryDeviceSupportAdd = dbCore.registryDeviceSupportAdd
 registryDeviceSupportAdd.argtypes = (c_char_p, c_void_p)
 registryDeviceSupportAdd.errcheck = expect_true
 
@@ -94,15 +75,15 @@ registryDeviceSupportAdd.errcheck = expect_true
 # Initialise and trigger I/O Intr processing structure.
 IOSCANPVT = c_void_p
 
-scanIoInit = libdbIoc.scanIoInit
+scanIoInit = dbCore.scanIoInit
 scanIoInit.argtypes = (IOSCANPVT,)
 scanIoInit.restype = None
 
-scanIoRequest = libdbIoc.scanIoRequest
+scanIoRequest = dbCore.scanIoRequest
 scanIoRequest.argtypes = (IOSCANPVT,)
 scanIoRequest.restype = None
 
-dbLoadDatabase = libdbIoc.dbLoadDatabase
+dbLoadDatabase = dbCore.dbLoadDatabase
 dbLoadDatabase.argtypes = (auto_encode, auto_encode, auto_encode)
 dbLoadDatabase.errcheck = expect_success
 
@@ -111,15 +92,15 @@ dbLoadDatabase.errcheck = expect_success
 #
 # Raises event processing if any alarm status has changed, and resets NSTA
 # and NSEV fields for further processing.
-recGblResetAlarms = libdbIoc.recGblResetAlarms
+recGblResetAlarms = dbCore.recGblResetAlarms
 recGblResetAlarms.argtypes = (c_void_p,)
 recGblResetAlarms.restype = c_short
 
 
-iocInit = libmiscIoc.iocInit
+iocInit = dbCore.iocInit
 iocInit.argtypes = ()
 
-epicsExit = libmiscIoc.epicsExit
+epicsExit = Com.epicsExit
 epicsExit.argtypes = ()
 
 iocshRegisterCommon()

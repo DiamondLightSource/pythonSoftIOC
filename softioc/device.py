@@ -1,15 +1,31 @@
 import os
 import time
-import traceback
+import inspect
 from ctypes import *
 import numpy
-
-import cothread
 
 from . import alarm
 from .fields import DbfCodeToNumpy, DbrToDbfCode
 from .imports import dbLoadDatabase, recGblResetAlarms, db_put_field
 from .device_core import DeviceSupportCore, RecordLookup
+
+
+dispatcher_callback = None
+
+
+def use_cothread():
+    import cothread
+    # Create our own cothread callback queue so that our callbacks
+    # processing doesn't interfere with other callback processing.
+    global dispatcher_callback
+    dispatcher_callback = cothread.cothread._Callback()
+
+
+def use_asyncio():
+    from .asyncio_callback import AsyncioCallback
+    global dispatcher_callback
+    dispatcher_callback = AsyncioCallback()
+    dispatcher_callback.start()
 
 
 class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
@@ -79,10 +95,6 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
 class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
     _link_ = 'OUT'
 
-    # Create our own cothread callback queue so that our callbacks processing
-    # doesn't interfere with other callback processing.
-    __Callback = cothread.cothread._Callback()
-
     def __init__(self, name, **kargs):
         on_update = kargs.pop('on_update', None)
         on_update_name = kargs.pop('on_update_name', None)
@@ -133,7 +145,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self._value = value
         if self.__on_update and self.__enable_write:
-            self.__Callback(self.__on_update, value)
+            dispatcher_callback(self.__on_update, value)
         return 0
 
 

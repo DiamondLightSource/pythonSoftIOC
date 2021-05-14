@@ -2,10 +2,11 @@
 
 from __future__ import print_function
 
-from epicsdbbuilder.recordnames import GetRecordNames
+from epicsdbbuilder import GetRecordNames, WriteRecords
 
 from softioc import softioc
 from softioc.builder import *
+
 import numpy
 
 names = GetRecordNames()
@@ -79,11 +80,5 @@ __all__ = [
     'Update', 'UpdateOut'
 ]
 
-
 if __name__ == "__main__":
-    # Simple example script for building an example soft IOC.
-    from softioc import pvlog, builder
-    builder.WriteRecords("expected_records.db")
-    LoadDatabase()
-    softioc.iocInit()
-    softioc.interactive_ioc(globals())
+    WriteRecords("expected_records.db")

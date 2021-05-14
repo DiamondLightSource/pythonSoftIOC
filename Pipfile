@@ -11,6 +11,7 @@ sphinx-rtd-theme = "*"
 sphinx-multiversion = {editable = true,git = "https://github.com/dls-controls/sphinx-multiversion.git",ref = "only-arg"}
 setuptools-dso = "*"
 aioca = "*"
+pytest-asyncio = "*"
 
 [packages]
 # All other package requirements from setup.py
@@ -20,6 +21,7 @@ epicscorelibs = "*"
 # Add some other useful extras
 cothread = "*"
 scipy = "*"
+aioca = "*"
 
 [scripts]
 # Put coverage here so we don't interfere with debugging in the IDE

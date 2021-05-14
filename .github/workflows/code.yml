@@ -32,22 +32,36 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python: [cp27, cp37, cp38, cp39]
 
-        include:
-        - os: macos-latest
-          TEST_REQUIRES: pytest-cov cothread
-          # Put coverage straight in the dist dir
-          COV_FILE: '{project}/dist/coverage.xml'
+        exclude:
+        - os: windows-latest
+          # No cothread or asyncio so doesn't work
+          python: cp27
 
+        include:
         - os: ubuntu-latest
-          TEST_REQUIRES: pytest-cov cothread
           # Put coverage in the output dir mounted in docker
-          COV_FILE: '/output/coverage.xml'
+          cov_file: /output/coverage.xml
+          test_requires: cothread pytest-asyncio aioca
 
         - os: windows-latest
+          cov_file: '{project}/dist/coverage.xml'
           # cothread doesn't work on windows
-          TEST_REQUIRES: pytest-cov
-          # Put coverage straight in the dist dir
-          COV_FILE: '{project}/dist/coverage.xml'
+          test_requires: pytest-asyncio aioca
+
+        - os: macos-latest
+          cov_file: '{project}/dist/coverage.xml'
+          test_requires: cothread pytest-asyncio aioca
+
+        - os: ubuntu-latest
+          python: cp27
+          # asyncio doesn't work on Python2.7
+          test_requires: cothread
+
+        - os: macos-latest
+          python: cp27
+          # asyncio doesn't work on Python2.7
+          test_requires: cothread
+
 
     steps:
       - name: Checkout Source
@@ -70,8 +84,8 @@ jobs:
         run: cibuildwheel --output-dir dist
         env:
           CIBW_BUILD: ${{ matrix.python }}*64
-          CIBW_TEST_REQUIRES: ${{ matrix.TEST_REQUIRES }}
-          CIBW_TEST_COMMAND: pytest --cov=softioc {project}/tests --cov-report xml:${{ matrix.COV_FILE }}
+          CIBW_TEST_REQUIRES: pytest-cov ${{ matrix.test_requires }}
+          CIBW_TEST_COMMAND: pytest --cov=softioc {project}/tests --cov-report xml:${{ matrix.cov_file }}
           # Disable auditwheel as it isn't compatible with setuptools_dso approach
           # https://github.com/mdavidsaver/setuptools_dso/issues/17
           CIBW_REPAIR_WHEEL_COMMAND: ''
@@ -79,6 +93,7 @@ jobs:
       - name: Upload Wheel and Sdist
         uses: actions/upload-artifact@v2
         with:
+          name: dist
           path: dist/softioc*
 
       - name: Upload coverage to Codecov
@@ -91,17 +106,14 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     # upload to PyPI on every tag
-    #if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     steps:
       - uses: actions/download-artifact@v2
         with:
+          name: dist
           path: dist
 
-      - name: Display structure of downloaded files
-        run: ls -R
-
       - name: Publish to PyPI
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pypi_token }}

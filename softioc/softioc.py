@@ -6,13 +6,18 @@ from ctypes import *
 
 from epicsdbbuilder.recordset import recordset
 
-from . import imports
+from . import imports, device
 
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
 
-iocInit = imports.iocInit
 epicsExit = imports.epicsExit
+
+def iocInit():
+    if device.dispatcher_callback is None:
+        # Fallback to cothread
+        device.use_cothread()
+    imports.iocInit()
 
 def safeEpicsExit():
     '''Calls epicsExit() after ensuring Python exit handlers called.'''
@@ -25,7 +30,6 @@ def safeEpicsExit():
             # Make sure we don't try the exit handlers more than once!
             del sys.exitfunc
     epicsExit()
-
 
 # The following identifiers will be exported to interactive shell.
 command_names = []

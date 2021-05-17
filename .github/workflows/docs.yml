@@ -15,6 +15,7 @@ jobs:
         with:
           # require all of history to see all tagged versions' docs
           fetch-depth: 0
+          submodules: true
 
       - name: Set up Python
         uses: actions/setup-python@v2

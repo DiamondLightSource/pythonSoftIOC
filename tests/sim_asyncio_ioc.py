@@ -19,6 +19,8 @@ if __name__ == "__main__":
     async def callback(value):
         await asyncio.sleep(0.5)
         print("async update %s" % value)
+        # Make sure it goes as epicsExit will not flush this for us
+        sys.stdout.flush()
         sim_records.t_ai.set(value)
 
     t_ao = builder.aOut('AO2', initial_value=12.45, on_update=callback)

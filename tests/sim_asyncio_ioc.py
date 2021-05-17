@@ -4,7 +4,7 @@ import asyncio
 import time
 import sys
 
-from softioc import softioc, builder, device, pvlog
+from softioc import softioc, builder, asyncio_dispatcher, pvlog
 
 
 if __name__ == "__main__":
@@ -23,11 +23,9 @@ if __name__ == "__main__":
 
     t_ao = builder.aOut('AO2', initial_value=12.45, on_update=callback)
 
-    device.use_asyncio()
-
     # Run the IOC
     builder.LoadDatabase()
-    softioc.iocInit()
+    softioc.iocInit(asyncio_dispatcher.AsyncioDispatcher())
     # Wait for some prints to have happened
     time.sleep(1)
     # Make sure coverage is written on epicsExit

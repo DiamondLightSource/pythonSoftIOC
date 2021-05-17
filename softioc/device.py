@@ -10,22 +10,9 @@ from .imports import dbLoadDatabase, recGblResetAlarms, db_put_field
 from .device_core import DeviceSupportCore, RecordLookup
 
 
-dispatcher_callback = None
-
-
-def use_cothread():
-    import cothread
-    # Create our own cothread callback queue so that our callbacks
-    # processing doesn't interfere with other callback processing.
-    global dispatcher_callback
-    dispatcher_callback = cothread.cothread._Callback()
-
-
-def use_asyncio():
-    from .asyncio_callback import AsyncioCallback
-    global dispatcher_callback
-    dispatcher_callback = AsyncioCallback()
-    dispatcher_callback.start()
+# This is set from softioc.iocInit
+# dispatcher(func, *args) will queue a callback to happen
+dispatcher = None
 
 
 class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
@@ -145,7 +132,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self._value = value
         if self.__on_update and self.__enable_write:
-            dispatcher_callback(self.__on_update, value)
+            dispatcher(self.__on_update, value)
         return 0
 
 

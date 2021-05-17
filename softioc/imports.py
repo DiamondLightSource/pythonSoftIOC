@@ -6,9 +6,8 @@ import os.path
 import sys
 from ctypes import *
 
-from epicscorelibs import path
-from epicscorelibs.ioc import \
-    iocshRegisterCommon, registerRecordDeviceDriver, pdbbase, dbCore, Com
+# Use the libs with the right windows flags
+from epicscorelibs.ioc import dbCore, Com
 
 from . import _extension
 
@@ -96,19 +95,11 @@ recGblResetAlarms = dbCore.recGblResetAlarms
 recGblResetAlarms.argtypes = (c_void_p,)
 recGblResetAlarms.restype = c_short
 
-
 iocInit = dbCore.iocInit
 iocInit.argtypes = ()
 
 epicsExit = Com.epicsExit
 epicsExit.argtypes = ()
-
-iocshRegisterCommon()
-dbLoadDatabase("base.dbd", os.path.join(path.base_path, "dbd"), None)
-dbLoadDatabase("devIocStats.dbd", os.path.dirname(__file__), None)
-
-if registerRecordDeviceDriver(pdbbase):
-    raise RuntimeError('Error registering')
 
 
 __all__ = [

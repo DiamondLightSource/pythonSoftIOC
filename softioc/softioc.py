@@ -13,11 +13,18 @@ __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
 epicsExit = imports.epicsExit
 
-def iocInit():
-    if device.dispatcher_callback is None:
+
+def iocInit(dispatcher=None):
+    if dispatcher is None:
         # Fallback to cothread
-        device.use_cothread()
+        import cothread
+        # Create our own cothread callback queue so that our callbacks
+        # processing doesn't interfere with other callback processing.
+        dispatcher = cothread.cothread._Callback()
+    # Set the dispatcher for record processing callbacks
+    device.dispatcher = dispatcher
     imports.iocInit()
+
 
 def safeEpicsExit():
     '''Calls epicsExit() after ensuring Python exit handlers called.'''

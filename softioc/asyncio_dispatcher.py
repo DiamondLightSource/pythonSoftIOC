@@ -3,10 +3,11 @@ import inspect
 import threading
 
 
-class AsyncioCallback(threading.Thread):
+class AsyncioDispatcher(threading.Thread):
     def __init__(self):
         super().__init__()
         self.loop = asyncio.new_event_loop()
+        self.start()
 
     def run(self):
         self.loop.run_forever()

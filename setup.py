@@ -74,7 +74,7 @@ ext = Extension(
     ],
     dsos = ['epicscorelibs.lib.dbCore', 'epicscorelibs.lib.Com'],
     define_macros = get_config_var('CPPFLAGS'),
-    extra_compile_args = get_config_var('CFLAGS'),
+    extra_compile_args = get_config_var('CFLAGS') + ["-std=c99"],
     extra_link_args = get_config_var('LDFLAGS'),
 )
 

@@ -21,16 +21,13 @@ def cothread_ioc():
         cmd, stdin=subprocess.PIPE,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     yield proc
-    # This has to work on Python2 and 3 so can't rely on communicate to
-    # produce stdout and stderr if we already closed the process
-    try:
+    if proc.returncode is None:
+        # still running, kill it and print the output
         proc.kill()
         out, err = proc.communicate()
         print(out.decode())
         print(err.decode())
-    except OSError:
-        # Doesn't matter if its already stopped
-        pass
+
 
 
 def test_cothread_ioc(cothread_ioc):

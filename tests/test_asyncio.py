@@ -19,10 +19,12 @@ def asyncio_ioc():
         cmd, stdin=subprocess.PIPE,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     yield proc
-    proc.kill()
-    out, err = proc.communicate()
-    print(out.decode())
-    print(err.decode(), file=sys.stderr)
+    if proc.returncode is None:
+        # still running, kill it and print the output
+        proc.kill()
+        out, err = proc.communicate()
+        print(out.decode())
+        print(err.decode(), file=sys.stderr)
 
 
 @pytest.mark.asyncio
@@ -44,9 +46,9 @@ async def test_asyncio_ioc(asyncio_ioc):
     # AO
     assert await caget(PV_PREFIX + ":AO2") == 12.45
     await caput(PV_PREFIX + ":AO2", 3.56, wait=True)
-    await asyncio.sleep(0.3)
+    await asyncio.sleep(0.1)
     assert await caget(PV_PREFIX + ":AI") == 12.34
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.6)
     assert await caget(PV_PREFIX + ":AI") == 3.56
     # Wait for a bit longer for the print output to flush
     await asyncio.sleep(2)

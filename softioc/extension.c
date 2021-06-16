@@ -245,15 +245,8 @@ static struct PyModuleDef softioc_module = {
 PyMOD(_extension)
 {
 #if PY_MAJOR_VERSION >= 3
-        PyObject *mod = PyModule_Create(&softioc_module);
+    return PyModule_Create(&softioc_module);
 #else
-        PyObject *mod = Py_InitModule("softioc._extension", softioc_methods);
-#endif
-        if(mod) {
-        }
-#if PY_MAJOR_VERSION >= 3
-    return mod;
-#else
-    (void)mod;
+    Py_InitModule("softioc._extension", softioc_methods);
 #endif
 }

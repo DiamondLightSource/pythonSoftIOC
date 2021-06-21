@@ -1,5 +1,3 @@
-'''Support for using the builder in cooperation with the python soft ioc.'''
-
 import os
 import numpy
 from .softioc import dbLoadDatabase

@@ -4,8 +4,13 @@ import threading
 
 
 class AsyncioDispatcher(threading.Thread):
+    """A dispatcher for `asyncio` based IOCs. Means that `on_update` callback
+    functions can be async. Will run an Event Loop in a thread when
+    created.
+    """
     def __init__(self):
         super().__init__()
+        #: `asyncio` event loop that the callbacks will run under.
         self.loop = asyncio.new_event_loop()
         self.start()
 

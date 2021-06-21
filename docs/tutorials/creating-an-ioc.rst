@@ -1,57 +1,15 @@
-.. _pythonsoftioc:
-
-Python Soft IOC
+Creating an IOC
 ===============
 
-The ``pythonIoc`` command is a tool for creating and running an EPICS IOC
-entirely within Python.
+Using ``pythonSoftIoc``
+-----------------------
 
-Building `pythonSoftIoc`
-========================
-
-To build `pythonSoftIoc` follow these steps:
-
-1.  Edit the following files:
-
-    `configure/RELEASE`
-        Set `EPICS_BASE` to point to your local installation of EPICS.
-
-    `configure/CONFIG_SITE`
-        Set `PYTHON` to the executable name of your Python interpreter.
-
-2.  Build `pythonIoc` without documentation by running::
-
-        make BUILD_DOCS=
-
-    At this point you should be able to run `./pythonIoc` which will give you an
-    interative Python interpreter.
-
-3.  Now ensure that you have numpy_, cothread_, and epicsdbbuilder_ installed.  These can
-    be installed unversioned, or versioned (in which case
-    `pkg_resources.require` will need to be used), or just localling built and
-    added to your `PYTHONPATH`.
-
-4.  Now check that `pythonIoc` works by running `example/runtest`.  You may need
-    to edit `example/version.py` if you're using a versioned install of
-    `cothread` and `epicsdbbuilder`.
-
-5.  Finally build the documentation by running::
-
-        make docs
-
-    Again, if your installation of components is versioned you may need to edit
-    `docs/conf.py` as appropriate.
-
-
-Using `pythonSoftIoc`
-=====================
-
-Probably the best way to use `pythonSoftIoc` is to start by copying fragments
-of a simple example such as `CS-DI-IOC-02`.  This consists of the following
+Probably the best way to use ``pythonSoftIoc`` is to start by copying fragments
+of a simple example such as ``CS-DI-IOC-02``.  This consists of the following
 elements:
 
-1.  A startup shell script `start-ioc` which launches the soft IOC using a
-    production build of `pythonSoftIoc`.  This script typically looks like
+1.  A startup shell script ``start-ioc`` which launches the soft IOC using a
+    production build of ``pythonSoftIoc``.  This script typically looks like
     this::
 
         #!/bin/sh
@@ -62,7 +20,7 @@ elements:
         exec $PYIOC start_ioc.py "$@"
 
 2.  The startup Python script.  This establishes the essential component
-    versions (apart from the `pythonSoftIoc` version), performs the appropriate
+    versions (apart from the ``pythonSoftIoc`` version), performs the appropriate
     initialisation and starts the IOC running.  The following template is a
     useful starting point::
 
@@ -87,7 +45,7 @@ elements:
         # Finally leave the IOC running with an interactive shell.
         softioc.interactive_ioc(globals())
 
-    Note that the use of `require` is specific to DLS, and you may have a
+    Note that the use of ``require`` is specific to DLS, and you may have a
     different way of managing your installations.
 
 ..  _numpy: http://www.numpy.org/

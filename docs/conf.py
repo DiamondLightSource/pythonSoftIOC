@@ -22,8 +22,9 @@ sys.path.insert(0, repo_root)
 import softioc  # noqa
 
 # General information about the project.
-project = u'Python Soft IOC'
-copyright = u'2011, Michael Abbott'
+project = u'pythonIoc'
+copyright = u'2008, Diamond Light Source'
+author = 'Michael Abbott'
 
 # The full version, including alpha/beta/rc tags.
 release = softioc.__version__
@@ -40,6 +41,10 @@ else:
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
+    # Use this for generating API docs
+    'sphinx.ext.autodoc',
+    # This can parse google style docstrings
+    'sphinx.ext.napoleon',
     # For linking to external sphinx documentation
     'sphinx.ext.intersphinx',
     # Add links to source code in API docs
@@ -47,8 +52,6 @@ extensions = [
     # Add multiple versions of documentation on CI
     'sphinx_multiversion',
 ]
-
-viewcode_import = True
 
 # If true, Sphinx will warn about all references where the target cannot
 # be found.
@@ -59,6 +62,20 @@ nitpicky = True
 # domain name if present. Example entries would be ('py:func', 'int') or
 # ('envvar', 'LD_LIBRARY_PATH').
 nitpick_ignore = [('py:func', 'int')]
+
+# Both the class’ and the __init__ method’s docstring are concatenated and
+# inserted into the main body of the autoclass directive
+autoclass_content = 'both'
+
+# Order the members by the order they appear in the source code
+autodoc_member_order = 'bysource'
+
+# Don't inherit docstrings from baseclasses
+autodoc_inherit_docstrings = False
+
+# The name of a reST role (builtin or Sphinx extension) to use as the default
+# role, that is, for text marked up `like this`
+default_role = 'any'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

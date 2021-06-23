@@ -49,8 +49,6 @@ extensions = [
     'sphinx.ext.intersphinx',
     # Add links to source code in API docs
     'sphinx.ext.viewcode',
-    # Add multiple versions of documentation on CI
-    'sphinx_multiversion',
 ]
 
 # If true, Sphinx will warn about all references where the target cannot
@@ -132,14 +130,6 @@ html_css_files = ['theme_overrides.css']
 # Logo
 html_logo = 'images/softioc-logo.svg'
 html_favicon = 'images/softioc-favicon.ico'
-
-# sphinx-multiversion config
-smv_rebuild_tags = False
-smv_tag_whitelist = r'^\d+\.\d+.*$'  # only document tags with form 0.9*
-smv_branch_whitelist = r'^master$'  # only branch to document is master
-smv_outputdir_format = '{ref.name}'
-smv_prefer_remote_refs = False
-smv_remote_whitelist = 'origin|github'
 
 # Common links that should be available on every page
 rst_epilog = """

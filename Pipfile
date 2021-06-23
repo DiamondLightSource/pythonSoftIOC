@@ -7,8 +7,6 @@ verify_ssl = true
 pytest-cov = "*"
 pytest-flake8 = "*"
 sphinx-rtd-theme = "*"
-# switch to main repo after PR https://github.com/Holzhaus/sphinx-multiversion/pull/60 is merged
-sphinx-multiversion = {editable = true,git = "https://github.com/dls-controls/sphinx-multiversion.git",ref = "only-arg"}
 setuptools-dso = "*"
 aioca = "*"
 pytest-asyncio = "*"

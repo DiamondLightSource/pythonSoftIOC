@@ -59,7 +59,7 @@ About the documentation
     :name: explanations
     :maxdepth: 1
 
-    explanations/use-cases
+    explanations/why-use-pythonIoc
 
 .. rst-class:: no-margin-after-ul
 

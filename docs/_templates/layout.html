@@ -10,14 +10,36 @@
   <!-- Include Index in the sidebar -->
   <!-- https://stackoverflow.com/a/37843854 -->
   <a href="{{pathto('genindex.html', 1)}}">Index</a>
-  <!-- Include all versions of the docs -->
-  <!-- https://holzhaus.github.io/sphinx-multiversion/master/templates.html -->
-  {% if versions %}
+  <!-- Add versions for selected branches + tags -->
   <p class="caption"><span class="caption-text">Versions</span></p>
-  <ul>
-  {%- for item in versions|reverse %}
-    <li><a href="{{ item.url }}">{{ item.name }}</a></li>
-  {%- endfor %}
-  </ul>
-  {% endif %}
+  <ul id="versions"></ul>
+  <script>
+    // Versions to add, will be filtered by dirs
+    var versions = ['master'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags that have pages
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
 {% endblock %}

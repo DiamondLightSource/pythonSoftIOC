@@ -36,7 +36,6 @@ jobs:
         with:
           msg: ${{ github.ref }}
           seperator: /
-          maxsplit: 2
 
       - name: Move to versioned directory
         # e.g. master or 0.1.2
@@ -44,7 +43,7 @@ jobs:
 
       - name: Publish Docs to gh-pages
         # Only master and tags are published
-        if: "${{ github.repository_owner == 'dls-controls' }}"
+        if: "${{ github.repository_owner == 'dls-controls' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags')) }}"
         # We pin to the SHA, not the tag, for security reasons.
         # https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
         uses: peaceiris/actions-gh-pages@bbdfb200618d235585ad98e965f4aafc39b4c501  # v3.7.3

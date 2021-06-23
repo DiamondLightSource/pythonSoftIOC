@@ -1,0 +1,3 @@
+[submodule "iocStats"]
+	path = iocStats
+	url = https://github.com/epics-modules/iocStats.git

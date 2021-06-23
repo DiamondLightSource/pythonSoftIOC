@@ -1,0 +1,31 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest-cov = "*"
+pytest-flake8 = "*"
+sphinx-rtd-theme = "*"
+# switch to main repo after PR https://github.com/Holzhaus/sphinx-multiversion/pull/60 is merged
+sphinx-multiversion = {editable = true,git = "https://github.com/dls-controls/sphinx-multiversion.git",ref = "only-arg"}
+setuptools-dso = "*"
+aioca = "*"
+pytest-asyncio = "*"
+
+[packages]
+# All other package requirements from setup.py
+softioc = {editable = true, path = "."}
+# Apart from the epicscorelibs which comes from pyproject.toml so needs to be here too
+epicscorelibs = "*"
+# Add some other useful extras
+cothread = "*"
+scipy = "*"
+aioca = "*"
+
+[scripts]
+# Put coverage here so we don't interfere with debugging in the IDE
+# Put flake8 here so we don't run it during cibuildwheel tests
+tests = "python -m pytest --cov=softioc --cov-report term --flake8"
+docs = "sphinx-build -EWT --keep-going docs build/html"
+gitclean = "git clean -fdX"

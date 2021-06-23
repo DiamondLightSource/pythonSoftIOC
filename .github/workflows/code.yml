@@ -1,0 +1,121 @@
+name: Code CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v2
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+
+      - name: Install Python Dependencies
+        run: pip install flake8
+
+      - name: Lint
+        run: flake8
+
+  build:
+    name: ${{ matrix.os }}/${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: [cp27, cp37, cp38, cp39]
+
+        exclude:
+        - os: windows-latest
+          # No cothread or asyncio so doesn't work
+          python: cp27
+
+        include:
+        - os: ubuntu-latest
+          # Put coverage in the output dir mounted in docker
+          cov_file: /output/coverage.xml
+          test_requires: cothread pytest-asyncio aioca
+
+        - os: windows-latest
+          cov_file: '{project}/dist/coverage.xml'
+          # cothread doesn't work on windows
+          test_requires: pytest-asyncio aioca
+
+        - os: macos-latest
+          cov_file: '{project}/dist/coverage.xml'
+          test_requires: cothread pytest-asyncio aioca
+
+        - os: ubuntu-latest
+          python: cp27
+          # asyncio doesn't work on Python2.7
+          test_requires: cothread
+
+        - os: macos-latest
+          python: cp27
+          # asyncio doesn't work on Python2.7
+          test_requires: cothread
+
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+
+      - name: Install Python Dependencies
+        run: pip install twine build cibuildwheel
+
+      - name: Build Sdist
+        run: python -m build --sdist .
+
+      - name: Build Wheel
+        run: cibuildwheel --output-dir dist
+        env:
+          CIBW_BUILD: ${{ matrix.python }}*64
+          CIBW_TEST_REQUIRES: pytest-cov ${{ matrix.test_requires }}
+          CIBW_TEST_COMMAND: pytest --cov=softioc {project}/tests --cov-report xml:${{ matrix.cov_file }}
+          # Disable auditwheel as it isn't compatible with setuptools_dso approach
+          # https://github.com/mdavidsaver/setuptools_dso/issues/17
+          CIBW_REPAIR_WHEEL_COMMAND: ''
+
+      - name: Upload Wheel and Sdist
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist/softioc*
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          name: ${{ matrix.os }}/${{ matrix.python }}
+          directory: dist
+
+  upload_pypi:
+    needs: [build]
+    runs-on: ubuntu-latest
+    # upload to PyPI on every tag
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: dist
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.pypi_token }}
+        run: twine upload dist/*
+

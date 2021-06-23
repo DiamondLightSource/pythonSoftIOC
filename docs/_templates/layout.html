@@ -1,0 +1,23 @@
+{% extends "!layout.html" %}
+{% block menu %}
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: {{ theme_style_nav_header_background }}
+    }
+  </style>
+  {{ super() }}
+  <!-- Include Index in the sidebar -->
+  <!-- https://stackoverflow.com/a/37843854 -->
+  <a href="{{pathto('genindex.html', 1)}}">Index</a>
+  <!-- Include all versions of the docs -->
+  <!-- https://holzhaus.github.io/sphinx-multiversion/master/templates.html -->
+  {% if versions %}
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul>
+  {%- for item in versions|reverse %}
+    <li><a href="{{ item.url }}">{{ item.name }}</a></li>
+  {%- endfor %}
+  </ul>
+  {% endif %}
+{% endblock %}

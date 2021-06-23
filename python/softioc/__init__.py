@@ -1,1 +1,0 @@
-'''Python soft IOC module.'''

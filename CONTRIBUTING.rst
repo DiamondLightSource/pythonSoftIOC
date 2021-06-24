@@ -17,6 +17,8 @@ To get the source source code and run the unit tests, run::
 
     $ git clone git://github.com/dls-controls/pythonIoc.git
     $ cd pythonIoc
+    $ git submodule init
+    $ git submodule update
     $ pipenv install --dev
     $ pipenv run tests
 

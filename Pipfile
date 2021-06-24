@@ -8,7 +8,6 @@ pytest-cov = "*"
 pytest-flake8 = "*"
 sphinx-rtd-theme = "*"
 setuptools-dso = "*"
-aioca = "*"
 pytest-asyncio = "*"
 
 [packages]
@@ -19,7 +18,7 @@ epicscorelibs = "*"
 # Add some other useful extras
 cothread = "*"
 scipy = "*"
-aioca = "*"
+aioca = ">=1.1"
 
 [scripts]
 # Put coverage here so we don't interfere with debugging in the IDE

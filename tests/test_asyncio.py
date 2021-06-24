@@ -19,6 +19,9 @@ def asyncio_ioc():
         cmd, stdin=subprocess.PIPE,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     yield proc
+    # purge the channels before the event loop goes
+    from aioca import purge_channel_caches
+    purge_channel_caches()
     if proc.returncode is None:
         # still running, kill it and print the output
         proc.kill()

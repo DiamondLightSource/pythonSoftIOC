@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Installation Tutorial &mdash; pythonIoc 3.0b1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Creating an IOC" href="creating-an-ioc.html" />
+    <link rel="prev" title="Tutorials" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0b1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-your-version-of-python">Check your version of python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-virtual-environment">Create a virtual environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-the-library">Installing the library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/index.html">How-to Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/index.html">Explanations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+</ul>
+
+            
+          
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Tutorials</a> &raquo;</li>
+        
+      <li>Installation Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tutorials/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation-tutorial">
+<h1>Installation Tutorial<a class="headerlink" href="#installation-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For installation inside DLS, please see the internal documentation on
+<code class="docutils literal notranslate"><span class="pre">dls-python3</span></code> and <code class="docutils literal notranslate"><span class="pre">pipenv</span></code>. Although these instructions will work
+inside DLS, they are intended for external use.</p>
+<p>If you want to contribute to the library itself, please following
+the <a class="reference internal" href="../reference/contributing.html#contributing"><span class="std std-ref">Contributing</span></a> instructions.</p>
+</div>
+<div class="section" id="check-your-version-of-python">
+<h2>Check your version of python<a class="headerlink" href="#check-your-version-of-python" title="Permalink to this headline">¶</a></h2>
+<p>You will need python 3.7 or later. You can check your version of python by
+typing into a terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-a-virtual-environment">
+<h2>Create a virtual environment<a class="headerlink" href="#create-a-virtual-environment" title="Permalink to this headline">¶</a></h2>
+<p>It is recommended that you install into a “virtual environment” so this
+installation will not interfere with any existing Python software:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">venv</span>
+<span class="n">source</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-the-library">
+<h2>Installing the library<a class="headerlink" href="#installing-the-library" title="Permalink to this headline">¶</a></h2>
+<p>You can now use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to install the library:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">softioc</span>
+</pre></div>
+</div>
+<p>Optionally on Linux or MacOS you can install cothread, which is used in the
+first tutorial:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">cothread</span>
+</pre></div>
+</div>
+<p>If you require a feature that is not currently released you can also install
+from github:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">dls</span><span class="o">-</span><span class="n">controls</span><span class="o">/</span><span class="n">pythonIoc</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>The library should now be installed and the commandline interface on your path.
+You can check the version that has been installed by typing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pythonIoc</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="creating-an-ioc.html" class="btn btn-neutral float-right" title="Creating an IOC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

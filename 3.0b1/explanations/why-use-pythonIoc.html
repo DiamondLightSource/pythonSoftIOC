@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Why use pythonIOC? &mdash; pythonIoc 3.0b1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Explanations" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0b1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/index.html">How-to Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Explanations</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Why use pythonIOC?</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#calculating-pvs-from-other-values">Calculating PVs from other values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dynamically-created-pvs">Dynamically created PVs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#existing-python-support">Existing Python Support</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+</ul>
+
+            
+          
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Explanations</a> &raquo;</li>
+        
+      <li>Why use pythonIOC?</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/explanations/why-use-pythonIoc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="why-use-pythonioc">
+<h1>Why use pythonIOC?<a class="headerlink" href="#why-use-pythonioc" title="Permalink to this headline">¶</a></h1>
+<p>EPICS IOCs are flexible and modular, why do we need to wrap it in Python? This
+page attempts to answer that question and list a few good use-cases for it.</p>
+<div class="section" id="calculating-pvs-from-other-values">
+<h2>Calculating PVs from other values<a class="headerlink" href="#calculating-pvs-from-other-values" title="Permalink to this headline">¶</a></h2>
+<p>Some use cases require PVs to be calculated from multiple sources. This is
+possible in EPICS records with <code class="docutils literal notranslate"><span class="pre">calc</span></code> or <code class="docutils literal notranslate"><span class="pre">aSub</span></code> records, but pythonIoc
+allows you to write this as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">cothread.catools</span> <span class="kn">import</span> <span class="n">caget</span><span class="p">,</span> <span class="n">camonitor</span>
+<span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">builder</span><span class="p">,</span> <span class="n">softioc</span>
+
+<span class="c1"># The PVs we want to average and their initial values</span>
+<span class="n">PVs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;DEVICE</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">:CURRENT&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)]</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">caget</span><span class="p">(</span><span class="n">PVs</span><span class="p">))</span>
+
+<span class="c1"># The PV we want to serve</span>
+<span class="n">avg</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">aOut</span><span class="p">(</span><span class="s2">&quot;AVERAGE:CURRENT&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+
+<span class="c1"># Start the IOC</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
+<span class="c1"># Make a monitor on the PVs to keep the value up to date</span>
+<span class="k">def</span> <span class="nf">update_avg</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">avg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+
+<span class="n">camonitor</span><span class="p">(</span><span class="n">PVs</span><span class="p">,</span> <span class="n">update_avg</span><span class="p">)</span>
+
+<span class="c1"># Leave the IOC running with an interactive shell.</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>ADD THE CONCENTRATOR USE CASE HERE</p>
+</div>
+<div class="section" id="dynamically-created-pvs">
+<h2>Dynamically created PVs<a class="headerlink" href="#dynamically-created-pvs" title="Permalink to this headline">¶</a></h2>
+<p>Other use cases will require PVs to be created based on the features of a
+device. As EPICS database records are statically created at IOC boot, you
+can generate the database with a script, but pythonIoc allows you to write
+this as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">my_device_lib</span> <span class="kn">import</span> <span class="n">Device</span>
+<span class="kn">import</span> <span class="nn">cothread</span>
+<span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">builder</span><span class="p">,</span> <span class="n">softioc</span>
+
+<span class="c1"># Connect to the device</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="s2">&quot;hostname&quot;</span><span class="p">)</span>
+<span class="n">device</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+<span class="c1"># Make a record for each parameter it has</span>
+<span class="n">records</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">get_params</span><span class="p">():</span>
+    <span class="n">records</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">aIn</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+<span class="c1"># Start the IOC</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
+<span class="c1"># Poll the device for changes and update the records</span>
+<span class="k">def</span> <span class="nf">update_params</span><span class="p">():</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">poll_changed_params</span><span class="p">():</span>
+            <span class="n">records</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+<span class="n">cothread</span><span class="o">.</span><span class="n">Spawn</span><span class="p">(</span><span class="n">update_params</span><span class="p">)</span>
+
+<span class="c1"># Leave the IOC running with an interactive shell.</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>ADD THE PANDA USE CASE HERE</p>
+</div>
+<div class="section" id="existing-python-support">
+<h2>Existing Python Support<a class="headerlink" href="#existing-python-support" title="Permalink to this headline">¶</a></h2>
+<p>It may be that you have specific device support written in Python that you wish
+to expose as PVs. This could be either in the form of a device support library
+or using a Python library to calculate PV values as above.</p>
+<p>ADD THE FURKA/GRIMSEL MONITORING IOC USE CASE HERE</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../reference/index.html" class="btn btn-neutral float-right" title="Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Explanations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

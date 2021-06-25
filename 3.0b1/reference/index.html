@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Reference &mdash; pythonIoc 3.0b1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Why use pythonIOC?" href="../explanations/why-use-pythonIoc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0b1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/index.html">How-to Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/index.html">Explanations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/reference/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="reference">
+<span id="id1"></span><h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<p>Technical reference material, for classes, methods, APIs, commands, and contributing to the project.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#softioc"><code class="docutils literal notranslate"><span class="pre">softioc</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#top-level-ioc-interface-softioc-softioc">Top Level IOC Interface: <code class="xref any docutils literal notranslate"><span class="pre">softioc.softioc</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#asyncio-dispatcher-softioc-asyncio-dispatcher">Asyncio Dispatcher: <code class="xref any docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#creating-records-softioc-builder">Creating Records: <code class="xref any docutils literal notranslate"><span class="pre">softioc.builder</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#alarm-value-definitions-softioc-alarm">Alarm Value Definitions: <code class="xref any docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#automatic-pv-logging-softioc-pvlog">Automatic PV logging: <code class="xref any docutils literal notranslate"><span class="pre">softioc.pvlog</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#record-support-in-the-python-soft-ioc-softioc-device">Record Support in the Python Soft IOC: <code class="xref any docutils literal notranslate"><span class="pre">softioc.device</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#working-with-in-records">Working with IN records</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#working-with-out-records">Working with OUT records</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#running-the-tests">Running the tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#code-styling">Code Styling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#release-checklist">Release Checklist</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../explanations/why-use-pythonIoc.html" class="btn btn-neutral float-left" title="Why use pythonIOC?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

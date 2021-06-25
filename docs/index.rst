@@ -6,29 +6,29 @@ How the documentation is structured
 
 .. rst-class:: columns
 
-:ref:`tutorials`
-~~~~~~~~~~~~~~~~
+`tutorials`
+~~~~~~~~~~~
 
 Tutorials for installation, library and commandline usage. New users start here.
 
 .. rst-class:: columns
 
-:ref:`how-to`
-~~~~~~~~~~~~~
+`how-to`
+~~~~~~~~
 
 Practical step-by-step guides for the more experienced user.
 
 .. rst-class:: columns
 
-:ref:`explanations`
-~~~~~~~~~~~~~~~~~~~
+`explanations`
+~~~~~~~~~~~~~~
 
 Explanation of how the library works and why it works that way.
 
 .. rst-class:: columns
 
-:ref:`reference`
-~~~~~~~~~~~~~~~~
+`reference`
+~~~~~~~~~~~
 
 Technical reference material, for classes, methods, APIs, commands, and contributing to the project.
 
@@ -40,35 +40,9 @@ About the documentation
 `Why is the documentation structured this way? <https://documentation.divio.com>`_
 
 .. toctree::
-    :caption: Tutorials
-    :name: tutorials
-    :maxdepth: 1
+    :hidden:
 
-    tutorials/installation
-    tutorials/creating-an-ioc
-
-.. toctree::
-    :caption: How-to Guides
-    :name: how-to
-    :maxdepth: 1
-
-    how-to/use-asyncio-in-an-ioc
-
-.. toctree::
-    :caption: Explanations
-    :name: explanations
-    :maxdepth: 1
-
-    explanations/why-use-pythonIoc
-
-.. rst-class:: no-margin-after-ul
-
-.. toctree::
-    :caption: Reference
-    :name: reference
-    :maxdepth: 1
-
-    reference/api
-    reference/contributing
-
-* :ref:`genindex`
+    tutorials/index
+    how-to/index
+    explanations/index
+    reference/index

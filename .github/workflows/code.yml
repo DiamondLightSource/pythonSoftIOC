@@ -84,6 +84,7 @@ jobs:
         run: cibuildwheel --output-dir dist
         env:
           CIBW_BUILD: ${{ matrix.python }}*64
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux1
           CIBW_TEST_REQUIRES: pytest-cov ${{ matrix.test_requires }}
           CIBW_TEST_COMMAND: pytest --cov=softioc {project}/tests --cov-report xml:${{ matrix.cov_file }}
           # Disable auditwheel as it isn't compatible with setuptools_dso approach

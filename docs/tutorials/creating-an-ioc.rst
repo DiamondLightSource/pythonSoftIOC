@@ -1,126 +1,79 @@
 Creating an IOC
 ===============
 
-THIS NEEDS UPDATING
-
-Using ``pythonSoftIoc``
------------------------
-
-Probably the best way to use ``pythonSoftIoc`` is to start by copying fragments
-of a simple example such as ``CS-DI-IOC-02``.  This consists of the following
-elements:
-
-1.  A startup shell script ``start-ioc`` which launches the soft IOC using a
-    production build of ``pythonSoftIoc``.  This script typically looks like
-    this::
-
-        #!/bin/sh
-
-        PYIOC=/path/to/pythonSoftIoc/pythonIoc
-
-        cd "$(dirname "$0")"
-        exec $PYIOC start_ioc.py "$@"
-
-2.  The startup Python script.  This establishes the essential component
-    versions (apart from the ``pythonSoftIoc`` version), performs the appropriate
-    initialisation and starts the IOC running.  The following template is a
-    useful starting point::
-
-        from pkg_resources import require
-        require('cothread==2.12')
-        require('epicsdbbuilder==1.0')
-
-        # Import the basic framework components.
-        from softioc import softioc, builder
-        import cothread
-
-        # Import any modules required to run the IOC
-        import ...
-
-        # Boilerplate get the IOC started
-        builder.LoadDatabase()
-        softioc.iocInit()
-
-        # Start processes required to be run after iocInit
-        ...
-
-        # Finally leave the IOC running with an interactive shell.
-        softioc.interactive_ioc(globals())
-
-    Note that the use of ``require`` is specific to DLS, and you may have a
-    different way of managing your installations.
-
-..  _numpy: http://www.numpy.org/
-..  _cothread: https://github.com/dls-controls/cothread
-..  _epicsdbbuilder: https://github.com/Araneidae/epicsdbbuilder
-
-
-
 Introduction
 ------------
 
-The Python Soft IOC consists of two components: a command ``pythonIoc`` and an
-associated library :mod:`softioc`.  The ``pythonIoc`` command consists of a bare
-EPICS IOC linked together with the DLS Python interpreter and configured so that
-startup arguments are interpreted by the Python interpreter -- this means that
-when ``pythonIoc`` is run it behaves the same as running ``dls-python``.
-
-Scripts run from within ``pythonIoc`` differ from standard Python scripts in one
-detail: they have the ability to create and publish PVs through the
-:mod:`softioc` library.  Typically both :mod:`cothread` and
-:mod:`epicsdbbuilder` will be recruited to help: :mod:`cothread` is used for
-dispatching OUT record processing callback methods, :mod:`epicsdbbuilder` is
-used for constructing records during IOC initialisation.
+Once the module has been installed (see :doc:`installation`) we can create a 
+simple EPICS Input/Output Controller (IOC). 
 
 An EPICS IOC created with the help of ``pythonIoc`` and :mod:`softioc` is
 referred to as a "Python soft IOC".  The code below illustrates a simple IOC
-with one PV::
+with two Process Variables (PVs):
 
-    # DLS requires
-    from pkg_resources import require
-    require('cothread==2.12')
-    require('epicsdbbuilder==1.0')
-
-    # Import basic softioc framework
-    from softioc import softioc, builder
-
-    # Create PVs
-    builder.SetDeviceName('TS-TEST-TEST-01')
-    builder.stringIn('TEST', initial_value = 'This is a test')
-
-    # Run the IOC.  This is boilerplate, and must always be done in this order,
-    # and must always be done after creating all PVs.
-    builder.LoadDatabase()
-    softioc.iocInit()
-
-    softioc.interactive_ioc(globals())
+.. literalinclude:: ../examples/example_cothread_ioc.py
 
 This example script illustrates the following points.
 
-- The use of ``pkg_resources.require`` is standard across all use of the
-  ``dls-python`` Python interpreter at Diamond, and in this example we are using
-  both :mod:`cothread` and :mod:`epicsdbbuilder`.  Of course, in an officially
-  published IOC specific versions must be specified, in this example I'm using
-  the most recent versions at the time of writing.
+.. literalinclude:: ../examples/example_cothread_ioc.py
+    :start-after: # Import
+    :end-before: # Set
 
-- The :mod:`softioc` library is part of ``pythonIoc`` and is automatically added
-  to the path.  The two submodules :mod:`softioc.softioc` and
-  :mod:`softioc.builder` provide the basic functionality for Python soft IOCs
-  and are the ones that are normally used.
+The :mod:`softioc` library is part of ``pythonIoc``. The two submodules 
+:mod:`softioc.softioc` and :mod:`softioc.builder` provide the basic 
+functionality for Python soft IOCs and are the ones that are normally used.
 
-- PVs are normally created dynamically using :mod:`softioc.builder`.  All PV
-  creation must be done before initialising the IOC.
 
-- Once PVs have been created then the associated EPICS database can be created
-  and loaded into the IOC and then the IOC can be started.
+.. literalinclude:: ../examples/example_cothread_ioc.py
+    :start-after: # Create 
+    :end-before: # Boilerplate
 
-- Finally the application must refrain from exiting until the IOC is no longer
-  needed.  The :func:`~softioc.softioc.interactive_ioc` runs a Python
-  interpreter shell with a number of useful EPICS functions in scope, and
-  passing ``globals()`` through can allow interactive interaction with the
-  internals of the IOC while it's running.  The alternative is to call something
-  like :func:`cothread.WaitForQuit` or some other :mod:`cothread` blocking
-  action.
+PVs are normally created dynamically using :mod:`softioc.builder`.  All PV
+creation must be done before initialising the IOC. We define `on_update` for
+``ao`` such that whenever we set ``ao``, ``ai`` will be set to the same value.
+
+.. literalinclude:: ../examples/example_cothread_ioc.py
+    :start-after: # Boilerplate 
+    :end-before: # Start
+
+Once PVs have been created then the associated EPICS database can be created
+and loaded into the IOC and then the IOC can be started.
+
+.. literalinclude:: ../examples/example_cothread_ioc.py
+    :start-after: # Start 
+    :end-before: # Finally
+
+We define a long-running operation that will increment the value of ``ai`` once per
+second. This is run as a background process by `cothread`. 
+
+.. literalinclude:: ../examples/example_cothread_ioc.py
+    :start-after: # Finally 
+
+Finally the application must refrain from exiting until the IOC is no longer
+needed.  The :func:`~softioc.softioc.interactive_ioc` runs a Python
+interpreter shell with a number of useful EPICS functions in scope, and
+passing ``globals()`` through can allow interactive interaction with the
+internals of the IOC while it's running.  The alternative is to call something
+like :func:`cothread.WaitForQuit` or some other :mod:`cothread` blocking
+action.
+
+In this interpreter there is immediate access to methods defined in the 
+:mod:`softioc.softioc` module. For example the :func:`~softioc.softioc.dbgf` function
+can be run to observe the increasing value of ``ai``::
+
+    >>> dbgf("MY-DEVICE-PREFIX:AI")
+    DBF_DOUBLE:         36
+    >>> dbgf("MY-DEVICE-PREFIX:AI")
+    DBF_DOUBLE:         37
+
+And the :func:`~softioc.softioc.dbpf` method allows data to be set and to observe
+the functionality of the lambda passed to `on_update` . We set the value on ``ao`` 
+and read the value on ``ai`` (exact values may vary based on time between commands)::
+
+    >>> dbpf("MY-DEVICE-PREFIX:AO","999")
+    DBF_DOUBLE:         999       
+    >>> dbgf("MY-DEVICE-PREFIX:AI")
+    DBF_DOUBLE:         1024   
 
 
 Creating a Publishable IOC
@@ -247,3 +200,8 @@ done (:class:`cothread.Spawn` is recommended for initiating persistent backgroun
 activity) the top level script must pause, as as soon as it exits the IOC will
 exit.  Calling :func:`~softioc.softioc.interactive_ioc` is recommended for this
 as the last statement in the top level script.
+
+
+..  _numpy: http://www.numpy.org/
+..  _cothread: https://github.com/dls-controls/cothread
+..  _epicsdbbuilder: https://github.com/Araneidae/epicsdbbuilder

@@ -6,7 +6,7 @@ PythonIOC
 
 This module allows an EPICS IOC with Python Device Support to be run from within
 the Python interpreter. Records can be programmatically created and arbitrary
-Python code run to updated them and respond to caputs. It supports cothread and
+Python code run to update them and respond to caputs. It supports cothread and
 asyncio for concurrency.
 
 ============== ==============================================================

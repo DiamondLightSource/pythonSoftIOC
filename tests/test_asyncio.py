@@ -51,7 +51,7 @@ async def test_asyncio_ioc(asyncio_ioc):
     await caput(PV_PREFIX + ":AO2", 3.56, wait=True)
     await asyncio.sleep(0.1)
     assert await caget(PV_PREFIX + ":AI") == 12.34
-    await asyncio.sleep(0.6)
+    await asyncio.sleep(0.8)
     assert await caget(PV_PREFIX + ":AI") == 3.56
     # Wait for a bit longer for the print output to flush
     await asyncio.sleep(2)

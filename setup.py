@@ -6,6 +6,7 @@ import epicscorelibs.path
 import epicscorelibs.version
 from setuptools_dso import Extension, setup
 from epicscorelibs.config import get_config_var
+from wheel.bdist_wheel import bdist_wheel
 
 # Place the directory containing _version_git on the path
 for path, _, filenames in os.walk(os.path.dirname(os.path.abspath(__file__))):
@@ -89,8 +90,15 @@ class Develop(develop):
         if not os.path.exists(link):
             os.symlink(os.path.join(self.install_dir, "epicscorelibs"), link)
 
+class Wheel(bdist_wheel):
+    def get_tag(self):
+        impl, abi_tag, plat_name = bdist_wheel.get_tag(self)
+        plat_name = plat_name.replace("linux", "manylinux1")
+        return (impl, abi_tag, plat_name)
+
+
 setup(
-    cmdclass=dict(develop=Develop, **get_cmdclass()),
+    cmdclass=dict(develop=Develop, bdist_wheel=Wheel, **get_cmdclass()),
     version=__version__,
     ext_modules = [ext],
     install_requires = [

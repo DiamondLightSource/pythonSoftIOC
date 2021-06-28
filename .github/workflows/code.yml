@@ -88,7 +88,7 @@ jobs:
           CIBW_TEST_COMMAND: pytest --cov=softioc {project}/tests --cov-report xml:${{ matrix.cov_file }}
           # Disable auditwheel as it isn't compatible with setuptools_dso approach
           # https://github.com/mdavidsaver/setuptools_dso/issues/17
-          # CIBW_REPAIR_WHEEL_COMMAND: ''
+          CIBW_REPAIR_WHEEL_COMMAND: ""
 
       - name: Upload Wheel and Sdist
         uses: actions/upload-artifact@v2

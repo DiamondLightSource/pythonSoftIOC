@@ -15,6 +15,12 @@ from .device_core import DeviceSupportCore, RecordLookup
 dispatcher = None
 
 
+# EPICS processing return codes
+EPICS_OK = 0
+EPICS_ERROR = 1
+NO_CONVERT = 2
+
+
 class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     '''Implements canonical default processing for records with a _process
     method.  Processing typically either copies a locally set value into the
@@ -25,11 +31,15 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     # will have to override this to also add their special_linconv method.
     _dset_extra_ = ([('process', CFUNCTYPE(c_int, c_void_p))], [0])
 
+    # For some record types we want to return a different return code either
+    # from record init or processing
+    _epics_rc = EPICS_OK
+
     # Default implementations of read and write, overwritten where necessary.
     def _read_value(self, record):
-        return getattr(record, self._val_field_)
+        return getattr(record, 'VAL')
     def _write_value(self, record, value):
-        setattr(record, self._val_field_, value)
+        setattr(record, 'VAL', value)
 
 
 class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
@@ -59,7 +69,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         self.process_severity(record, severity, alarm)
         if timestamp is not None:
             record.TIME = timestamp
-        return 0
+        return self._epics_rc
 
     def set(self, value,
             severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM, timestamp=None):
@@ -112,7 +122,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             record.TIME = time.time()
             record.UDF = 0
             recGblResetAlarms(record)
-        return self.__super.init_record(record)
+        return self._epics_rc
 
     def _process(self, record):
         '''Processing suitable for output records.  Performs immediate value
@@ -120,7 +130,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         value = self._read_value(record)
         if numpy.all(value == self._value) and not self.__always_update:
             # If the value isn't making a change then don't do anything.
-            return 0
+            return EPICS_OK
         if self.__enable_write and self.__validate and \
                 not self.__validate(self, value):
             # Asynchronous validation rejects value.  It's up to the
@@ -128,12 +138,12 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             # last good value.
             if self._value is not None:
                 self._write_value(record, self._value)
-            return 1
+            return EPICS_ERROR
 
         self._value = value
         if self.__on_update and self.__enable_write:
             dispatcher(self.__on_update, value)
-        return 0
+        return EPICS_OK
 
 
     NumpyCharCodeToDbr = {
@@ -209,16 +219,14 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return self._value
 
 
-def _Device(Base, record_type, rval=False, mlst=False, default=0):
+def _Device(Base, record_type, mlst=False, default=0, convert=True):
     '''Wrapper for generating simple records.'''
-    val_field = 'RVAL' if rval else 'VAL'
-
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type
-        _val_field_ = val_field
         _default_ = default
-        _fields_ = ['UDF', val_field]
+        _fields_ = ['UDF', 'VAL']
+        _epics_rc = EPICS_OK if convert else NO_CONVERT
         if mlst:
             _fields_.append('MLST')
 
@@ -231,20 +239,18 @@ _Out = ProcessDeviceSupportOut
 def _Device_In(type, **kargs):
     return _Device(_In,  type, **kargs)
 
-def _Device_Out(type, rval=False, mlst=True):
-    return _Device(_Out, type, rval=rval, mlst=mlst, default=None)
+def _Device_Out(type, convert=True, mlst=True):
+    return _Device(_Out, type, convert=convert, mlst=mlst, default=None)
 
 longin = _Device_In('longin')
 longout = _Device_Out('longout')
-bi = _Device_In('bi', rval=True)
-bo = _Device_Out('bo', rval=True)
+bi = _Device_In('bi', convert=False)
+bo = _Device_Out('bo', convert=False)
 stringin = _Device_In('stringin', mlst=False, default='')
 stringout = _Device_Out('stringout', mlst=False)
-mbbi = _Device_In('mbbi', rval=True)
-mbbo = _Device_Out('mbbo', rval=True)
+mbbi = _Device_In('mbbi', convert=False)
+mbbo = _Device_Out('mbbo', convert=False)
 
-
-NO_CONVERT = 2
 
 dset_process_linconv = (
     [('process',         CFUNCTYPE(c_int, c_void_p)),
@@ -257,10 +263,10 @@ dset_process_linconv = (
 class ai(ProcessDeviceSupportIn):
     _record_type_ = 'ai'
     _device_name_ = 'devPython_ai'
-    _val_field_ = 'VAL'
     _default_ = 0.0
     _fields_ = ['UDF', 'VAL']
     _dset_extra_ = dset_process_linconv
+    _epics_rc = NO_CONVERT
 
     def _process(self, record):
         _value = self._value
@@ -270,17 +276,12 @@ class ai(ProcessDeviceSupportIn):
         record.UDF = int(numpy.isnan(_value[0]))
         return NO_CONVERT
 
-
 class ao(ProcessDeviceSupportOut):
     _record_type_ = 'ao'
     _device_name_ = 'devPython_ao'
-    _val_field_ = 'VAL'
     _fields_ = ['UDF', 'VAL', 'MLST']
     _dset_extra_ = dset_process_linconv
-
-    def init_record(self, record):
-        self.__super.init_record(record)
-        return NO_CONVERT
+    _epics_rc = NO_CONVERT
 
 
 

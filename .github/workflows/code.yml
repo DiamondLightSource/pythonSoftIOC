@@ -75,7 +75,7 @@ jobs:
           python-version: '3.7'
 
       - name: Install Python Dependencies
-        run: pip install twine build cibuildwheel
+        run: pip install build cibuildwheel
 
       - name: Build Sdist
         run: python -m build --sdist .
@@ -112,6 +112,9 @@ jobs:
         with:
           name: dist
           path: dist
+
+      - name: Install Python Dependencies
+        run: pip install twine
 
       - name: Publish to PyPI
         env:

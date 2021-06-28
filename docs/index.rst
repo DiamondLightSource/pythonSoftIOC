@@ -4,31 +4,34 @@
 How the documentation is structured
 -----------------------------------
 
+Documentation is split into four categories, accessible from links below or in
+the side-bar. Use the links below or in the side-bar.
+
 .. rst-class:: columns
 
-:ref:`tutorials`
-~~~~~~~~~~~~~~~~
+Tutorials
+~~~~~~~~~
 
 Tutorials for installation, library and commandline usage. New users start here.
 
 .. rst-class:: columns
 
-:ref:`how-to`
+How-to Guides
 ~~~~~~~~~~~~~
 
 Practical step-by-step guides for the more experienced user.
 
 .. rst-class:: columns
 
-:ref:`explanations`
-~~~~~~~~~~~~~~~~~~~
+Explanations
+~~~~~~~~~~~~
 
 Explanation of how the library works and why it works that way.
 
 .. rst-class:: columns
 
-:ref:`reference`
-~~~~~~~~~~~~~~~~
+Reference
+~~~~~~~~~
 
 Technical reference material, for classes, methods, APIs, commands, and contributing to the project.
 
@@ -38,6 +41,9 @@ About the documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 `Why is the documentation structured this way? <https://documentation.divio.com>`_
+
+Table Of Contents
+-----------------
 
 .. toctree::
     :caption: Tutorials

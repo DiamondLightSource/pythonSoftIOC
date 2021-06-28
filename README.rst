@@ -1,4 +1,4 @@
-PythonIOC
+pythonIoc
 =========
 
 |code_ci| |docs_ci| |coverage| |pypi_version| |license|
@@ -58,8 +58,8 @@ A simple example of the use of this library:
     :target: https://codecov.io/gh/dls-controls/pythonIoc
     :alt: Test Coverage
 
-.. |pypi_version| image:: https://img.shields.io/pypi/v/pythonIoc.svg
-    :target: https://pypi.org/project/pythonIoc
+.. |pypi_version| image:: https://img.shields.io/pypi/v/softioc.svg
+    :target: https://pypi.org/project/softioc
     :alt: Latest PyPI version
 
 .. |license| image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg

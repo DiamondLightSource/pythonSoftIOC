@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.device &mdash; pythonIoc 2.16+28.g5b99b99 documentation</title>
+  <title>softioc.device &mdash; pythonIoc 2.16+29.g67c11e2 documentation</title>
   
 
   
@@ -235,6 +235,12 @@
 <span class="n">dispatcher</span> <span class="o">=</span> <span class="kc">None</span>
 
 
+<span class="c1"># EPICS processing return codes</span>
+<span class="n">EPICS_OK</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">EPICS_ERROR</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">NO_CONVERT</span> <span class="o">=</span> <span class="mi">2</span>
+
+
 <span class="k">class</span> <span class="nc">ProcessDeviceSupportCore</span><span class="p">(</span><span class="n">DeviceSupportCore</span><span class="p">,</span> <span class="n">RecordLookup</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Implements canonical default processing for records with a _process</span>
 <span class="sd">    method.  Processing typically either copies a locally set value into the</span>
@@ -245,11 +251,15 @@
     <span class="c1"># will have to override this to also add their special_linconv method.</span>
     <span class="n">_dset_extra_</span> <span class="o">=</span> <span class="p">([(</span><span class="s1">&#39;process&#39;</span><span class="p">,</span> <span class="n">CFUNCTYPE</span><span class="p">(</span><span class="n">c_int</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">))],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
+    <span class="c1"># For some record types we want to return a different return code either</span>
+    <span class="c1"># from record init or processing</span>
+    <span class="n">_epics_rc</span> <span class="o">=</span> <span class="n">EPICS_OK</span>
+
     <span class="c1"># Default implementations of read and write, overwritten where necessary.</span>
     <span class="k">def</span> <span class="nf">_read_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val_field_</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_write_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="nb">setattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val_field_</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ProcessDeviceSupportIn"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportIn">[docs]</a><span class="k">class</span> <span class="nc">ProcessDeviceSupportIn</span><span class="p">(</span><span class="n">ProcessDeviceSupportCore</span><span class="p">):</span>
@@ -279,7 +289,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">process_severity</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">record</span><span class="o">.</span><span class="n">TIME</span> <span class="o">=</span> <span class="n">timestamp</span>
-        <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epics_rc</span>
 
 <div class="viewcode-block" id="ProcessDeviceSupportIn.set"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportIn.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span>
             <span class="n">severity</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">,</span> <span class="n">alarm</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">UDF_ALARM</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -332,7 +342,7 @@
             <span class="n">record</span><span class="o">.</span><span class="n">TIME</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="n">record</span><span class="o">.</span><span class="n">UDF</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">recGblResetAlarms</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__super</span><span class="o">.</span><span class="n">init_record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epics_rc</span>
 
     <span class="k">def</span> <span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Processing suitable for output records.  Performs immediate value</span>
@@ -340,7 +350,7 @@
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_value</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__always_update</span><span class="p">:</span>
             <span class="c1"># If the value isn&#39;t making a change then don&#39;t do anything.</span>
-            <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">EPICS_OK</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate</span> <span class="ow">and</span> \
                 <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
             <span class="c1"># Asynchronous validation rejects value.  It&#39;s up to the</span>
@@ -348,12 +358,12 @@
             <span class="c1"># last good value.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_write_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
-            <span class="k">return</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">EPICS_ERROR</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__on_update</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span><span class="p">:</span>
             <span class="n">dispatcher</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__on_update</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">EPICS_OK</span>
 
 
     <span class="n">NumpyCharCodeToDbr</span> <span class="o">=</span> <span class="p">{</span>
@@ -429,16 +439,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">_Device</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">record_type</span><span class="p">,</span> <span class="n">rval</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_Device</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">record_type</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Wrapper for generating simple records.&#39;&#39;&#39;</span>
-    <span class="n">val_field</span> <span class="o">=</span> <span class="s1">&#39;RVAL&#39;</span> <span class="k">if</span> <span class="n">rval</span> <span class="k">else</span> <span class="s1">&#39;VAL&#39;</span>
-
     <span class="k">class</span> <span class="nc">GenericDevice</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
         <span class="n">_record_type_</span> <span class="o">=</span> <span class="n">record_type</span>
         <span class="n">_device_name_</span> <span class="o">=</span> <span class="s1">&#39;devPython_&#39;</span> <span class="o">+</span> <span class="n">record_type</span>
-        <span class="n">_val_field_</span> <span class="o">=</span> <span class="n">val_field</span>
         <span class="n">_default_</span> <span class="o">=</span> <span class="n">default</span>
-        <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="n">val_field</span><span class="p">]</span>
+        <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">]</span>
+        <span class="n">_epics_rc</span> <span class="o">=</span> <span class="n">EPICS_OK</span> <span class="k">if</span> <span class="n">convert</span> <span class="k">else</span> <span class="n">NO_CONVERT</span>
         <span class="k">if</span> <span class="n">mlst</span><span class="p">:</span>
             <span class="n">_fields_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;MLST&#39;</span><span class="p">)</span>
 
@@ -451,20 +459,18 @@
 <span class="k">def</span> <span class="nf">_Device_In</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">_Device</span><span class="p">(</span><span class="n">_In</span><span class="p">,</span>  <span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_Device_Out</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">rval</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">_Device</span><span class="p">(</span><span class="n">_Out</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">rval</span><span class="o">=</span><span class="n">rval</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="n">mlst</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_Device_Out</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_Device</span><span class="p">(</span><span class="n">_Out</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="n">convert</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="n">mlst</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
 <span class="n">longin</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;longin&#39;</span><span class="p">)</span>
 <span class="n">longout</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;longout&#39;</span><span class="p">)</span>
-<span class="n">bi</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;bi&#39;</span><span class="p">,</span> <span class="n">rval</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">bo</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">rval</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">bi</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;bi&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">bo</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">stringin</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;stringin&#39;</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="n">stringout</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;stringout&#39;</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">mbbi</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;mbbi&#39;</span><span class="p">,</span> <span class="n">rval</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">mbbo</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;mbbo&#39;</span><span class="p">,</span> <span class="n">rval</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">mbbi</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;mbbi&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mbbo</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;mbbo&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-
-<span class="n">NO_CONVERT</span> <span class="o">=</span> <span class="mi">2</span>
 
 <span class="n">dset_process_linconv</span> <span class="o">=</span> <span class="p">(</span>
     <span class="p">[(</span><span class="s1">&#39;process&#39;</span><span class="p">,</span>         <span class="n">CFUNCTYPE</span><span class="p">(</span><span class="n">c_int</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">)),</span>
@@ -477,10 +483,10 @@
 <span class="k">class</span> <span class="nc">ai</span><span class="p">(</span><span class="n">ProcessDeviceSupportIn</span><span class="p">):</span>
     <span class="n">_record_type_</span> <span class="o">=</span> <span class="s1">&#39;ai&#39;</span>
     <span class="n">_device_name_</span> <span class="o">=</span> <span class="s1">&#39;devPython_ai&#39;</span>
-    <span class="n">_val_field_</span> <span class="o">=</span> <span class="s1">&#39;VAL&#39;</span>
     <span class="n">_default_</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">]</span>
     <span class="n">_dset_extra_</span> <span class="o">=</span> <span class="n">dset_process_linconv</span>
+    <span class="n">_epics_rc</span> <span class="o">=</span> <span class="n">NO_CONVERT</span>
 
     <span class="k">def</span> <span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
         <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
@@ -490,17 +496,12 @@
         <span class="n">record</span><span class="o">.</span><span class="n">UDF</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">NO_CONVERT</span>
 
-
 <span class="k">class</span> <span class="nc">ao</span><span class="p">(</span><span class="n">ProcessDeviceSupportOut</span><span class="p">):</span>
     <span class="n">_record_type_</span> <span class="o">=</span> <span class="s1">&#39;ao&#39;</span>
     <span class="n">_device_name_</span> <span class="o">=</span> <span class="s1">&#39;devPython_ao&#39;</span>
-    <span class="n">_val_field_</span> <span class="o">=</span> <span class="s1">&#39;VAL&#39;</span>
     <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">,</span> <span class="s1">&#39;MLST&#39;</span><span class="p">]</span>
     <span class="n">_dset_extra_</span> <span class="o">=</span> <span class="n">dset_process_linconv</span>
-
-    <span class="k">def</span> <span class="nf">init_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__super</span><span class="o">.</span><span class="n">init_record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">NO_CONVERT</span>
+    <span class="n">_epics_rc</span> <span class="o">=</span> <span class="n">NO_CONVERT</span>
 
 
 

@@ -53,6 +53,7 @@ About the documentation
     :maxdepth: 1
 
     how-to/use-asyncio-in-an-ioc
+    how-to/make-publishable-ioc
 
 .. toctree::
     :caption: Explanations

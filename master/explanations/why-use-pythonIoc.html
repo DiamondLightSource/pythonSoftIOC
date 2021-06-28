@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Why use pythonIOC? &mdash; pythonIoc 2.16+29.g67c11e2 documentation</title>
+  <title>Why use pythonIOC? &mdash; pythonIoc 2.16+31.ga743f63 documentation</title>
   
 
   
@@ -132,10 +132,11 @@
   <a href="../genindex.html">Index</a>
   <!-- Add versions for selected branches + tags -->
   <p class="caption"><span class="caption-text">Versions</span></p>
-  <ul id="versions"></ul>
+  <ul id="versions"/>
   <script>
-    // Versions to add, will be filtered by dirs
-    var versions = ['master'];
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
     var dirs = new Set();
     function addVersion(name) {
       if (dirs.has(name)) {
@@ -148,13 +149,13 @@
       }
     }
     Promise.all([
-      // Find gh-pages directories
+      // Find gh-pages directories and populate `dirs`
       fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
       .then(response => response.json())
       .then(data => data.forEach(function(e) {
         if (e.type == "dir") dirs.add(e.name);
       })),
-      // Add tags that have pages
+      // Add tags to `versions`
       fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
         .then(response => response.json())
         .then(data => data.forEach(function(e) {
@@ -237,7 +238,7 @@ possible in EPICS records with <code class="docutils literal notranslate"><span 
 allows you to write this as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">cothread.catools</span> <span class="kn">import</span> <span class="n">caget</span><span class="p">,</span> <span class="n">camonitor</span>
-<span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">builder</span>
+<span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">builder</span><span class="p">,</span> <span class="n">softioc</span>
 
 <span class="c1"># The PVs we want to average and their initial values</span>
 <span class="n">PVs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;DEVICE</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">:CURRENT&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)]</span>
@@ -246,21 +247,56 @@ allows you to write this as:</p>
 <span class="c1"># The PV we want to serve</span>
 <span class="n">avg</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">aOut</span><span class="p">(</span><span class="s2">&quot;AVERAGE:CURRENT&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
 
+<span class="c1"># Start the IOC</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
 <span class="c1"># Make a monitor on the PVs to keep the value up to date</span>
 <span class="k">def</span> <span class="nf">update_avg</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="n">values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
     <span class="n">avg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
 
 <span class="n">camonitor</span><span class="p">(</span><span class="n">PVs</span><span class="p">,</span> <span class="n">update_avg</span><span class="p">)</span>
+
+<span class="c1"># Leave the IOC running with an interactive shell.</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
 </pre></div>
 </div>
 <p>ADD THE CONCENTRATOR USE CASE HERE</p>
 </div>
 <div class="section" id="dynamically-created-pvs">
 <h2>Dynamically created PVs<a class="headerlink" href="#dynamically-created-pvs" title="Permalink to this headline">¶</a></h2>
-<p>Other use cases will do something like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">connect</span> <span class="n">to</span> <span class="n">device</span>
-<span class="n">make</span> <span class="n">PVs</span>
+<p>Other use cases will require PVs to be created based on the features of a
+device. As EPICS database records are statically created at IOC boot, you
+can generate the database with a script, but pythonIoc allows you to write
+this as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">my_device_lib</span> <span class="kn">import</span> <span class="n">Device</span>
+<span class="kn">import</span> <span class="nn">cothread</span>
+<span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">builder</span><span class="p">,</span> <span class="n">softioc</span>
+
+<span class="c1"># Connect to the device</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="s2">&quot;hostname&quot;</span><span class="p">)</span>
+<span class="n">device</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+<span class="c1"># Make a record for each parameter it has</span>
+<span class="n">records</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">get_params</span><span class="p">():</span>
+    <span class="n">records</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">aIn</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+<span class="c1"># Start the IOC</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
+<span class="c1"># Poll the device for changes and update the records</span>
+<span class="k">def</span> <span class="nf">update_params</span><span class="p">():</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">poll_changed_params</span><span class="p">():</span>
+            <span class="n">records</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+<span class="n">cothread</span><span class="o">.</span><span class="n">Spawn</span><span class="p">(</span><span class="n">update_params</span><span class="p">)</span>
+
+<span class="c1"># Leave the IOC running with an interactive shell.</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
 </pre></div>
 </div>
 <p>ADD THE PANDA USE CASE HERE</p>
@@ -268,8 +304,9 @@ allows you to write this as:</p>
 <div class="section" id="existing-python-support">
 <h2>Existing Python Support<a class="headerlink" href="#existing-python-support" title="Permalink to this headline">¶</a></h2>
 <p>It may be that you have specific device support written in Python that you wish
-to expose as PVs.</p>
-<p>NEED A GOOD EXAMPLE HERE</p>
+to expose as PVs. This could be either in the form of a device support library
+or using a Python library to calculate PV values as above.</p>
+<p>ADD THE FURKA/GRIMSEL MONITORING IOC USE CASE HERE</p>
 </div>
 </div>
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.softioc &mdash; pythonIoc 2.16+29.g67c11e2 documentation</title>
+  <title>softioc.softioc &mdash; pythonIoc 2.16+31.ga743f63 documentation</title>
   
 
   
@@ -125,10 +125,11 @@
   <a href="../../genindex.html">Index</a>
   <!-- Add versions for selected branches + tags -->
   <p class="caption"><span class="caption-text">Versions</span></p>
-  <ul id="versions"></ul>
+  <ul id="versions"/>
   <script>
-    // Versions to add, will be filtered by dirs
-    var versions = ['master'];
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
     var dirs = new Set();
     function addVersion(name) {
       if (dirs.has(name)) {
@@ -141,13 +142,13 @@
       }
     }
     Promise.all([
-      // Find gh-pages directories
+      // Find gh-pages directories and populate `dirs`
       fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
       .then(response => response.json())
       .then(data => data.forEach(function(e) {
         if (e.type == "dir") dirs.add(e.name);
       })),
-      // Add tags that have pages
+      // Add tags to `versions`
       fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
         .then(response => response.json())
         .then(data => data.forEach(function(e) {

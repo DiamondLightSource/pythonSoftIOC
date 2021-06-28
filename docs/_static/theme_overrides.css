@@ -18,13 +18,13 @@
 }
 
 /* Add two-column option */
-@media only screen and (min-width: 1000px),
-       only screen and (min-width: 500px) and (max-width: 768px){
+@media only screen and (min-width: 1000px) {
     .columns {
-        padding-left: 5px;
-        padding-right: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
         float: left;
         width: 50%;
+        min-height: 145px;
     }
 }
 

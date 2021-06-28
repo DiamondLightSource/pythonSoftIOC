@@ -63,31 +63,30 @@ _mbbPrefixes = [
     'ZR', 'ON', 'TW', 'TH', 'FR', 'FV', 'SX', 'SV',     # 0-7
     'EI', 'NI', 'TE', 'EL', 'TV', 'TT', 'FT', 'FF']     # 8-15
 
-# Adds a list of (option, value [,severity]) tuples into field settings
+# Converts a list of (option [,severity]) values or tuples into field settings
 # suitable for mbbi and mbbo records.
-def _process_mbb_values(option_values, fields):
-    def process_value(prefix, option, value, severity=None):
+def _process_mbb_values(options, fields):
+    def process_value(prefix, value, option, severity=None):
         fields[prefix + 'ST'] = option
         fields[prefix + 'VL'] = value
         if severity:
             fields[prefix + 'SV'] = severity
-    for default_value, (prefix, value) in \
-            enumerate(zip(_mbbPrefixes, option_values)):
-        if isinstance(value, str):
-            # The value is a simple string naming the option.  Assign a
-            # default numerical value (and no severity setting).
-            process_value(prefix, value, default_value)
+    for prefix, (value, option) in zip(_mbbPrefixes, enumerate(options)):
+        if isinstance(value, tuple):
+            # The option is tuple consisting of the option name and an optional
+            # alarm severity.
+            process_value(prefix, value, *option)
         else:
-            # The value is two- or three-tuple consisting of an option name, a
-            # corresponding numerical value and an alarm severity.
-            process_value(prefix, *value)
+            # The option is a simple string naming the option.  Assign the
+            # default numerical value (and no severity setting).
+            process_value(prefix, value, option)
 
-def mbbIn(name, *option_values, **fields):
-    _process_mbb_values(option_values, fields)
+def mbbIn(name, *options, **fields):
+    _process_mbb_values(options, fields)
     return _in_record('mbbi', name, **fields)
 
-def mbbOut(name, *option_values, **fields):
-    _process_mbb_values(option_values, fields)
+def mbbOut(name, *options, **fields):
+    _process_mbb_values(options, fields)
     return PythonDevice.mbbo(name, OMSL = 'supervisory', **fields)
 
 

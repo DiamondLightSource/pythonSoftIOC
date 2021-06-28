@@ -263,18 +263,25 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
     Create ``stringin`` and ``stringout`` records.
 
 ..  function::
-        mbbIn(name, *option_values, **fields)
-        mbbOut(name, *option_values, **fields)
+        mbbIn(name, *options, **fields)
+        mbbOut(name, *options, **fields)
 
     Create ``mbbi`` and ``mbbo`` records.  Up to 16 options can be specified as
-    a list of two or three field tuples.  The first field of each tuple is the
-    option name, the second field is the option value, and the third optional
-    field is the option severity.  For example::
+    either an option name or a tuple of tw fields.  The name or first field of
+    the tuple names the option, and the second optional field is the option
+    severity.  For example::
 
         status = mbbIn('STATUS',
-            ('OK', 0),
-            ('FAILING', 1, alarm.MINOR_ALARM),
-            ('FAILED', 2, alarm.MAJOR_ALARM))
+            'OK',
+            ('FAILING', alarm.MINOR_ALARM),
+            ('FAILED', alarm.MAJOR_ALARM))
+
+    Numerical values are assigned to options sequentially from 0 to 15 and
+    cannot be overridden.
+
+    ..  warning::
+        This is a strictly incompatible change from version 2, but is now
+        compatible with version 2 of epics_device_.
 
 ..  function::
         Waveform(name, [value,] **fields)
@@ -518,3 +525,5 @@ Working with OUT records
     ..  method:: get()
 
         Returns the value associated with the record.
+
+.. _epics_device: https://github.com/Araneidae/epics_device

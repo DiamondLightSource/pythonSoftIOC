@@ -7,7 +7,8 @@ builder.SetDeviceName("MY-DEVICE-PREFIX")
 
 # Create some records
 ai = builder.aIn('AI', initial_value=5)
-ao = builder.aOut('AO', initial_value=12.45, on_update=lambda v: ai.set(v))
+ao = builder.aOut('AO', initial_value=12.45, always_update=True,
+                  on_update=lambda v: ai.set(v))
 
 # Boilerplate get the IOC started
 builder.LoadDatabase()
@@ -18,7 +19,6 @@ def update():
     while True:
         ai.set(ai.get() + 1)
         cothread.Sleep(1)
-
 
 cothread.Spawn(update)
 

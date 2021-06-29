@@ -12,13 +12,9 @@ pytest-asyncio = "*"
 
 [packages]
 # All other package requirements from setup.py
-softioc = {editable = true, path = "."}
+softioc = {editable = true, extras = ["useful"], path = "."}
 # Apart from the epicscorelibs which comes from pyproject.toml so needs to be here too
-epicscorelibs = "*"
-# Add some other useful extras
-cothread = "*"
-scipy = "*"
-aioca = ">=1.1"
+# epicscorelibs = "*"
 
 [scripts]
 # Put coverage here so we don't interfere with debugging in the IDE

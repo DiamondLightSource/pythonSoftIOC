@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2e7fd7813537237e1cd605991fbdaad93a169aa6132b355335ede332afd75810"
+            "sha256": "5e878878e2876d16a9eafd0f919385001f3672d6ce38edeed4c2d7dd41e68a13"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -19,14 +19,12 @@
                 "sha256:10de39e2c4cb45502f71678d07f70cb42a04c9c5d6070737507bfea8cae518d5",
                 "sha256:c9e89c5369cea81ea37ae5b9bc9d18d70c4f721c618124fc8b0e5ffcb153d4a6"
             ],
-            "index": "pypi",
             "version": "==1.1"
         },
         "cothread": {
             "hashes": [
                 "sha256:50cf5b5a65e7fcfd113f06c2d6b1f363e37b0caee412c75ac7608377aa0bd10a"
             ],
-            "index": "pypi",
             "version": "==2.17"
         },
         "epicscorelibs": {
@@ -57,7 +55,6 @@
                 "sha256:e8cc04309f8b885c61bc0e6562a2af80c097f295d3dbb6e375e5bc80717d6e53",
                 "sha256:f2c8a85042aae0bf5b949d0aedfdf4ed08ea8498c1d25019c7f5c671708d87d2"
             ],
-            "index": "pypi",
             "version": "==7.0.4.99.1.2"
         },
         "epicsdbbuilder": {
@@ -118,11 +115,13 @@
                 "sha256:f68eb46b86b2c246af99fcaa6f6e37c7a7a413e1084a794990b877f2ff71f7b6",
                 "sha256:fdf606341cd798530b05705c87779606fcdfaf768a8129c348ea94441da15b04"
             ],
-            "index": "pypi",
             "version": "==1.6.3"
         },
         "softioc": {
             "editable": true,
+            "extras": [
+                "useful"
+            ],
             "path": "."
         },
         "typing-extensions": {

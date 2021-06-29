@@ -36,7 +36,7 @@ def test_cothread_ioc(cothread_ioc):
     from cothread.catools import ca_nothing, caget, caput, camonitor
 
     # Start
-    assert caget(PV_PREFIX + ":UPTIME") in ["00:00:00", "00:00:01"]
+    assert caget(PV_PREFIX + ":UPTIME").startswith("00:00:0")
     # WAVEFORM
     caput(PV_PREFIX + ":SINN", 4, wait=True)
     q = cothread.EventQueue()

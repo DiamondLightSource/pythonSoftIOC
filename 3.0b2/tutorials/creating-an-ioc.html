@@ -1,0 +1,501 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Creating an IOC &mdash; pythonIoc 3.0b2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Use asyncio in an IOC" href="../how-to/use-asyncio-in-an-ioc.html" />
+    <link rel="prev" title="Installation Tutorial" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0b2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Creating an IOC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-pythonsoftioc">Using <code class="docutils literal notranslate"><span class="pre">pythonSoftIoc</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-publishable-ioc">Creating a Publishable IOC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-pvs">Creating PVs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initialising-the-ioc">Initialising the IOC</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+  <!-- Include Index in the sidebar -->
+  <!-- https://stackoverflow.com/a/37843854 -->
+  <a href="../genindex.html">Index</a>
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Creating an IOC</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tutorials/creating-an-ioc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="creating-an-ioc">
+<h1>Creating an IOC<a class="headerlink" href="#creating-an-ioc" title="Permalink to this headline">¶</a></h1>
+<p>THIS NEEDS UPDATING</p>
+<div class="section" id="using-pythonsoftioc">
+<h2>Using <code class="docutils literal notranslate"><span class="pre">pythonSoftIoc</span></code><a class="headerlink" href="#using-pythonsoftioc" title="Permalink to this headline">¶</a></h2>
+<p>Probably the best way to use <code class="docutils literal notranslate"><span class="pre">pythonSoftIoc</span></code> is to start by copying fragments
+of a simple example such as <code class="docutils literal notranslate"><span class="pre">CS-DI-IOC-02</span></code>.  This consists of the following
+elements:</p>
+<ol class="arabic">
+<li><p>A startup shell script <code class="docutils literal notranslate"><span class="pre">start-ioc</span></code> which launches the soft IOC using a
+production build of <code class="docutils literal notranslate"><span class="pre">pythonSoftIoc</span></code>.  This script typically looks like
+this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/sh
+
+PYIOC=/path/to/pythonSoftIoc/pythonIoc
+
+cd &quot;$(dirname &quot;$0&quot;)&quot;
+exec $PYIOC start_ioc.py &quot;$@&quot;
+</pre></div>
+</div>
+</li>
+<li><p>The startup Python script.  This establishes the essential component
+versions (apart from the <code class="docutils literal notranslate"><span class="pre">pythonSoftIoc</span></code> version), performs the appropriate
+initialisation and starts the IOC running.  The following template is a
+useful starting point:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">require</span>
+<span class="n">require</span><span class="p">(</span><span class="s1">&#39;cothread==2.12&#39;</span><span class="p">)</span>
+<span class="n">require</span><span class="p">(</span><span class="s1">&#39;epicsdbbuilder==1.0&#39;</span><span class="p">)</span>
+
+<span class="c1"># Import the basic framework components.</span>
+<span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">softioc</span><span class="p">,</span> <span class="n">builder</span>
+<span class="kn">import</span> <span class="nn">cothread</span>
+
+<span class="c1"># Import any modules required to run the IOC</span>
+<span class="kn">import</span> <span class="nn">...</span>
+
+<span class="c1"># Boilerplate get the IOC started</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
+<span class="c1"># Start processes required to be run after iocInit</span>
+<span class="o">...</span>
+
+<span class="c1"># Finally leave the IOC running with an interactive shell.</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Note that the use of <code class="docutils literal notranslate"><span class="pre">require</span></code> is specific to DLS, and you may have a
+different way of managing your installations.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The Python Soft IOC consists of two components: a command <code class="docutils literal notranslate"><span class="pre">pythonIoc</span></code> and an
+associated library <a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a>.  The <code class="docutils literal notranslate"><span class="pre">pythonIoc</span></code> command consists of a bare
+EPICS IOC linked together with the DLS Python interpreter and configured so that
+startup arguments are interpreted by the Python interpreter – this means that
+when <code class="docutils literal notranslate"><span class="pre">pythonIoc</span></code> is run it behaves the same as running <code class="docutils literal notranslate"><span class="pre">dls-python</span></code>.</p>
+<p>Scripts run from within <code class="docutils literal notranslate"><span class="pre">pythonIoc</span></code> differ from standard Python scripts in one
+detail: they have the ability to create and publish PVs through the
+<a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a> library.  Typically both <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cothread</span></code></a> and
+<a class="reference external" href="https://dls-controls.github.io/epicsdbbuilder/master/api.html#module-epicsdbbuilder" title="(in EPICS Database Builder vmaster)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">epicsdbbuilder</span></code></a> will be recruited to help: <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cothread</span></code></a> is used for
+dispatching OUT record processing callback methods, <a class="reference external" href="https://dls-controls.github.io/epicsdbbuilder/master/api.html#module-epicsdbbuilder" title="(in EPICS Database Builder vmaster)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">epicsdbbuilder</span></code></a> is
+used for constructing records during IOC initialisation.</p>
+<p>An EPICS IOC created with the help of <code class="docutils literal notranslate"><span class="pre">pythonIoc</span></code> and <a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a> is
+referred to as a “Python soft IOC”.  The code below illustrates a simple IOC
+with one PV:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># DLS requires</span>
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">require</span>
+<span class="n">require</span><span class="p">(</span><span class="s1">&#39;cothread==2.12&#39;</span><span class="p">)</span>
+<span class="n">require</span><span class="p">(</span><span class="s1">&#39;epicsdbbuilder==1.0&#39;</span><span class="p">)</span>
+
+<span class="c1"># Import basic softioc framework</span>
+<span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">softioc</span><span class="p">,</span> <span class="n">builder</span>
+
+<span class="c1"># Create PVs</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">SetDeviceName</span><span class="p">(</span><span class="s1">&#39;TS-TEST-TEST-01&#39;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">stringIn</span><span class="p">(</span><span class="s1">&#39;TEST&#39;</span><span class="p">,</span> <span class="n">initial_value</span> <span class="o">=</span> <span class="s1">&#39;This is a test&#39;</span><span class="p">)</span>
+
+<span class="c1"># Run the IOC.  This is boilerplate, and must always be done in this order,</span>
+<span class="c1"># and must always be done after creating all PVs.</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>This example script illustrates the following points.</p>
+<ul class="simple">
+<li><p>The use of <code class="docutils literal notranslate"><span class="pre">pkg_resources.require</span></code> is standard across all use of the
+<code class="docutils literal notranslate"><span class="pre">dls-python</span></code> Python interpreter at Diamond, and in this example we are using
+both <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cothread</span></code></a> and <a class="reference external" href="https://dls-controls.github.io/epicsdbbuilder/master/api.html#module-epicsdbbuilder" title="(in EPICS Database Builder vmaster)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">epicsdbbuilder</span></code></a>.  Of course, in an officially
+published IOC specific versions must be specified, in this example I’m using
+the most recent versions at the time of writing.</p></li>
+<li><p>The <a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a> library is part of <code class="docutils literal notranslate"><span class="pre">pythonIoc</span></code> and is automatically added
+to the path.  The two submodules <a class="reference internal" href="../reference/api.html#module-softioc.softioc" title="softioc.softioc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc.softioc</span></code></a> and
+<a class="reference internal" href="../reference/api.html#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> provide the basic functionality for Python soft IOCs
+and are the ones that are normally used.</p></li>
+<li><p>PVs are normally created dynamically using <a class="reference internal" href="../reference/api.html#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a>.  All PV
+creation must be done before initialising the IOC.</p></li>
+<li><p>Once PVs have been created then the associated EPICS database can be created
+and loaded into the IOC and then the IOC can be started.</p></li>
+<li><p>Finally the application must refrain from exiting until the IOC is no longer
+needed.  The <a class="reference internal" href="../reference/api.html#softioc.softioc.interactive_ioc" title="softioc.softioc.interactive_ioc"><code class="xref py py-func docutils literal notranslate"><span class="pre">interactive_ioc()</span></code></a> runs a Python
+interpreter shell with a number of useful EPICS functions in scope, and
+passing <code class="docutils literal notranslate"><span class="pre">globals()</span></code> through can allow interactive interaction with the
+internals of the IOC while it’s running.  The alternative is to call something
+like <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#cothread.WaitForQuit" title="(in Cothread)"><code class="xref py py-func docutils literal notranslate"><span class="pre">cothread.WaitForQuit()</span></code></a> or some other <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cothread</span></code></a> blocking
+action.</p></li>
+</ul>
+</div>
+<div class="section" id="creating-a-publishable-ioc">
+<h2>Creating a Publishable IOC<a class="headerlink" href="#creating-a-publishable-ioc" title="Permalink to this headline">¶</a></h2>
+<p>As the example script above shows, a single Python script can be an IOC.
+However, to fit into the DLS framework for publishing IOCs in <code class="docutils literal notranslate"><span class="pre">/dls_sw/prod</span></code> a
+bit more structure is needed.  I recommend at least four files as shown:</p>
+<dl>
+<dt><code class="docutils literal notranslate"><span class="pre">Makefile</span></code></dt><dd><p>This file is necessary in order to run <code class="docutils literal notranslate"><span class="pre">dls-release.py</span></code>, and needs to have
+both <code class="docutils literal notranslate"><span class="pre">install</span></code> and <code class="docutils literal notranslate"><span class="pre">clean</span></code> targets, but doesn’t need to actually do
+anything.  Thus the following content for this file is enough:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">install</span><span class="p">:</span>
+<span class="n">clean</span><span class="p">:</span>
+</pre></div>
+</div>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">start-ioc</span></code></dt><dd><p>An executable file for starting the IOC needs to be created.  I recommend
+that this consist of the following boilerplate:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/sh
+
+PYIOC_VER=2-6
+EPICS_VER=3.14.12.3
+
+PYIOC=/dls_sw/prod/R$EPICS_VER/support/pythonSoftIoc/$PYIOC_VER/pythonIoc
+
+exec $PYIOC ioc_entry.py &quot;$@&quot;
+</pre></div>
+</div>
+<p>Here I have given the startup script for the IOC the name <code class="docutils literal notranslate"><span class="pre">ioc_entry.py</span></code>.
+This name should be replaced by any appropriate name.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">ioc_entry.py</span></code></dt><dd><p>I recommend that the top level Python script used to launch the IOC contain
+only <code class="docutils literal notranslate"><span class="pre">pkg_resources.require</span></code> statements, simple code to start the body
+of the IOC, and it should end with standard code to start the IOC.  The
+following structure can be followed (here I’ve assumed that the rest of the
+IOC is in a single file called <code class="docutils literal notranslate"><span class="pre">ioc_body.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">require</span>
+
+<span class="n">require</span><span class="p">(</span><span class="s1">&#39;cothread==2.12&#39;</span><span class="p">)</span>
+<span class="n">require</span><span class="p">(</span><span class="s1">&#39;epicsdbbuilder==1.0&#39;</span><span class="p">)</span>
+<span class="c1"># Any other requires needed by this IOC</span>
+
+<span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">softioc</span>
+
+<span class="c1"># Do whatever makes sense to create all the PVs and get ready to go</span>
+<span class="kn">import</span> <span class="nn">ioc_body</span>
+<span class="n">ioc_body</span><span class="o">.</span><span class="n">initialise</span><span class="p">()</span>
+
+<span class="c1"># Start the IOC -- this is boilerplate</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
+<span class="c1"># If activities need to be started after iocInit, now&#39;s the time</span>
+<span class="n">ioc_body</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Note that <em>all</em> requires <em>must</em> occur in this initial startup file.</p>
+</dd>
+<dt>The rest of the IOC</dt><dd><p>Of course, a Python script can be structured into any number of Python
+modules.  In the example above I have illustrated just one such module
+called <code class="docutils literal notranslate"><span class="pre">ioc_body.py</span></code> with two entry points.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="creating-pvs">
+<h2>Creating PVs<a class="headerlink" href="#creating-pvs" title="Permalink to this headline">¶</a></h2>
+<p>See the documentation of <a class="reference internal" href="../reference/api.html#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> for details, but an overview is
+provided here.</p>
+<p>PVs are created internally and dynamically using functionality provided by
+<a class="reference external" href="https://dls-controls.github.io/epicsdbbuilder/master/api.html#module-epicsdbbuilder" title="(in EPICS Database Builder vmaster)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">epicsdbbuilder</span></code></a>, which in this context simply provides mechanisms for
+creating <code class="docutils literal notranslate"><span class="pre">.db</span></code> files, but <a class="reference internal" href="../reference/api.html#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> also binds each created PV to
+a special <code class="docutils literal notranslate"><span class="pre">Python</span></code> device – this allows PV processing to be hooked into
+Python support.</p>
+<p>PV creation must be done in two stages: first the device name must be set by
+calling <a class="reference internal" href="../reference/api.html#softioc.builder.SetDeviceName" title="softioc.builder.SetDeviceName"><code class="xref py py-func docutils literal notranslate"><span class="pre">SetDeviceName()</span></code></a>.  After this PVs can be created
+by calling any of the following PV creation functions:</p>
+<blockquote>
+<div><p><a class="reference internal" href="../reference/api.html#softioc.builder.aIn" title="softioc.builder.aIn"><code class="xref py py-func docutils literal notranslate"><span class="pre">aIn()</span></code></a>, <a class="reference internal" href="../reference/api.html#softioc.builder.aOut" title="softioc.builder.aOut"><code class="xref py py-func docutils literal notranslate"><span class="pre">aOut()</span></code></a>,
+<a class="reference internal" href="../reference/api.html#softioc.builder.boolIn" title="softioc.builder.boolIn"><code class="xref py py-func docutils literal notranslate"><span class="pre">boolIn()</span></code></a>, <a class="reference internal" href="../reference/api.html#softioc.builder.boolOut" title="softioc.builder.boolOut"><code class="xref py py-func docutils literal notranslate"><span class="pre">boolOut()</span></code></a>,
+<a class="reference internal" href="../reference/api.html#softioc.builder.longIn" title="softioc.builder.longIn"><code class="xref py py-func docutils literal notranslate"><span class="pre">longIn()</span></code></a>, <a class="reference internal" href="../reference/api.html#softioc.builder.longOut" title="softioc.builder.longOut"><code class="xref py py-func docutils literal notranslate"><span class="pre">longOut()</span></code></a>,
+<a class="reference internal" href="../reference/api.html#softioc.builder.stringIn" title="softioc.builder.stringIn"><code class="xref py py-func docutils literal notranslate"><span class="pre">stringIn()</span></code></a>, <a class="reference internal" href="../reference/api.html#softioc.builder.stringOut" title="softioc.builder.stringOut"><code class="xref py py-func docutils literal notranslate"><span class="pre">stringOut()</span></code></a>,
+<a class="reference internal" href="../reference/api.html#softioc.builder.mbbIn" title="softioc.builder.mbbIn"><code class="xref py py-func docutils literal notranslate"><span class="pre">mbbIn()</span></code></a>, <a class="reference internal" href="../reference/api.html#softioc.builder.mbbOut" title="softioc.builder.mbbOut"><code class="xref py py-func docutils literal notranslate"><span class="pre">mbbOut()</span></code></a>,
+<a class="reference internal" href="../reference/api.html#softioc.builder.Waveform" title="softioc.builder.Waveform"><code class="xref py py-func docutils literal notranslate"><span class="pre">Waveform()</span></code></a>, <a class="reference internal" href="../reference/api.html#softioc.builder.WaveformOut" title="softioc.builder.WaveformOut"><code class="xref py py-func docutils literal notranslate"><span class="pre">WaveformOut()</span></code></a>.</p>
+</div></blockquote>
+<p>These functions create, respectively, <code class="docutils literal notranslate"><span class="pre">Python</span></code> device bound records of the
+following types:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">ai</span></code>, <code class="docutils literal notranslate"><span class="pre">ao</span></code>, <code class="docutils literal notranslate"><span class="pre">bi</span></code>, <code class="docutils literal notranslate"><span class="pre">bo</span></code>, <code class="docutils literal notranslate"><span class="pre">longin</span></code>, <code class="docutils literal notranslate"><span class="pre">longout</span></code>, <code class="docutils literal notranslate"><span class="pre">mbbi</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mbbo</span></code>, <code class="docutils literal notranslate"><span class="pre">stringin</span></code>, <code class="docutils literal notranslate"><span class="pre">stringout</span></code>, <code class="docutils literal notranslate"><span class="pre">waveform</span></code></p>
+</div></blockquote>
+<p>Occasionally it may be desirable to create a soft record without <code class="docutils literal notranslate"><span class="pre">Python</span></code>
+device support, particularly if any other record type is required.  This can be done using the corresponding record creation
+functions provided as methods of <a class="reference internal" href="../reference/api.html#softioc.builder.records" title="softioc.builder.records"><code class="xref py py-attr docutils literal notranslate"><span class="pre">softioc.builder.records</span></code></a>.  For example, if a <code class="docutils literal notranslate"><span class="pre">calc</span></code>
+record is required then this can be created by calling
+<code class="docutils literal notranslate"><span class="pre">softioc.builder.records.calc</span></code>.</p>
+<p>For all records created by these methods both
+<a class="reference internal" href="../reference/api.html#softioc.device.ProcessDeviceSupportIn.get" title="softioc.device.ProcessDeviceSupportIn.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get()</span></code></a> and
+<a class="reference internal" href="../reference/api.html#softioc.device.ProcessDeviceSupportIn.set" title="softioc.device.ProcessDeviceSupportIn.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> methods are available for
+reading and writing the current value of the record.  For IN records calling
+<a class="reference internal" href="../reference/api.html#softioc.device.ProcessDeviceSupportIn.set" title="softioc.device.ProcessDeviceSupportIn.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> will trigger a record update
+(all IN records are by default created with <code class="docutils literal notranslate"><span class="pre">SCAN='I/O</span> <span class="pre">Intr'</span></code>).</p>
+</div>
+<div class="section" id="initialising-the-ioc">
+<h2>Initialising the IOC<a class="headerlink" href="#initialising-the-ioc" title="Permalink to this headline">¶</a></h2>
+<p>This is simply a matter of calling two functions:
+<a class="reference internal" href="../reference/api.html#softioc.builder.LoadDatabase" title="softioc.builder.LoadDatabase"><code class="xref py py-func docutils literal notranslate"><span class="pre">LoadDatabase()</span></code></a> and <a class="reference internal" href="../reference/api.html#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref py py-func docutils literal notranslate"><span class="pre">iocInit()</span></code></a>,
+which must be called in this order.  After calling
+<a class="reference internal" href="../reference/api.html#softioc.builder.LoadDatabase" title="softioc.builder.LoadDatabase"><code class="xref py py-func docutils literal notranslate"><span class="pre">LoadDatabase()</span></code></a> it is no longer possible to create PVs.</p>
+<p>It is sensible to start any server background activity after the IOC has been
+initialised by calling <a class="reference internal" href="../reference/api.html#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref py py-func docutils literal notranslate"><span class="pre">iocInit()</span></code></a>.  After this has been
+done (<a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#cothread.Spawn" title="(in Cothread)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cothread.Spawn</span></code></a> is recommended for initiating persistent background
+activity) the top level script must pause, as as soon as it exits the IOC will
+exit.  Calling <a class="reference internal" href="../reference/api.html#softioc.softioc.interactive_ioc" title="softioc.softioc.interactive_ioc"><code class="xref py py-func docutils literal notranslate"><span class="pre">interactive_ioc()</span></code></a> is recommended for this
+as the last statement in the top level script.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../how-to/use-asyncio-in-an-ioc.html" class="btn btn-neutral float-right" title="Use asyncio in an IOC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

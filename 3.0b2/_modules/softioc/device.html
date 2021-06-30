@@ -1,0 +1,619 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>softioc.device &mdash; pythonIoc 3.0b2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="../../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0b2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+  <!-- Include Index in the sidebar -->
+  <!-- https://stackoverflow.com/a/37843854 -->
+  <a href="../../genindex.html">Index</a>
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>softioc.device</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for softioc.device</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">alarm</span>
+<span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="n">DbfCodeToNumpy</span><span class="p">,</span> <span class="n">DbrToDbfCode</span>
+<span class="kn">from</span> <span class="nn">.imports</span> <span class="kn">import</span> <span class="n">dbLoadDatabase</span><span class="p">,</span> <span class="n">recGblResetAlarms</span><span class="p">,</span> <span class="n">db_put_field</span>
+<span class="kn">from</span> <span class="nn">.device_core</span> <span class="kn">import</span> <span class="n">DeviceSupportCore</span><span class="p">,</span> <span class="n">RecordLookup</span>
+
+
+<span class="c1"># This is set from softioc.iocInit</span>
+<span class="c1"># dispatcher(func, *args) will queue a callback to happen</span>
+<span class="n">dispatcher</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="c1"># EPICS processing return codes</span>
+<span class="n">EPICS_OK</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">EPICS_ERROR</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">NO_CONVERT</span> <span class="o">=</span> <span class="mi">2</span>
+
+
+<span class="k">class</span> <span class="nc">ProcessDeviceSupportCore</span><span class="p">(</span><span class="n">DeviceSupportCore</span><span class="p">,</span> <span class="n">RecordLookup</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Implements canonical default processing for records with a _process</span>
+<span class="sd">    method.  Processing typically either copies a locally set value into the</span>
+<span class="sd">    record, or else reads a value from the record and triggers an update.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Most records just have an extra process method, but unfortunately ai/ao</span>
+    <span class="c1"># will have to override this to also add their special_linconv method.</span>
+    <span class="n">_dset_extra_</span> <span class="o">=</span> <span class="p">([(</span><span class="s1">&#39;process&#39;</span><span class="p">,</span> <span class="n">CFUNCTYPE</span><span class="p">(</span><span class="n">c_int</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">))],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># For some record types we want to return a different return code either</span>
+    <span class="c1"># from record init or processing</span>
+    <span class="n">_epics_rc</span> <span class="o">=</span> <span class="n">EPICS_OK</span>
+
+    <span class="c1"># Default implementations of read and write, overwritten where necessary.</span>
+    <span class="k">def</span> <span class="nf">_read_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_write_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ProcessDeviceSupportIn"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportIn">[docs]</a><span class="k">class</span> <span class="nc">ProcessDeviceSupportIn</span><span class="p">(</span><span class="n">ProcessDeviceSupportCore</span><span class="p">):</span>
+    <span class="n">_link_</span> <span class="o">=</span> <span class="s1">&#39;INP&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="c1"># We implement update locking via a simple trick which relies on the</span>
+        <span class="c1"># Python global interpreter lock: this ensures that assigning or</span>
+        <span class="c1"># reading a single value is atomic.  We therefore cluster all our</span>
+        <span class="c1"># variable state into a single tuple which represents a single value</span>
+        <span class="c1"># to be processed.</span>
+        <span class="c1">#    The tuple contains everything needed to be written: the value,</span>
+        <span class="c1"># severity, alarm and optional timestamp.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;initial_value&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_</span><span class="p">),</span>
+            <span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">,</span> <span class="n">alarm</span><span class="o">.</span><span class="n">UDF_ALARM</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__super</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># For input process we copy the value stored in the instance to the</span>
+        <span class="c1"># record.  The alarm status is also updated, and a custom timestamp</span>
+        <span class="c1"># can also be set.</span>
+        <span class="k">if</span> <span class="n">_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_severity</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">TIME</span> <span class="o">=</span> <span class="n">timestamp</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epics_rc</span>
+
+<div class="viewcode-block" id="ProcessDeviceSupportIn.set"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportIn.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span>
+            <span class="n">severity</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">,</span> <span class="n">alarm</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">UDF_ALARM</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Updates the stored value and triggers an update.  The alarm</span>
+<span class="sd">        severity and timestamp can also be specified if appropriate.&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProcessDeviceSupportIn.set_alarm"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportIn.set_alarm">[docs]</a>    <span class="k">def</span> <span class="nf">set_alarm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Updates the alarm status without changing the stored value.  An</span>
+<span class="sd">        update is triggered, and a timestamp can optionally be specified.&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProcessDeviceSupportIn.get"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportIn.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns the last written value.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="ProcessDeviceSupportOut"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportOut">[docs]</a><span class="k">class</span> <span class="nc">ProcessDeviceSupportOut</span><span class="p">(</span><span class="n">ProcessDeviceSupportCore</span><span class="p">):</span>
+    <span class="n">_link_</span> <span class="o">=</span> <span class="s1">&#39;OUT&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="n">on_update</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;on_update&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">on_update_name</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;on_update_name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># At most one of on_update and on_update_name can be specified</span>
+        <span class="k">assert</span> <span class="n">on_update</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">on_update_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> \
+            <span class="s1">&#39;Cannot specify on_update and on_update_name together&#39;</span>
+        <span class="k">if</span> <span class="n">on_update</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__on_update</span> <span class="o">=</span> <span class="n">on_update</span>
+        <span class="k">elif</span> <span class="n">on_update_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__on_update</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="n">on_update_name</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__on_update</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;validate&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__always_update</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;always_update&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;initial_value&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__super</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">init_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Special record initialisation for out records only: implements</span>
+<span class="sd">        special record initialisation if an initial value has been specified,</span>
+<span class="sd">        allowing out records to have a sensible initial value.&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;MLST&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields_</span><span class="p">:</span>
+                <span class="n">record</span><span class="o">.</span><span class="n">MLST</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">TIME</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">UDF</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">recGblResetAlarms</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epics_rc</span>
+
+    <span class="k">def</span> <span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Processing suitable for output records.  Performs immediate value</span>
+<span class="sd">        validation and asynchronous update notification.&#39;&#39;&#39;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_value</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__always_update</span><span class="p">:</span>
+            <span class="c1"># If the value isn&#39;t making a change then don&#39;t do anything.</span>
+            <span class="k">return</span> <span class="n">EPICS_OK</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="c1"># Asynchronous validation rejects value.  It&#39;s up to the</span>
+            <span class="c1"># validation routine to do any logging.  In this case restore the</span>
+            <span class="c1"># last good value.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">EPICS_ERROR</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__on_update</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span><span class="p">:</span>
+            <span class="n">dispatcher</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__on_update</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">EPICS_OK</span>
+
+
+    <span class="n">NumpyCharCodeToDbr</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># The following type codes are supported directly:</span>
+        <span class="s1">&#39;S&#39;</span><span class="p">:</span>    <span class="mi">0</span><span class="p">,</span>  <span class="c1"># DBR_STRING     str_</span>
+        <span class="s1">&#39;h&#39;</span><span class="p">:</span>    <span class="mi">1</span><span class="p">,</span>  <span class="c1"># DBR_SHORT      short  = int16</span>
+        <span class="s1">&#39;f&#39;</span><span class="p">:</span>    <span class="mi">2</span><span class="p">,</span>  <span class="c1"># DBR_FLOAT      single = float32</span>
+        <span class="s1">&#39;b&#39;</span><span class="p">:</span>    <span class="mi">4</span><span class="p">,</span>  <span class="c1"># DBR_CHAR       byte   = int8</span>
+        <span class="s1">&#39;i&#39;</span><span class="p">:</span>    <span class="mi">5</span><span class="p">,</span>  <span class="c1"># DBR_LONG       intc   = int32</span>
+        <span class="s1">&#39;d&#39;</span><span class="p">:</span>    <span class="mi">6</span><span class="p">,</span>  <span class="c1"># DBR_DOUBLE     float_ = float64</span>
+        <span class="c1"># These are supported as related types</span>
+        <span class="s1">&#39;H&#39;</span><span class="p">:</span>    <span class="mi">1</span><span class="p">,</span>  <span class="c1"># DBR_SHORT      ushort = uint16</span>
+        <span class="s1">&#39;?&#39;</span><span class="p">:</span>    <span class="mi">4</span><span class="p">,</span>  <span class="c1"># DBR_CHAR       bool_</span>
+        <span class="s1">&#39;B&#39;</span><span class="p">:</span>    <span class="mi">4</span><span class="p">,</span>  <span class="c1"># DBR_CHAR       ubyte  = uint8</span>
+        <span class="s1">&#39;I&#39;</span><span class="p">:</span>    <span class="mi">5</span><span class="p">,</span>  <span class="c1"># DBR_LONG       uintc  = uint32</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int_</span><span class="p">()</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">NumpyCharCodeToDbr</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>   <span class="c1"># int_, uint</span>
+
+    <span class="c1"># Converts a Python value into a form suitable for sending over channel</span>
+    <span class="c1"># access.  Derived from the corresponding cothread implementation.  Returns</span>
+    <span class="c1"># computed dbrcode, waveform length, raw data pointer and pointer to</span>
+    <span class="c1"># underlying data (for lifetime management).</span>
+    <span class="k">def</span> <span class="nf">value_to_dbr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># First convert the data directly into an array.  This will help in</span>
+        <span class="c1"># subsequent processing: this does most of the type coercion.</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">requirements</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+        <span class="k">assert</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t put multidimensional arrays!&#39;</span>
+
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
+            <span class="c1"># Need special processing to hack the array so that strings are</span>
+            <span class="c1"># actually 40 characters long.</span>
+            <span class="n">new_value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;S40&#39;</span><span class="p">)</span>
+            <span class="n">new_value</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">new_value</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dbrtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NumpyCharCodeToDbr</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># One more special case.  caput() of a list of integers on a 64-bit</span>
+            <span class="c1"># system will fail at this point because they were automatically</span>
+            <span class="c1"># converted to 64-bit integers.  Catch this special case and fix it</span>
+            <span class="c1"># up by silently converting to 32-bit integers.  Not really the</span>
+            <span class="c1"># right thing to do (as data can be quietly lost), but the</span>
+            <span class="c1"># alternative isn&#39;t nice to use either.</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+                <span class="n">dbrtype</span> <span class="o">=</span> <span class="mi">5</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>
+
+        <span class="k">return</span> <span class="n">dbrtype</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">value</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">value</span>
+
+
+<div class="viewcode-block" id="ProcessDeviceSupportOut.set"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportOut.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Special routine to set the value directly.&#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># Record not initialised yet.  Record the value for when</span>
+            <span class="c1"># initialisation occurs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datatype</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_to_dbr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span> <span class="o">=</span> <span class="n">process</span>
+            <span class="n">db_put_field</span><span class="p">(</span>
+                <span class="n">_record</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span> <span class="n">DbrToDbfCode</span><span class="p">[</span><span class="n">datatype</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ProcessDeviceSupportOut.get"><a class="viewcode-back" href="../../reference/api.html#softioc.device.ProcessDeviceSupportOut.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_Device</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">record_type</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Wrapper for generating simple records.&#39;&#39;&#39;</span>
+    <span class="k">class</span> <span class="nc">GenericDevice</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+        <span class="n">_record_type_</span> <span class="o">=</span> <span class="n">record_type</span>
+        <span class="n">_device_name_</span> <span class="o">=</span> <span class="s1">&#39;devPython_&#39;</span> <span class="o">+</span> <span class="n">record_type</span>
+        <span class="n">_default_</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">]</span>
+        <span class="n">_epics_rc</span> <span class="o">=</span> <span class="n">EPICS_OK</span> <span class="k">if</span> <span class="n">convert</span> <span class="k">else</span> <span class="n">NO_CONVERT</span>
+        <span class="k">if</span> <span class="n">mlst</span><span class="p">:</span>
+            <span class="n">_fields_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;MLST&#39;</span><span class="p">)</span>
+
+    <span class="n">GenericDevice</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">record_type</span>
+    <span class="k">return</span> <span class="n">GenericDevice</span>
+
+<span class="n">_In</span> <span class="o">=</span> <span class="n">ProcessDeviceSupportIn</span>
+<span class="n">_Out</span> <span class="o">=</span> <span class="n">ProcessDeviceSupportOut</span>
+
+<span class="k">def</span> <span class="nf">_Device_In</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_Device</span><span class="p">(</span><span class="n">_In</span><span class="p">,</span>  <span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_Device_Out</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_Device</span><span class="p">(</span><span class="n">_Out</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="n">convert</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="n">mlst</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="n">longin</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;longin&#39;</span><span class="p">)</span>
+<span class="n">longout</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;longout&#39;</span><span class="p">)</span>
+<span class="n">bi</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;bi&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">bo</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">stringin</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;stringin&#39;</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">stringout</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;stringout&#39;</span><span class="p">,</span> <span class="n">mlst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mbbi</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;mbbi&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mbbo</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;mbbo&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="n">dset_process_linconv</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">[(</span><span class="s1">&#39;process&#39;</span><span class="p">,</span>         <span class="n">CFUNCTYPE</span><span class="p">(</span><span class="n">c_int</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">)),</span>
+     <span class="p">(</span><span class="s1">&#39;special_linconv&#39;</span><span class="p">,</span> <span class="n">CFUNCTYPE</span><span class="p">(</span><span class="n">c_int</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">,</span> <span class="n">c_int</span><span class="p">))],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># For ai and ao there&#39;s no point in supporting RVAL &lt;-&gt; VAL conversion, so</span>
+<span class="c1"># for these we support no conversion directly.</span>
+
+<span class="k">class</span> <span class="nc">ai</span><span class="p">(</span><span class="n">ProcessDeviceSupportIn</span><span class="p">):</span>
+    <span class="n">_record_type_</span> <span class="o">=</span> <span class="s1">&#39;ai&#39;</span>
+    <span class="n">_device_name_</span> <span class="o">=</span> <span class="s1">&#39;devPython_ai&#39;</span>
+    <span class="n">_default_</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">]</span>
+    <span class="n">_dset_extra_</span> <span class="o">=</span> <span class="n">dset_process_linconv</span>
+    <span class="n">_epics_rc</span> <span class="o">=</span> <span class="n">NO_CONVERT</span>
+
+    <span class="k">def</span> <span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__super</span><span class="o">.</span><span class="n">_process</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">_value</span><span class="p">)</span>
+        <span class="c1"># Because we&#39;re returning NO_CONVERT we need to do the .UDF updating</span>
+        <span class="c1"># ourself (otherwise the record support layer does this).</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">UDF</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">NO_CONVERT</span>
+
+<span class="k">class</span> <span class="nc">ao</span><span class="p">(</span><span class="n">ProcessDeviceSupportOut</span><span class="p">):</span>
+    <span class="n">_record_type_</span> <span class="o">=</span> <span class="s1">&#39;ao&#39;</span>
+    <span class="n">_device_name_</span> <span class="o">=</span> <span class="s1">&#39;devPython_ao&#39;</span>
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">,</span> <span class="s1">&#39;MLST&#39;</span><span class="p">]</span>
+    <span class="n">_dset_extra_</span> <span class="o">=</span> <span class="n">dset_process_linconv</span>
+    <span class="n">_epics_rc</span> <span class="o">=</span> <span class="n">NO_CONVERT</span>
+
+
+
+<span class="k">class</span> <span class="nc">WaveformBase</span><span class="p">(</span><span class="n">ProcessDeviceSupportCore</span><span class="p">):</span>
+    <span class="n">_link_</span> <span class="o">=</span> <span class="s1">&#39;INP&#39;</span>
+    <span class="c1"># In the waveform record class, the following four fields are key:</span>
+    <span class="c1">#   FTVL    Type of stored waveform (as a DBF_ code)</span>
+    <span class="c1">#   BPTR    Pointer to raw array containing waveform data</span>
+    <span class="c1">#   NELM    Length of allocated array in number of elements</span>
+    <span class="c1">#   NORD    Currently reported length of array (0 &lt;= NORD &lt;= NELM)</span>
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;FTVL&#39;</span><span class="p">,</span> <span class="s1">&#39;BPTR&#39;</span><span class="p">,</span> <span class="s1">&#39;NELM&#39;</span><span class="p">,</span> <span class="s1">&#39;NORD&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">init_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">DbfCodeToNumpy</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">FTVL</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__super</span><span class="o">.</span><span class="n">init_record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_read_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="n">nord</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">NORD</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nord</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">memmove</span><span class="p">(</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">c_void_p</span><span class="p">),</span> <span class="n">record</span><span class="o">.</span><span class="n">BPTR</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">*</span> <span class="n">nord</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_write_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+        <span class="k">assert</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t write multidimensional arrays&#39;</span>
+
+        <span class="n">nelm</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">NELM</span>
+        <span class="n">nord</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nord</span> <span class="o">&gt;</span> <span class="n">nelm</span><span class="p">:</span>
+            <span class="n">nord</span> <span class="o">=</span> <span class="n">nelm</span>
+        <span class="n">memmove</span><span class="p">(</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">BPTR</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">c_void_p</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">*</span> <span class="n">nord</span><span class="p">)</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">NORD</span> <span class="o">=</span> <span class="n">nord</span>
+
+
+<span class="k">class</span> <span class="nc">waveform</span><span class="p">(</span><span class="n">WaveformBase</span><span class="p">,</span> <span class="n">ProcessDeviceSupportIn</span><span class="p">):</span>
+    <span class="n">_record_type_</span> <span class="o">=</span> <span class="s1">&#39;waveform&#39;</span>
+    <span class="n">_device_name_</span> <span class="o">=</span> <span class="s1">&#39;devPython_waveform&#39;</span>
+    <span class="n">_default_</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="c1"># Because arrays are mutable values it&#39;s ever so easy to accidentially call</span>
+    <span class="c1"># set() with a value which subsequently changes.  To avoid this common class</span>
+    <span class="c1"># of bug, at the cost of duplicated code and data, here we ensure a copy is</span>
+    <span class="c1"># taken of the value.</span>
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span>
+            <span class="n">severity</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">,</span> <span class="n">alarm</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">UDF_ALARM</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Updates the stored value and triggers an update.  The alarm</span>
+<span class="sd">        severity and timestamp can also be specified if appropriate.&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># Convert a string into an array of characters.  This will produce</span>
+            <span class="c1"># the correct behaviour when treating a character array as a string.</span>
+            <span class="c1"># Note that the trailing null is needed to work around problems with</span>
+            <span class="c1"># some clients.</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;uint8&#39;</span><span class="p">)</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span><span class="o">+</span><span class="n">value</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+        <span class="k">assert</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t write multidimensional arrays&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">waveform_out</span><span class="p">(</span><span class="n">WaveformBase</span><span class="p">,</span> <span class="n">ProcessDeviceSupportOut</span><span class="p">):</span>
+    <span class="n">_record_type_</span> <span class="o">=</span> <span class="s1">&#39;waveform&#39;</span>
+    <span class="n">_device_name_</span> <span class="o">=</span> <span class="s1">&#39;devPython_waveform_out&#39;</span>
+
+
+<span class="c1"># Ensure the .dbd file is loaded.</span>
+<span class="n">dbLoadDatabase</span><span class="p">(</span><span class="s2">&quot;device.dbd&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -11,7 +11,7 @@ Single File IOC
 An IOC that is entirely contained within a single Python source file can be used as an 
 IOC inside DLS simply by adding this shebang line::
 
-    #!/dls_sw/prod/python3/RHEL7-x86_64/pythonIoc/prefix/bin/pythonIoc
+    #!/dls_sw/prod/python3/RHEL7-x86_64/softioc/3.0b2/prefix/bin/pythonIoc
 
 
 IOC entry point for a module

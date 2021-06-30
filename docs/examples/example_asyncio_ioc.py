@@ -1,6 +1,5 @@
 # Import the basic framework components.
 from softioc import softioc, builder, asyncio_dispatcher
-from aioca import caget, caput
 import asyncio
 
 # Create an asyncio dispatcher, the event loop is now running

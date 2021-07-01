@@ -1,7 +1,7 @@
 Read data from an IOC
 ======================
 
-This guide explains how to read data from an IOC from a separate Python program. 
+This guide explains how to read data from an IOC in a separate Python program. 
 
 .. note:: 
     Please ensure your firewall allows both TCP and UDP traffic on ports 5064 and 5065. 

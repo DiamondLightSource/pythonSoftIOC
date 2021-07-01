@@ -25,7 +25,7 @@ functionality for Python soft IOCs and are the ones that are normally used.
 
 :mod:`cothread` is one of the two possible libraries the IOC can use for
 asynchronous operations. 
-(see :doc:`../how-to/use-asyncio-in-an-ioc` for the other option)
+(see :doc:`../how-to/use-asyncio-in-an-ioc` for the alternative)
 
 
 
@@ -36,7 +36,10 @@ asynchronous operations.
 PVs are normally created dynamically using :mod:`softioc.builder`.  All PV
 creation must be done before initialising the IOC. We define a lambda function for 
 `on_update` on ``ao`` such that whenever we set ``ao``, ``ai`` will be set to the 
-same value.
+same value. The ``always_update`` flag ensures that the ``on_update`` function is always 
+triggered, which is not the default behaviour if the updated value is the same as the
+current value.
+
 
 .. literalinclude:: ../examples/example_cothread_ioc.py
     :start-after: # Boilerplate 
@@ -53,7 +56,7 @@ which must be called in this order.  After calling
     :end-before: # Finally
 
 We define a long-running operation that will increment the value of ``ai`` once per
-second. This is run as a background process by `cothread`. 
+second. This is run as a background thread by `cothread`. 
 
 .. literalinclude:: ../examples/example_cothread_ioc.py
     :start-after: # Finally 
@@ -68,7 +71,7 @@ action.
 
 In this interpreter there is immediate access to methods defined in the 
 :mod:`softioc.softioc` module. For example the :func:`~softioc.softioc.dbgf` function
-can be run to observe the increasing value of ``ai``::
+can be run to observe the increasing value of ``AI``::
 
     >>> dbgf("MY-DEVICE-PREFIX:AI")
     DBF_DOUBLE:         36
@@ -76,8 +79,8 @@ can be run to observe the increasing value of ``ai``::
     DBF_DOUBLE:         37
 
 And the :func:`~softioc.softioc.dbpf` method allows data to be set and to observe
-the functionality of the lambda passed to `on_update` . We set the value on ``ao`` 
-and read the value on ``ai`` (exact values will vary based on time taken)::
+the functionality of the lambda passed to ``on_update`` . We set the value on ``AO`` 
+and read the value on ``AI`` (exact values will vary based on time taken)::
 
     >>> dbgf("MY-DEVICE-PREFIX:AI")
     DBF_DOUBLE:         15

@@ -60,6 +60,7 @@ Table Of Contents
 
     how-to/use-asyncio-in-an-ioc
     how-to/make-publishable-ioc
+    how-to/read-data-from-ioc
 
 .. toctree::
     :caption: Explanations

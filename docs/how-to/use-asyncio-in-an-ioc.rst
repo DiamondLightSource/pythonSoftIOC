@@ -13,7 +13,8 @@ an IOC.
 
 
 The ``dispatcher`` is created and passed to :func:`~softioc.softioc.iocInit`. This is what 
-allows the use of :mod:`asyncio` functions in this IOC.
+allows the use of :mod:`asyncio` functions in this IOC. It contains a new event loop to handle
+this.
 
 The ``async update`` function will increment the value of ``ai`` once per second,
 sleeping that coroutine between updates.
@@ -28,5 +29,5 @@ shell open. The values of the PVs can be queried using the methods defined in th
 Asynchronous Channel Access
 ---------------------------
 
-PVs can be retrieved in an asynchronous manner by using the :py:mod:`aioca` module. 
-It provides ``await``-able implementations of ``caget``, ``caput``, etc.
+PVs can be retrieved externally from a PV in an asynchronous manner by using the :py:mod:`aioca` module. 
+It provides ``await``-able implementations of ``caget``, ``caput``, etc. See that module for more information.

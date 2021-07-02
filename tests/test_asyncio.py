@@ -41,9 +41,7 @@ async def test_asyncio_ioc(asyncio_ioc):
     atexit.unregister(_catools._catools_atexit)
 
     # Start
-    assert await caget(PV_PREFIX + ":UPTIME") in [
-        "00:00:00", "00:00:01", "00:00:02", "00:00:03"
-    ]
+    assert (await caget(PV_PREFIX + ":UPTIME")).startswith("00:00:0")
     # WAVEFORM
     await caput(PV_PREFIX + ":SINN", 4, wait=True)
     q = asyncio.Queue()

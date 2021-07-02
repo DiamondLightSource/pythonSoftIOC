@@ -42,6 +42,8 @@ jobs:
           # Put coverage in the output dir mounted in docker
           cov_file: /output/coverage.xml
           test_requires: cothread pytest-asyncio aioca
+          # Build an sdist here so it has the right line endings
+          sdist: true
 
         - os: windows-latest
           cov_file: '{project}/dist/coverage.xml'
@@ -78,6 +80,7 @@ jobs:
         run: pip install build cibuildwheel
 
       - name: Build Sdist
+        if: matrix.sdist
         run: python -m build --sdist .
 
       - name: Build Wheel
@@ -89,6 +92,7 @@ jobs:
           # Disable auditwheel as it isn't compatible with setuptools_dso approach
           # https://github.com/mdavidsaver/setuptools_dso/issues/17
           CIBW_REPAIR_WHEEL_COMMAND: ''
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux1
 
       - name: Upload Wheel and Sdist
         uses: actions/upload-artifact@v2

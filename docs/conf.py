@@ -96,6 +96,7 @@ pygments_style = 'sphinx'
 intersphinx_mapping = dict(
     python=('https://docs.python.org/3/', None),
     cothread=("https://cothread.readthedocs.org/en/stable/", None),
+    aioca=("https://dls-controls.github.io/aioca/master/", None),
     epicsdbbuilder=(
         "https://dls-controls.github.io/epicsdbbuilder/master/", None)
 )

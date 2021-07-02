@@ -6,7 +6,7 @@ pythonIoc
 
 This module allows an EPICS IOC with Python Device Support to be run from within
 the Python interpreter. Records can be programmatically created and arbitrary
-Python code run to updated them and respond to caputs. It supports cothread and
+Python code run to update them and respond to caputs. It supports cothread and
 asyncio for concurrency.
 
 ============== ==============================================================
@@ -15,7 +15,7 @@ Source code    https://github.com/dls-controls/pythonIoc
 Documentation  https://dls-controls.github.io/pythonIoc
 ============== ==============================================================
 
-A simple example of the use of this library is the following:
+A simple example of the use of this library:
 
 .. code:: python
 
@@ -40,11 +40,11 @@ A simple example of the use of this library is the following:
             ai.set(ai.get() + 1)
             cothread.Sleep(1)
 
+
     cothread.Spawn(update)
 
     # Finally leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
-
 
 .. |code_ci| image:: https://github.com/dls-controls/pythonIoc/workflows/Code%20CI/badge.svg?branch=master
     :target: https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Code+CI%22

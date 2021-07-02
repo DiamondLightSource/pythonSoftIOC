@@ -374,7 +374,7 @@ starting the IOC.
     This must be called exactly once after creating all the records required by
     the IOC and before calling :func:`~softioc.softioc.iocInit`.  After this
     function has been called none of the functions provided by
-    :mod:`softioc.builder` are usable.
+    `softioc.builder` are usable.
 
 .. automodule:: softioc.alarm
 

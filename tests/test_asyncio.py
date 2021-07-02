@@ -34,7 +34,10 @@ def asyncio_ioc():
 async def test_asyncio_ioc(asyncio_ioc):
     import asyncio
     from aioca import caget, caput, camonitor, CANothing, _catools
-    # Unregister the atexit handler as it conflicts with cothread
+    # Unregister the aioca atexit handler as it conflicts with the one installed
+    # by cothread. If we don't do this we get a seg fault. This is not a problem
+    # in production as we won't mix aioca and cothread, but we do mix them in
+    # the tests so need to do this.
     atexit.unregister(_catools._catools_atexit)
 
     # Start

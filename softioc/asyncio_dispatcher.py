@@ -9,6 +9,10 @@ class AsyncioDispatcher(threading.Thread):
     created.
     """
     def __init__(self):
+        """Create an AsyncioDispatcher suitable to be used by
+        `softioc.iocInit`."""
+        # Docstring specified to suppress threading.Thread's docstring, which
+        # would otherwise be inherited by this method and be misleading.
         super().__init__()
         #: `asyncio` event loop that the callbacks will run under.
         self.loop = asyncio.new_event_loop()

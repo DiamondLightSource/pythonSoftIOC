@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.asyncio_dispatcher &mdash; pythonIoc 2.16+36.g3b3c47b documentation</title>
+  <title>softioc.asyncio_dispatcher &mdash; pythonIoc 3.0b2+17.g7baaad3 documentation</title>
   
 
   
@@ -107,6 +107,8 @@
 <p class="caption"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -230,6 +232,10 @@
 <span class="sd">    created.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create an AsyncioDispatcher suitable to be used by</span>
+<span class="sd">        `softioc.iocInit`.&quot;&quot;&quot;</span>
+        <span class="c1"># Docstring specified to suppress threading.Thread&#39;s docstring, which</span>
+        <span class="c1"># would otherwise be inherited by this method and be misleading.</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="c1">#: `asyncio` event loop that the callbacks will run under.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>

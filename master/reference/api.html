@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API &mdash; pythonIoc 2.16+36.g3b3c47b documentation</title>
+  <title>API &mdash; pythonIoc 3.0b2+17.g7baaad3 documentation</title>
   
 
   
@@ -109,6 +109,8 @@
 <p class="caption"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -561,6 +563,8 @@ dispatcher for caput requests.</p>
 <dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based IOCs. Means that <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> callback
 functions can be async. Will run an Event Loop in a thread when
 created.</p>
+<p>Create an AsyncioDispatcher suitable to be used by
+<a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref any py py-func docutils literal notranslate"><span class="pre">softioc.iocInit</span></code></a>.</p>
 <dl class="py attribute">
 <dt id="softioc.asyncio_dispatcher.AsyncioDispatcher.loop">
 <code class="sig-name descname"><span class="pre">loop</span></code><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher.loop" title="Permalink to this definition">¶</a></dt>
@@ -798,7 +802,7 @@ starting the IOC.</p>
 <dd><p>This must be called exactly once after creating all the records required by
 the IOC and before calling <a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref py py-func docutils literal notranslate"><span class="pre">iocInit()</span></code></a>.  After this
 function has been called none of the functions provided by
-<a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> are usable.</p>
+<a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> are usable.</p>
 </dd></dl>
 
 <span class="target" id="module-softioc.alarm"></span><div class="section" id="alarm-value-definitions-softioc-alarm">

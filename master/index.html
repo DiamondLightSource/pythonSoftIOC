@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pythonIoc &mdash; pythonIoc 2.16+36.g3b3c47b documentation</title>
+  <title>pythonIoc &mdash; pythonIoc 3.0b2+17.g7baaad3 documentation</title>
   
 
   
@@ -108,6 +108,8 @@
 <p class="caption"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -226,7 +228,7 @@
 <p><a class="reference external" href="https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Code+CI%22"><img alt="Code CI" src="https://github.com/dls-controls/pythonIoc/workflows/Code%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Docs+CI%22"><img alt="Docs CI" src="https://github.com/dls-controls/pythonIoc/workflows/Docs%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://codecov.io/gh/dls-controls/pythonIoc"><img alt="Test Coverage" src="https://codecov.io/gh/dls-controls/pythonIoc/branch/master/graph/badge.svg" /></a> <a class="reference external" href="https://pypi.org/project/softioc"><img alt="Latest PyPI version" src="https://img.shields.io/pypi/v/softioc.svg" /></a> <a class="reference external" href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a></p>
 <p>This module allows an EPICS IOC with Python Device Support to be run from within
 the Python interpreter. Records can be programmatically created and arbitrary
-Python code run to updated them and respond to caputs. It supports cothread and
+Python code run to update them and respond to caputs. It supports cothread and
 asyncio for concurrency.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -245,7 +247,7 @@ asyncio for concurrency.</p>
 </tr>
 </tbody>
 </table>
-<p>A simple example of the use of this library is the following:</p>
+<p>A simple example of the use of this library:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import the basic framework components.</span>
 <span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">softioc</span><span class="p">,</span> <span class="n">builder</span>
 <span class="kn">import</span> <span class="nn">cothread</span>
@@ -266,6 +268,7 @@ asyncio for concurrency.</p>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">ai</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">cothread</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
 
 <span class="n">cothread</span><span class="o">.</span><span class="n">Spawn</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
 
@@ -311,6 +314,8 @@ the side-bar. Use the links below or in the side-bar.</p>
 <p class="caption"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound" id="id2">

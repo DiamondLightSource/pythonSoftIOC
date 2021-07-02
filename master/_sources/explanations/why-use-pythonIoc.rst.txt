@@ -38,8 +38,6 @@ allows you to write this as:
     # Leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
 
-ADD THE CONCENTRATOR USE CASE HERE
-
 Dynamically created PVs
 -----------------------
 

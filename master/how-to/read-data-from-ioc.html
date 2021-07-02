@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Contributing &mdash; pythonIoc 3.0b2+17.g7baaad3 documentation</title>
+  <title>Read data from an IOC &mdash; pythonIoc 3.0b2+17.g7baaad3 documentation</title>
   
 
   
@@ -41,7 +41,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="API" href="api.html" /> 
+    <link rel="next" title="Why use pythonIOC?" href="../explanations/why-use-pythonIoc.html" />
+    <link rel="prev" title="Create a Publishable IOC" href="make-publishable-ioc.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -106,25 +107,19 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
 </ul>
 <p class="caption"><span class="caption-text">How-to Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Read data from an IOC</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#running-the-tests">Running the tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#code-styling">Code Styling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#release-checklist">Release Checklist</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
 </ul>
 
             
@@ -210,13 +205,13 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Contributing</li>
+      <li>Read data from an IOC</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/reference/contributing.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/how-to/read-data-from-ioc.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -229,70 +224,42 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="contributing">
-<span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
-<p>Contributions and issues are most welcome! All issues and pull requests are
-handled through github on the <a class="reference external" href="https://github.com/dls-controls/pythonIoc/issues">dls_controls repository</a>. Also, please check for
-any existing issues before filing a new one. If you have a great idea but it
-involves big changes, please file a ticket before making a pull request! We
-want to make sure you don’t spend your time coding something that might not fit
-the scope of the project.</p>
-<div class="section" id="running-the-tests">
-<h2>Running the tests<a class="headerlink" href="#running-the-tests" title="Permalink to this headline">¶</a></h2>
-<p>To get the source source code and run the unit tests, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone git://github.com/dls-controls/pythonIoc.git
-$ cd pythonIoc
-$ git submodule init
-$ git submodule update
-$ pipenv install --dev
-$ pipenv run tests
-</pre></div>
+  <div class="section" id="read-data-from-an-ioc">
+<h1>Read data from an IOC<a class="headerlink" href="#read-data-from-an-ioc" title="Permalink to this headline">¶</a></h1>
+<p>This guide explains how to read data from an IOC in a separate Python program.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please ensure your firewall allows both TCP and UDP traffic on ports 5064 and 5065.
+These are used by EPICS for channel access to the PVs.</p>
 </div>
-<p>While 100% code coverage does not make a library bug-free, it significantly
-reduces the number of easily caught bugs! Please make sure coverage remains the
-same or is improved by a pull request!</p>
-</div>
-<div class="section" id="code-styling">
-<h2>Code Styling<a class="headerlink" href="#code-styling" title="Permalink to this headline">¶</a></h2>
-<p>The code in this repository conforms to standards set by the following tools:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://flake8.pycqa.org/en/latest/">flake8</a> for style checks</p></li>
-</ul>
-<p>These tests will be run on code when running <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">tests</span></code> and also
-automatically at check in. Please read the tool documentation for details
-on how to fix the errors it reports.</p>
-</div>
-<div class="section" id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
-<p>Documentation is contained in the <code class="docutils literal notranslate"><span class="pre">docs</span></code> directory and extracted from
-docstrings of the API.</p>
-<p>Docs follow the underlining convention:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Headling</span> <span class="mi">1</span> <span class="p">(</span><span class="n">page</span> <span class="n">title</span><span class="p">)</span>
-<span class="o">=======================</span>
+<p>To start, run the <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> IOC from <a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a> or the
+<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> IOC from <a class="reference internal" href="use-asyncio-in-an-ioc.html"><span class="doc">Use asyncio in an IOC</span></a> and leave it running at the
+interactive shell.</p>
+<p>We will read data from that IOC using this script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">softioc</span>
+<span class="kn">from</span> <span class="nn">cothread.catools</span> <span class="kn">import</span> <span class="n">caget</span><span class="p">,</span> <span class="n">caput</span><span class="p">,</span> <span class="n">camonitor</span>
 
-<span class="n">Heading</span> <span class="mi">2</span>
-<span class="o">---------</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">caget</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AI&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">caget</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">caput</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">,</span> <span class="s2">&quot;999&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">caget</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">))</span>
 
-<span class="n">Heading</span> <span class="mi">3</span>
-<span class="o">~~~~~~~~~</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>You can build the docs from the project directory by running:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pipenv run docs
-$ firefox build/html/index.html
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may see warnings regarding the missing “caRepeater” program. This is an EPICS tool
+that is used to track when PVs start and stop. It is not required for this simple example,
+and so the warning can be ignored.</p>
+</div>
+<p>From the interactive command line you can now use the <code class="docutils literal notranslate"><span class="pre">caget</span></code> and <code class="docutils literal notranslate"><span class="pre">caput</span></code> functions to operate on
+the PVs exposed in the IOC. Another interesting command to try is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">camonitor</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AI&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">val</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="release-checklist">
-<h2>Release Checklist<a class="headerlink" href="#release-checklist" title="Permalink to this headline">¶</a></h2>
-<p>Before a new release, please go through the following checklist:</p>
-<ul class="simple">
-<li><p>Choose a new PEP440 compliant release number</p></li>
-<li><p>Git tag the version with a message summarizing the changes</p></li>
-<li><p>Push to github and the actions will make a release on pypi</p></li>
-<li><p>Push to internal gitlab and do a dls-release.py of the tag</p></li>
-</ul>
-</div>
+<p>You should observe the value of <code class="docutils literal notranslate"><span class="pre">AI</span></code> being printed out, once per second, every time the PV value
+updates.</p>
 </div>
 
 
@@ -301,7 +268,8 @@ $ firefox build/html/index.html
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="api.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../explanations/why-use-pythonIoc.html" class="btn btn-neutral float-right" title="Why use pythonIOC?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="make-publishable-ioc.html" class="btn btn-neutral float-left" title="Create a Publishable IOC" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

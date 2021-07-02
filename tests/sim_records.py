@@ -26,7 +26,7 @@ t_ai = aIn('AI', initial_value=12.34)
 t_boolin = boolIn('BOOLIN', 'True', 'False', initial_value=False)
 t_longin = longIn('LONGIN', initial_value=33)
 t_stringin = stringIn('STRINGIN', initial_value="Testing string")
-t_mbbi = mbbIn('MBBI', 'One', 'Two', 'Three', initial_value=2)
+t_mbbi = mbbIn('MBBI', 'One', 'Two', ('Three', "MINOR"), initial_value=2)
 
 t_ao = aOut('AO', initial_value=12.45, on_update_name=on_update_name)
 t_boolout = boolOut(

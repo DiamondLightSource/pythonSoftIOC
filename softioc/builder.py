@@ -72,7 +72,7 @@ def _process_mbb_values(options, fields):
         if severity:
             fields[prefix + 'SV'] = severity
     for prefix, (value, option) in zip(_mbbPrefixes, enumerate(options)):
-        if isinstance(value, tuple):
+        if isinstance(option, tuple):
             # The option is tuple consisting of the option name and an optional
             # alarm severity.
             process_value(prefix, value, *option)

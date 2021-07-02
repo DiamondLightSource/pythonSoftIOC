@@ -1,7 +1,7 @@
 Create a Publishable IOC
 ========================
 
-As seen in :doc:`../tutorials/creating-an-ioc`, a single Python script can be an IOC.
+As seen in `../tutorials/creating-an-ioc`, a single Python script can be an IOC.
 It is also possible (and the most common situation) to have an entire Python module
 comprising an IOC. This guide explains both, as well as how to publish an IOC within
 the DLS environment.

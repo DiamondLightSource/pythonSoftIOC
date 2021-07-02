@@ -8,8 +8,8 @@ This guide explains how to read data from an IOC in a separate Python program.
     These are used by EPICS for channel access to the PVs.
 
 
-To start, run the :mod:`cothread` IOC from :doc:`../tutorials/creating-an-ioc` or the 
-:mod:`asyncio` IOC from :doc:`use-asyncio-in-an-ioc` and leave it running at the 
+To start, run the `cothread` IOC from `../tutorials/creating-an-ioc` or the 
+`asyncio` IOC from `use-asyncio-in-an-ioc` and leave it running at the 
 interactive shell.
 
 We will read data from that IOC using this script:

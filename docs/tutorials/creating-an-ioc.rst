@@ -4,10 +4,10 @@ Creating an IOC
 Introduction
 ------------
 
-Once the module has been installed (see :doc:`installation`) we can create a 
+Once the module has been installed (see `installation`) we can create a 
 simple EPICS Input/Output Controller (IOC). 
 
-An EPICS IOC created with the help of ``pythonIoc`` and :mod:`softioc` is
+An EPICS IOC created with the help of ``pythonIoc`` and `softioc` is
 referred to as a "Python soft IOC".  The code below illustrates a simple IOC
 with two Process Variables (PVs):
 
@@ -19,13 +19,13 @@ Each section is explained in detail below:
     :start-after: # Import
     :end-before: # Set
 
-The :mod:`softioc` library is part of ``pythonIoc``. The two submodules 
-:mod:`softioc.softioc` and :mod:`softioc.builder` provide the basic 
+The `softioc` library is part of ``pythonIoc``. The two submodules 
+`softioc.softioc` and `softioc.builder` provide the basic 
 functionality for Python soft IOCs and are the ones that are normally used.
 
-:mod:`cothread` is one of the two possible libraries the IOC can use for
+`cothread` is one of the two possible libraries the IOC can use for
 asynchronous operations. 
-(see :doc:`../how-to/use-asyncio-in-an-ioc` for the alternative)
+(see `../how-to/use-asyncio-in-an-ioc` for the alternative)
 
 
 
@@ -33,7 +33,7 @@ asynchronous operations.
     :start-after: # Create 
     :end-before: # Boilerplate
 
-PVs are normally created dynamically using :mod:`softioc.builder`.  All PV
+PVs are normally created dynamically using `softioc.builder`.  All PV
 creation must be done before initialising the IOC. We define a lambda function for 
 `on_update` on ``ao`` such that whenever we set ``ao``, ``ai`` will be set to the 
 same value. The ``always_update`` flag ensures that the ``on_update`` function is always 
@@ -66,11 +66,11 @@ needed.  The :func:`~softioc.softioc.interactive_ioc` runs a Python
 interpreter shell with a number of useful EPICS functions in scope, and
 passing ``globals()`` through can allow interactive interaction with the
 internals of the IOC while it's running.  The alternative is to call something
-like :func:`cothread.WaitForQuit` or some other :mod:`cothread` blocking
+like :func:`cothread.WaitForQuit` or some other `cothread` blocking
 action.
 
 In this interpreter there is immediate access to methods defined in the 
-:mod:`softioc.softioc` module. For example the :func:`~softioc.softioc.dbgf` function
+`softioc.softioc` module. For example the :func:`~softioc.softioc.dbgf` function
 can be run to observe the increasing value of ``AI``::
 
     >>> dbgf("MY-DEVICE-PREFIX:AI")
@@ -93,12 +93,12 @@ and read the value on ``AI`` (exact values will vary based on time taken)::
 Creating PVs
 ------------
 
-See the documentation of :mod:`softioc.builder` for details, but an overview is
+See the documentation of `softioc.builder` for details, but an overview is
 provided here.
 
 PVs are created internally and dynamically using functionality provided by
-:mod:`epicsdbbuilder`, which in this context simply provides mechanisms for
-creating ``.db`` files, but :mod:`softioc.builder` also binds each created PV to
+`epicsdbbuilder`, which in this context simply provides mechanisms for
+creating ``.db`` files, but `softioc.builder` also binds each created PV to
 a special ``Python`` device -- this allows PV processing to be hooked into
 Python support.
 
@@ -131,7 +131,3 @@ For all records created by these methods both
 reading and writing the current value of the record.  For IN records calling
 :meth:`~softioc.device.ProcessDeviceSupportIn.set` will trigger a record update
 (all IN records are by default created with ``SCAN='I/O Intr'``).
-
-
-..  _cothread: https://github.com/dls-controls/cothread
-..  _epicsdbbuilder: https://github.com/Araneidae/epicsdbbuilder

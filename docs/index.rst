@@ -5,7 +5,7 @@ How the documentation is structured
 -----------------------------------
 
 Documentation is split into four categories, accessible from links below or in
-the side-bar. Use the links below or in the side-bar.
+the side-bar.
 
 .. rst-class:: columns
 

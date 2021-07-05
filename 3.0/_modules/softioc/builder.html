@@ -1,0 +1,488 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>softioc.builder &mdash; pythonIoc 3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="../../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+  <!-- Include Index in the sidebar -->
+  <!-- https://stackoverflow.com/a/37843854 -->
+  <a href="../../genindex.html">Index</a>
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>softioc.builder</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for softioc.builder</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">.softioc</span> <span class="kn">import</span> <span class="n">dbLoadDatabase</span>
+
+<span class="kn">from</span> <span class="nn">epicsdbbuilder</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">InitialiseDbd</span><span class="p">()</span>
+<span class="n">LoadDbdFile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;device.dbd&#39;</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">pythonSoftIoc</span>  <span class="c1"># noqa</span>
+<span class="n">PythonDevice</span> <span class="o">=</span> <span class="n">pythonSoftIoc</span><span class="o">.</span><span class="n">PythonDevice</span><span class="p">()</span>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1">#  Wrappers for PythonDevice record constructors.</span>
+<span class="c1">#</span>
+<span class="c1"># The SCAN field for all input records defaults to I/O Intr.</span>
+
+
+<span class="k">def</span> <span class="nf">_in_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;For input records we provide some automatic extra features: scanning</span>
+<span class="sd">    and initialisation as appropriate.&#39;&#39;&#39;</span>
+
+    <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SCAN&#39;</span><span class="p">,</span> <span class="s1">&#39;I/O Intr&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;initial_value&#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;PINI&#39;</span><span class="p">,</span> <span class="s1">&#39;YES&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">PythonDevice</span><span class="p">,</span> <span class="n">record</span><span class="p">)(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="aIn"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.aIn">[docs]</a><span class="k">def</span> <span class="nf">aIn</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">LOPR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">HOPR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_in_record</span><span class="p">(</span>
+        <span class="s1">&#39;ai&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">LOPR</span> <span class="o">=</span> <span class="n">LOPR</span><span class="p">,</span> <span class="n">HOPR</span> <span class="o">=</span> <span class="n">HOPR</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="aOut"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.aOut">[docs]</a><span class="k">def</span> <span class="nf">aOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">LOPR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">HOPR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;DRVL&#39;</span><span class="p">,</span> <span class="n">LOPR</span><span class="p">)</span>
+    <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;DRVH&#39;</span><span class="p">,</span> <span class="n">HOPR</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">ao</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">LOPR</span> <span class="o">=</span> <span class="n">LOPR</span><span class="p">,</span> <span class="n">HOPR</span> <span class="o">=</span> <span class="n">HOPR</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="boolIn"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.boolIn">[docs]</a><span class="k">def</span> <span class="nf">boolIn</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ZNAM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ONAM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_in_record</span><span class="p">(</span><span class="s1">&#39;bi&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ZNAM</span> <span class="o">=</span> <span class="n">ZNAM</span><span class="p">,</span> <span class="n">ONAM</span> <span class="o">=</span> <span class="n">ONAM</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="boolOut"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.boolOut">[docs]</a><span class="k">def</span> <span class="nf">boolOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ZNAM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ONAM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">bo</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">OMSL</span> <span class="o">=</span> <span class="s1">&#39;supervisory&#39;</span><span class="p">,</span> <span class="n">ZNAM</span> <span class="o">=</span> <span class="n">ZNAM</span><span class="p">,</span> <span class="n">ONAM</span> <span class="o">=</span> <span class="n">ONAM</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="longIn"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.longIn">[docs]</a><span class="k">def</span> <span class="nf">longIn</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">LOPR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">HOPR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">EGU</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;MDEL&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_in_record</span><span class="p">(</span>
+        <span class="s1">&#39;longin&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">EGU</span> <span class="o">=</span> <span class="n">EGU</span><span class="p">,</span> <span class="n">LOPR</span> <span class="o">=</span> <span class="n">LOPR</span><span class="p">,</span> <span class="n">HOPR</span> <span class="o">=</span> <span class="n">HOPR</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="longOut"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.longOut">[docs]</a><span class="k">def</span> <span class="nf">longOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">DRVL</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">DRVH</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">EGU</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">longout</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">OMSL</span> <span class="o">=</span> <span class="s1">&#39;supervisory&#39;</span><span class="p">,</span> <span class="n">DRVL</span> <span class="o">=</span> <span class="n">DRVL</span><span class="p">,</span> <span class="n">DRVH</span> <span class="o">=</span> <span class="n">DRVH</span><span class="p">,</span> <span class="n">EGU</span> <span class="o">=</span> <span class="n">EGU</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+<span class="c1"># Field name prefixes for mbbi/mbbo records.</span>
+<span class="n">_mbbPrefixes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;ZR&#39;</span><span class="p">,</span> <span class="s1">&#39;ON&#39;</span><span class="p">,</span> <span class="s1">&#39;TW&#39;</span><span class="p">,</span> <span class="s1">&#39;TH&#39;</span><span class="p">,</span> <span class="s1">&#39;FR&#39;</span><span class="p">,</span> <span class="s1">&#39;FV&#39;</span><span class="p">,</span> <span class="s1">&#39;SX&#39;</span><span class="p">,</span> <span class="s1">&#39;SV&#39;</span><span class="p">,</span>     <span class="c1"># 0-7</span>
+    <span class="s1">&#39;EI&#39;</span><span class="p">,</span> <span class="s1">&#39;NI&#39;</span><span class="p">,</span> <span class="s1">&#39;TE&#39;</span><span class="p">,</span> <span class="s1">&#39;EL&#39;</span><span class="p">,</span> <span class="s1">&#39;TV&#39;</span><span class="p">,</span> <span class="s1">&#39;TT&#39;</span><span class="p">,</span> <span class="s1">&#39;FT&#39;</span><span class="p">,</span> <span class="s1">&#39;FF&#39;</span><span class="p">]</span>     <span class="c1"># 8-15</span>
+
+<span class="c1"># Converts a list of (option [,severity]) values or tuples into field settings</span>
+<span class="c1"># suitable for mbbi and mbbo records.</span>
+<span class="k">def</span> <span class="nf">_process_mbb_values</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_value</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">severity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">fields</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;ST&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">option</span>
+        <span class="n">fields</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;VL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">severity</span><span class="p">:</span>
+            <span class="n">fields</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;SV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">severity</span>
+    <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_mbbPrefixes</span><span class="p">,</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">options</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">option</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="c1"># The option is tuple consisting of the option name and an optional</span>
+            <span class="c1"># alarm severity.</span>
+            <span class="n">process_value</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">option</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># The option is a simple string naming the option.  Assign the</span>
+            <span class="c1"># default numerical value (and no severity setting).</span>
+            <span class="n">process_value</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+
+<div class="viewcode-block" id="mbbIn"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.mbbIn">[docs]</a><span class="k">def</span> <span class="nf">mbbIn</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="n">_process_mbb_values</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_in_record</span><span class="p">(</span><span class="s1">&#39;mbbi&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="mbbOut"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.mbbOut">[docs]</a><span class="k">def</span> <span class="nf">mbbOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="n">_process_mbb_values</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">mbbo</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">OMSL</span> <span class="o">=</span> <span class="s1">&#39;supervisory&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="stringIn"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.stringIn">[docs]</a><span class="k">def</span> <span class="nf">stringIn</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_in_record</span><span class="p">(</span><span class="s1">&#39;stringin&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="stringOut"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.stringOut">[docs]</a><span class="k">def</span> <span class="nf">stringOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">stringout</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.Action">[docs]</a><span class="k">def</span> <span class="nf">Action</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">boolOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">always_update</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+<span class="c1"># Converts numpy character code to FTVL value.</span>
+<span class="n">NumpyCharCodeToFtvl</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># The following type codes are supported directly:</span>
+    <span class="s1">&#39;B&#39;</span><span class="p">:</span>    <span class="s1">&#39;UCHAR&#39;</span><span class="p">,</span>        <span class="c1"># ubyte</span>
+    <span class="s1">&#39;b&#39;</span><span class="p">:</span>    <span class="s1">&#39;CHAR&#39;</span><span class="p">,</span>         <span class="c1"># byte</span>
+    <span class="s1">&#39;H&#39;</span><span class="p">:</span>    <span class="s1">&#39;USHORT&#39;</span><span class="p">,</span>       <span class="c1"># ushort</span>
+    <span class="s1">&#39;h&#39;</span><span class="p">:</span>    <span class="s1">&#39;SHORT&#39;</span><span class="p">,</span>        <span class="c1"># short</span>
+    <span class="s1">&#39;i&#39;</span><span class="p">:</span>    <span class="s1">&#39;LONG&#39;</span><span class="p">,</span>         <span class="c1"># intc</span>
+    <span class="s1">&#39;L&#39;</span><span class="p">:</span>    <span class="s1">&#39;ULONG&#39;</span><span class="p">,</span>        <span class="c1"># uint</span>
+    <span class="s1">&#39;l&#39;</span><span class="p">:</span>    <span class="s1">&#39;LONG&#39;</span><span class="p">,</span>         <span class="c1"># int_</span>
+    <span class="s1">&#39;f&#39;</span><span class="p">:</span>    <span class="s1">&#39;FLOAT&#39;</span><span class="p">,</span>        <span class="c1"># single</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">:</span>    <span class="s1">&#39;DOUBLE&#39;</span><span class="p">,</span>       <span class="c1"># float_</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span>    <span class="s1">&#39;STRING&#39;</span><span class="p">,</span>       <span class="c1"># str_</span>
+
+    <span class="c1"># The following type codes are weakly supported by pretending that</span>
+    <span class="c1"># they&#39;re related types.</span>
+    <span class="s1">&#39;?&#39;</span><span class="p">:</span>    <span class="s1">&#39;CHAR&#39;</span><span class="p">,</span>         <span class="c1"># bool_</span>
+    <span class="s1">&#39;p&#39;</span><span class="p">:</span>    <span class="s1">&#39;LONG&#39;</span><span class="p">,</span>         <span class="c1"># intp</span>
+    <span class="s1">&#39;I&#39;</span><span class="p">:</span>    <span class="s1">&#39;ULONG&#39;</span><span class="p">,</span>        <span class="c1"># uintc</span>
+    <span class="s1">&#39;P&#39;</span><span class="p">:</span>    <span class="s1">&#39;ULONG&#39;</span><span class="p">,</span>        <span class="c1"># uintp</span>
+
+    <span class="c1"># The following type codes are not supported at all:</span>
+    <span class="c1">#   q   longlong        Q   ulonglong       g   longfloat</span>
+    <span class="c1">#   F   csingle         D   complex_        G   clongfloat</span>
+    <span class="c1">#   O   object_         U   unicode_        V   void</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_waveform</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Helper routine for waveform construction.  If a value is given it is</span>
+<span class="sd">    interpreted as an initial value and used to configure length and datatype</span>
+<span class="sd">    (unless these are overridden), otherwise length and datatype must be</span>
+<span class="sd">    specified.&#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;initial_value&#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t specify initial value twice!&#39;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;initial_value&#39;</span><span class="p">),)</span>
+
+    <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+        <span class="c1"># If a value is specified it should be the *only* non keyword</span>
+        <span class="c1"># argument.</span>
+        <span class="n">value</span><span class="p">,</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;initial_value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="c1"># Pick up default length and datatype from initial value</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">FTVL</span> <span class="o">=</span> <span class="n">NumpyCharCodeToFtvl</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># No value specified, so require length and datatype to be specified.</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+        <span class="n">FTVL</span> <span class="o">=</span> <span class="s1">&#39;FLOAT&#39;</span>
+
+    <span class="n">datatype</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;datatype&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">datatype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s1">&#39;FTVL&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">,</span> \
+            <span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t specify FTVL and datatype together&#39;</span>
+        <span class="n">FTVL</span> <span class="o">=</span> <span class="n">NumpyCharCodeToFtvl</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">datatype</span><span class="p">)</span><span class="o">.</span><span class="n">char</span><span class="p">]</span>
+
+    <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;NELM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+    <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;FTVL&#39;</span><span class="p">,</span> <span class="n">FTVL</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Waveform"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.Waveform">[docs]</a><span class="k">def</span> <span class="nf">Waveform</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="n">_waveform</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_in_record</span><span class="p">(</span><span class="s1">&#39;waveform&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<span class="n">WaveformIn</span> <span class="o">=</span> <span class="n">Waveform</span>
+
+<div class="viewcode-block" id="WaveformOut"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.WaveformOut">[docs]</a><span class="k">def</span> <span class="nf">WaveformOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="n">_waveform</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">waveform_out</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1">#  Support routines for builder</span>
+
+
+<span class="n">_DatabaseWritten</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="LoadDatabase"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.LoadDatabase">[docs]</a><span class="k">def</span> <span class="nf">LoadDatabase</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;This should be called after all the builder records have been created,</span>
+<span class="sd">    but before calling iocInit().  The database is loaded into EPICS memory,</span>
+<span class="sd">    ready for operation.&#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">mkstemp</span>
+    <span class="n">fd</span><span class="p">,</span> <span class="n">database</span> <span class="o">=</span> <span class="n">mkstemp</span><span class="p">(</span><span class="s1">&#39;.db&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+    <span class="n">WriteRecords</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+    <span class="n">dbLoadDatabase</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+
+    <span class="n">pythonSoftIoc</span><span class="o">.</span><span class="n">RecordWrapper</span><span class="o">.</span><span class="n">reset_builder</span><span class="p">()</span></div>
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># Record name configuration.  A device name prefix must be specified.</span>
+
+<span class="n">SetSimpleRecordNames</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
+
+<span class="n">SetDeviceName</span> <span class="o">=</span> <span class="n">SetPrefix</span>
+<div class="viewcode-block" id="SetDeviceName"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.SetDeviceName">[docs]</a><span class="k">def</span> <span class="nf">SetDeviceName</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">SetPrefix</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UnsetDevice"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.UnsetDevice">[docs]</a><span class="k">def</span> <span class="nf">UnsetDevice</span><span class="p">():</span>
+    <span class="n">SetPrefix</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Re-exports from epicsdbbuilder</span>
+    <span class="s1">&#39;records&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PP&#39;</span><span class="p">,</span> <span class="s1">&#39;CP&#39;</span><span class="p">,</span> <span class="s1">&#39;MS&#39;</span><span class="p">,</span> <span class="s1">&#39;NP&#39;</span><span class="p">,</span>
+    <span class="c1"># Wrappers for PythonDevice</span>
+    <span class="s1">&#39;aIn&#39;</span><span class="p">,</span>      <span class="s1">&#39;aOut&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;boolIn&#39;</span><span class="p">,</span>   <span class="s1">&#39;boolOut&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;longIn&#39;</span><span class="p">,</span>   <span class="s1">&#39;longOut&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stringIn&#39;</span><span class="p">,</span> <span class="s1">&#39;stringOut&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mbbIn&#39;</span><span class="p">,</span>    <span class="s1">&#39;mbbOut&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Waveform&#39;</span><span class="p">,</span> <span class="s1">&#39;WaveformOut&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Action&#39;</span><span class="p">,</span>
+    <span class="c1"># Other builder support functions</span>
+    <span class="s1">&#39;LoadDatabase&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SetDeviceName&#39;</span><span class="p">,</span> <span class="s1">&#39;UnsetDevice&#39;</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

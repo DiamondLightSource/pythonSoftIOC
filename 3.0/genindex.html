@@ -1,0 +1,648 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Index &mdash; pythonIoc 3.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+  <!-- Include Index in the sidebar -->
+  <!-- https://stackoverflow.com/a/37843854 -->
+  <a href="#">Index</a>
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Index</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.Action">Action() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.aIn">aIn() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.aOut">aOut() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.asyncio_dispatcher.AsyncioDispatcher">AsyncioDispatcher (class in softioc.asyncio_dispatcher)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.BAD_SUB_ALARM">BAD_SUB_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.boolIn">boolIn() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.boolOut">boolOut() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.CALC_ALARM">CALC_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.alarm.COMM_ALARM">COMM_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.COS_ALARM">COS_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.CP">CP() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.dba">dba() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbgf">dbgf() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbgrep">dbgrep() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbhcr">dbhcr() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbior">dbior() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbl">dbl() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbLoadDatabase">dbLoadDatabase() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbLockShowLocked">dbLockShowLocked() (in module softioc.softioc)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.dblsr">dblsr() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbnr">dbnr() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbpf">dbpf() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbpr">dbpr() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbtgf">dbtgf() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbtpf">dbtpf() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.dbtr">dbtr() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.devIocStats">devIocStats() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.alarm.DISABLE_ALARM">DISABLE_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.eltc">eltc() (in module softioc.softioc)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.exit">exit (in module softioc.softioc)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.generalTimeReport">generalTimeReport() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.device.ProcessDeviceSupportIn.get">get() (softioc.device.ProcessDeviceSupportIn method)</a>
+
+      <ul>
+        <li><a href="reference/api.html#softioc.device.ProcessDeviceSupportOut.get">(softioc.device.ProcessDeviceSupportOut method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.gft">gft() (in module softioc.softioc)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.HIGH_ALARM">HIGH_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.HIHI_ALARM">HIHI_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.alarm.HW_LIMIT_ALARM">HW_LIMIT_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.interactive_ioc">interactive_ioc() (in module softioc.softioc)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.iocInit">iocInit() (in module softioc.softioc)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.LINK_ALARM">LINK_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.LoadDatabase">LoadDatabase() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.alarm.LOLO_ALARM">LOLO_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.longIn">longIn() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.longOut">longOut() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.asyncio_dispatcher.AsyncioDispatcher.loop">loop (softioc.asyncio_dispatcher.AsyncioDispatcher attribute)</a>
+</li>
+      <li><a href="reference/api.html#softioc.alarm.LOW_ALARM">LOW_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.mbbIn">mbbIn() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.mbbOut">mbbOut() (in module softioc.builder)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc">softioc</a>
+</li>
+        <li><a href="reference/api.html#module-softioc.alarm">softioc.alarm</a>
+</li>
+        <li><a href="reference/api.html#module-softioc.asyncio_dispatcher">softioc.asyncio_dispatcher</a>
+</li>
+        <li><a href="reference/api.html#module-softioc.builder">softioc.builder</a>
+</li>
+        <li><a href="reference/api.html#module-softioc.device">softioc.device</a>
+</li>
+        <li><a href="reference/api.html#module-softioc.pvlog">softioc.pvlog</a>
+</li>
+        <li><a href="reference/api.html#module-softioc.softioc">softioc.softioc</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.MS">MS() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.NP">NP() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.pft">pft() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.PP">PP() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.device.ProcessDeviceSupportIn">ProcessDeviceSupportIn (class in softioc.device)</a>
+</li>
+      <li><a href="reference/api.html#softioc.device.ProcessDeviceSupportOut">ProcessDeviceSupportOut (class in softioc.device)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.READ_ACCESS_ALARM">READ_ACCESS_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.READ_ALARM">READ_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.records">records (in module softioc.builder)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.SCAN_ALARM">SCAN_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.scanpel">scanpel() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.scanpiol">scanpiol() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.softioc.scanppl">scanppl() (in module softioc.softioc)</a>
+</li>
+      <li><a href="reference/api.html#softioc.device.ProcessDeviceSupportIn.set">set() (softioc.device.ProcessDeviceSupportIn method)</a>
+
+      <ul>
+        <li><a href="reference/api.html#softioc.device.ProcessDeviceSupportOut.set">(softioc.device.ProcessDeviceSupportOut method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/api.html#softioc.device.ProcessDeviceSupportIn.set_alarm">set_alarm() (softioc.device.ProcessDeviceSupportIn method)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.SetDeviceName">SetDeviceName() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.alarm.SIMM_ALARM">SIMM_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.alarm.SOFT_ALARM">SOFT_ALARM (in module softioc.alarm)</a>
+</li>
+      <li>
+    softioc
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc">module</a>
+</li>
+      </ul></li>
+      <li><a href="reference/api.html#softioc.softioc.__version__">softioc.__version__ (in module softioc)</a>
+</li>
+      <li>
+    softioc.alarm
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc.alarm">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    softioc.asyncio_dispatcher
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc.asyncio_dispatcher">module</a>
+</li>
+      </ul></li>
+      <li>
+    softioc.builder
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc.builder">module</a>
+</li>
+      </ul></li>
+      <li>
+    softioc.device
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc.device">module</a>
+</li>
+      </ul></li>
+      <li>
+    softioc.pvlog
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc.pvlog">module</a>
+</li>
+      </ul></li>
+      <li>
+    softioc.softioc
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc.softioc">module</a>
+</li>
+      </ul></li>
+      <li><a href="reference/api.html#softioc.alarm.STATE_ALARM">STATE_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.stringIn">stringIn() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.stringOut">stringOut() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.TIMEOUT_ALARM">TIMEOUT_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.softioc.tpn">tpn() (in module softioc.softioc)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.UDF_ALARM">UDF_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.UnsetDevice">UnsetDevice() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.builder.Waveform">Waveform() (in module softioc.builder)</a>
+</li>
+      <li><a href="reference/api.html#softioc.builder.WaveformOut">WaveformOut() (in module softioc.builder)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.alarm.WRITE_ACCESS_ALARM">WRITE_ACCESS_ALARM (in module softioc.alarm)</a>
+</li>
+      <li><a href="reference/api.html#softioc.alarm.WRITE_ALARM">WRITE_ALARM (in module softioc.alarm)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

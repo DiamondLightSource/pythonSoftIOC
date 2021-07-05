@@ -273,8 +273,8 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
 
         status = mbbIn('STATUS',
             'OK',
-            ('FAILING', alarm.MINOR_ALARM),
-            ('FAILED', alarm.MAJOR_ALARM))
+            ('FAILING', "MINOR"),
+            ('FAILED', "MAJOR"))
 
     Numerical values are assigned to options sequentially from 0 to 15 and
     cannot be overridden.

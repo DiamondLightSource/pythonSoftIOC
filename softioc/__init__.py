@@ -12,7 +12,8 @@ from ._version_git import __version__
 
 # Need to do this before calling anything in device.py
 iocshRegisterCommon()
-dbLoadDatabase("base.dbd", os.path.join(path.base_path, "dbd"), None)
+for dbd in ('base.dbd', 'PVAServerRegister.dbd', 'qsrv.dbd'):
+    dbLoadDatabase(dbd, os.path.join(path.base_path, "dbd"), None)
 dbLoadDatabase("devIocStats.dbd", os.path.dirname(__file__), None)
 
 if registerRecordDeviceDriver(pdbbase):

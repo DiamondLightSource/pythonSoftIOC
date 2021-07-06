@@ -73,7 +73,16 @@ ext = Extension(
         epicscorelibs.path.include_path,
         devIocStats_src, devIocStats_os, devIocStats_default
     ],
-    dsos = ['epicscorelibs.lib.dbCore', 'epicscorelibs.lib.Com'],
+    dsos = [
+        'epicscorelibs.lib.qsrv',
+        'epicscorelibs.lib.pvAccessIOC',
+        'epicscorelibs.lib.pvAccess',
+        'epicscorelibs.lib.pvData',
+        'epicscorelibs.lib.dbRecStd',
+        'epicscorelibs.lib.dbCore',
+        'epicscorelibs.lib.ca',
+        'epicscorelibs.lib.Com',
+    ],
     define_macros = get_config_var('CPPFLAGS'),
     extra_compile_args = get_config_var('CFLAGS') + ["-std=c99"],
     extra_link_args = get_config_var('LDFLAGS'),

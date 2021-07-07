@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API &mdash; pythonIoc 3.0+1.g94d2e66 documentation</title>
+  <title>API &mdash; pythonIoc 3.0+6.g379e715 documentation</title>
   
 
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
 
   
@@ -32,6 +34,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -284,8 +287,8 @@ record fields.</p>
 </dl>
 </div>
 <dl class="py data">
-<dt id="softioc.softioc.__version__">
-<code class="sig-prename descclassname"><span class="pre">softioc.</span></code><code class="sig-name descname"><span class="pre">__version__</span></code><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></em><a class="headerlink" href="#softioc.softioc.__version__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.__version__">
+<span class="sig-prename descclassname"><span class="pre">softioc.</span></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></em><a class="headerlink" href="#softioc.softioc.__version__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version number as calculated by <a class="reference external" href="https://github.com/dls-controls/versiongit">https://github.com/dls-controls/versiongit</a></p>
 </dd></dl>
 
@@ -295,8 +298,8 @@ record fields.</p>
 importing <code class="docutils literal notranslate"><span class="pre">*</span></code>):</p>
 </div>
 <dl class="py function">
-<dt id="softioc.softioc.iocInit">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">iocInit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dispatcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#iocInit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.iocInit" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.iocInit">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">iocInit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dispatcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#iocInit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.iocInit" title="Permalink to this definition">¶</a></dt>
 <dd><p>This must be called exactly once after loading all EPICS database files.
 After this point the EPICS IOC is running and serving PVs.</p>
 <dl class="field-list simple">
@@ -313,8 +316,8 @@ be called in response to caput on a record. If not supplied use
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbLoadDatabase">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbLoadDatabase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substitutions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#dbLoadDatabase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.dbLoadDatabase" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbLoadDatabase">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbLoadDatabase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substitutions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#dbLoadDatabase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.dbLoadDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a database file and applies any given substitutions.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -328,15 +331,15 @@ called after <a class="reference internal" href="#softioc.softioc.iocInit" title
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.devIocStats">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">devIocStats</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ioc_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#devIocStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.devIocStats" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.devIocStats">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">devIocStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ioc_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#devIocStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.devIocStats" title="Permalink to this definition">¶</a></dt>
 <dd><p>This will load a template for the devIocStats library with the specified
 IOC name. This should be called before <a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref any py py-func docutils literal notranslate"><span class="pre">iocInit</span></code></a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.interactive_ioc">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">interactive_ioc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_exit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#interactive_ioc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.interactive_ioc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.interactive_ioc">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">interactive_ioc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_exit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#interactive_ioc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.interactive_ioc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fires up the interactive IOC prompt with the given context.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -359,47 +362,47 @@ behaviour: typing <a class="reference internal" href="#softioc.softioc.exit" tit
 makes them available to the <a class="reference internal" href="#softioc.softioc.interactive_ioc" title="softioc.softioc.interactive_ioc"><code class="xref any py py-func docutils literal notranslate"><span class="pre">interactive_ioc</span></code></a> interpreter shell. See the <a class="reference external" href="https://docs.epics-controls.org/en/latest/appdevguide/IOCTestFacilities.html">IOC
 Test Facilities</a> documentation for more details of each function.</p>
 <dl class="py function">
-<dt id="softioc.softioc.dba">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dba</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dba" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dba">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints value of each field in dbAddr structure associated with field.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbl">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbl</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbl" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbl">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints the names of records in the database matching pattern.  If a (space
 separated) list of fields is also given then the values of the fields are also
 printed.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbnr">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbnr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbnr" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbnr">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbnr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbnr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print number of records of each record type.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbgrep">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbgrep</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbgrep" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbgrep">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbgrep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbgrep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lists all record names that match the pattern. * matches any number of
 characters in a record name.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbgf">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbgf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbgf" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbgf">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbgf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints field type and value.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbpf">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbpf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbpf" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbpf">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbpf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbpf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes the given value into the field.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbpr">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbpr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbpr" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbpr">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbpr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints all the fields in record up to the indicated interest level:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -427,61 +430,61 @@ characters in a record name.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbtr">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbtr" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbtr">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbtr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbtr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests processing of the specified record.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbtgf">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbtgf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbtgf" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbtgf">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbtgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbtgf" title="Permalink to this definition">¶</a></dt>
 <dd><p>This performs a dbNameToAddr and then calls dbGetField with all possible request
 types and options. It prints the results of each call. This routine is of most
 interest to system developers for testing database access.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbtpf">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbtpf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbtpf" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbtpf">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbtpf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbtpf" title="Permalink to this definition">¶</a></dt>
 <dd><p>This command performs a dbNameToAddr, then calls dbPutField, followed by dbgf
 for each possible request type. This routine is of interest to system developers
 for testing database access.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbior">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbior</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbior" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbior">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbior" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints driver reports for the selected driver (or all drivers if driver is
 omitted) at the given interest level.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbhcr">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbhcr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbhcr" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbhcr">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbhcr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbhcr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints hardware configuration report.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.gft">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">gft</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.gft" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.gft">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">gft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.gft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Field Test for old database access</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.pft">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">pft</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.pft" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.pft">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">pft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.pft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Put Field Test for old database access</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.tpn">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">tpn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.tpn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.tpn">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">tpn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.tpn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test Process Notify for old database access</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dblsr">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dblsr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recordname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dblsr" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dblsr">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dblsr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recordname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dblsr" title="Permalink to this definition">¶</a></dt>
 <dd><p>This command generates a report showing the lock set to which each record
 belongs. If recordname is 0, “”, or “*” all records are shown, otherwise only
 records in the same lock set as recordname are shown.</p>
@@ -506,8 +509,8 @@ records in the same lock set as recordname are shown.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.dbLockShowLocked">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">dbLockShowLocked</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbLockShowLocked" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.dbLockShowLocked">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">dbLockShowLocked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.dbLockShowLocked" title="Permalink to this definition">¶</a></dt>
 <dd><p>This command generates a report showing all locked locksets, the records they
 contain, the lockset state and the thread that currently owns the lockset. The
 level argument is passed to epicsMutexShow to adjust the information reported
@@ -515,41 +518,41 @@ about each locked epicsMutex.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.scanppl">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">scanppl</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.scanppl" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.scanppl">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">scanppl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.scanppl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints all records with the selected scan rate (or all if rate=0).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.scanpel">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">scanpel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.scanpel" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.scanpel">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">scanpel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.scanpel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints all records with selected event number (or all if event=0).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.scanpiol">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">scanpiol</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.scanpiol" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.scanpiol">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">scanpiol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.scanpiol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints all records in the I/O event scan lists.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.generalTimeReport">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">generalTimeReport</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">int</span> <span class="pre">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.generalTimeReport" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.generalTimeReport">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">generalTimeReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">int</span> <span class="pre">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.generalTimeReport" title="Permalink to this definition">¶</a></dt>
 <dd><p>This routine displays the time providers and their priority levels that have
 registered with the General Time subsystem for both current and event times. At
 level 1 it also shows the current time as obtained from each provider.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.softioc.eltc">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">eltc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noYes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.eltc" title="Permalink to this definition">¶</a></dt>
-<dd><p>TThis determines if error messages are displayed on the IOC console. 0 means no
+<dt class="sig sig-object py" id="softioc.softioc.eltc">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">eltc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noYes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.softioc.eltc" title="Permalink to this definition">¶</a></dt>
+<dd><p>This determines if error messages are displayed on the IOC console. 0 means no
 and any other value means yes.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="softioc.softioc.exit">
-<code class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></code><code class="sig-name descname"><span class="pre">exit</span></code><a class="headerlink" href="#softioc.softioc.exit" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.softioc.exit">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">exit</span></span><a class="headerlink" href="#softioc.softioc.exit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Displaying this value will invoke <code class="docutils literal notranslate"><span class="pre">epicsExit()</span></code> causing the IOC to
 terminate immediately.</p>
 </dd></dl>
@@ -559,16 +562,16 @@ terminate immediately.</p>
 <p>If your application uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then this module gives an alternative
 dispatcher for caput requests.</p>
 <dl class="py class">
-<dt id="softioc.asyncio_dispatcher.AsyncioDispatcher">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">softioc.asyncio_dispatcher.</span></code><code class="sig-name descname"><span class="pre">AsyncioDispatcher</span></code><a class="reference internal" href="../_modules/softioc/asyncio_dispatcher.html#AsyncioDispatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.asyncio_dispatcher.AsyncioDispatcher">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">softioc.asyncio_dispatcher.</span></span><span class="sig-name descname"><span class="pre">AsyncioDispatcher</span></span><a class="reference internal" href="../_modules/softioc/asyncio_dispatcher.html#AsyncioDispatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based IOCs. Means that <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> callback
 functions can be async. Will run an Event Loop in a thread when
 created.</p>
 <p>Create an AsyncioDispatcher suitable to be used by
 <a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref any py py-func docutils literal notranslate"><span class="pre">softioc.iocInit</span></code></a>.</p>
 <dl class="py attribute">
-<dt id="softioc.asyncio_dispatcher.AsyncioDispatcher.loop">
-<code class="sig-name descname"><span class="pre">loop</span></code><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher.loop" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.asyncio_dispatcher.AsyncioDispatcher.loop">
+<span class="sig-name descname"><span class="pre">loop</span></span><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher.loop" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> event loop that the callbacks will run under.</p>
 </dd></dl>
 
@@ -651,45 +654,45 @@ optional keyword arguments listed above and record field names.</p>
 <p>All functions return a wrapped <a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn" title="softioc.device.ProcessDeviceSupportIn"><code class="xref any py py-class docutils literal notranslate"><span class="pre">ProcessDeviceSupportIn</span></code></a> or
 <a class="reference internal" href="#softioc.device.ProcessDeviceSupportOut" title="softioc.device.ProcessDeviceSupportOut"><code class="xref any py py-class docutils literal notranslate"><span class="pre">ProcessDeviceSupportOut</span></code></a> instance.</p>
 <dl class="py function">
-<dt id="softioc.builder.aIn">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">aIn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#aIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.aIn" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.aOut">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">aOut</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#aOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.aOut" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.aIn">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">aIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#aIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.aIn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.aOut">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">aOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#aOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.aOut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create <code class="docutils literal notranslate"><span class="pre">ai</span></code> and <code class="docutils literal notranslate"><span class="pre">ao</span></code> records.  The lower and upper limits for the
 record can be specified, and if specified these will also be used to set the
 <code class="docutils literal notranslate"><span class="pre">EGUL</span></code> and <code class="docutils literal notranslate"><span class="pre">EGUF</span></code> fields.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.builder.boolIn">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">boolIn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZNAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ONAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#boolIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.boolIn" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.boolOut">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">boolOut</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZNAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ONAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#boolOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.boolOut" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.boolIn">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">boolIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZNAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ONAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#boolIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.boolIn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.boolOut">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">boolOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZNAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ONAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#boolOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.boolOut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create <code class="docutils literal notranslate"><span class="pre">bi</span></code> and <code class="docutils literal notranslate"><span class="pre">bo</span></code> records with the specified names for false (zero)
 and true (one).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.builder.longIn">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">longIn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EGU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#longIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.longIn" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.longOut">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">longOut</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DRVL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DRVH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EGU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#longOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.longOut" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.longIn">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">longIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HOPR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EGU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#longIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.longIn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.longOut">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">longOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DRVL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DRVH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EGU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#longOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.longOut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create <code class="docutils literal notranslate"><span class="pre">longin</span></code> and <code class="docutils literal notranslate"><span class="pre">longout</span></code> records with specified limits and units.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.builder.stringIn">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">stringIn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#stringIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.stringIn" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.stringOut">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">stringOut</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#stringOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.stringOut" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.stringIn">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">stringIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#stringIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.stringIn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.stringOut">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">stringOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#stringOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.stringOut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create <code class="docutils literal notranslate"><span class="pre">stringin</span></code> and <code class="docutils literal notranslate"><span class="pre">stringout</span></code> records.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.builder.mbbIn">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">mbbIn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#mbbIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.mbbIn" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.mbbOut">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">mbbOut</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#mbbOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.mbbOut" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.mbbIn">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">mbbIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#mbbIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.mbbIn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.mbbOut">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">mbbOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#mbbOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.mbbOut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create <code class="docutils literal notranslate"><span class="pre">mbbi</span></code> and <code class="docutils literal notranslate"><span class="pre">mbbo</span></code> records.  Up to 16 options can be specified as
 either an option name or a tuple of tw fields.  The name or first field of
 the tuple names the option, and the second optional field is the option
@@ -710,10 +713,10 @@ compatible with version 2 of <a class="reference external" href="https://github.
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.builder.Waveform">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">Waveform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">name</span></em>, <span class="optional">[</span><em class="sig-param"><span class="pre">value</span></em>, <span class="optional">]</span><em class="sig-param"><span class="pre">**fields</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#Waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.Waveform" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.WaveformOut">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">WaveformOut</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">name</span></em>, <span class="optional">[</span><em class="sig-param"><span class="pre">value</span></em>, <span class="optional">]</span><em class="sig-param"><span class="pre">**fields</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#WaveformOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.WaveformOut" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.Waveform">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">Waveform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">name</span></em>, <span class="optional">[</span><em class="sig-param"><span class="pre">value</span></em>, <span class="optional">]</span><em class="sig-param"><span class="pre">**fields</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#Waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.Waveform" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.WaveformOut">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">WaveformOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">name</span></em>, <span class="optional">[</span><em class="sig-param"><span class="pre">value</span></em>, <span class="optional">]</span><em class="sig-param"><span class="pre">**fields</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#WaveformOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.WaveformOut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create <code class="docutils literal notranslate"><span class="pre">waveform</span></code> records.  Depending on whether <a class="reference internal" href="#softioc.builder.Waveform" title="softioc.builder.Waveform"><code class="xref any py py-func docutils literal notranslate"><span class="pre">Waveform</span></code></a> or
 <a class="reference internal" href="#softioc.builder.WaveformOut" title="softioc.builder.WaveformOut"><code class="xref any py py-func docutils literal notranslate"><span class="pre">WaveformOut</span></code></a> is called the record is configured to behave as an IN or an
 OUT record, in particular <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> can only be specified when calling
@@ -731,8 +734,8 @@ if given, or defaults to <code class="docutils literal notranslate"><span class=
 
 <p>The following function generates a specialised record.</p>
 <dl class="py function">
-<dt id="softioc.builder.Action">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">Action</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#Action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.Action" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.Action">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#Action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.Action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a record (using <a class="reference internal" href="#softioc.builder.boolOut" title="softioc.builder.boolOut"><code class="xref any py py-func docutils literal notranslate"><span class="pre">boolOut</span></code></a>) which will always call the <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>
 method when processed.  Used for action records.  The <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> keyword
 should always be passed.</p>
@@ -744,8 +747,8 @@ standard two part name of the form <code class="docutils literal notranslate"><s
 specified by the functions below and the <code class="docutils literal notranslate"><span class="pre">name</span></code> part is specified in the
 record creation function.</p>
 <dl class="py function">
-<dt id="softioc.builder.SetDeviceName">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">SetDeviceName</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#SetDeviceName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.SetDeviceName" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.SetDeviceName">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">SetDeviceName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#SetDeviceName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.SetDeviceName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up the prefix part of the record name, referred to here as the “device”
 part.  This function must be called before creating any records.
 Note that
@@ -754,8 +757,8 @@ entirely optional.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="softioc.builder.UnsetDevice">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">UnsetDevice</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#UnsetDevice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.UnsetDevice" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.UnsetDevice">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">UnsetDevice</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#UnsetDevice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.UnsetDevice" title="Permalink to this definition">¶</a></dt>
 <dd><p>This can optionally be called after completing the creation of records to
 prevent the accidential creation of records with the currently set device
 name.</p>
@@ -764,22 +767,22 @@ name.</p>
 <p>The following helper functions are useful when constructing links between
 records.</p>
 <dl class="py function">
-<dt id="softioc.builder.PP">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">PP</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/epicsdbbuilder/recordbase.html#PP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.PP" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.CP">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">CP</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/epicsdbbuilder/recordbase.html#CP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.CP" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.NP">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">NP</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/epicsdbbuilder/recordbase.html#NP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.NP" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.builder.MS">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">MS</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/epicsdbbuilder/recordbase.html#MS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.MS" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.PP">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">PP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/epicsdbbuilder/recordbase.html#PP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.PP" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.CP">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">CP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/epicsdbbuilder/recordbase.html#CP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.CP" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.NP">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">NP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/epicsdbbuilder/recordbase.html#NP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.NP" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.MS">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">MS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/epicsdbbuilder/recordbase.html#MS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.MS" title="Permalink to this definition">¶</a></dt>
 <dd><p>When assigned to a link field in a record these functions add the
 appropriate processing attributes to the link.  These are not normally used.</p>
 </dd></dl>
 
 <p>The following attributes allow more direct access to record creation.</p>
 <dl class="py attribute">
-<dt id="softioc.builder.records">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">records</span></code><a class="headerlink" href="#softioc.builder.records" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.records">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">records</span></span><a class="headerlink" href="#softioc.builder.records" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the <code class="docutils literal notranslate"><span class="pre">iocbuilder</span></code> records object, and is populated with
 functions named after each available record type.  Records created with
 these calls are created with soft device support and Python is not involved
@@ -798,8 +801,8 @@ standard Python IOC record:</p>
 <p>Finally, the following function is used to load record definitions before
 starting the IOC.</p>
 <dl class="py function">
-<dt id="softioc.builder.LoadDatabase">
-<code class="sig-prename descclassname"><span class="pre">softioc.builder.</span></code><code class="sig-name descname"><span class="pre">LoadDatabase</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#LoadDatabase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.LoadDatabase" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.builder.LoadDatabase">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">LoadDatabase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/builder.html#LoadDatabase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.LoadDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>This must be called exactly once after creating all the records required by
 the IOC and before calling <a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref py py-func docutils literal notranslate"><span class="pre">iocInit()</span></code></a>.  After this
 function has been called none of the functions provided by
@@ -812,60 +815,60 @@ function has been called none of the functions provided by
 <p>The following values can be passed to IN record <a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn.set" title="softioc.device.ProcessDeviceSupportIn.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> and
 <a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn.set_alarm" title="softioc.device.ProcessDeviceSupportIn.set_alarm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_alarm()</span></code></a> methods.</p>
 <dl class="py attribute">
-<dt>
-<code class="sig-name descname"><span class="pre">NO_ALARM</span> <span class="pre">=</span> <span class="pre">0</span></code></dt>
-<dt>
-<code class="sig-name descname"><span class="pre">MINOR_ALARM</span> <span class="pre">=</span> <span class="pre">1</span></code></dt>
-<dt>
-<code class="sig-name descname"><span class="pre">MAJOR_ALARM</span> <span class="pre">=</span> <span class="pre">2</span></code></dt>
-<dt>
-<code class="sig-name descname"><span class="pre">INVALID_ALARM</span> <span class="pre">=</span> <span class="pre">3</span></code></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">NO_ALARM</span> <span class="pre">=</span> <span class="pre">0</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">MINOR_ALARM</span> <span class="pre">=</span> <span class="pre">1</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">MAJOR_ALARM</span> <span class="pre">=</span> <span class="pre">2</span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">INVALID_ALARM</span> <span class="pre">=</span> <span class="pre">3</span></span></dt>
 <dd><p>These are severity values.  The default severity is <code class="docutils literal notranslate"><span class="pre">NO_ALARM</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="softioc.alarm.READ_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">READ_ALARM</span></code><a class="headerlink" href="#softioc.alarm.READ_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.WRITE_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">WRITE_ALARM</span></code><a class="headerlink" href="#softioc.alarm.WRITE_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.HIHI_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">HIHI_ALARM</span></code><a class="headerlink" href="#softioc.alarm.HIHI_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.HIGH_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">HIGH_ALARM</span></code><a class="headerlink" href="#softioc.alarm.HIGH_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.LOLO_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">LOLO_ALARM</span></code><a class="headerlink" href="#softioc.alarm.LOLO_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.LOW_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">LOW_ALARM</span></code><a class="headerlink" href="#softioc.alarm.LOW_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.STATE_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">STATE_ALARM</span></code><a class="headerlink" href="#softioc.alarm.STATE_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.COS_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">COS_ALARM</span></code><a class="headerlink" href="#softioc.alarm.COS_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.COMM_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">COMM_ALARM</span></code><a class="headerlink" href="#softioc.alarm.COMM_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.TIMEOUT_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">TIMEOUT_ALARM</span></code><a class="headerlink" href="#softioc.alarm.TIMEOUT_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.HW_LIMIT_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">HW_LIMIT_ALARM</span></code><a class="headerlink" href="#softioc.alarm.HW_LIMIT_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.CALC_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">CALC_ALARM</span></code><a class="headerlink" href="#softioc.alarm.CALC_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.SCAN_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">SCAN_ALARM</span></code><a class="headerlink" href="#softioc.alarm.SCAN_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.LINK_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">LINK_ALARM</span></code><a class="headerlink" href="#softioc.alarm.LINK_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.SOFT_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">SOFT_ALARM</span></code><a class="headerlink" href="#softioc.alarm.SOFT_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.BAD_SUB_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">BAD_SUB_ALARM</span></code><a class="headerlink" href="#softioc.alarm.BAD_SUB_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.UDF_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">UDF_ALARM</span></code><a class="headerlink" href="#softioc.alarm.UDF_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.DISABLE_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">DISABLE_ALARM</span></code><a class="headerlink" href="#softioc.alarm.DISABLE_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.SIMM_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">SIMM_ALARM</span></code><a class="headerlink" href="#softioc.alarm.SIMM_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.READ_ACCESS_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">READ_ACCESS_ALARM</span></code><a class="headerlink" href="#softioc.alarm.READ_ACCESS_ALARM" title="Permalink to this definition">¶</a></dt>
-<dt id="softioc.alarm.WRITE_ACCESS_ALARM">
-<code class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></code><code class="sig-name descname"><span class="pre">WRITE_ACCESS_ALARM</span></code><a class="headerlink" href="#softioc.alarm.WRITE_ACCESS_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.READ_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">READ_ALARM</span></span><a class="headerlink" href="#softioc.alarm.READ_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.WRITE_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">WRITE_ALARM</span></span><a class="headerlink" href="#softioc.alarm.WRITE_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.HIHI_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">HIHI_ALARM</span></span><a class="headerlink" href="#softioc.alarm.HIHI_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.HIGH_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">HIGH_ALARM</span></span><a class="headerlink" href="#softioc.alarm.HIGH_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.LOLO_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">LOLO_ALARM</span></span><a class="headerlink" href="#softioc.alarm.LOLO_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.LOW_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">LOW_ALARM</span></span><a class="headerlink" href="#softioc.alarm.LOW_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.STATE_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">STATE_ALARM</span></span><a class="headerlink" href="#softioc.alarm.STATE_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.COS_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">COS_ALARM</span></span><a class="headerlink" href="#softioc.alarm.COS_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.COMM_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">COMM_ALARM</span></span><a class="headerlink" href="#softioc.alarm.COMM_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.TIMEOUT_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">TIMEOUT_ALARM</span></span><a class="headerlink" href="#softioc.alarm.TIMEOUT_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.HW_LIMIT_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">HW_LIMIT_ALARM</span></span><a class="headerlink" href="#softioc.alarm.HW_LIMIT_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.CALC_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">CALC_ALARM</span></span><a class="headerlink" href="#softioc.alarm.CALC_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.SCAN_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">SCAN_ALARM</span></span><a class="headerlink" href="#softioc.alarm.SCAN_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.LINK_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">LINK_ALARM</span></span><a class="headerlink" href="#softioc.alarm.LINK_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.SOFT_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">SOFT_ALARM</span></span><a class="headerlink" href="#softioc.alarm.SOFT_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.BAD_SUB_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">BAD_SUB_ALARM</span></span><a class="headerlink" href="#softioc.alarm.BAD_SUB_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.UDF_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">UDF_ALARM</span></span><a class="headerlink" href="#softioc.alarm.UDF_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.DISABLE_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">DISABLE_ALARM</span></span><a class="headerlink" href="#softioc.alarm.DISABLE_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.SIMM_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">SIMM_ALARM</span></span><a class="headerlink" href="#softioc.alarm.SIMM_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.READ_ACCESS_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">READ_ACCESS_ALARM</span></span><a class="headerlink" href="#softioc.alarm.READ_ACCESS_ALARM" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.alarm.WRITE_ACCESS_ALARM">
+<span class="sig-prename descclassname"><span class="pre">softioc.alarm.</span></span><span class="sig-name descname"><span class="pre">WRITE_ACCESS_ALARM</span></span><a class="headerlink" href="#softioc.alarm.WRITE_ACCESS_ALARM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alarm code definitions.  Frankly these values aren’t terribly useful, only
 the severity is used for most notifications, but an alarm code needs to be
 specified when specifying a non zero severity.</p>
@@ -911,13 +914,13 @@ records value on startup.</p>
 <p>EPICS IN records are implemented as subclasses of the <a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn" title="softioc.device.ProcessDeviceSupportIn"><code class="xref any py py-class docutils literal notranslate"><span class="pre">ProcessDeviceSupportIn</span></code></a>
 class which provides the methods documented below.</p>
 <dl class="py class">
-<dt id="softioc.device.ProcessDeviceSupportIn">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">softioc.device.</span></code><code class="sig-name descname"><span class="pre">ProcessDeviceSupportIn</span></code><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportIn">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">softioc.device.</span></span><span class="sig-name descname"><span class="pre">ProcessDeviceSupportIn</span></span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class is used to implement Python device support for the record types
 <code class="docutils literal notranslate"><span class="pre">ai</span></code>, <code class="docutils literal notranslate"><span class="pre">bi</span></code>, <code class="docutils literal notranslate"><span class="pre">longin</span></code>, <code class="docutils literal notranslate"><span class="pre">mbbi</span></code> and IN <code class="docutils literal notranslate"><span class="pre">waveform</span></code> records.</p>
 <dl class="py method">
-<dt id="softioc.device.ProcessDeviceSupportIn.set">
-<code class="sig-name descname"><span class="pre">set</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">UDF_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.set" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportIn.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">UDF_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the stored value and severity status and triggers an update.  If
 <code class="docutils literal notranslate"><span class="pre">SCAN</span></code> has been set to <code class="docutils literal notranslate"><span class="pre">'I/O</span> <span class="pre">Intr'</span></code> (which is the default if the
 <a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">builder</span></code></a> methods have been used) then the record will be
@@ -930,8 +933,8 @@ always copied immediately – this avoids accidents with mutable values.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="softioc.device.ProcessDeviceSupportIn.set_alarm">
-<code class="sig-name descname"><span class="pre">set_alarm</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">severity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn.set_alarm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.set_alarm" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportIn.set_alarm">
+<span class="sig-name descname"><span class="pre">set_alarm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">severity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn.set_alarm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.set_alarm" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is exactly equivalent to calling:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rec</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
 </pre></div>
@@ -940,8 +943,8 @@ always copied immediately – this avoids accidents with mutable values.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="softioc.device.ProcessDeviceSupportIn.get">
-<code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.get" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportIn.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>This returns the value last written to this record with <a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn.set" title="softioc.device.ProcessDeviceSupportIn.set"><code class="xref py py-func docutils literal notranslate"><span class="pre">set()</span></code></a>.</p>
 <p>Note that channel access puts to a Python soft IOC input record are
 completely ineffective, and this includes waveform records.</p>
@@ -953,14 +956,14 @@ completely ineffective, and this includes waveform records.</p>
 <div class="section" id="working-with-out-records">
 <h2>Working with OUT records<a class="headerlink" href="#working-with-out-records" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="softioc.device.ProcessDeviceSupportOut">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">softioc.device.</span></code><code class="sig-name descname"><span class="pre">ProcessDeviceSupportOut</span></code><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportOut">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">softioc.device.</span></span><span class="sig-name descname"><span class="pre">ProcessDeviceSupportOut</span></span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class is used to implement Python device support for the record types
 <code class="docutils literal notranslate"><span class="pre">ao</span></code>, <code class="docutils literal notranslate"><span class="pre">bo</span></code>, <code class="docutils literal notranslate"><span class="pre">longout</span></code>, <code class="docutils literal notranslate"><span class="pre">mbbo</span></code> and OUT <code class="docutils literal notranslate"><span class="pre">waveform</span></code> records.  All OUT
 records support the following methods.</p>
 <dl class="py method">
-<dt id="softioc.device.ProcessDeviceSupportOut.set">
-<code class="sig-name descname"><span class="pre">set</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.set" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportOut.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the value associated with the record.  By default this will
 trigger record processing, and so will cause any associated <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>
 and <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> methods to be called.  If <code class="docutils literal notranslate"><span class="pre">process</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>
@@ -969,8 +972,8 @@ be updated.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="softioc.device.ProcessDeviceSupportOut.get">
-<code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.get" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportOut.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value associated with the record.</p>
 </dd></dl>
 

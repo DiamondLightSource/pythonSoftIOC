@@ -35,8 +35,8 @@ You can now use ``pip`` to install the library::
 
     python3 -m pip install softioc
 
-Optionally on Linux or MacOS you can install cothread, which is used in the
-first tutorial::
+Optionally on Linux or MacOS (not M1) you can install cothread, which is used in
+the first tutorial::
 
     python3 -m pip install cothread
 

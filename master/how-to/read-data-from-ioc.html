@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Read data from an IOC &mdash; pythonIoc 3.0+1.g94d2e66 documentation</title>
+  <title>Read data from an IOC &mdash; pythonIoc 3.0+6.g379e715 documentation</title>
   
 
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
 
   
@@ -32,6 +34,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -110,7 +113,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="make-publishable-ioc.html">Create a Publishable IOC</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Read data from an IOC</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Read data from an IOC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-channel-access">Using Channel Access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-pvaccess">Using PVAccess</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -228,39 +235,66 @@
   <div class="section" id="read-data-from-an-ioc">
 <h1>Read data from an IOC<a class="headerlink" href="#read-data-from-an-ioc" title="Permalink to this headline">¶</a></h1>
 <p>This guide explains how to read data from an IOC in a separate Python program.</p>
+<p>To start, run the <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> IOC from <a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a> or the
+<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> IOC from <a class="reference internal" href="use-asyncio-in-an-ioc.html"><span class="doc">Use asyncio in an IOC</span></a> and leave it running at the
+interactive shell.</p>
+<div class="section" id="using-channel-access">
+<h2>Using Channel Access<a class="headerlink" href="#using-channel-access" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Please ensure your firewall allows both TCP and UDP traffic on ports 5064 and 5065.
 These are used by EPICS for channel access to the PVs.</p>
 </div>
-<p>To start, run the <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> IOC from <a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a> or the
-<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> IOC from <a class="reference internal" href="use-asyncio-in-an-ioc.html"><span class="doc">Use asyncio in an IOC</span></a> and leave it running at the
-interactive shell.</p>
-<p>We will read data from that IOC using this script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">softioc</span>
-<span class="kn">from</span> <span class="nn">cothread.catools</span> <span class="kn">import</span> <span class="n">caget</span><span class="p">,</span> <span class="n">caput</span><span class="p">,</span> <span class="n">camonitor</span>
+<p>We will read data from the IOC using this script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cothread.catools</span> <span class="kn">import</span> <span class="n">caget</span><span class="p">,</span> <span class="n">caput</span><span class="p">,</span> <span class="n">camonitor</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">caget</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AI&quot;</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">caget</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">caput</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">,</span> <span class="s2">&quot;999&quot;</span><span class="p">))</span>
+<span class="n">caput</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">,</span> <span class="s2">&quot;999&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">caget</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">))</span>
-
-<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>You may see warnings regarding the missing “caRepeater” program. This is an EPICS tool
-that is used to track when PVs start and stop. It is not required for this simple example,
-and so the warning can be ignored.</p>
+<p>You can run this as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">i</span> <span class="n">example_read_from_ioc_ca</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
 </div>
 <p>From the interactive command line you can now use the <code class="docutils literal notranslate"><span class="pre">caget</span></code> and <code class="docutils literal notranslate"><span class="pre">caput</span></code> functions to operate on
 the PVs exposed in the IOC. Another interesting command to try is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">camonitor</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AI&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">val</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">camonitor</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AI&quot;</span><span class="p">,</span> <span class="nb">print</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You should observe the value of <code class="docutils literal notranslate"><span class="pre">AI</span></code> being printed out, once per second, every time the PV value
 updates.</p>
+</div>
+<div class="section" id="using-pvaccess">
+<h2>Using PVAccess<a class="headerlink" href="#using-pvaccess" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please ensure your firewall allows both TCP and UDP traffic on ports 5075 and 5076.
+These are used by EPICS for PVAccess to the PVs.</p>
+</div>
+<p>We will read data from the IOC using this script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">p4p.client.cothread</span> <span class="kn">import</span> <span class="n">Context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="s2">&quot;pva&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AI&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">))</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">,</span> <span class="s2">&quot;999&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AO&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>You can run this as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">i</span> <span class="n">example_read_from_ioc_pva</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>From the interactive command line you can now use the <code class="docutils literal notranslate"><span class="pre">ctx.get</span></code> and <code class="docutils literal notranslate"><span class="pre">ctx.put</span></code> functions to operate on
+the PVs exposed in the IOC. Another interesting command to try is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX:AI&quot;</span><span class="p">,</span> <span class="nb">print</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You should observe the value and timestamp of <code class="docutils literal notranslate"><span class="pre">AI</span></code> being printed out, once per second, every time the PV value
+updates.</p>
+</div>
 </div>
 
 

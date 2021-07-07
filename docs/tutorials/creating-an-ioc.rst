@@ -25,9 +25,11 @@ functionality for Python soft IOCs and are the ones that are normally used.
 
 `cothread` is one of the two possible libraries the IOC can use for
 asynchronous operations.
-(see `../how-to/use-asyncio-in-an-ioc` for the alternative)
 
+.. note::
 
+    `cothread` doesn't work on Windows or on a Mac M1. You can use `asyncio`
+    instead by following `../how-to/use-asyncio-in-an-ioc`
 
 .. literalinclude:: ../examples/example_cothread_ioc.py
     :start-after: # Create

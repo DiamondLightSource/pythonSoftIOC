@@ -1,8 +1,6 @@
 '''External DLL imports used for implementing Python EPICS device support.
 '''
 
-import os
-import os.path
 import sys
 from ctypes import *
 

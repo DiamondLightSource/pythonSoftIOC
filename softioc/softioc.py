@@ -224,7 +224,7 @@ level 1 it also shows the current time as obtained from each provider.''',
 ExportTest('eltc', (c_int,), (), '''\
 eltc(noYes)
 
-TThis determines if error messages are displayed on the IOC console. 0 means no
+This determines if error messages are displayed on the IOC console. 0 means no
 and any other value means yes.''',
            lib=imports.Com)
 

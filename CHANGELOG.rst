@@ -9,7 +9,9 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased_
 -----------
 
-Nothing yet
+Added:
+
+- PVA support to the IOC #17
 
 
 3.0_ - 2021-07-05

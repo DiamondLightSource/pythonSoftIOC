@@ -46,6 +46,10 @@ def test_cothread_ioc(cothread_ioc):
     assert caget(PV_PREFIX + ":STRINGOUT") == "watevah"
     caput(PV_PREFIX + ":STRINGOUT", "something", wait=True)
     assert caget(PV_PREFIX + ":STRINGOUT") == "something"
+    # Check pvaccess works
+    from p4p.client.cothread import Context
+    with Context("pva") as ctx:
+        assert ctx.get(PV_PREFIX + ":STRINGOUT") == "something"
     # Stop
     cothread_ioc.send_signal(signal.SIGINT)
     # Disconnect

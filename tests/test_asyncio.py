@@ -54,6 +54,10 @@ async def test_asyncio_ioc(asyncio_ioc):
     assert await caget(PV_PREFIX + ":AI") == 12.34
     await asyncio.sleep(0.8)
     assert await caget(PV_PREFIX + ":AI") == 3.56
+    # Check pvaccess works
+    from p4p.client.asyncio import Context
+    with Context("pva") as ctx:
+        assert await ctx.get(PV_PREFIX + ":AI") == 3.56
     # Wait for a bit longer for the print output to flush
     await asyncio.sleep(2)
     # Stop

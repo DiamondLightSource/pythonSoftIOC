@@ -9,6 +9,12 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased_
 -----------
 
+Nothing yet
+
+
+3.1_ - 2021-07-07
+-----------------
+
 Added:
 
 - PVA support to the IOC #17
@@ -61,7 +67,8 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 
-.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/3.0...HEAD
+.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/3.1...HEAD
+.. _3.1: https://github.com/dls-controls/pythonIoc/compare/3.0...3.1
 .. _3.0: https://github.com/dls-controls/pythonIoc/compare/3.0b2...3.0
 .. _3.0b2: https://github.com/dls-controls/pythonIoc/compare/3.0b1...3.0b2
 .. _3.0b1: https://github.com/dls-controls/pythonIoc/compare/2-16...3.0b1

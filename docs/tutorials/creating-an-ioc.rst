@@ -58,7 +58,7 @@ which must be called in this order.  After calling
     :end-before: # Finally
 
 We define a long-running operation that will increment the value of ``ai`` once per
-second. This is run as a background thread by `cothread`.
+second. This is run in the background by `cothread`.
 
 .. literalinclude:: ../examples/example_cothread_ioc.py
     :start-after: # Finally

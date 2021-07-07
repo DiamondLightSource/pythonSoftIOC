@@ -38,6 +38,7 @@ allows you to write this as:
     # Leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
 
+
 Dynamically created PVs
 -----------------------
 
@@ -76,7 +77,6 @@ this as:
     # Leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
 
-ADD THE PANDA USE CASE HERE
 
 Existing Python Support
 -----------------------
@@ -84,5 +84,3 @@ Existing Python Support
 It may be that you have specific device support written in Python that you wish
 to expose as PVs. This could be either in the form of a device support library
 or using a Python library to calculate PV values as above.
-
-ADD THE FURKA/GRIMSEL MONITORING IOC USE CASE HERE

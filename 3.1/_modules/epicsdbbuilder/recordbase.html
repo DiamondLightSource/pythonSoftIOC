@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>epicsdbbuilder.recordbase &mdash; pythonIoc 3.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="../../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+  <!-- Include Index in the sidebar -->
+  <!-- https://stackoverflow.com/a/37843854 -->
+  <a href="../../genindex.html">Index</a>
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>epicsdbbuilder.recordbase</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for epicsdbbuilder.recordbase</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Support for generating epics records.&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">recordnames</span>
+<span class="kn">from</span> <span class="nn">.recordset</span> <span class="kn">import</span> <span class="n">recordset</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;PP&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CP&#39;</span><span class="p">,</span> <span class="s1">&#39;CPP&#39;</span><span class="p">,</span> <span class="s1">&#39;NP&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MS&#39;</span><span class="p">,</span> <span class="s1">&#39;MSS&#39;</span><span class="p">,</span> <span class="s1">&#39;MSI&#39;</span><span class="p">,</span> <span class="s1">&#39;NMS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ImportRecord&#39;</span><span class="p">]</span>
+
+
+
+<span class="c1"># Quotes a single character if necessary</span>
+<span class="k">def</span> <span class="nf">quote_char</span><span class="p">(</span><span class="n">ch</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">ord</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">x</span><span class="si">%02x</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">ord</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ch</span> <span class="ow">in</span> <span class="s1">&#39;&quot;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">ch</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ch</span>
+
+<span class="c1"># Converts a string into a safely quoted string with quotation marks</span>
+<span class="k">def</span> <span class="nf">quote_string</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">quote_char</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1">#   Record class</span>
+
+<span class="c1"># Base class for all record types.</span>
+<span class="c1">#</span>
+<span class="c1"># All record types known to the IOC builder (loaded from DBD files in EPICS</span>
+<span class="c1"># support modules) are subclasses of this class.</span>
+<span class="k">class</span> <span class="nc">Record</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="c1"># Creates a subclass of the record with the given record type and</span>
+    <span class="c1"># validator bound to the subclass.  The device used to load the record is</span>
+    <span class="c1"># remembered so that it can subsequently be instantiated if necessary.</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">CreateSubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">on_use</span><span class="p">,</span> <span class="n">recordType</span><span class="p">,</span> <span class="n">validate</span><span class="p">):</span>
+        <span class="c1"># Each record we publish is a class so that individual record</span>
+        <span class="c1"># classes can be subclassed when convenient.</span>
+        <span class="k">class</span> <span class="nc">BuildRecord</span><span class="p">(</span><span class="n">Record</span><span class="p">):</span>
+            <span class="n">_validate</span> <span class="o">=</span> <span class="n">validate</span>
+            <span class="n">_type</span> <span class="o">=</span> <span class="n">recordType</span>
+            <span class="n">_on_use</span> <span class="o">=</span> <span class="n">on_use</span>
+        <span class="n">BuildRecord</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">recordType</span>
+
+        <span class="c1"># Perform any class extension required for this particular record type.</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">bits</span>
+        <span class="k">return</span> <span class="n">bits</span><span class="o">.</span><span class="n">ExtendClass</span><span class="p">(</span><span class="n">BuildRecord</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Because we have hooked into __setattr__, we need to dance a little</span>
+        <span class="c1"># to write names into our dictionary.</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;__&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;_Record&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+
+    <span class="c1"># Record constructor.  Needs to be told the type of record that this will</span>
+    <span class="c1"># be, a field validation object (which will be used to check field names</span>
+    <span class="c1"># and field value assignments), the name of the record being created, and</span>
+    <span class="c1"># initialisations for any other fields.  Builds standard record name using</span>
+    <span class="c1"># the currently configured RecordName hook.</span>
+
+    <span class="c1"># Record constructor.</span>
+    <span class="c1">#</span>
+    <span class="c1"># This is used to construct a record of a particular record type.  The</span>
+    <span class="c1"># record is added to database of the generated IOC, or can simply be</span>
+    <span class="c1"># written out to a separate .db file, depending on the chosen IOC writer.</span>
+    <span class="c1">#</span>
+    <span class="c1"># record</span>
+    <span class="c1">#   The name of the record being generated.  The detailed name of the</span>
+    <span class="c1">#   record is determined by the configured record name convention, and</span>
+    <span class="c1">#   normally the device part of the record name is not specified here.</span>
+    <span class="c1"># **fields</span>
+    <span class="c1">#   All of the fields supported by the record type appear as attributes</span>
+    <span class="c1">#   of the class.  Values can be specified in the constructor, or can be</span>
+    <span class="c1">#   assigned subsequently to the generated instance.</span>
+    <span class="c1">#</span>
+    <span class="c1"># For example, the following code generates a record which counts how</span>
+    <span class="c1"># many times it has been processed:</span>
+    <span class="c1">#</span>
+    <span class="c1">#   cntr = records.calc(&#39;CNTR&#39;, CALC = &#39;A+1&#39;, VAL = 0)</span>
+    <span class="c1">#   cntr.A = cntr</span>
+    <span class="c1">#</span>
+    <span class="c1"># This will generate a database somewhat like this:</span>
+    <span class="c1">#</span>
+    <span class="c1"># record(calc, &quot;$(DEVICE):CNTR&quot;)</span>
+    <span class="c1"># {</span>
+    <span class="c1">#     field(A,    &quot;$(DEVICE):CNTR&quot;)</span>
+    <span class="c1">#     field(CALC, &quot;A+1&quot;)</span>
+    <span class="c1">#     field(VAL,  &quot;0&quot;)</span>
+    <span class="c1"># }</span>
+    <span class="c1">#</span>
+    <span class="c1"># Record links can be wrapped with PP(), CP(), MS() and NP() calls.</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+
+        <span class="c1"># Make sure the Device class providing this record is instantiated</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_use</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_on_use</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># These assignment have to be directly into the dictionary to</span>
+        <span class="c1"># bypass the tricksy use of __setattr__.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__fields&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__aliases&#39;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__metadata&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">recordnames</span><span class="o">.</span><span class="n">RecordName</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+
+        <span class="c1"># Support the special &#39;address&#39; field as an alias for either INP or</span>
+        <span class="c1"># OUT, depending on which of those exists.  We only set up this field</span>
+        <span class="c1"># if exactly one of INP or OUT is present as a valid field.</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;INP&#39;</span><span class="p">,</span> <span class="s1">&#39;OUT&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ValidFieldName</span><span class="p">(</span><span class="n">field</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">address</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__address&#39;</span><span class="p">,</span> <span class="n">address</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Make sure all the fields are properly processed and validated.</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+        <span class="n">recordset</span><span class="o">.</span><span class="n">PublishRecord</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">add_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__aliases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+
+
+    <span class="c1"># Call to generate database description of this record.  Outputs record</span>
+    <span class="c1"># definition in .db file format.  Hooks for meta-data can go here.</span>
+    <span class="k">def</span> <span class="nf">Print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__metadata</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#%&#39;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;record(</span><span class="si">%s</span><span class="s1">, &quot;</span><span class="si">%s</span><span class="s1">&quot;)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+        <span class="c1"># Print the fields in alphabetical order.  This is more convenient</span>
+        <span class="c1"># to the eye and has the useful side effect of bypassing a bug</span>
+        <span class="c1"># where DTYPE needs to be specified before INP or OUT fields.</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;ValidateLater&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__ValidateField</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__FormatFieldForDb</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">padding</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>  <span class="c1"># To align field values</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    field(</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__aliases</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    alias(&quot;</span><span class="si">%s</span><span class="s1">&quot;)&#39;</span> <span class="o">%</span> <span class="n">alias</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+
+
+    <span class="c1"># The string for a record is just its name.</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="c1"># The representation string for a record identifies its type and name,</span>
+    <span class="c1"># but we can&#39;t do much more.</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;record </span><span class="si">%s</span><span class="s1"> &quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># Calling the record generates a self link with a list of specifiers.</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">specifiers</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_Link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">specifiers</span><span class="p">)</span>
+
+
+    <span class="c1"># Assigning to a record attribute updates a field.</span>
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fieldname</span> <span class="o">==</span> <span class="s1">&#39;address&#39;</span><span class="p">:</span>
+            <span class="n">fieldname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__address</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Treat assigning None to a field the same as deleting that field.</span>
+            <span class="c1"># This is convenient for default arguments.</span>
+            <span class="k">if</span> <span class="n">fieldname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="p">[</span><span class="n">fieldname</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If the field is callable we call it first: this is used to</span>
+            <span class="c1"># ensure we convert record pointers into links.  It&#39;s unlikely</span>
+            <span class="c1"># that this will have unfortunate side effects elsewhere, but it&#39;s</span>
+            <span class="c1"># always possible...</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;ValidateLater&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__ValidateField</span><span class="p">(</span><span class="n">fieldname</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="p">[</span><span class="n">fieldname</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="c1"># Field validation</span>
+    <span class="k">def</span> <span class="nf">__ValidateField</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># If the field can validate itself then ask it to, otherwise use our</span>
+        <span class="c1"># own validation routine.  This is really just a hook for parameters</span>
+        <span class="c1"># so that they can do their own validation.</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;Validate&#39;</span><span class="p">):</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">Validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="o">.</span><span class="n">ValidFieldValue</span><span class="p">(</span><span class="n">fieldname</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="c1"># Field formatting</span>
+    <span class="k">def</span> <span class="nf">__FormatFieldForDb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;FormatDb&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">FormatDb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">quote_string</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+
+    <span class="c1"># Allow individual fields to be deleted from the record.</span>
+    <span class="k">def</span> <span class="fm">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fieldname</span> <span class="o">==</span> <span class="s1">&#39;address&#39;</span><span class="p">:</span>
+            <span class="n">fieldname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__address</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="p">[</span><span class="n">fieldname</span><span class="p">]</span>
+
+
+    <span class="c1"># Reading a record attribute returns a link to the field.</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fieldname</span> <span class="o">==</span> <span class="s1">&#39;address&#39;</span><span class="p">:</span>
+            <span class="n">fieldname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__address</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="o">.</span><span class="n">ValidFieldName</span><span class="p">(</span><span class="n">fieldname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_Link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_FieldValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="p">[</span><span class="n">fieldname</span><span class="p">]</span>
+
+    <span class="c1"># Can be called to validate the given field name, returns True iff this</span>
+    <span class="c1"># record type supports the given field name.</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ValidFieldName</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># The validator is specified to raise an AttributeError exception</span>
+            <span class="c1"># if the field name cannot be validated.  We translate this into</span>
+            <span class="c1"># a boolean here.</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_validate</span><span class="o">.</span><span class="n">ValidFieldName</span><span class="p">(</span><span class="n">fieldname</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># When a record is pickled for export it will reappear as an ImportRecord</span>
+    <span class="c1"># instance.  This makes more sense (as the record has been fully generated</span>
+    <span class="c1"># already), and avoids a lot of trouble.</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ImportRecord</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span>
+
+
+
+<span class="c1"># Records can be imported by name.  An imported record has no specification</span>
+<span class="c1"># of its type, and so no validation can be done: all that can be done to an</span>
+<span class="c1"># imported record is to link to it.</span>
+<span class="k">class</span> <span class="nc">ImportRecord</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;external record &quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">specifiers</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_Link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">specifiers</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">):</span>
+        <span class="c1"># Brain-dead minimal validation: just check for all uppercase!</span>
+        <span class="n">ValidChars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">fieldname</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">ValidChars</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Invalid field name </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fieldname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_Link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">recordset</span><span class="o">.</span><span class="n">AddBodyLine</span><span class="p">(</span><span class="s1">&#39;alias(&quot;</span><span class="si">%s</span><span class="s1">&quot;, &quot;</span><span class="si">%s</span><span class="s1">&quot;)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+
+<span class="c1"># A link is a class to encapsulate a process variable link.  It remembers</span>
+<span class="c1"># the record, the linked field, and a list of specifiers (such as PP, CP,</span>
+<span class="c1"># etcetera).</span>
+<span class="k">class</span> <span class="nc">_Link</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="o">*</span><span class="n">specifiers</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">record</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specifiers</span> <span class="o">=</span> <span class="n">specifiers</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">specifier</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specifiers</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">specifier</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">specifiers</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_Link</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">specifiers</span> <span class="o">+</span> <span class="n">specifiers</span><span class="p">)</span>
+
+    <span class="c1"># Returns the value currently assigned to this field.</span>
+    <span class="k">def</span> <span class="nf">Value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">_FieldValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+
+
+<span class="c1"># Some helper routines for building links</span>
+
+<div class="viewcode-block" id="PP"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.PP">[docs]</a><span class="k">def</span> <span class="nf">PP</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Process Passive&quot;: any record update through a PP output link will be</span>
+<span class="sd">    processed if its scan is Passive.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = PP(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other PP&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;PP&#39;</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">CA</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Channel Access&quot;: a CA (input or output) link will be treated as</span>
+<span class="sd">    a channel access link regardless whether it is a DB link or not.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = CA(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other CA&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;CA&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CP"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.CP">[docs]</a><span class="k">def</span> <span class="nf">CP</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Channel Process&quot;: a CP input link will cause the linking record</span>
+<span class="sd">    to process any time the linked record is updated.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = CP(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other CP&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;CP&#39;</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">CPP</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Channel Process if Passive&quot;: a CP input link will be treated as</span>
+<span class="sd">    a channel access link and if the linking record is passive,</span>
+<span class="sd">    the linking passive record will be processed any time the linked record</span>
+<span class="sd">    is updated.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = CPP(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other CPP&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;CPP&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MS"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.MS">[docs]</a><span class="k">def</span> <span class="nf">MS</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Maximise Severity&quot;: any alarm state on the linked record is propagated</span>
+<span class="sd">    to the linking record. When propagated, the alarm status will become</span>
+<span class="sd">    `LINK_ALARM`.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = MS(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other MS&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;MS&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">MSS</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Maximise Status and Severity&quot;: both alarm status and alarm severity</span>
+<span class="sd">    on the linked record are propagated to the linking record.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = MSS(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other MSS&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;MSS&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">MSI</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Maximise Severity if Invalid&quot;: propagate an alarm state on the linked</span>
+<span class="sd">    record only if the alarm severity is `INVALID_ALARM`.</span>
+<span class="sd">    When propagated, the alarm status will become `LINK_ALARM`.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = MSI(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other MSI&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;MSI&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">NMS</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Non-Maximise Severity&quot;: no alarm is propagated.</span>
+<span class="sd">    This is the default behavior of EPICS links.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = NMS(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other NMS&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;NMS&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NP"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.NP">[docs]</a><span class="k">def</span> <span class="nf">NP</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;No Process&quot;: the linked record is not processed.</span>
+<span class="sd">    This is the default behavior of EPICS links.</span>
+
+<span class="sd">    Example (Python source)</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    `my_record.INP = NP(other_record)`</span>
+
+<span class="sd">    Example (Generated DB)</span>
+<span class="sd">    ----------------------</span>
+<span class="sd">    `field(INP, &quot;other NPP&quot;)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;NPP&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

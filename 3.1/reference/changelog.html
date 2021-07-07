@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Changelog &mdash; pythonIoc 3.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="API" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pythonIoc
+          
+
+          
+            
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#unreleased">Unreleased</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">3.1 - 2021-07-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.0 - 2021-07-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#b2-2021-06-28">3.0b2 - 2021-06-28</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#b1-2021-06-28">3.0b1 - 2021-06-28</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">2-16 - 2019-12-10</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+  <!-- Include Index in the sidebar -->
+  <!-- https://stackoverflow.com/a/37843854 -->
+  <a href="../genindex.html">Index</a>
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonIoc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Changelog</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/reference/changelog.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a class="reference external" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
+and this project adheres to <a class="reference external" href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<div class="section" id="unreleased">
+<h2><a class="reference external" href="https://github.com/dls-controls/pythonIoc/compare/3.1...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Permalink to this headline">¶</a></h2>
+<p>Nothing yet</p>
+</div>
+<div class="section" id="id1">
+<h2><a class="reference external" href="https://github.com/dls-controls/pythonIoc/compare/3.0...3.1">3.1</a> - 2021-07-07<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Added:</p>
+<ul class="simple">
+<li><p>PVA support to the IOC #17</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><a class="reference external" href="https://github.com/dls-controls/pythonIoc/compare/3.0b2...3.0">3.0</a> - 2021-07-05<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Added:</p>
+<ul class="simple">
+<li><p>More documentation #14</p></li>
+</ul>
+<p>Fixed:</p>
+<ul class="simple">
+<li><p>Mbbi/o specifying alarm values bug introduced in 3.0b2 #15</p></li>
+</ul>
+</div>
+<div class="section" id="b2-2021-06-28">
+<h2><a class="reference external" href="https://github.com/dls-controls/pythonIoc/compare/3.0b1...3.0b2">3.0b2</a> - 2021-06-28<a class="headerlink" href="#b2-2021-06-28" title="Permalink to this headline">¶</a></h2>
+<p>Changed:</p>
+<ul class="simple">
+<li><p>Restructured the docs #9 #10</p></li>
+</ul>
+<p>Removed:</p>
+<ul class="simple">
+<li><p>Option of specifying scalar value for mbbi and mbbo records</p></li>
+</ul>
+</div>
+<div class="section" id="b1-2021-06-28">
+<h2><a class="reference external" href="https://github.com/dls-controls/pythonIoc/compare/2-16...3.0b1">3.0b1</a> - 2021-06-28<a class="headerlink" href="#b1-2021-06-28" title="Permalink to this headline">¶</a></h2>
+<p>Port to being a Python package #5</p>
+<p>Changed:</p>
+<ul class="simple">
+<li><p>Removed ability to build as an EPICS module</p></li>
+<li><p>Restructure C code as Python extension</p></li>
+<li><p>Make devIocStats a submodule</p></li>
+<li><p>Now has a hard dependency on epicscorelibs</p></li>
+</ul>
+<p>Added:</p>
+<ul class="simple">
+<li><p>asyncio support</p></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="reference external" href="https://github.com/dls-controls/pythonIoc/releases/tag/2-16">2-16</a> - 2019-12-10<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Last release as an EPICS module rather than a Python package</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

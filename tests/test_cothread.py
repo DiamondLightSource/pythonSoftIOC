@@ -50,6 +50,8 @@ def test_cothread_ioc(cothread_ioc):
     from p4p.client.cothread import Context
     with Context("pva") as ctx:
         assert ctx.get(PV_PREFIX + ":STRINGOUT") == "something"
+    # Wait for a bit longer for the print output to flush
+    cothread.Sleep(2)
     # Stop
     cothread_ioc.send_signal(signal.SIGINT)
     # Disconnect

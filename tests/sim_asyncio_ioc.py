@@ -23,7 +23,7 @@ if __name__ == "__main__":
         sys.stdout.flush()
         sim_records.t_ai.set(value)
 
-    t_ao = builder.aOut('AO2', initial_value=12.45, on_update=callback)
+    t_ao = builder.aOut('AO2', on_update=callback)
 
     # Run the IOC
     builder.LoadDatabase()

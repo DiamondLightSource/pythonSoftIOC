@@ -14,15 +14,15 @@ allows you to write this as:
 .. code-block::
 
     import numpy as np
-    from cothread.catools import caget, camonitor
+    from cothread.catools import camonitor
     from softioc import builder, softioc
 
-    # The PVs we want to average and their initial values
+    # The PVs we want to average and initial values
     PVs = [f"DEVICE{i}:CURRENT" for i in range(100)]
-    values = np.array(caget(PVs))
+    values = np.empty(len(PVs)) * np.nan
 
-    # The PV we want to serve
-    avg = builder.aOut("AVERAGE:CURRENT", np.mean(values))
+    # The PV we want to serve, initially undefined
+    avg = builder.aOut("AVERAGE:CURRENT")
 
     # Start the IOC
     builder.LoadDatabase()
@@ -31,13 +31,22 @@ allows you to write this as:
     # Make a monitor on the PVs to keep the value up to date
     def update_avg(value: float, index: int):
         values[index] = value
-        avg.set(np.mean(values))
+        mean = np.mean(values)
+        # If all PVs have returned a value, set the mean
+        if not np.isnan(mean)
+            avg.set(mean)
 
     camonitor(PVs, update_avg)
 
     # Leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
 
+.. note::
+
+    If using `asyncio` then you would use `aioca.camonitor` instead of
+    `cothread.catools.camonitor`::
+
+        from aioca import camonitor
 
 Dynamically created PVs
 -----------------------

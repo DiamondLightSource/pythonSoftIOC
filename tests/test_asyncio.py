@@ -33,7 +33,7 @@ def asyncio_ioc():
 @pytest.mark.asyncio
 async def test_asyncio_ioc(asyncio_ioc):
     import asyncio
-    from aioca import caget, caput, camonitor, CANothing, _catools
+    from aioca import caget, caput, camonitor, CANothing, _catools, FORMAT_CTRL
     # Unregister the aioca atexit handler as it conflicts with the one installed
     # by cothread. If we don't do this we get a seg fault. This is not a problem
     # in production as we won't mix aioca and cothread, but we do mix them in
@@ -48,7 +48,10 @@ async def test_asyncio_ioc(asyncio_ioc):
     m = camonitor(PV_PREFIX + ":SIN", q.put, notify_disconnect=True)
     assert len(await asyncio.wait_for(q.get(), 1)) == 4
     # AO
-    assert await caget(PV_PREFIX + ":AO2") == 12.45
+    ao_val = await caget(PV_PREFIX + ":AO2", format=FORMAT_CTRL)
+    assert ao_val == 0
+    assert ao_val.severity == 3  # INVALID
+    assert ao_val.status == 17  # UDF
     await caput(PV_PREFIX + ":AO2", 3.56, wait=True)
     await asyncio.sleep(0.1)
     assert await caget(PV_PREFIX + ":AI") == 12.34
@@ -70,7 +73,7 @@ async def test_asyncio_ioc(asyncio_ioc):
     # check closed and output
     assert "%s:SINN.VAL 1024 -> 4" % PV_PREFIX in out
     assert 'update_sin_wf 4' in out
-    assert "%s:AO2.VAL 12.45 -> 3.56" % PV_PREFIX in out
+    assert "%s:AO2.VAL 0 -> 3.56" % PV_PREFIX in out
     assert 'async update 3.56' in out
     assert 'Starting iocInit' in err
     assert 'iocRun: All initialization complete' in err

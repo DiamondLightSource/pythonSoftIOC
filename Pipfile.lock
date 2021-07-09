@@ -16,10 +16,10 @@
     "default": {
         "aioca": {
             "hashes": [
-                "sha256:10de39e2c4cb45502f71678d07f70cb42a04c9c5d6070737507bfea8cae518d5",
-                "sha256:c9e89c5369cea81ea37ae5b9bc9d18d70c4f721c618124fc8b0e5ffcb153d4a6"
+                "sha256:2f01c5fd327916d6c13c7a6106189fd8411ee52f6e34b276368cb831252734f0",
+                "sha256:f5c6f1d1774f5cd96bd7827eda7f9f6a71f735699b424745c3fd8293146211ae"
             ],
-            "version": "==1.1"
+            "version": "==1.2"
         },
         "cothread": {
             "hashes": [
@@ -295,7 +295,7 @@
                 "sha256:4a5611fea3768d3d967c447ab4e93f567d95db92225b43b7b238dbfb855d70bb",
                 "sha256:c6513572926a96458f8c8f725bf0e00108fba0c9583ade9bd15b869c9d726e33"
             ],
-            "markers": "python_version < '3.8'",
+            "markers": "python_version < '3.8' and python_version < '3.8'",
             "version": "==4.6.0"
         },
         "iniconfig": {

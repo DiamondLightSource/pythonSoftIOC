@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Why use pythonIOC? &mdash; pythonIoc 3.1+4.gb2e6a2a documentation</title>
+  <title>Why use pythonIOC? &mdash; pythonIoc 3.1+6.ga2450f4 documentation</title>
   
 
   
@@ -273,16 +273,16 @@ allows you to write this as:</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then you would use <a class="reference external" href="https://dls-controls.github.io/aioca/master/api.html#aioca.camonitor" title="(in aioca v1.1)"><code class="xref any docutils literal notranslate"><span class="pre">aioca.camonitor</span></code></a> instead of
+<p>If using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then you would use <a class="reference external" href="https://dls-controls.github.io/aioca/master/api.html#aioca.camonitor" title="(in aioca vmaster)"><code class="xref any docutils literal notranslate"><span class="pre">aioca.camonitor</span></code></a> instead of
 <a class="reference external" href="https://cothread.readthedocs.io/en/stable/catools.html#cothread.catools.camonitor" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread.catools.camonitor</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aioca</span> <span class="kn">import</span> <span class="n">camonitor</span>
 </pre></div>
 </div>
 <p>You also need to do the <code class="docutils literal notranslate"><span class="pre">camonitor</span></code> from inside the dispatcher’s
 event loop:</p>
-<blockquote>
-<div><p>dispatcher.loop.call_soon_threadsafe(camonitor, PVs, update_avg)</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dispatcher</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">call_soon_threadsafe</span><span class="p">(</span><span class="n">camonitor</span><span class="p">,</span> <span class="n">PVs</span><span class="p">,</span> <span class="n">update_avg</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="dynamically-created-pvs">

@@ -49,7 +49,7 @@ allows you to write this as:
         from aioca import camonitor
 
     You also need to do the ``camonitor`` from inside the dispatcher's
-    event loop:
+    event loop::
 
         dispatcher.loop.call_soon_threadsafe(camonitor, PVs, update_avg)
 

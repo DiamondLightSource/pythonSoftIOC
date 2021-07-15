@@ -1,7 +1,7 @@
 Use `asyncio` in an IOC
 =======================
 
-There are two libraries available for asynchronous operations in PythonIOC:
+There are two libraries available for asynchronous operations in pythonSoftIOC:
 `cothread` and `asyncio`. This guide shows how to use the latter in
 an IOC.
 

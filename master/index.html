@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pythonIoc &mdash; pythonIoc 3.1+6.ga2450f4 documentation</title>
+  <title>pythonSoftIOC &mdash; pythonSoftIOC 3.1+7.ga9d7201 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> pythonIoc
+            <a href="#" class="icon icon-home"> pythonSoftIOC
           
 
           
@@ -116,7 +116,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
@@ -142,7 +142,7 @@
       if (dirs.has(name)) {
         var li = document.createElement("li");
         var a = document.createElement("a");
-        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.href = 'https://dls-controls.github.io/pythonSoftIOC/' + name;
         a.innerText = name;
         li.appendChild(a)
         document.getElementById('versions').appendChild(li);
@@ -150,13 +150,13 @@
     }
     Promise.all([
       // Find gh-pages directories and populate `dirs`
-      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      fetch("https://api.github.com/repos/dls-controls/pythonSoftIOC/contents?ref=gh-pages")
       .then(response => response.json())
       .then(data => data.forEach(function(e) {
         if (e.type == "dir") dirs.add(e.name);
       })),
       // Add tags to `versions`
-      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+      fetch('https://api.github.com/repos/dls-controls/pythonSoftIOC/tags')
         .then(response => response.json())
         .then(data => data.forEach(function(e) {
           versions.push(e.name);
@@ -175,7 +175,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">pythonIoc</a>
+          <a href="#">pythonSoftIOC</a>
         
       </nav>
 
@@ -208,7 +208,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>pythonIoc</li>
+      <li>pythonSoftIOC</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -227,9 +227,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pythonioc">
-<h1>pythonIoc<a class="headerlink" href="#pythonioc" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference external" href="https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Code+CI%22"><img alt="Code CI" src="https://github.com/dls-controls/pythonIoc/workflows/Code%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Docs+CI%22"><img alt="Docs CI" src="https://github.com/dls-controls/pythonIoc/workflows/Docs%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://codecov.io/gh/dls-controls/pythonIoc"><img alt="Test Coverage" src="https://codecov.io/gh/dls-controls/pythonIoc/branch/master/graph/badge.svg" /></a> <a class="reference external" href="https://pypi.org/project/softioc"><img alt="Latest PyPI version" src="https://img.shields.io/pypi/v/softioc.svg" /></a> <a class="reference external" href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a></p>
+  <div class="section" id="pythonsoftioc">
+<h1>pythonSoftIOC<a class="headerlink" href="#pythonsoftioc" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/actions?query=workflow%3A%22Code+CI%22"><img alt="Code CI" src="https://github.com/dls-controls/pythonSoftIOC/workflows/Code%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/actions?query=workflow%3A%22Docs+CI%22"><img alt="Docs CI" src="https://github.com/dls-controls/pythonSoftIOC/workflows/Docs%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://codecov.io/gh/dls-controls/pythonSoftIOC"><img alt="Test Coverage" src="https://codecov.io/gh/dls-controls/pythonSoftIOC/branch/master/graph/badge.svg" /></a> <a class="reference external" href="https://pypi.org/project/softioc"><img alt="Latest PyPI version" src="https://img.shields.io/pypi/v/softioc.svg" /></a> <a class="reference external" href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a></p>
 <p>This module allows an EPICS IOC with Python Device Support to be run from within
 the Python interpreter. Records can be programmatically created and arbitrary
 Python code run to update them and respond to caputs. It supports cothread and
@@ -244,10 +244,10 @@ asyncio for concurrency. PVs are served over Channel Access and PVAccess.</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">softioc</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Source code</p></td>
-<td><p><a class="reference external" href="https://github.com/dls-controls/pythonIoc">https://github.com/dls-controls/pythonIoc</a></p></td>
+<td><p><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC">https://github.com/dls-controls/pythonSoftIOC</a></p></td>
 </tr>
 <tr class="row-odd"><td><p>Documentation</p></td>
-<td><p><a class="reference external" href="https://dls-controls.github.io/pythonIoc">https://dls-controls.github.io/pythonIoc</a></p></td>
+<td><p><a class="reference external" href="https://dls-controls.github.io/pythonSoftIOC">https://dls-controls.github.io/pythonSoftIOC</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -325,7 +325,7 @@ the side-bar.</p>
 <div class="toctree-wrapper compound" id="id2">
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper no-margin-after-ul compound" id="id3">

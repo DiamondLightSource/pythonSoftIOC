@@ -67,7 +67,7 @@ Table Of Contents
     :name: explanations
     :maxdepth: 1
 
-    explanations/why-use-pythonIoc
+    explanations/why-use-pythonSoftIOC
 
 .. rst-class:: no-margin-after-ul
 

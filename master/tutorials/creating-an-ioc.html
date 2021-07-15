@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Creating an IOC &mdash; pythonIoc 3.1+6.ga2450f4 documentation</title>
+  <title>Creating an IOC &mdash; pythonSoftIOC 3.1+7.ga9d7201 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> pythonIoc
+            <a href="../index.html" class="icon icon-home"> pythonSoftIOC
           
 
           
@@ -121,7 +121,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
@@ -147,7 +147,7 @@
       if (dirs.has(name)) {
         var li = document.createElement("li");
         var a = document.createElement("a");
-        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.href = 'https://dls-controls.github.io/pythonSoftIOC/' + name;
         a.innerText = name;
         li.appendChild(a)
         document.getElementById('versions').appendChild(li);
@@ -155,13 +155,13 @@
     }
     Promise.all([
       // Find gh-pages directories and populate `dirs`
-      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      fetch("https://api.github.com/repos/dls-controls/pythonSoftIOC/contents?ref=gh-pages")
       .then(response => response.json())
       .then(data => data.forEach(function(e) {
         if (e.type == "dir") dirs.add(e.name);
       })),
       // Add tags to `versions`
-      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+      fetch('https://api.github.com/repos/dls-controls/pythonSoftIOC/tags')
         .then(response => response.json())
         .then(data => data.forEach(function(e) {
           versions.push(e.name);
@@ -180,7 +180,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">pythonIoc</a>
+          <a href="../index.html">pythonSoftIOC</a>
         
       </nav>
 
@@ -238,7 +238,7 @@
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Once the module has been installed (see <a class="reference internal" href="installation.html"><span class="doc">Installation Tutorial</span></a>) we can create a
 simple EPICS Input/Output Controller (IOC).</p>
-<p>An EPICS IOC created with the help of <code class="docutils literal notranslate"><span class="pre">pythonIoc</span></code> and <a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a> is
+<p>An EPICS IOC created with the help of <code class="docutils literal notranslate"><span class="pre">pythonSoftIOC</span></code> and <a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a> is
 referred to as a “Python soft IOC”.  The code below illustrates a simple IOC
 with two Process Variables (PVs):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import the basic framework components.</span>
@@ -275,7 +275,7 @@ with two Process Variables (PVs):</p>
 
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a> library is part of <code class="docutils literal notranslate"><span class="pre">pythonIoc</span></code>. The two submodules
+<p>The <a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a> library is part of <code class="docutils literal notranslate"><span class="pre">pythonSoftIOC</span></code>. The two submodules
 <a class="reference internal" href="../reference/api.html#module-softioc.softioc" title="softioc.softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.softioc</span></code></a> and <a class="reference internal" href="../reference/api.html#module-softioc.builder" title="softioc.builder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> provide the basic
 functionality for Python soft IOCs and are the ones that are normally used.</p>
 <p><a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> is one of the two possible libraries the IOC can use for

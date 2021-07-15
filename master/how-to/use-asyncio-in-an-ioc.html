@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Use asyncio in an IOC &mdash; pythonIoc 3.1+6.ga2450f4 documentation</title>
+  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 3.1+7.ga9d7201 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> pythonIoc
+            <a href="../index.html" class="icon icon-home"> pythonSoftIOC
           
 
           
@@ -120,7 +120,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonIoc.html">Why use pythonIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
@@ -146,7 +146,7 @@
       if (dirs.has(name)) {
         var li = document.createElement("li");
         var a = document.createElement("a");
-        a.href = 'https://dls-controls.github.io/pythonIoc/' + name;
+        a.href = 'https://dls-controls.github.io/pythonSoftIOC/' + name;
         a.innerText = name;
         li.appendChild(a)
         document.getElementById('versions').appendChild(li);
@@ -154,13 +154,13 @@
     }
     Promise.all([
       // Find gh-pages directories and populate `dirs`
-      fetch("https://api.github.com/repos/dls-controls/pythonIoc/contents?ref=gh-pages")
+      fetch("https://api.github.com/repos/dls-controls/pythonSoftIOC/contents?ref=gh-pages")
       .then(response => response.json())
       .then(data => data.forEach(function(e) {
         if (e.type == "dir") dirs.add(e.name);
       })),
       // Add tags to `versions`
-      fetch('https://api.github.com/repos/dls-controls/pythonIoc/tags')
+      fetch('https://api.github.com/repos/dls-controls/pythonSoftIOC/tags')
         .then(response => response.json())
         .then(data => data.forEach(function(e) {
           versions.push(e.name);
@@ -179,7 +179,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">pythonIoc</a>
+          <a href="../index.html">pythonSoftIOC</a>
         
       </nav>
 
@@ -233,7 +233,7 @@
             
   <div class="section" id="use-asyncio-in-an-ioc">
 <h1>Use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> in an IOC<a class="headerlink" href="#use-asyncio-in-an-ioc" title="Permalink to this headline">¶</a></h1>
-<p>There are two libraries available for asynchronous operations in PythonIOC:
+<p>There are two libraries available for asynchronous operations in pythonSoftIOC:
 <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a>. This guide shows how to use the latter in
 an IOC.</p>
 <div class="admonition note">

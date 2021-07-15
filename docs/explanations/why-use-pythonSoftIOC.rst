@@ -1,5 +1,5 @@
-Why use pythonIOC?
-==================
+Why use pythonSoftIOC?
+======================
 
 EPICS IOCs are flexible and modular, why do we need to wrap it in Python? This
 page attempts to answer that question and list a few good use-cases for it.
@@ -8,7 +8,7 @@ Calculating PVs from other values
 ---------------------------------
 
 Some use cases require PVs to be calculated from multiple sources. This is
-possible in EPICS records with ``calc`` or ``aSub`` records, but pythonIoc
+possible in EPICS records with ``calc`` or ``aSub`` records, but pythonSoftIOC
 allows you to write this as:
 
 .. code-block::
@@ -58,7 +58,7 @@ Dynamically created PVs
 
 Other use cases will require PVs to be created based on the features of a
 device. As EPICS database records are statically created at IOC boot, you
-can generate the database with a script, but pythonIoc allows you to write
+can generate the database with a script, but pythonSoftIOC allows you to write
 this as:
 
 .. code-block::

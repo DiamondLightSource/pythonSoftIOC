@@ -8,15 +8,15 @@ the DLS environment.
 
 Single File IOC
 ----------------
-An IOC that is entirely contained within a single Python source file can be used as an 
+An IOC that is entirely contained within a single Python source file can be used as an
 IOC inside DLS simply by adding this shebang line::
 
-    #!/dls_sw/prod/python3/RHEL7-x86_64/softioc/3.0b2/prefix/bin/pythonIoc
+    #!/dls_sw/prod/python3/RHEL7-x86_64/softioc/3.2/prefix/bin/pythonSoftIOC
 
 
 IOC entry point for a module
 ------------------------------
-If your IOC is more complicated than one file, it is recommended to write a python 
+If your IOC is more complicated than one file, it is recommended to write a python
 module (including docs/tests/etc.). The Panda Blocks Client will be an example of
 this.
 

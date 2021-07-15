@@ -10,19 +10,10 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import os
-import sys
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, repo_root)
-
-import softioc  # noqa
+import softioc
 
 # General information about the project.
-project = u'pythonIoc'
+project = u'pythonSoftIOC'
 copyright = u'2008, Diamond Light Source'
 author = 'Michael Abbott'
 

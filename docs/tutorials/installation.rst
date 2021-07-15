@@ -43,9 +43,9 @@ the first tutorial::
 If you require a feature that is not currently released you can also install
 from github::
 
-    python3 -m pip install git+git://github.com/dls-controls/pythonIoc.git
+    python3 -m pip install git+git://github.com/dls-controls/pythonSoftIOC.git
 
 The library should now be installed and the commandline interface on your path.
 You can check the version that has been installed by typing::
 
-    pythonIoc --version
+    pythonSoftIOC --version

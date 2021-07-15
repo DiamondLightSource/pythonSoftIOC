@@ -1,5 +1,5 @@
-pythonIoc
-=========
+pythonSoftIOC
+=============
 
 |code_ci| |docs_ci| |coverage| |pypi_version| |license|
 
@@ -11,8 +11,8 @@ asyncio for concurrency. PVs are served over Channel Access and PVAccess.
 
 ============== ==============================================================
 PyPI           ``pip install softioc``
-Source code    https://github.com/dls-controls/pythonIoc
-Documentation  https://dls-controls.github.io/pythonIoc
+Source code    https://github.com/dls-controls/pythonSoftIOC
+Documentation  https://dls-controls.github.io/pythonSoftIOC
 ============== ==============================================================
 
 A simple example of the use of this library:
@@ -46,16 +46,16 @@ A simple example of the use of this library:
     # Finally leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
 
-.. |code_ci| image:: https://github.com/dls-controls/pythonIoc/workflows/Code%20CI/badge.svg?branch=master
-    :target: https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Code+CI%22
+.. |code_ci| image:: https://github.com/dls-controls/pythonSoftIOC/workflows/Code%20CI/badge.svg?branch=master
+    :target: https://github.com/dls-controls/pythonSoftIOC/actions?query=workflow%3A%22Code+CI%22
     :alt: Code CI
 
-.. |docs_ci| image:: https://github.com/dls-controls/pythonIoc/workflows/Docs%20CI/badge.svg?branch=master
-    :target: https://github.com/dls-controls/pythonIoc/actions?query=workflow%3A%22Docs+CI%22
+.. |docs_ci| image:: https://github.com/dls-controls/pythonSoftIOC/workflows/Docs%20CI/badge.svg?branch=master
+    :target: https://github.com/dls-controls/pythonSoftIOC/actions?query=workflow%3A%22Docs+CI%22
     :alt: Docs CI
 
-.. |coverage| image:: https://codecov.io/gh/dls-controls/pythonIoc/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/dls-controls/pythonIoc
+.. |coverage| image:: https://codecov.io/gh/dls-controls/pythonSoftIOC/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/dls-controls/pythonSoftIOC
     :alt: Test Coverage
 
 .. |pypi_version| image:: https://img.shields.io/pypi/v/softioc.svg
@@ -70,4 +70,4 @@ A simple example of the use of this library:
     Anything below this line is used when viewing README.rst and will be replaced
     when included in index.rst
 
-See https://dls-controls.github.io/pythonIoc for more detailed documentation.
+See https://dls-controls.github.io/pythonSoftIOC for more detailed documentation.

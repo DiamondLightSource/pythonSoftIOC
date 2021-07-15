@@ -7,7 +7,7 @@ Introduction
 Once the module has been installed (see `installation`) we can create a
 simple EPICS Input/Output Controller (IOC).
 
-An EPICS IOC created with the help of ``pythonIoc`` and `softioc` is
+An EPICS IOC created with the help of ``pythonSoftIOC`` and `softioc` is
 referred to as a "Python soft IOC".  The code below illustrates a simple IOC
 with two Process Variables (PVs):
 
@@ -19,7 +19,7 @@ Each section is explained in detail below:
     :start-after: # Import
     :end-before: # Set
 
-The `softioc` library is part of ``pythonIoc``. The two submodules
+The `softioc` library is part of ``pythonSoftIOC``. The two submodules
 `softioc.softioc` and `softioc.builder` provide the basic
 functionality for Python soft IOCs and are the ones that are normally used.
 

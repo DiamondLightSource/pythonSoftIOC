@@ -122,10 +122,11 @@ following types:
      ``mbbo``, ``stringin``, ``stringout``, ``waveform``
 
 Occasionally it may be desirable to create a soft record without ``Python``
-device support, particularly if any other record type is required.  This can be done using the corresponding record creation
-functions provided as methods of :attr:`softioc.builder.records`.  For example, if a ``calc``
-record is required then this can be created by calling
-``softioc.builder.records.calc``.
+device support, particularly if any other record type is required.  This can be done using 
+the corresponding record creation functions provided as methods of 
+:attr:`softioc.builder.records`.  For example, if a ``calc`` record is required then this 
+can be created by calling ``softioc.builder.records.calc``. See an example in  
+`../how-to/use-iocbuilder-records`.
 
 For all records created by these methods both
 :meth:`~softioc.device.ProcessDeviceSupportIn.get` and

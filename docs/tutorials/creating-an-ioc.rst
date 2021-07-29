@@ -71,6 +71,12 @@ internals of the IOC while it's running.  The alternative is to call something
 like :func:`cothread.WaitForQuit` or some other `cothread` blocking
 action.
 
+.. note::
+    The following section should only be used for debugging purposes, and not
+    for production testing, as the functions used do not necessarily reflect 
+    what a real user would see when querying an IOC over the network. 
+    See `../how-to/read-data-from-ioc` for proper network access examples.
+
 In this interpreter there is immediate access to methods defined in the
 `softioc.softioc` module. For example the :func:`~softioc.softioc.dbgf` function
 can be run to observe the increasing value of ``AI``::

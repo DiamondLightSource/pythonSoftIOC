@@ -14,7 +14,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: "3.7"
 
       - name: Install Python Dependencies
         run: pip install flake8
@@ -33,37 +33,36 @@ jobs:
         python: [cp27, cp37, cp38, cp39]
 
         exclude:
-        - os: windows-latest
-          # No cothread or asyncio so doesn't work
-          python: cp27
+          - os: windows-latest
+            # No cothread or asyncio so doesn't work
+            python: cp27
 
         include:
-        - os: ubuntu-latest
-          # Put coverage in the output dir mounted in docker
-          cov_file: /output/coverage.xml
-          test_requires: cothread pytest-asyncio aioca
-          # Build an sdist here so it has the right line endings
-          sdist: true
+          - os: ubuntu-latest
+            # Put coverage in the output dir mounted in docker
+            cov_file: /output/coverage.xml
+            test_requires: cothread pytest-asyncio aioca
+            # Build an sdist here so it has the right line endings
+            sdist: true
 
-        - os: windows-latest
-          cov_file: '{project}/dist/coverage.xml'
-          # cothread doesn't work on windows
-          test_requires: pytest-asyncio aioca
+          - os: windows-latest
+            cov_file: "{project}/dist/coverage.xml"
+            # cothread doesn't work on windows
+            test_requires: pytest-asyncio aioca
 
-        - os: macos-latest
-          cov_file: '{project}/dist/coverage.xml'
-          test_requires: cothread pytest-asyncio aioca
+          - os: macos-latest
+            cov_file: "{project}/dist/coverage.xml"
+            test_requires: cothread pytest-asyncio aioca
 
-        - os: ubuntu-latest
-          python: cp27
-          # asyncio doesn't work on Python2.7
-          test_requires: cothread
+          - os: ubuntu-latest
+            python: cp27
+            # asyncio doesn't work on Python2.7
+            test_requires: cothread
 
-        - os: macos-latest
-          python: cp27
-          # asyncio doesn't work on Python2.7
-          test_requires: cothread
-
+          - os: macos-latest
+            python: cp27
+            # asyncio doesn't work on Python2.7
+            test_requires: cothread
 
     steps:
       - name: Checkout Source
@@ -74,10 +73,10 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: "3.7"
 
       - name: Install Python Dependencies
-        run: pip install build cibuildwheel
+        run: pip install build cibuildwheel==1.* # The 2.* releases dropped Python2 support.
 
       - name: Build Sdist
         if: matrix.sdist
@@ -91,7 +90,7 @@ jobs:
           CIBW_TEST_COMMAND: pytest --cov=softioc {project}/tests --cov-report xml:${{ matrix.cov_file }}
           # Disable auditwheel as it isn't compatible with setuptools_dso approach
           # https://github.com/mdavidsaver/setuptools_dso/issues/17
-          CIBW_REPAIR_WHEEL_COMMAND: ''
+          CIBW_REPAIR_WHEEL_COMMAND: ""
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux1
 
       - name: Upload Wheel and Sdist
@@ -125,4 +124,3 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pypi_token }}
         run: twine upload dist/*
-

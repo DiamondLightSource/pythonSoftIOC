@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Creating an IOC &mdash; pythonSoftIOC 3.1+7.ga9d7201 documentation</title>
+  <title>Creating an IOC &mdash; pythonSoftIOC 3.1+19.gee1ba0c documentation</title>
   
 
   
@@ -118,6 +118,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -327,6 +328,13 @@ passing <code class="docutils literal notranslate"><span class="pre">globals()</
 internals of the IOC while it’s running.  The alternative is to call something
 like <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#cothread.WaitForQuit" title="(in Cothread)"><code class="xref py py-func docutils literal notranslate"><span class="pre">cothread.WaitForQuit()</span></code></a> or some other <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> blocking
 action.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following section should only be used for debugging purposes, and not
+for production testing, as the functions used do not necessarily reflect
+what a real user would see when querying an IOC over the network.
+See <a class="reference internal" href="../how-to/read-data-from-ioc.html"><span class="doc">Read data from an IOC</span></a> for proper network access examples.</p>
+</div>
 <p>In this interpreter there is immediate access to methods defined in the
 <a class="reference internal" href="../reference/api.html#module-softioc.softioc" title="softioc.softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.softioc</span></code></a> module. For example the <a class="reference internal" href="../reference/api.html#softioc.softioc.dbgf" title="softioc.softioc.dbgf"><code class="xref py py-func docutils literal notranslate"><span class="pre">dbgf()</span></code></a> function
 can be run to observe the increasing value of <code class="docutils literal notranslate"><span class="pre">AI</span></code>:</p>
@@ -375,10 +383,11 @@ following types:</p>
 <code class="docutils literal notranslate"><span class="pre">mbbo</span></code>, <code class="docutils literal notranslate"><span class="pre">stringin</span></code>, <code class="docutils literal notranslate"><span class="pre">stringout</span></code>, <code class="docutils literal notranslate"><span class="pre">waveform</span></code></p>
 </div></blockquote>
 <p>Occasionally it may be desirable to create a soft record without <code class="docutils literal notranslate"><span class="pre">Python</span></code>
-device support, particularly if any other record type is required.  This can be done using the corresponding record creation
-functions provided as methods of <a class="reference internal" href="../reference/api.html#softioc.builder.records" title="softioc.builder.records"><code class="xref py py-attr docutils literal notranslate"><span class="pre">softioc.builder.records</span></code></a>.  For example, if a <code class="docutils literal notranslate"><span class="pre">calc</span></code>
-record is required then this can be created by calling
-<code class="docutils literal notranslate"><span class="pre">softioc.builder.records.calc</span></code>.</p>
+device support, particularly if any other record type is required.  This can be
+done using the corresponding record creation functions provided as methods of
+<a class="reference internal" href="../reference/api.html#softioc.builder.records" title="softioc.builder.records"><code class="xref py py-attr docutils literal notranslate"><span class="pre">softioc.builder.records</span></code></a>.  For example, if a <code class="docutils literal notranslate"><span class="pre">calc</span></code> record is required
+then this can be created by calling <code class="docutils literal notranslate"><span class="pre">softioc.builder.records.calc</span></code>. See an
+example in <a class="reference internal" href="../how-to/use-soft-records.html"><span class="doc">Use soft records in an IOC</span></a>.</p>
 <p>For all records created by these methods both
 <a class="reference internal" href="../reference/api.html#softioc.device.ProcessDeviceSupportIn.get" title="softioc.device.ProcessDeviceSupportIn.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get()</span></code></a> and
 <a class="reference internal" href="../reference/api.html#softioc.device.ProcessDeviceSupportIn.set" title="softioc.device.ProcessDeviceSupportIn.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> methods are available for

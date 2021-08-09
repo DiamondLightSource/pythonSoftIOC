@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API &mdash; pythonSoftIOC 3.1+7.ga9d7201 documentation</title>
+  <title>API &mdash; pythonSoftIOC 3.1+19.gee1ba0c documentation</title>
   
 
   
@@ -114,6 +114,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -783,19 +784,11 @@ appropriate processing attributes to the link.  These are not normally used.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="softioc.builder.records">
 <span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">records</span></span><a class="headerlink" href="#softioc.builder.records" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is the <code class="docutils literal notranslate"><span class="pre">iocbuilder</span></code> records object, and is populated with
+<dd><p>This is the <a class="reference external" href="https://dls-controls.github.io/epicsdbbuilder/master/api.html#epicsdbbuilder.records" title="(in EPICS Database Builder vmaster)"><code class="xref any docutils literal notranslate"><span class="pre">epicsdbbuilder.records</span></code></a> object, and is populated with
 functions named after each available record type.  Records created with
 these calls are created with soft device support and Python is not involved
 in their processing.</p>
-<p>The following example shows a calc record being used to post-process a
-standard Python IOC record:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">builder</span>
-<span class="n">builder</span><span class="o">.</span><span class="n">SetDeviceName</span><span class="p">(</span><span class="s1">&#39;XX-XX-XX-01&#39;</span><span class="p">)</span>
-<span class="n">rec</span> <span class="o">=</span> <span class="n">aIn</span><span class="p">(</span><span class="s1">&#39;VALUE&#39;</span><span class="p">)</span>
-<span class="n">calc</span> <span class="o">=</span> <span class="n">records</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="s1">&#39;CALC&#39;</span><span class="p">,</span> <span class="n">CALC</span> <span class="o">=</span> <span class="s1">&#39;A*B&#39;</span><span class="p">,</span> <span class="n">A</span> <span class="o">=</span> <span class="n">rec</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span>
-<span class="n">rec</span><span class="o">.</span><span class="n">FLNK</span> <span class="o">=</span> <span class="n">PP</span><span class="p">(</span><span class="n">calc</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>See <a class="reference internal" href="../how-to/use-soft-records.html"><span class="doc">Use soft records in an IOC</span></a> for a full example of its usage.</p>
 </dd></dl>
 
 <p>Finally, the following function is used to load record definitions before

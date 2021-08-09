@@ -119,9 +119,10 @@
         },
         "setuptools-dso": {
             "hashes": [
-                "sha256:9cb73204c32424cd2b10d0b1c873ec4d84e30ff82b207e8e750994bd1a0f59a9"
+                "sha256:10f0e4eab7bf6789f76a5544f15a1be0f285413652b7d3d7ac11203ce72569d5",
+                "sha256:bcf27777d7fc39359ab56c5a393c0aa62ae7bc84f30d1f36a40d6143f0af14b0"
             ],
-            "version": "==2.0"
+            "version": "==2.1"
         },
         "softioc": {
             "editable": true,
@@ -149,10 +150,10 @@
         },
         "attrs": {
             "hashes": [
-                "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6",
-                "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"
+                "sha256:149e90d6d8ac20db7a955ad60cf0e6881a3f20d37096140088356da6c716b0b1",
+                "sha256:ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb"
             ],
-            "version": "==20.3.0"
+            "version": "==21.2.0"
         },
         "babel": {
             "hashes": [
@@ -547,9 +548,10 @@
         },
         "setuptools-dso": {
             "hashes": [
-                "sha256:9cb73204c32424cd2b10d0b1c873ec4d84e30ff82b207e8e750994bd1a0f59a9"
+                "sha256:10f0e4eab7bf6789f76a5544f15a1be0f285413652b7d3d7ac11203ce72569d5",
+                "sha256:bcf27777d7fc39359ab56c5a393c0aa62ae7bc84f30d1f36a40d6143f0af14b0"
             ],
-            "version": "==2.0"
+            "version": "==2.1"
         },
         "snowballstemmer": {
             "hashes": [

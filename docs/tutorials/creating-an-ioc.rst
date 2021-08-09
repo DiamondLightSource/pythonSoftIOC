@@ -73,8 +73,8 @@ action.
 
 .. note::
     The following section should only be used for debugging purposes, and not
-    for production testing, as the functions used do not necessarily reflect 
-    what a real user would see when querying an IOC over the network. 
+    for production testing, as the functions used do not necessarily reflect
+    what a real user would see when querying an IOC over the network.
     See `../how-to/read-data-from-ioc` for proper network access examples.
 
 In this interpreter there is immediate access to methods defined in the
@@ -128,11 +128,11 @@ following types:
      ``mbbo``, ``stringin``, ``stringout``, ``waveform``
 
 Occasionally it may be desirable to create a soft record without ``Python``
-device support, particularly if any other record type is required.  This can be done using 
-the corresponding record creation functions provided as methods of 
-:attr:`softioc.builder.records`.  For example, if a ``calc`` record is required then this 
-can be created by calling ``softioc.builder.records.calc``. See an example in  
-`../how-to/use-iocbuilder-records`.
+device support, particularly if any other record type is required.  This can be
+done using the corresponding record creation functions provided as methods of
+:attr:`softioc.builder.records`.  For example, if a ``calc`` record is required
+then this can be created by calling ``softioc.builder.records.calc``. See an
+example in `../how-to/use-soft-records`.
 
 For all records created by these methods both
 :meth:`~softioc.device.ProcessDeviceSupportIn.get` and

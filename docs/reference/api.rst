@@ -351,12 +351,12 @@ The following attributes allow more direct access to record creation.
 
 ..  attribute:: records
 
-    This is the ``iocbuilder`` records object, and is populated with
+    This is the `epicsdbbuilder.records` object, and is populated with
     functions named after each available record type.  Records created with
     these calls are created with soft device support and Python is not involved
     in their processing.
 
-    See `../how-to/use-iocbuilder-records` for a full example of its usage.
+    See `../how-to/use-soft-records` for a full example of its usage.
 
 Finally, the following function is used to load record definitions before
 starting the IOC.

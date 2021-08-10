@@ -67,7 +67,7 @@ While the same example written using asyncio is::
     builder.aOut('AO', on_update=update_ao)
 
 Note that because ``something_that_yields_control()`` is an ``async def``,
-``update_ao()`` needs to be to.
+``update_ao()`` needs to be too.
 
 .. seealso::
 
@@ -94,6 +94,5 @@ to mix `asyncio` and `cothread`, it's messy and tricky to get right. Better to
 keep to one if possible.
 
 .. _aio-libs: https://github.com/aio-libs
-
 
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.device &mdash; pythonSoftIOC 3.1+19.gee1ba0c documentation</title>
+  <title>softioc.device &mdash; pythonSoftIOC 3.1+23.g3356f44 documentation</title>
   
 
   
@@ -521,6 +521,8 @@
     <span class="c1">#   NELM    Length of allocated array in number of elements</span>
     <span class="c1">#   NORD    Currently reported length of array (0 &lt;= NORD &lt;= NELM)</span>
     <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;FTVL&#39;</span><span class="p">,</span> <span class="s1">&#39;BPTR&#39;</span><span class="p">,</span> <span class="s1">&#39;NELM&#39;</span><span class="p">,</span> <span class="s1">&#39;NORD&#39;</span><span class="p">]</span>
+    <span class="c1"># Allow set() to be called before init_record:</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">init_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">DbfCodeToNumpy</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">FTVL</span><span class="p">]</span>

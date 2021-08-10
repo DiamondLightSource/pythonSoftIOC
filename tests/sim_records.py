@@ -42,6 +42,8 @@ def update_sin_wf(value):
     sin_wf.set(numpy.sin(
         numpy.linspace(0, 2*numpy.pi*sin_ph.get(), sin_len.get())))
 sin_wf = Waveform('SIN', datatype = float, length = 1024)
+# Check we can update its value before iocInit as per #22
+sin_wf.set([1, 2, 3])
 sin_len = longOut(
     'SINN', 0, 1024, initial_value=1024, on_update=update_sin_wf)
 sin_ph = aOut('SINP', initial_value = 0.0, on_update = update_sin_wf)

@@ -293,6 +293,8 @@ class WaveformBase(ProcessDeviceSupportCore):
     #   NELM    Length of allocated array in number of elements
     #   NORD    Currently reported length of array (0 <= NORD <= NELM)
     _fields_ = ['UDF', 'FTVL', 'BPTR', 'NELM', 'NORD']
+    # Allow set() to be called before init_record:
+    dtype = None
 
     def init_record(self, record):
         self.dtype = DbfCodeToNumpy[record.FTVL]

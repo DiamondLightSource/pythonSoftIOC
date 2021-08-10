@@ -69,6 +69,7 @@ Table Of Contents
     :maxdepth: 1
 
     explanations/why-use-pythonSoftIOC
+    explanations/asyncio-cothread-differences
 
 .. rst-class:: no-margin-after-ul
 

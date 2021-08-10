@@ -1,16 +1,19 @@
 Use `asyncio` in an IOC
 =======================
 
-There are two libraries available for asynchronous operations in pythonSoftIOC:
-`cothread` and `asyncio`. This guide shows how to use the latter in
-an IOC.
+`../tutorials/creating-an-ioc` shows how to create a pythonSoftIOC using the
+`cothread` library. This page shows how to create one using `asyncio`
 
-.. note::
-    This page only explains the differences between using `cothread` and `asyncio`.
-    For more thorough explanation of the IOC itself see `../tutorials/creating-an-ioc`
+.. seealso::
+
+    `../explanations/asyncio-cothread-differences` for the differences and why
+    you would use one over the other
+
+
+Example IOC
+-----------
 
 .. literalinclude:: ../examples/example_asyncio_ioc.py
-
 
 The ``dispatcher`` is created and passed to :func:`~softioc.softioc.iocInit`. This is what
 allows the use of `asyncio` functions in this IOC. It contains a new event loop to handle

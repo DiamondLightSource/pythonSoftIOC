@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 3.1+23.g3356f44 documentation</title>
+  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 3.1+26.g12967f8 documentation</title>
   
 
   
@@ -112,6 +112,7 @@
 <p class="caption"><span class="caption-text">How-to Guides</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example-ioc">Example IOC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#asynchronous-channel-access">Asynchronous Channel Access</a></li>
 </ul>
 </li>
@@ -122,6 +123,7 @@
 <p class="caption"><span class="caption-text">Explanations</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/asyncio-cothread-differences.html">What are the differences between <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code>?</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
@@ -234,14 +236,15 @@
             
   <div class="section" id="use-asyncio-in-an-ioc">
 <h1>Use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> in an IOC<a class="headerlink" href="#use-asyncio-in-an-ioc" title="Permalink to this headline">¶</a></h1>
-<p>There are two libraries available for asynchronous operations in pythonSoftIOC:
-<a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a>. This guide shows how to use the latter in
-an IOC.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This page only explains the differences between using <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a>.
-For more thorough explanation of the IOC itself see <a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a></p>
+<p><a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a> shows how to create a pythonSoftIOC using the
+<a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> library. This page shows how to create one using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a></p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../explanations/asyncio-cothread-differences.html"><span class="doc">What are the differences between asyncio and cothread?</span></a> for the differences and why
+you would use one over the other</p>
 </div>
+<div class="section" id="example-ioc">
+<h2>Example IOC<a class="headerlink" href="#example-ioc" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import the basic framework components.</span>
 <span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">softioc</span><span class="p">,</span> <span class="n">builder</span><span class="p">,</span> <span class="n">asyncio_dispatcher</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
@@ -283,6 +286,7 @@ main event loop.</p>
 <p>This IOC will, like the one in <a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a>, leave an interactive
 shell open. The values of the PVs can be queried using the methods defined in the
 <a class="reference internal" href="../reference/api.html#module-softioc.softioc" title="softioc.softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.softioc</span></code></a> module.</p>
+</div>
 <div class="section" id="asynchronous-channel-access">
 <h2>Asynchronous Channel Access<a class="headerlink" href="#asynchronous-channel-access" title="Permalink to this headline">¶</a></h2>
 <p>PVs can be retrieved externally from a PV in an asynchronous manner by using the

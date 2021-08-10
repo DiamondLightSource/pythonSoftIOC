@@ -7,6 +7,7 @@ import sys
 import os
 import atexit
 import pytest
+import time
 
 PV_PREFIX = "".join(random.choice(string.ascii_uppercase) for _ in range(12))
 
@@ -33,7 +34,7 @@ def asyncio_ioc():
 @pytest.mark.asyncio
 async def test_asyncio_ioc(asyncio_ioc):
     import asyncio
-    from aioca import caget, caput, camonitor, CANothing, _catools, FORMAT_CTRL
+    from aioca import caget, caput, camonitor, CANothing, _catools, FORMAT_TIME
     # Unregister the aioca atexit handler as it conflicts with the one installed
     # by cothread. If we don't do this we get a seg fault. This is not a problem
     # in production as we won't mix aioca and cothread, but we do mix them in
@@ -48,19 +49,25 @@ async def test_asyncio_ioc(asyncio_ioc):
     m = camonitor(PV_PREFIX + ":SIN", q.put, notify_disconnect=True)
     assert len(await asyncio.wait_for(q.get(), 1)) == 4
     # AO
-    ao_val = await caget(PV_PREFIX + ":AO2", format=FORMAT_CTRL)
+    ao_val = await caget(PV_PREFIX + ":ALARM", format=FORMAT_TIME)
     assert ao_val == 0
     assert ao_val.severity == 3  # INVALID
     assert ao_val.status == 17  # UDF
-    await caput(PV_PREFIX + ":AO2", 3.56, wait=True)
+    await caput(PV_PREFIX + ":ALARM", 3, wait=True)
     await asyncio.sleep(0.1)
-    assert await caget(PV_PREFIX + ":AI") == 12.34
+    ai_val = await caget(PV_PREFIX + ":AI", format=FORMAT_TIME)
+    assert ai_val == 23.45
+    assert ai_val.severity == 0
+    assert ai_val.status == 0
     await asyncio.sleep(0.8)
-    assert await caget(PV_PREFIX + ":AI") == 3.56
+    ai_val = await caget(PV_PREFIX + ":AI", format=FORMAT_TIME)
+    assert ai_val == 23.45
+    assert ai_val.severity == 3
+    assert ai_val.status == 7  # STATE_ALARM
     # Check pvaccess works
     from p4p.client.asyncio import Context
     with Context("pva") as ctx:
-        assert await ctx.get(PV_PREFIX + ":AI") == 3.56
+        assert await ctx.get(PV_PREFIX + ":AI") == 23.45
     # Wait for a bit longer for the print output to flush
     await asyncio.sleep(2)
     # Stop
@@ -73,8 +80,9 @@ async def test_asyncio_ioc(asyncio_ioc):
     # check closed and output
     assert "%s:SINN.VAL 1024 -> 4" % PV_PREFIX in out
     assert 'update_sin_wf 4' in out
-    assert "%s:AO2.VAL 0 -> 3.56" % PV_PREFIX in out
-    assert 'async update 3.56' in out
+    assert "%s:ALARM.VAL 0 -> 3" % PV_PREFIX in out
+    assert 'on_update %s:AO : 3.0' % PV_PREFIX in out
+    assert 'async update 3.0 (23.45)' in out
     assert 'Starting iocInit' in err
     assert 'iocRun: All initialization complete' in err
     assert '(InteractiveConsole)' in err

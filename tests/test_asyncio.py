@@ -1,13 +1,12 @@
 # Will be ignored on Python2 by conftest.py settings
 
-import signal
 import pytest
 
 
 @pytest.mark.asyncio
 async def test_asyncio_ioc(asyncio_ioc):
     import asyncio
-    from aioca import caget, caput, camonitor, CANothing, _catools, FORMAT_TIME
+    from aioca import caget, caput, camonitor, CANothing, FORMAT_TIME
 
     # Start
     pre = asyncio_ioc.pv_prefix
@@ -68,7 +67,7 @@ async def test_asyncio_ioc_override(asyncio_ioc_override):
     assert (await caget(pre + ":GAIN")) == 1
 
     # Stop
-    asyncio_ioc_override.proc.send_signal(signal.SIGINT)
+    await caput(pre + ":SYSRESET", 1)
     # check closed and output
     out, err = asyncio_ioc_override.proc.communicate()
     out = out.decode()
@@ -77,3 +76,4 @@ async def test_asyncio_ioc_override(asyncio_ioc_override):
     assert '1' in out
     assert 'Starting iocInit' in err
     assert 'iocRun: All initialization complete' in err
+    assert 'IOC reboot started' in err

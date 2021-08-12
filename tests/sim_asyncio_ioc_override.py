@@ -24,6 +24,7 @@ if __name__ == "__main__":
 
     # Override DTYPE and OUT, and provide a callback
     gain = builder.boolOut("GAIN", on_update=print)
+    softioc.devIocStats(parsed_args.prefix)
 
     # Run the IOC
     builder.LoadDatabase()

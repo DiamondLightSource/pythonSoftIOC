@@ -5,6 +5,10 @@ from epicscorelibs import path
 from epicscorelibs.ioc import \
     iocshRegisterCommon, registerRecordDeviceDriver, pdbbase
 
+# Do this as early as possible, in case we happen to use cothread
+# as it's harmless if we don't
+import epicscorelibs.path.cothread  # noqa
+
 # This import will also pull in the extension, which is needed
 # before we call iocshRegisterCommon
 from .imports import dbLoadDatabase

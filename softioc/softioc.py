@@ -4,7 +4,7 @@ from ctypes import *
 
 from epicsdbbuilder.recordset import recordset
 
-from . import imports, device
+from . import imports, device, builder
 
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
@@ -240,10 +240,9 @@ class Exiter:
 exit = Exiter()
 command_names.append('exit')
 
+# For backwards compatibility
+dbLoadDatabase = builder.dbLoadDatabase
 
-def dbLoadDatabase(database, path = None, substitutions = None):
-    '''Loads a database file and applies any given substitutions.'''
-    imports.dbLoadDatabase(database, path, substitutions)
 
 def _add_records_from_file(dir, file, macros):
     # This is very naive, for instance macros are added to but never removed,
@@ -261,9 +260,7 @@ def _add_records_from_file(dir, file, macros):
                 _add_records_from_file(dir, line.split('"')[1], macros)
             else:
                 # A record line
-                for k, v in macros.items():
-                    line = line.replace('$(%s)' % k, v)
-                recordset.AddBodyLine(line)
+                builder.AddDatabaseLine(line, macros)
 
 
 def devIocStats(ioc_name):

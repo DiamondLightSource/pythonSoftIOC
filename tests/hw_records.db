@@ -1,0 +1,8 @@
+record(bo, "$(device):GAIN") {
+  field(DTYP, "Hy8001")
+  field(OMSL, "supervisory")
+  field(OUT, "#C1 S0 @")
+  field(DESC, "Gain bit 1")
+  field(ZNAM, "Off")
+  field(ONAM, "On")
+}

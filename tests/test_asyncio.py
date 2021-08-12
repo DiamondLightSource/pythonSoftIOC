@@ -1,45 +1,34 @@
 # Will be ignored on Python2 by conftest.py settings
 
-import random
-import string
-import subprocess
-import sys
-import os
 import atexit
+import signal
 import pytest
-import time
+from tests.conftest import SubprocessIOC, PV_PREFIX
 
-PV_PREFIX = "".join(random.choice(string.ascii_uppercase) for _ in range(12))
+
+def aioca_cleanup():
+    from aioca import purge_channel_caches, _catools
+    # Unregister the aioca atexit handler as it conflicts with the one installed
+    # by cothread. If we don't do this we get a seg fault. This is not a problem
+    # in production as we won't mix aioca and cothread, but we do mix them in
+    # the tests so need to do this.
+    atexit.unregister(_catools._catools_atexit)
+    # purge the channels before the event loop goes
+    purge_channel_caches()
 
 
 @pytest.fixture
 def asyncio_ioc():
-    sim_ioc = os.path.join(os.path.dirname(__file__), "sim_asyncio_ioc.py")
-    cmd = [sys.executable, sim_ioc, PV_PREFIX]
-    proc = subprocess.Popen(
-        cmd, stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    yield proc
-    # purge the channels before the event loop goes
-    from aioca import purge_channel_caches
-    purge_channel_caches()
-    if proc.returncode is None:
-        # still running, kill it and print the output
-        proc.kill()
-        out, err = proc.communicate()
-        print(out.decode())
-        print(err.decode(), file=sys.stderr)
+    ioc = SubprocessIOC("sim_asyncio_ioc.py")
+    yield ioc.proc
+    ioc.kill()
+    aioca_cleanup()
 
 
 @pytest.mark.asyncio
 async def test_asyncio_ioc(asyncio_ioc):
     import asyncio
     from aioca import caget, caput, camonitor, CANothing, _catools, FORMAT_TIME
-    # Unregister the aioca atexit handler as it conflicts with the one installed
-    # by cothread. If we don't do this we get a seg fault. This is not a problem
-    # in production as we won't mix aioca and cothread, but we do mix them in
-    # the tests so need to do this.
-    atexit.unregister(_catools._catools_atexit)
 
     # Start
     assert (await caget(PV_PREFIX + ":UPTIME")).startswith("00:00:0")
@@ -86,3 +75,32 @@ async def test_asyncio_ioc(asyncio_ioc):
     assert 'Starting iocInit' in err
     assert 'iocRun: All initialization complete' in err
     assert '(InteractiveConsole)' in err
+
+
+@pytest.fixture
+def asyncio_ioc_override():
+    ioc = SubprocessIOC("sim_asyncio_ioc_override.py")
+    yield ioc.proc
+    ioc.kill()
+    aioca_cleanup()
+
+
+@pytest.mark.asyncio
+async def test_asyncio_ioc_override(asyncio_ioc_override):
+    from aioca import caget, caput
+
+    # Gain bo
+    assert (await caget(PV_PREFIX + ":GAIN")) == 0
+    await caput(PV_PREFIX + ":GAIN", "On", wait=True)
+    assert (await caget(PV_PREFIX + ":GAIN")) == 1
+
+    # Stop
+    asyncio_ioc_override.send_signal(signal.SIGINT)
+    # check closed and output
+    out, err = asyncio_ioc_override.communicate()
+    out = out.decode()
+    err = err.decode()
+    # check closed and output
+    assert '1' in out
+    assert 'Starting iocInit' in err
+    assert 'iocRun: All initialization complete' in err

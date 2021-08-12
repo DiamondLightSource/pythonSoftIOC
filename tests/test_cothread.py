@@ -1,12 +1,7 @@
-import random
-import string
-import subprocess
 import sys
-import os
 import signal
+from tests.conftest import SubprocessIOC, PV_PREFIX
 import pytest
-
-PV_PREFIX = "".join(random.choice(string.ascii_uppercase) for _ in range(12))
 
 
 if sys.platform.startswith("win"):
@@ -15,23 +10,12 @@ if sys.platform.startswith("win"):
 
 @pytest.fixture
 def cothread_ioc():
-    sim_ioc = os.path.join(os.path.dirname(__file__), "sim_cothread_ioc.py")
-    cmd = [sys.executable, sim_ioc, PV_PREFIX]
-    proc = subprocess.Popen(
-        cmd, stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    yield proc
-    if proc.returncode is None:
-        # still running, kill it and print the output
-        proc.kill()
-        out, err = proc.communicate()
-        print(out.decode())
-        print(err.decode())
-
+    ioc = SubprocessIOC("sim_cothread_ioc.py")
+    yield ioc.proc
+    ioc.kill()
 
 
 def test_cothread_ioc(cothread_ioc):
-    import epicscorelibs.path.cothread
     import cothread
     from cothread.catools import ca_nothing, caget, caput, camonitor
 

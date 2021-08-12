@@ -4,7 +4,7 @@ import asyncio
 import time
 import sys
 
-from softioc import softioc, builder, asyncio_dispatcher, pvlog
+from softioc import alarm, softioc, builder, asyncio_dispatcher, pvlog
 
 
 if __name__ == "__main__":
@@ -17,13 +17,20 @@ if __name__ == "__main__":
     import sim_records
 
     async def callback(value):
+        # Set the ao value, which will trigger on_update for it
+        sim_records.t_ao.set(value)
         await asyncio.sleep(0.5)
-        print("async update %s" % value)
+        print("async update %s (%s)" % (value, sim_records.t_ai.get()))
         # Make sure it goes as epicsExit will not flush this for us
         sys.stdout.flush()
-        sim_records.t_ai.set(value)
+        # Set the ai alarm, but keep the value
+        sim_records.t_ai.set_alarm(int(value) % 4, alarm.STATE_ALARM)
 
-    t_ao = builder.aOut('AO2', on_update=callback)
+    # Set a different initial value
+    sim_records.t_ai.set(23.45)
+
+    # Create a record to set the alarm
+    t_ao = builder.aOut('ALARM', on_update=callback)
 
     # Run the IOC
     builder.LoadDatabase()

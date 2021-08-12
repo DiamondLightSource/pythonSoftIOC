@@ -35,7 +35,7 @@ t_longout = longOut('LONGOUT', initial_value=2008, on_update=on_update)
 t_stringout = stringOut(
     'STRINGOUT', initial_value='watevah', on_update=on_update)
 t_mbbo = mbbOut(
-    'MBBO', 'Ein', 'Zwei', 'Drei', initial_value=1, on_update=on_update)
+    'MBBO', 'Ein', 'Zwei', 'Drei', initial_value=1)
 
 def update_sin_wf(value):
     print('update_sin_wf', value)

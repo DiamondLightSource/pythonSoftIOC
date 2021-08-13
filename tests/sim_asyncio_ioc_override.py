@@ -4,6 +4,7 @@ import asyncio
 import os
 import re
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 from softioc import softioc, builder, asyncio_dispatcher
 
@@ -16,11 +17,14 @@ if __name__ == "__main__":
     builder.SetDeviceName(parsed_args.prefix)
 
     # Load the base records without DTYP fields
-    macros = dict(device=parsed_args.prefix)
-    with open(Path(__file__).parent / "hw_records.db") as f:
-        for line in f.readlines():
-            if not re.match(r"\s*field\s*\(\s*DTYP", line):
-                builder.AddDatabaseLine(line, macros)
+    with open(Path(__file__).parent / "hw_records.db", "rb") as inp:
+        with NamedTemporaryFile(suffix='.db', delete=False) as out:
+            for line in inp.readlines():
+                if not re.match(rb"\s*field\s*\(\s*DTYP", line):
+                    out.write(line)
+    softioc.dbLoadDatabase(
+        out.name, substitutions=f"device={parsed_args.prefix}")
+    os.unlink(out.name)
 
     # Override DTYPE and OUT, and provide a callback
     gain = builder.boolOut("GAIN", on_update=print)

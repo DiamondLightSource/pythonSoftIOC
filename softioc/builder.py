@@ -1,19 +1,14 @@
 import os
 import numpy
+from .softioc import dbLoadDatabase
 
 from epicsdbbuilder import *
-from epicsdbbuilder.recordset import recordset
 
 InitialiseDbd()
 LoadDbdFile(os.path.join(os.path.dirname(__file__), 'device.dbd'))
 
-from . import pythonSoftIoc, imports  # noqa
+from . import pythonSoftIoc  # noqa
 PythonDevice = pythonSoftIoc.PythonDevice()
-
-
-def dbLoadDatabase(database, path = None, substitutions = None):
-    '''Loads a database file and applies any given substitutions.'''
-    imports.dbLoadDatabase(database, path, substitutions)
 
 
 # ----------------------------------------------------------------------------
@@ -184,14 +179,6 @@ def WaveformOut(name, *value, **fields):
 
 
 _DatabaseWritten = False
-
-def AddDatabaseLine(line, macros={}):
-    '''Add a single line to the produced database, substituting $(k) for v for
-    each entry in macros'''
-    for k, v in macros.items():
-        line = line.replace("$(%s)" % k, v)
-    recordset.AddBodyLine(line)
-
 
 def LoadDatabase():
     '''This should be called after all the builder records have been created,

@@ -1,6 +1,7 @@
 import os
 import sys
 from ctypes import *
+from tempfile import NamedTemporaryFile
 
 from epicsdbbuilder.recordset import recordset
 
@@ -245,33 +246,43 @@ def dbLoadDatabase(database, path = None, substitutions = None):
     '''Loads a database file and applies any given substitutions.'''
     imports.dbLoadDatabase(database, path, substitutions)
 
-def _add_records_from_file(dir, file, macros):
-    # This is very naive, for instance macros are added to but never removed,
-    # but it works well enough for devIocStats
-    with open(os.path.join(dir, file)) as f:
+
+def _add_records_from_file(dirname, file, substitutions):
+    # This is very naive, it loads all includes before their parents which
+    # possibly can put them out of order, but it works well enough for
+    # devIocStats
+    with open(os.path.join(dirname, file)) as f:
+        lines, include_subs = [], ""
         for line in f.readlines():
             line = line.rstrip()
             if line.startswith('substitute'):
-                # substitute "QUEUE=scanOnce, QUEUE_CAPS=SCANONCE
-                for sub in line.split('"')[1].split(','):
-                    k, v = sub.split('=')
-                    macros[k.strip()] = v.strip()
+                # substitute "QUEUE=scanOnce, QUEUE_CAPS=SCANONCE"
+                # keep hold of the substitutions
+                include_subs = line.split('"')[1]
             elif line.startswith('include'):
                 # include "iocQueue.db"
-                _add_records_from_file(dir, line.split('"')[1], macros)
+                subs = substitutions
+                if substitutions and include_subs:
+                    subs = substitutions + ", " + include_subs
+                else:
+                    subs = substitutions + include_subs
+                _add_records_from_file(dirname, line.split('"')[1], subs)
             else:
                 # A record line
-                for k, v in macros.items():
-                    line = line.replace('$(%s)' % k, v)
-                recordset.AddBodyLine(line)
+                lines.append(line)
+        # Write a tempfile and load it
+        with NamedTemporaryFile(suffix='.db', delete=False) as f:
+            f.write(os.linesep.join(lines).encode())
+        dbLoadDatabase(f.name, substitutions=substitutions)
+        os.unlink(f.name)
 
 
 def devIocStats(ioc_name):
     '''This will load a template for the devIocStats library with the specified
     IOC name. This should be called before `iocInit`'''
-    macros = dict(IOCNAME=ioc_name, TODFORMAT='%m/%d/%Y %H:%M:%S')
+    substitutions = 'IOCNAME=' + ioc_name + ', TODFORMAT=%m/%d/%Y %H:%M:%S'
     iocstats_dir = os.path.join(os.path.dirname(__file__), 'iocStatsDb')
-    _add_records_from_file(iocstats_dir, 'ioc.template', macros)
+    _add_records_from_file(iocstats_dir, 'ioc.template', substitutions)
 
 
 def interactive_ioc(context = {}, call_exit = True):

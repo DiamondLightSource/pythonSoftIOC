@@ -5,6 +5,11 @@ from epicscorelibs import path
 from epicscorelibs.ioc import \
     iocshRegisterCommon, registerRecordDeviceDriver, pdbbase
 
+# Do this as early as possible, in case we happen to use cothread
+# This will set the CATOOLS_LIBCA_PATH environment variable in case we use
+# cothread.catools. It works even if we don't have cothread installed
+import epicscorelibs.path.cothread  # noqa
+
 # This import will also pull in the extension, which is needed
 # before we call iocshRegisterCommon
 from .imports import dbLoadDatabase

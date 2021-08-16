@@ -11,7 +11,6 @@ from . import pythonSoftIoc  # noqa
 PythonDevice = pythonSoftIoc.PythonDevice()
 
 
-
 # ----------------------------------------------------------------------------
 #  Wrappers for PythonDevice record constructors.
 #

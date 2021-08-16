@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.softioc &mdash; pythonSoftIOC 3.1+28.g6caaf1a documentation</title>
+  <title>softioc.softioc &mdash; pythonSoftIOC 3.1+36.ga558b5a documentation</title>
   
 
   
@@ -230,6 +230,7 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
 
 <span class="kn">from</span> <span class="nn">epicsdbbuilder.recordset</span> <span class="kn">import</span> <span class="n">recordset</span>
 
@@ -474,33 +475,43 @@
     <span class="sd">&#39;&#39;&#39;Loads a database file and applies any given substitutions.&#39;&#39;&#39;</span>
     <span class="n">imports</span><span class="o">.</span><span class="n">dbLoadDatabase</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">)</span></div>
 
-<span class="k">def</span> <span class="nf">_add_records_from_file</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">macros</span><span class="p">):</span>
-    <span class="c1"># This is very naive, for instance macros are added to but never removed,</span>
-    <span class="c1"># but it works well enough for devIocStats</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+<span class="k">def</span> <span class="nf">_add_records_from_file</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">):</span>
+    <span class="c1"># This is very naive, it loads all includes before their parents which</span>
+    <span class="c1"># possibly can put them out of order, but it works well enough for</span>
+    <span class="c1"># devIocStats</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span><span class="p">,</span> <span class="n">include_subs</span> <span class="o">=</span> <span class="p">[],</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;substitute&#39;</span><span class="p">):</span>
-                <span class="c1"># substitute &quot;QUEUE=scanOnce, QUEUE_CAPS=SCANONCE</span>
-                <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
-                    <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
-                    <span class="n">macros</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="c1"># substitute &quot;QUEUE=scanOnce, QUEUE_CAPS=SCANONCE&quot;</span>
+                <span class="c1"># keep hold of the substitutions</span>
+                <span class="n">include_subs</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;include&#39;</span><span class="p">):</span>
                 <span class="c1"># include &quot;iocQueue.db&quot;</span>
-                <span class="n">_add_records_from_file</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">macros</span><span class="p">)</span>
+                <span class="n">subs</span> <span class="o">=</span> <span class="n">substitutions</span>
+                <span class="k">if</span> <span class="n">substitutions</span> <span class="ow">and</span> <span class="n">include_subs</span><span class="p">:</span>
+                    <span class="n">subs</span> <span class="o">=</span> <span class="n">substitutions</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="n">include_subs</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">subs</span> <span class="o">=</span> <span class="n">substitutions</span> <span class="o">+</span> <span class="n">include_subs</span>
+                <span class="n">_add_records_from_file</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">subs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># A record line</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">macros</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;$(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-                <span class="n">recordset</span><span class="o">.</span><span class="n">AddBodyLine</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="c1"># Write a tempfile and load it</span>
+        <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.db&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="n">dbLoadDatabase</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">substitutions</span><span class="o">=</span><span class="n">substitutions</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="devIocStats"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.devIocStats">[docs]</a><span class="k">def</span> <span class="nf">devIocStats</span><span class="p">(</span><span class="n">ioc_name</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;This will load a template for the devIocStats library with the specified</span>
 <span class="sd">    IOC name. This should be called before `iocInit`&#39;&#39;&#39;</span>
-    <span class="n">macros</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">IOCNAME</span><span class="o">=</span><span class="n">ioc_name</span><span class="p">,</span> <span class="n">TODFORMAT</span><span class="o">=</span><span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span><span class="p">)</span>
+    <span class="n">substitutions</span> <span class="o">=</span> <span class="s1">&#39;IOCNAME=&#39;</span> <span class="o">+</span> <span class="n">ioc_name</span> <span class="o">+</span> <span class="s1">&#39;, TODFORMAT=%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span>
     <span class="n">iocstats_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;iocStatsDb&#39;</span><span class="p">)</span>
-    <span class="n">_add_records_from_file</span><span class="p">(</span><span class="n">iocstats_dir</span><span class="p">,</span> <span class="s1">&#39;ioc.template&#39;</span><span class="p">,</span> <span class="n">macros</span><span class="p">)</span></div>
+    <span class="n">_add_records_from_file</span><span class="p">(</span><span class="n">iocstats_dir</span><span class="p">,</span> <span class="s1">&#39;ioc.template&#39;</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="interactive_ioc"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.interactive_ioc">[docs]</a><span class="k">def</span> <span class="nf">interactive_ioc</span><span class="p">(</span><span class="n">context</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">call_exit</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>

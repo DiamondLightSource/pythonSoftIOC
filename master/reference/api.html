@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API &mdash; pythonSoftIOC 3.1+28.g6caaf1a documentation</title>
+  <title>API &mdash; pythonSoftIOC 3.1+36.ga558b5a documentation</title>
   
 
   
@@ -563,22 +563,6 @@ terminate immediately.</p>
 <h2>Asyncio Dispatcher: <a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a><a class="headerlink" href="#asyncio-dispatcher-softioc-asyncio-dispatcher" title="Permalink to this headline">¶</a></h2>
 <p>If your application uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then this module gives an alternative
 dispatcher for caput requests.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="softioc.asyncio_dispatcher.AsyncioDispatcher">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">softioc.asyncio_dispatcher.</span></span><span class="sig-name descname"><span class="pre">AsyncioDispatcher</span></span><a class="reference internal" href="../_modules/softioc/asyncio_dispatcher.html#AsyncioDispatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based IOCs. Means that <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> callback
-functions can be async. Will run an Event Loop in a thread when
-created.</p>
-<p>Create an AsyncioDispatcher suitable to be used by
-<a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref any py py-func docutils literal notranslate"><span class="pre">softioc.iocInit</span></code></a>.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="softioc.asyncio_dispatcher.AsyncioDispatcher.loop">
-<span class="sig-name descname"><span class="pre">loop</span></span><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher.loop" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> event loop that the callbacks will run under.</p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <span class="target" id="module-softioc.builder"></span><div class="section" id="creating-records-softioc-builder">
 <h2>Creating Records: <a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a><a class="headerlink" href="#creating-records-softioc-builder" title="Permalink to this headline">¶</a></h2>

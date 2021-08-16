@@ -1,6 +1,7 @@
 # Will be ignored on Python2 by conftest.py settings
 
 import pytest
+import sys
 
 
 @pytest.mark.asyncio
@@ -57,6 +58,9 @@ async def test_asyncio_ioc(asyncio_ioc):
 
 
 @pytest.mark.asyncio
+@pytest.mark.skipif(
+    sys.platform.startswith("darwin"),
+    reason="devIocStats reboot doesn't work on MacOS")
 async def test_asyncio_ioc_override(asyncio_ioc_override):
     from aioca import caget, caput
 
@@ -69,7 +73,7 @@ async def test_asyncio_ioc_override(asyncio_ioc_override):
     # Stop
     await caput(pre + ":SYSRESET", 1)
     # check closed and output
-    out, err = asyncio_ioc_override.proc.communicate()
+    out, err = asyncio_ioc_override.proc.communicate(timeout=5)
     out = out.decode()
     err = err.decode()
     # check closed and output

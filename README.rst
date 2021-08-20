@@ -13,6 +13,7 @@ asyncio for concurrency. PVs are served over Channel Access and PVAccess.
 PyPI           ``pip install softioc``
 Source code    https://github.com/dls-controls/pythonSoftIOC
 Documentation  https://dls-controls.github.io/pythonSoftIOC
+Changelog      https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst
 ============== ==============================================================
 
 A simple example of the use of this library:

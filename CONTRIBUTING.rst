@@ -66,12 +66,10 @@ You can build the docs from the project directory by running::
 Release Process
 ---------------
 
-To make a new release, please go through the following checklist:
+To make a new release, please follow this checklist:
 
 - Choose a new PEP440 compliant release number
-- Git tag the version with a message summarizing the changes
+- Add a release note in CHANGELOG.rst
+- Git tag the version
 - Push to github and the actions will make a release on pypi
-- Push to internal gitlab but do not release from there
-- Run ``dls-py3 download-one-dependency softioc <release>``
-- Run ``cp Pipfile.lock /dls_sw/work/python3/RHEL7-x86_64/distributions/softioc-<release>.Pipfile.lock``
-- Run ``dls-release.py -a python3ext softioc <release>``
+- Push to internal gitlab and do a dls-release.py of the tag

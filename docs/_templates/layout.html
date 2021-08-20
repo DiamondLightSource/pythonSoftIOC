@@ -9,7 +9,9 @@
   {{ super() }}
   <!-- Include Index in the sidebar -->
   <!-- https://stackoverflow.com/a/37843854 -->
-  <a href="{{pathto('genindex.html', 1)}}">Index</a>
+  <a href="{{ pathto('genindex.html', 1) }}">Index</a>
+  <!-- Include link to changelog too -->
+  <a href="https://github.com/dls-controls/{{ project }}/blob/master/CHANGELOG.rst">Changelog</a>
   <!-- Add versions for selected branches + tags -->
   <p class="caption"><span class="caption-text">Versions</span></p>
   <ul id="versions"/>

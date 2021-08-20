@@ -11,13 +11,25 @@ Unreleased_
 
 Nothing yet
 
+3.2_ - 2021-08-20
+-----------------
+
+Changed:
+
+- Repository changed from pythonIoc to pythonSoftIOC
+
+Added:
+
+- `Allow waveform.set() to be called before iocInit <../../pull/22>`_
+- `Allow AsyncioDispatcher to take existing event loop <../../pull/28>`_
+
 
 3.1_ - 2021-07-07
 -----------------
 
 Added:
 
-- PVA support to the IOC #17
+- `PVA support to the IOC <../../pull/17>`_
 
 
 3.0_ - 2021-07-05
@@ -25,11 +37,11 @@ Added:
 
 Added:
 
-- More documentation #14
+- `More documentation <../../pull/14>`_
 
 Fixed:
 
-- Mbbi/o specifying alarm values bug introduced in 3.0b2 #15
+- `Mbbi/o specifying alarm values bug introduced in 3.0b2 <../../pull/15>`_
 
 
 3.0b2_ - 2021-06-28
@@ -37,7 +49,7 @@ Fixed:
 
 Changed:
 
-- Restructured the docs #9 #10
+- `Restructured the docs <../../pull/10>`_
 
 Removed:
 
@@ -47,7 +59,7 @@ Removed:
 3.0b1_ - 2021-06-28
 -------------------
 
-Port to being a Python package #5
+`Port to being a Python package <../../pull/5>`_
 
 Changed:
 
@@ -67,7 +79,8 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 
-.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/3.1...HEAD
+.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/3.2...HEAD
+.. _3.2: https://github.com/dls-controls/pythonIoc/compare/3.1...3.2
 .. _3.1: https://github.com/dls-controls/pythonIoc/compare/3.0...3.1
 .. _3.0: https://github.com/dls-controls/pythonIoc/compare/3.0b2...3.0
 .. _3.0b2: https://github.com/dls-controls/pythonIoc/compare/3.0b1...3.0b2

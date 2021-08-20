@@ -79,7 +79,6 @@ Table Of Contents
     :maxdepth: 1
 
     reference/api
-    reference/changelog
     reference/contributing
 
 * :ref:`genindex`

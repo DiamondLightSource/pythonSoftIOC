@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.builder &mdash; pythonSoftIOC 3.1+42.g26b4bfb documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 3.1+43.gc95035a documentation</title>
   
 
   
@@ -292,6 +292,9 @@
     <span class="s1">&#39;ZR&#39;</span><span class="p">,</span> <span class="s1">&#39;ON&#39;</span><span class="p">,</span> <span class="s1">&#39;TW&#39;</span><span class="p">,</span> <span class="s1">&#39;TH&#39;</span><span class="p">,</span> <span class="s1">&#39;FR&#39;</span><span class="p">,</span> <span class="s1">&#39;FV&#39;</span><span class="p">,</span> <span class="s1">&#39;SX&#39;</span><span class="p">,</span> <span class="s1">&#39;SV&#39;</span><span class="p">,</span>     <span class="c1"># 0-7</span>
     <span class="s1">&#39;EI&#39;</span><span class="p">,</span> <span class="s1">&#39;NI&#39;</span><span class="p">,</span> <span class="s1">&#39;TE&#39;</span><span class="p">,</span> <span class="s1">&#39;EL&#39;</span><span class="p">,</span> <span class="s1">&#39;TV&#39;</span><span class="p">,</span> <span class="s1">&#39;TT&#39;</span><span class="p">,</span> <span class="s1">&#39;FT&#39;</span><span class="p">,</span> <span class="s1">&#39;FF&#39;</span><span class="p">]</span>     <span class="c1"># 8-15</span>
 
+<span class="c1"># All the severity strings supported by &lt;prefix&gt;SV</span>
+<span class="n">_severityStrings</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NO_ALARM&quot;</span><span class="p">,</span> <span class="s2">&quot;MINOR&quot;</span><span class="p">,</span> <span class="s2">&quot;MAJOR&quot;</span><span class="p">,</span> <span class="s2">&quot;INVALID&quot;</span><span class="p">]</span>
+
 <span class="c1"># Converts a list of (option [,severity]) values or tuples into field settings</span>
 <span class="c1"># suitable for mbbi and mbbo records.</span>
 <span class="k">def</span> <span class="nf">_process_mbb_values</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
@@ -299,6 +302,9 @@
         <span class="n">fields</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;ST&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">option</span>
         <span class="n">fields</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;VL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">if</span> <span class="n">severity</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">severity</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="c1"># Map alarm.MINOR_ALARM -&gt; &quot;MINOR&quot;</span>
+                <span class="n">severity</span> <span class="o">=</span> <span class="n">_severityStrings</span><span class="p">[</span><span class="n">severity</span><span class="p">]</span>
             <span class="n">fields</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;SV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">severity</span>
     <span class="c1"># zip() silently ignores extra values in options, so explicitly check length</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;May not specify more than 16 enum values&quot;</span>

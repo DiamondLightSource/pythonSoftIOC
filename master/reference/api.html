@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API &mdash; pythonSoftIOC 3.1+42.g26b4bfb documentation</title>
+  <title>API &mdash; pythonSoftIOC 3.1+43.gc95035a documentation</title>
   
 
   
@@ -686,10 +686,13 @@ the tuple names the option, and the second optional field is the option
 severity.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">status</span> <span class="o">=</span> <span class="n">mbbIn</span><span class="p">(</span><span class="s1">&#39;STATUS&#39;</span><span class="p">,</span>
     <span class="s1">&#39;OK&#39;</span><span class="p">,</span>
-    <span class="p">(</span><span class="s1">&#39;FAILING&#39;</span><span class="p">,</span> <span class="s2">&quot;MINOR&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s1">&#39;FAILED&#39;</span><span class="p">,</span> <span class="s2">&quot;MAJOR&quot;</span><span class="p">))</span>
+    <span class="p">(</span><span class="s1">&#39;FAILING&#39;</span><span class="p">,</span> <span class="s1">&#39;MINOR&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;FAILED&#39;</span><span class="p">,</span> <span class="s1">&#39;MAJOR&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;NOT CONNECTED&#39;</span><span class="p">,</span> <span class="s1">&#39;INVALID&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>Severities can also be assigned using the <a class="reference internal" href="#module-softioc.alarm" title="softioc.alarm"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a> numerical
+severities if preferred.</p>
 <p>Numerical values are assigned to options sequentially from 0 to 15 and
 cannot be overridden.</p>
 <div class="admonition warning">

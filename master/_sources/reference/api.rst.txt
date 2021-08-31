@@ -273,8 +273,12 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
 
         status = mbbIn('STATUS',
             'OK',
-            ('FAILING', "MINOR"),
-            ('FAILED', "MAJOR"))
+            ('FAILING', 'MINOR'),
+            ('FAILED', 'MAJOR'),
+            ('NOT CONNECTED', 'INVALID'))
+
+    Severities can also be assigned using the `softioc.alarm` numerical
+    severities if preferred.
 
     Numerical values are assigned to options sequentially from 0 to 15 and
     cannot be overridden.

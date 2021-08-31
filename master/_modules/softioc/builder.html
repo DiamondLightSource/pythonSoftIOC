@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.builder &mdash; pythonSoftIOC 3.1+39.g30f5e0d documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 3.1+40.g5e478cf documentation</title>
   
 
   
@@ -300,6 +300,8 @@
         <span class="n">fields</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;VL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">if</span> <span class="n">severity</span><span class="p">:</span>
             <span class="n">fields</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;SV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">severity</span>
+    <span class="c1"># zip() silently ignores extra values in options, so explicitly check length</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;May not specify more than 16 enum values&quot;</span>
     <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_mbbPrefixes</span><span class="p">,</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">options</span><span class="p">)):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">option</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="c1"># The option is tuple consisting of the option name and an optional</span>

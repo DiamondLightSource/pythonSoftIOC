@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Use soft records in an IOC &mdash; pythonSoftIOC 3.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Why use pythonSoftIOC?" href="../explanations/why-use-pythonSoftIOC.html" />
+    <link rel="prev" title="Read data from an IOC" href="read-data-from-ioc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pythonSoftIOC
+          
+
+          
+            
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+  <style>
+    /* style mobile top nav to look like main nav */
+    .wy-nav-top {
+        background: rgb(7, 43, 93)
+    }
+  </style>
+  
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">How-to Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read-data-from-ioc.html">Read data from an IOC</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Use soft records in an IOC</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/asyncio-cothread-differences.html">What are the differences between <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code>?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+  <!-- Include Index in the sidebar -->
+  <!-- https://stackoverflow.com/a/37843854 -->
+  <a href="../genindex.html">Index</a>
+  <!-- Include link to changelog too -->
+  <a href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a>
+  <!-- Add versions for selected branches + tags -->
+  <p class="caption"><span class="caption-text">Versions</span></p>
+  <ul id="versions"/>
+  <script>
+    // Add any branches to appear in the side pane here, tags will be added below
+    // Will only appear if docs are built and pushed in gh-pages
+    var versions = ['master', 'main'];
+    var dirs = new Set();
+    function addVersion(name) {
+      if (dirs.has(name)) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = 'https://dls-controls.github.io/pythonSoftIOC/' + name;
+        a.innerText = name;
+        li.appendChild(a)
+        document.getElementById('versions').appendChild(li);
+      }
+    }
+    Promise.all([
+      // Find gh-pages directories and populate `dirs`
+      fetch("https://api.github.com/repos/dls-controls/pythonSoftIOC/contents?ref=gh-pages")
+      .then(response => response.json())
+      .then(data => data.forEach(function(e) {
+        if (e.type == "dir") dirs.add(e.name);
+      })),
+      // Add tags to `versions`
+      fetch('https://api.github.com/repos/dls-controls/pythonSoftIOC/tags')
+        .then(response => response.json())
+        .then(data => data.forEach(function(e) {
+          versions.push(e.name);
+        }))
+      ]).then(_ => versions.forEach(addVersion))
+  </script>
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonSoftIOC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Use soft records in an IOC</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/how-to/use-soft-records.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="use-soft-records-in-an-ioc">
+<h1>Use soft records in an IOC<a class="headerlink" href="#use-soft-records-in-an-ioc" title="Permalink to this headline">¶</a></h1>
+<p>It is possible to use records with soft device support mixed with pythonSoftIOC
+records (with Python device support). This allows use of <code class="docutils literal notranslate"><span class="pre">calc</span></code>, <code class="docutils literal notranslate"><span class="pre">fanout</span></code>
+and other EPICS database soft records.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">builder</span><span class="p">,</span> <span class="n">softioc</span>
+<span class="kn">from</span> <span class="nn">softioc.builder</span> <span class="kn">import</span> <span class="n">records</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">SetDeviceName</span><span class="p">(</span><span class="s2">&quot;XX-XX-XX-01&quot;</span><span class="p">)</span>
+
+<span class="n">py_record</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">aOut</span><span class="p">(</span><span class="s2">&quot;VAL1&quot;</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">on_update</span><span class="o">=</span><span class="nb">print</span><span class="p">)</span>
+<span class="n">soft_record</span> <span class="o">=</span> <span class="n">records</span><span class="o">.</span><span class="n">ao</span><span class="p">(</span><span class="s2">&quot;VAL2&quot;</span><span class="p">,</span> <span class="n">VAL</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">calc</span> <span class="o">=</span> <span class="n">records</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="s2">&quot;CALC&quot;</span><span class="p">,</span> <span class="n">CALC</span><span class="o">=</span><span class="s2">&quot;A*B&quot;</span><span class="p">,</span> <span class="n">INPA</span><span class="o">=</span><span class="n">builder</span><span class="o">.</span><span class="n">CP</span><span class="p">(</span><span class="n">py_record</span><span class="p">),</span> <span class="n">B</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">soft_record</span><span class="o">.</span><span class="n">OUT</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">PP</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">VAL1</span></code> record is created in the usual pythonSoftIOC way, with Python
+device support. You can <a class="reference internal" href="../reference/api.html#softioc.device.ProcessDeviceSupportOut.set" title="softioc.device.ProcessDeviceSupportOut.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> it,
+and <a class="reference internal" href="../reference/api.html#on-update"><span class="std std-ref">on_update</span></a> will be called when you <code class="docutils literal notranslate"><span class="pre">caput</span></code> it.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">VAL2</span></code> record is created using the lower level
+<a class="reference internal" href="../reference/api.html#softioc.builder.records" title="softioc.builder.records"><code class="xref py py-attr docutils literal notranslate"><span class="pre">softioc.builder.records</span></code></a> object. You can <a class="reference internal" href="../reference/api.html#softioc.softioc.dbpf" title="softioc.softioc.dbpf"><code class="xref any py py-func docutils literal notranslate"><span class="pre">dbpf</span></code></a> it, and no Python will
+be called when you <code class="docutils literal notranslate"><span class="pre">caput</span></code> to it.</p>
+<p>Note that the Device Name is shared between both kinds of records - both will
+have the same prefix.</p>
+<p>We construct the <code class="docutils literal notranslate"><span class="pre">calc</span></code> record again using <a class="reference internal" href="../reference/api.html#softioc.builder.records" title="softioc.builder.records"><code class="xref py py-attr docutils literal notranslate"><span class="pre">softioc.builder.records</span></code></a>.
+This record will calculate <code class="docutils literal notranslate"><span class="pre">A*B</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">A</span></code> is provided by the record pointed at by <code class="docutils literal notranslate"><span class="pre">INPA</span></code>, which is
+<code class="docutils literal notranslate"><span class="pre">py_record</span></code>, and the <a class="reference internal" href="../reference/api.html#softioc.builder.CP" title="softioc.builder.CP"><code class="xref any py py-func docutils literal notranslate"><span class="pre">CP</span></code></a> link causes it to be monitored, processing
+<code class="docutils literal notranslate"><span class="pre">calc</span></code> each time it updates.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">B</span></code> is initially set to 1. When <code class="docutils literal notranslate"><span class="pre">soft_record</span></code> processes, it sends its
+value to <code class="docutils literal notranslate"><span class="pre">calc.B</span></code>, and the <a class="reference internal" href="../reference/api.html#softioc.builder.PP" title="softioc.builder.PP"><code class="xref any py py-func docutils literal notranslate"><span class="pre">PP</span></code></a> link causes it to process.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You could also use <code class="docutils literal notranslate"><span class="pre">calc(SCAN=&quot;1</span> <span class="pre">second&quot;,</span> <span class="pre">...)</span></code> instead of the <a class="reference internal" href="../reference/api.html#softioc.builder.PP" title="softioc.builder.PP"><code class="xref any py py-func docutils literal notranslate"><span class="pre">PP</span></code></a> and
+<a class="reference internal" href="../reference/api.html#softioc.builder.CP" title="softioc.builder.CP"><code class="xref any py py-func docutils literal notranslate"><span class="pre">CP</span></code></a> links, which would fetch the value periodically rather than just on
+change.</p>
+</div>
+<p>The output of this IOC can be examined by running this IOC in one terminal, and
+then modifying and running the example scripts found in <a class="reference internal" href="read-data-from-ioc.html"><span class="doc">Read data from an IOC</span></a>.
+Try setting the value of either <code class="docutils literal notranslate"><span class="pre">VAL1</span></code> or <code class="docutils literal notranslate"><span class="pre">VAL2</span></code> and observe the effect on
+the <code class="docutils literal notranslate"><span class="pre">CALC</span></code> output.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../explanations/why-use-pythonSoftIOC.html" class="btn btn-neutral float-right" title="Why use pythonSoftIOC?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="read-data-from-ioc.html" class="btn btn-neutral float-left" title="Read data from an IOC" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2008, Diamond Light Source.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

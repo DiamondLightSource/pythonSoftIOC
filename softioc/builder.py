@@ -62,6 +62,9 @@ _mbbPrefixes = [
     'ZR', 'ON', 'TW', 'TH', 'FR', 'FV', 'SX', 'SV',     # 0-7
     'EI', 'NI', 'TE', 'EL', 'TV', 'TT', 'FT', 'FF']     # 8-15
 
+# All the severity strings supported by <prefix>SV
+_severityStrings = ["NO_ALARM", "MINOR", "MAJOR", "INVALID"]
+
 # Converts a list of (option [,severity]) values or tuples into field settings
 # suitable for mbbi and mbbo records.
 def _process_mbb_values(options, fields):
@@ -69,6 +72,9 @@ def _process_mbb_values(options, fields):
         fields[prefix + 'ST'] = option
         fields[prefix + 'VL'] = value
         if severity:
+            if isinstance(severity, int):
+                # Map alarm.MINOR_ALARM -> "MINOR"
+                severity = _severityStrings[severity]
             fields[prefix + 'SV'] = severity
     # zip() silently ignores extra values in options, so explicitly check length
     assert len(options) <= 16, "May not specify more than 16 enum values"

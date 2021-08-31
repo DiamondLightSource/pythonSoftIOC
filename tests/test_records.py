@@ -10,7 +10,7 @@ def test_records(tmp_path):
     path = str(tmp_path / "records.db")
     builder.WriteRecords(path)
     expected = os.path.join(os.path.dirname(__file__), "expected_records.db")
-    assert open(path).readlines()[4:] == open(expected).readlines()[4:]
+    assert open(path).readlines()[5:] == open(expected).readlines()
 
 def test_enum_length_restriction():
     with pytest.raises(AssertionError):

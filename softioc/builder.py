@@ -70,6 +70,8 @@ def _process_mbb_values(options, fields):
         fields[prefix + 'VL'] = value
         if severity:
             fields[prefix + 'SV'] = severity
+
+    assert len(options) <= 16, "May not specify more than 16 enum values"
     for prefix, (value, option) in zip(_mbbPrefixes, enumerate(options)):
         if isinstance(option, tuple):
             # The option is tuple consisting of the option name and an optional

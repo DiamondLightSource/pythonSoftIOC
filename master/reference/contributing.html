@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Contributing &mdash; pythonSoftIOC 3.1+44.ga663da9 documentation</title>
+  <title>Contributing &mdash; pythonSoftIOC 3.1+45.g271481f documentation</title>
   
 
   
@@ -298,7 +298,10 @@ $ firefox build/html/index.html
 <li><p>Add a release note in CHANGELOG.rst</p></li>
 <li><p>Git tag the version</p></li>
 <li><p>Push to github and the actions will make a release on pypi</p></li>
-<li><p>Push to internal gitlab and do a dls-release.py of the tag</p></li>
+<li><p>Push to internal gitlab but do not release from there</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">dls-py3</span> <span class="pre">download-one-dependency</span> <span class="pre">softioc</span> <span class="pre">&lt;release&gt;</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">cp</span> <span class="pre">Pipfile.lock</span> <span class="pre">/dls_sw/work/python3/RHEL7-x86_64/distributions/softioc-&lt;release&gt;.Pipfile.lock</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">dls-release.py</span> <span class="pre">-a</span> <span class="pre">python3ext</span> <span class="pre">softioc</span> <span class="pre">&lt;release&gt;</span></code></p></li>
 </ul>
 </div>
 </div>

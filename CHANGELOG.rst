@@ -11,7 +11,7 @@ Unreleased_
 
 Nothing yet
 
-3.2_ - 2021-08-20
+3.2_ - 2021-08-31
 -----------------
 
 Changed:
@@ -22,6 +22,12 @@ Added:
 
 - `Allow waveform.set() to be called before iocInit <../../pull/22>`_
 - `Allow AsyncioDispatcher to take existing event loop <../../pull/28>`_
+- `Support alarm.*_ALARM in mbb{In,Out} <../../pull/34>`_
+
+Fixed:
+
+- `Bug if multiple projects use VersionGit <../../pull/31>`_
+- `Error if mbb{In,Out} given more that 16 labels <../../pull/33>`_
 
 
 3.1_ - 2021-07-07

@@ -72,4 +72,7 @@ To make a new release, please follow this checklist:
 - Add a release note in CHANGELOG.rst
 - Git tag the version
 - Push to github and the actions will make a release on pypi
-- Push to internal gitlab and do a dls-release.py of the tag
+- Push to internal gitlab but do not release from there
+- Run ``dls-py3 download-one-dependency softioc <release>``
+- Run ``cp Pipfile.lock /dls_sw/work/python3/RHEL7-x86_64/distributions/softioc-<release>.Pipfile.lock``
+- Run ``dls-release.py -a python3ext softioc <release>``

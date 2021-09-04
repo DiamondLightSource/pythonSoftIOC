@@ -36,7 +36,7 @@ def iocInit(dispatcher=None):
     imports.iocInit()
 
 
-def safeEpicsExit():
+def safeEpicsExit(code=0):
     '''Calls epicsExit() after ensuring Python exit handlers called.'''
     if hasattr(sys, 'exitfunc'):
         try:
@@ -46,7 +46,7 @@ def safeEpicsExit():
         finally:
             # Make sure we don't try the exit handlers more than once!
             del sys.exitfunc
-    epicsExit()
+    epicsExit(code)
 
 # The following identifiers will be exported to interactive shell.
 command_names = []

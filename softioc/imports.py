@@ -99,6 +99,10 @@ iocInit.argtypes = ()
 epicsExit = Com.epicsExit
 epicsExit.argtypes = (c_int,)
 
+epicsExitCallAtExits = Com.epicsExitCallAtExits
+epicsExitCallAtExits.argtypes = ()
+epicsExitCallAtExits.restype = None
+
 
 __all__ = [
     'get_field_offsets',

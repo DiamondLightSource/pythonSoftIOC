@@ -1,5 +1,6 @@
 import os
 import sys
+import atexit
 from ctypes import *
 from tempfile import NamedTemporaryFile
 
@@ -38,7 +39,7 @@ def iocInit(dispatcher=None):
 
 def safeEpicsExit(code=0):
     '''Calls epicsExit() after ensuring Python exit handlers called.'''
-    if hasattr(sys, 'exitfunc'):
+    if hasattr(sys, 'exitfunc'): # py 2.x
         try:
             # Calling epicsExit() will bypass any atexit exit handlers, so call
             # them explicitly now.
@@ -46,6 +47,12 @@ def safeEpicsExit(code=0):
         finally:
             # Make sure we don't try the exit handlers more than once!
             del sys.exitfunc
+
+    elif hasattr(atexit, '_run_exitfuncs'): # py 3.x
+        atexit._run_exitfuncs()
+
+    # calls epicsExitCallAtExits()
+    # and then OS exit()
     epicsExit(code)
 
 # The following identifiers will be exported to interactive shell.

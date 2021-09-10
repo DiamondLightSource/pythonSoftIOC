@@ -39,5 +39,5 @@ if __name__ == "__main__":
     time.sleep(1)
     # Make sure coverage is written on epicsExit
     from pytest_cov.embed import cleanup
-    sys.exitfunc = cleanup
+    sys._run_exitfuncs = cleanup
     softioc.interactive_ioc()

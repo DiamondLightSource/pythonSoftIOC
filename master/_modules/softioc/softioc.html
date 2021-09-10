@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.softioc &mdash; pythonSoftIOC 3.1+45.g271481f documentation</title>
+  <title>softioc.softioc &mdash; pythonSoftIOC 3.2+4.g1e4f1e6 documentation</title>
   
 
   
@@ -230,6 +230,7 @@
   <h1>Source code for softioc.softioc</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">atexit</span>
 <span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
 
@@ -240,7 +241,10 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dbLoadDatabase&#39;</span><span class="p">,</span> <span class="s1">&#39;iocInit&#39;</span><span class="p">,</span> <span class="s1">&#39;interactive_ioc&#39;</span><span class="p">]</span>
 
 
-<span class="n">epicsExit</span> <span class="o">=</span> <span class="n">imports</span><span class="o">.</span><span class="n">epicsExit</span>
+<span class="c1"># tie in epicsAtExit() to interpreter lifecycle</span>
+<span class="nd">@atexit</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span> <span class="nf">epicsAtPyExit</span><span class="p">():</span>
+    <span class="n">imports</span><span class="o">.</span><span class="n">epicsExitCallAtExits</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="iocInit"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.iocInit">[docs]</a><span class="k">def</span> <span class="nf">iocInit</span><span class="p">(</span><span class="n">dispatcher</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -266,9 +270,9 @@
     <span class="n">imports</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span></div>
 
 
-<span class="k">def</span> <span class="nf">safeEpicsExit</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">safeEpicsExit</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Calls epicsExit() after ensuring Python exit handlers called.&#39;&#39;&#39;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;exitfunc&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;exitfunc&#39;</span><span class="p">):</span>  <span class="c1"># py 2.x</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Calling epicsExit() will bypass any atexit exit handlers, so call</span>
             <span class="c1"># them explicitly now.</span>
@@ -276,7 +280,14 @@
         <span class="k">finally</span><span class="p">:</span>
             <span class="c1"># Make sure we don&#39;t try the exit handlers more than once!</span>
             <span class="k">del</span> <span class="n">sys</span><span class="o">.</span><span class="n">exitfunc</span>
-    <span class="n">epicsExit</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">atexit</span><span class="p">,</span> <span class="s1">&#39;_run_exitfuncs&#39;</span><span class="p">):</span>  <span class="c1"># py 3.x</span>
+        <span class="n">atexit</span><span class="o">.</span><span class="n">_run_exitfuncs</span><span class="p">()</span>
+
+    <span class="c1"># calls epicsExitCallAtExits()</span>
+    <span class="c1"># and then OS exit()</span>
+    <span class="n">imports</span><span class="o">.</span><span class="n">epicsExit</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+<span class="n">epicsExit</span> <span class="o">=</span> <span class="n">safeEpicsExit</span>
 
 <span class="c1"># The following identifiers will be exported to interactive shell.</span>
 <span class="n">command_names</span> <span class="o">=</span> <span class="p">[]</span>
@@ -463,10 +474,10 @@
 <span class="c1"># Hacked up exit object so that when soft IOC framework sends us an exit command</span>
 <span class="c1"># we actually exit.</span>
 <span class="k">class</span> <span class="nc">Exiter</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">safeEpicsExit</span><span class="p">()</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">safeEpicsExit</span><span class="p">()</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># hack to exit when &quot;called&quot; with no parenthesis</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 
 <span class="n">exit</span> <span class="o">=</span> <span class="n">Exiter</span><span class="p">()</span>
 <span class="n">command_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;exit&#39;</span><span class="p">)</span>
@@ -535,10 +546,15 @@
         <span class="c1"># This suppresses irritating exit message introduced by Python3.  Alas,</span>
         <span class="c1"># this option is only available in Python 3.6!</span>
         <span class="n">interact_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">exitmsg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">code</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">local</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">exports</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">),</span> <span class="o">**</span><span class="n">interact_args</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">code</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">local</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">exports</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">),</span> <span class="o">**</span><span class="n">interact_args</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">SystemExit</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">call_exit</span><span class="p">:</span>
+            <span class="n">safeEpicsExit</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">raise</span>
 
     <span class="k">if</span> <span class="n">call_exit</span><span class="p">:</span>
-        <span class="n">safeEpicsExit</span><span class="p">()</span></div>
+        <span class="n">safeEpicsExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

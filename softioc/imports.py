@@ -97,7 +97,11 @@ iocInit = dbCore.iocInit
 iocInit.argtypes = ()
 
 epicsExit = Com.epicsExit
-epicsExit.argtypes = ()
+epicsExit.argtypes = (c_int,)
+
+epicsExitCallAtExits = Com.epicsExitCallAtExits
+epicsExitCallAtExits.argtypes = ()
+epicsExitCallAtExits.restype = None
 
 
 __all__ = [

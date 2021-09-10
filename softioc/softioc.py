@@ -1,5 +1,6 @@
 import os
 import sys
+import atexit
 from ctypes import *
 from tempfile import NamedTemporaryFile
 
@@ -10,7 +11,10 @@ from . import imports, device
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
 
-epicsExit = imports.epicsExit
+# tie in epicsAtExit() to interpreter lifecycle
+@atexit.register
+def epicsAtPyExit():
+    imports.epicsExitCallAtExits()
 
 
 def iocInit(dispatcher=None):
@@ -36,9 +40,9 @@ def iocInit(dispatcher=None):
     imports.iocInit()
 
 
-def safeEpicsExit():
+def safeEpicsExit(code=0):
     '''Calls epicsExit() after ensuring Python exit handlers called.'''
-    if hasattr(sys, 'exitfunc'):
+    if hasattr(sys, 'exitfunc'):  # py 2.x
         try:
             # Calling epicsExit() will bypass any atexit exit handlers, so call
             # them explicitly now.
@@ -46,7 +50,14 @@ def safeEpicsExit():
         finally:
             # Make sure we don't try the exit handlers more than once!
             del sys.exitfunc
-    epicsExit()
+
+    elif hasattr(atexit, '_run_exitfuncs'):  # py 3.x
+        atexit._run_exitfuncs()
+
+    # calls epicsExitCallAtExits()
+    # and then OS exit()
+    imports.epicsExit(code)
+epicsExit = safeEpicsExit
 
 # The following identifiers will be exported to interactive shell.
 command_names = []
@@ -233,10 +244,10 @@ and any other value means yes.''',
 # Hacked up exit object so that when soft IOC framework sends us an exit command
 # we actually exit.
 class Exiter:
-    def __repr__(self):
-        safeEpicsExit()
-    def __call__(self):
-        safeEpicsExit()
+    def __repr__(self):  # hack to exit when "called" with no parenthesis
+        sys.exit(0)
+    def __call__(self, code=0):
+        sys.exit(code)
 
 exit = Exiter()
 command_names.append('exit')
@@ -305,7 +316,12 @@ def interactive_ioc(context = {}, call_exit = True):
         # This suppresses irritating exit message introduced by Python3.  Alas,
         # this option is only available in Python 3.6!
         interact_args = dict(exitmsg = '')
-    code.interact(local = dict(exports, **context), **interact_args)
+    try:
+        code.interact(local = dict(exports, **context), **interact_args)
+    except SystemExit as e:
+        if call_exit:
+            safeEpicsExit(e.code)
+        raise
 
     if call_exit:
-        safeEpicsExit()
+        safeEpicsExit(0)

@@ -166,7 +166,10 @@ def _waveform(value, fields):
             'Can\'t specify FTVL and datatype together'
         FTVL = NumpyCharCodeToFtvl[numpy.dtype(datatype).char]
 
-    fields['NELM'] = length
+    # If NELM has been explicitly set use that, otherwise use computed length
+    if 'NELM' not in fields:
+        fields['NELM'] = length
+    
     fields.setdefault('FTVL', FTVL)
 
 

@@ -169,7 +169,9 @@ def _waveform(value, fields):
     # If NELM has been explicitly set use that, otherwise use computed length
     if 'NELM' not in fields:
         fields['NELM'] = length
-    
+    elif fields['NELM'] < length:
+        raise ValueError("NELM value shorter than value length")
+
     fields.setdefault('FTVL', FTVL)
 
 

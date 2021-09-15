@@ -298,9 +298,10 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
 
     If ``value`` is specified or if an `initial_value` is specified (only one of
     these can be used) the value is used to initialise the waveform and to
-    determine its field type and length.  If no initial value is specified then
-    the keyword argument ``length`` must be used to specify the length of the
-    waveform.
+    determine its field type and length (the inferred values may be overridden using 
+    keywords ``datatype`` and ``NELM`` respectively).  If no initial value is specified 
+    then the keyword argument ``length`` (or ``NELM``) must be used to specify the 
+    length of the waveform.
 
     The field type can be explicitly specified either by setting the ``datatype``
     keyword to a Python type name, or by setting ``FTVL`` to the appropriate EPICS

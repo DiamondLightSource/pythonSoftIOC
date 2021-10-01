@@ -1,5 +1,6 @@
 import asyncio
 import inspect
+import logging
 import threading
 import atexit
 
@@ -28,7 +29,10 @@ class AsyncioDispatcher:
 
     def __call__(self, func, *args):
         async def async_wrapper():
-            ret = func(*args)
-            if inspect.isawaitable(ret):
-                await ret
+            try:
+                ret = func(*args)
+                if inspect.isawaitable(ret):
+                    await ret
+            except Exception:
+                logging.exception("Exception when awaiting callback")
         asyncio.run_coroutine_threadsafe(async_wrapper(), self.loop)

@@ -20,6 +20,6 @@ softioc = {editable = true, extras = ["useful"], path = "."}
 [scripts]
 # Put coverage here so we don't interfere with debugging in the IDE
 # Put flake8 here so we don't run it during cibuildwheel tests
-tests = "python -m pytest"
+tests = "python -m pytest --cov=softioc --cov-report term --flake8"
 docs = "sphinx-build -EWT --keep-going docs build/html"
 gitclean = "git clean -fdX"

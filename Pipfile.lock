@@ -596,8 +596,15 @@
                 "sha256:32bd3b5d13dc8186d7a42fc816a23d32e83a4827d7d9882948e7b837c232da5a",
                 "sha256:4a05bdbe8b1446d77a01e20a23ebc6777c74f43237035e76be89699308987d6f"
             ],
-            "markers": "python_version > '3.0'",
             "version": "==0.5.2"
+        },
+        "sphinx-rtd-theme-github-versions": {
+            "hashes": [
+                "sha256:ad2822c08b0f075c051e25b9d291152d846c21ed052db3b458d5ef30efac59b3",
+                "sha256:f84b45baf536c01c2e62f26e8206dd69f0375d9c9b3769d56295292e6e00f43b"
+            ],
+            "markers": "python_version > '3.0'",
+            "version": "==0.2"
         },
         "sphinxcontrib-applehelp": {
             "hashes": [

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>What are the differences between asyncio and cothread? &mdash; pythonSoftIOC 3.2+8.g2c5961b documentation</title>
+  <title>What are the differences between asyncio and cothread? &mdash; pythonSoftIOC 3.2+9.g59d87d0 documentation</title>
   
 
   
@@ -92,31 +92,25 @@
         
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-  <style>
-    /* style mobile top nav to look like main nav */
-    .wy-nav-top {
-        background: rgb(7, 43, 93)
-    }
-  </style>
   
             
             
               
             
             
-              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/installation.html">Installation Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
 </ul>
-<p class="caption"><span class="caption-text">How-to Guides</span></p>
+<p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Explanations</span></p>
+<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">What are the differences between <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code>?</a><ul>
@@ -126,26 +120,25 @@
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
             
           
-  <!-- Include Index in the sidebar -->
-  <!-- https://stackoverflow.com/a/37843854 -->
-  <a href="../genindex.html">Index</a>
-  <!-- Include link to changelog too -->
-  <a href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a>
   <!-- Add versions for selected branches + tags -->
-  <p class="caption"><span class="caption-text">Versions</span></p>
+  <p class="caption">
+    <span class="caption-text">Versions</span>
+  </p>
   <ul id="versions"/>
   <script>
     // Add any branches to appear in the side pane here, tags will be added below
     // Will only appear if docs are built and pushed in gh-pages
-    var versions = ['master', 'main'];
+    var versions = ['main', 'master'];
     var dirs = new Set();
     function addVersion(name) {
       if (dirs.has(name)) {
@@ -237,8 +230,8 @@
            <div itemprop="articleBody">
             
   <div class="section" id="what-are-the-differences-between-asyncio-and-cothread">
-<h1>What are the differences between <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a>?<a class="headerlink" href="#what-are-the-differences-between-asyncio-and-cothread" title="Permalink to this headline">¶</a></h1>
-<p>There are two concurrency frameworks that pythonSoftIOC supports, <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> and
+<h1>What are the differences between <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a>?<a class="headerlink" href="#what-are-the-differences-between-asyncio-and-cothread" title="Permalink to this headline">¶</a></h1>
+<p>There are two concurrency frameworks that pythonSoftIOC supports, <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> and
 <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a>. This page details the differences between them and reasons why you
 should use one over the other</p>
 <div class="admonition seealso">
@@ -262,7 +255,7 @@ needed in threaded code.</p>
 <h2>The Differences<a class="headerlink" href="#the-differences" title="Permalink to this headline">¶</a></h2>
 <p>The main difference between the libraries is how a coroutine yields control.</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> uses an <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> which will yield control when they <code class="docutils literal notranslate"><span class="pre">await</span></code>.
+<li><p><a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> uses an <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> which will yield control when they <code class="docutils literal notranslate"><span class="pre">await</span></code>.
 Only an <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> can <code class="docutils literal notranslate"><span class="pre">await</span></code> another <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code>, so functions that
 yield control are explicitly marked as such by the presence of the <code class="docutils literal notranslate"><span class="pre">async</span></code>
 keyword.</p></li>
@@ -310,17 +303,17 @@ explicit vs implicit yield</p>
 <h2>Which to use<a class="headerlink" href="#which-to-use" title="Permalink to this headline">¶</a></h2>
 <p>There are some questions to ask to help you choose which one to use:</p>
 <ul class="simple">
-<li><p>If you run python2.7 then you need to use <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> as <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> is python3
+<li><p>If you run python2.7 then you need to use <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> as <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> is python3
 only</p></li>
-<li><p>If you run on Windows then you need <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> as <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> doesn’t work on
+<li><p>If you run on Windows then you need <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> as <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> doesn’t work on
 Windows</p></li>
-<li><p>If you need to integrate with a library that uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> like one from
-<a class="reference external" href="https://github.com/aio-libs">aio-libs</a> then use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a></p></li>
+<li><p>If you need to integrate with a library that uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> like one from
+<a class="reference external" href="https://github.com/aio-libs">aio-libs</a> then use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a></p></li>
 <li><p>If you need to turn a script using <a class="reference external" href="https://cothread.readthedocs.io/en/stable/catools.html#module-cothread.catools" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread.catools</span></code></a> into an IOC then use
 <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a></p></li>
 </ul>
 <p>In general, avoid mixing concurrency frameworks if you can. While it is possible
-to mix <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a>, it’s messy and tricky to get right. Better to
+to mix <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a>, it’s messy and tricky to get right. Better to
 keep to one if possible.</p>
 </div>
 </div>

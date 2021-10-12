@@ -28,19 +28,25 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python: [cp27, cp37, cp38, cp39]
-        cov_file: ["{project}/dist/coverage.xml"]
 
         exclude:
+          # No cothread or asyncio for windows python 2.7 so doesn't work
           - os: windows-latest
-            # No cothread or asyncio so doesn't work
             python: cp27
 
         include:
+          # Put coverage in the project directory for mac
+          - os: macos-latest
+            cov_file: "{project}/dist/coverage.xml"
+          # And for windows
+          - os: windows-latest
+            cov_file: "{project}/dist/coverage.xml"
+          # But put coverage in the output dir mounted in docker for linux
           - os: ubuntu-latest
-            # Put coverage in the output dir mounted in docker
             cov_file: /output/coverage.xml
-            # Build an sdist here so it has the right line endings
-            sdist: true           
+          # Build an sdist on linux so it has the right line endings
+          - os: ubuntu-latest
+            sdist: true
 
     name: build/${{ matrix.os }}/${{ matrix.python }}
     runs-on: ${{ matrix.os }}

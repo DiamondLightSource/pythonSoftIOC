@@ -23,9 +23,6 @@ jobs:
         run: flake8
 
   build:
-    name: build/${{ matrix.os }}/${{ matrix.python }}
-    runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: false
       matrix:
@@ -33,41 +30,33 @@ jobs:
         python: [cp27, cp37, cp38, cp39]
 
         exclude:
+          # No cothread or asyncio for windows python 2.7 so doesn't work
           - os: windows-latest
-            # No cothread or asyncio so doesn't work
             python: cp27
 
         include:
-          - os: ubuntu-latest
-            # Put coverage in the output dir mounted in docker
-            cov_file: /output/coverage.xml
-            test_requires: cothread pytest-asyncio aioca
-            # Build an sdist here so it has the right line endings
-            sdist: true
-
+          # Put coverage in the project directory for mac
+          - os: macos-latest
+            cov_file: "{project}/dist/coverage.xml"
+          # And for windows
           - os: windows-latest
             cov_file: "{project}/dist/coverage.xml"
-            # cothread doesn't work on windows
-            test_requires: pytest-asyncio aioca
-
-          - os: macos-latest
-            cov_file: "{project}/dist/coverage.xml"
-            test_requires: cothread pytest-asyncio aioca
-
+          # But put coverage in the output dir mounted in docker for linux
           - os: ubuntu-latest
-            python: cp27
-            # asyncio doesn't work on Python2.7
-            test_requires: cothread
+            cov_file: /output/coverage.xml
+          # Build an sdist on linux so it has the right line endings
+          - os: ubuntu-latest
+            sdist: true
 
-          - os: macos-latest
-            python: cp27
-            # asyncio doesn't work on Python2.7
-            test_requires: cothread
+    name: build/${{ matrix.os }}/${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout Source
         uses: actions/checkout@v2
         with:
+          # require history to get back to last tag for version number of branches
+          fetch-depth: 0
           submodules: true
 
       - name: Install Python
@@ -86,8 +75,8 @@ jobs:
         run: cibuildwheel --output-dir dist
         env:
           CIBW_BUILD: ${{ matrix.python }}*64
-          CIBW_TEST_REQUIRES: pytest-cov p4p ${{ matrix.test_requires }}
-          CIBW_TEST_COMMAND: pytest --cov=softioc {project}/tests --cov-report xml:${{ matrix.cov_file }}
+          CIBW_TEST_EXTRAS: dev
+          CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }}
           # Disable auditwheel as it isn't compatible with setuptools_dso approach
           # https://github.com/mdavidsaver/setuptools_dso/issues/17
           CIBW_REPAIR_WHEEL_COMMAND: ""
@@ -101,7 +90,7 @@ jobs:
           path: dist/softioc*
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
           name: ${{ matrix.os }}/${{ matrix.python }}
           directory: dist

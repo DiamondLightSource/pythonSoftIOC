@@ -4,22 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest-cov = "*"
-pytest-flake8 = "*"
-sphinx-rtd-theme = "*"
-setuptools-dso = "*"
-pytest-asyncio = "*"
-p4p = "*"
+softioc = {editable = true, extras = ["dev"], path = "."}
 
 [packages]
-# All other package requirements from setup.py
 softioc = {editable = true, extras = ["useful"], path = "."}
-# Apart from the epicscorelibs which comes from pyproject.toml so needs to be here too
-# epicscorelibs = "*"
 
 [scripts]
-# Put coverage here so we don't interfere with debugging in the IDE
-# Put flake8 here so we don't run it during cibuildwheel tests
-tests = "python -m pytest --cov=softioc --cov-report term --flake8"
+# Do flake8 here so it doesn't happen in the container in CI
+tests = "python -m pytest --flake8"
 docs = "sphinx-build -EWT --keep-going docs build/html"
 gitclean = "git clean -fdX"

@@ -71,8 +71,6 @@ Table Of Contents
     explanations/why-use-pythonSoftIOC
     explanations/asyncio-cothread-differences
 
-.. rst-class:: no-margin-after-ul
-
 .. toctree::
     :caption: Reference
     :name: reference
@@ -80,5 +78,5 @@ Table Of Contents
 
     reference/api
     reference/contributing
-
-* :ref:`genindex`
+    Changelog <https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst>
+    Index <genindex.html#http://>

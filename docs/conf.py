@@ -97,8 +97,8 @@ intersphinx_mapping = dict(
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
 try:
-    import sphinx_rtd_theme
-    html_theme = 'sphinx_rtd_theme'
+    import sphinx_rtd_theme_github_versions
+    html_theme = 'sphinx_rtd_theme_github_versions'
 except ImportError:
     html_theme = 'default'
 

@@ -12,11 +12,6 @@
     padding: 4px 6px;
 }
 
-/* allow us to stop margin after list so we can add to it */
-.no-margin-after-ul ul {
-    margin-bottom: 0 !important;
-}
-
 /* Add two-column option */
 @media only screen and (min-width: 1000px) {
     .columns {

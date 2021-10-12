@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python: [cp27, cp37, cp38, cp39]
+        python: [cp27, cp36, cp37, cp38, cp39]
 
         exclude:
           # No cothread or asyncio for windows python 2.7 so doesn't work

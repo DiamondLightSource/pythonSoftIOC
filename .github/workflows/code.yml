@@ -59,7 +59,6 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-
       - name: Install Python
         uses: actions/setup-python@v2
         with:

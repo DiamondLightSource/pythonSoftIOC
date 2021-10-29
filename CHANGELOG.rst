@@ -17,6 +17,7 @@ Nothing yet
 Changed:
 
 - Repository changed from pythonIoc to pythonSoftIOC
+- Executable name changed from pythonIoc to pythonSoftIOC
 
 Added:
 

@@ -107,7 +107,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self.__validate = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
-        self._value = kargs.pop('initial_value', None)
+        self._value = kargs.pop('initial_value', self._default_)
         self.__enable_write = True
         self.__super.__init__(name, **kargs)
 
@@ -236,18 +236,18 @@ def _Device(Base, record_type, mlst=False, default=0, convert=True):
 _In = ProcessDeviceSupportIn
 _Out = ProcessDeviceSupportOut
 
-def _Device_In(type, **kargs):
-    return _Device(_In,  type, **kargs)
+def _Device_In(record_type, **kargs):
+    return _Device(_In,  record_type, **kargs)
 
-def _Device_Out(type, convert=True, mlst=True):
-    return _Device(_Out, type, convert=convert, mlst=mlst, default=None)
+def _Device_Out(record_type, convert=True, mlst=True, **kargs):
+    return _Device(_Out, record_type, convert=convert, mlst=mlst, **kargs)
 
 longin = _Device_In('longin')
 longout = _Device_Out('longout')
 bi = _Device_In('bi', convert=False)
 bo = _Device_Out('bo', convert=False)
 stringin = _Device_In('stringin', mlst=False, default='')
-stringout = _Device_Out('stringout', mlst=False)
+stringout = _Device_Out('stringout', mlst=False, default='')
 mbbi = _Device_In('mbbi', convert=False)
 mbbo = _Device_Out('mbbo', convert=False)
 
@@ -279,6 +279,7 @@ class ai(ProcessDeviceSupportIn):
 class ao(ProcessDeviceSupportOut):
     _record_type_ = 'ao'
     _device_name_ = 'devPython_ao'
+    _default_ = 0.0
     _fields_ = ['UDF', 'VAL', 'MLST']
     _dset_extra_ = dset_process_linconv
     _epics_rc = NO_CONVERT
@@ -295,6 +296,8 @@ class WaveformBase(ProcessDeviceSupportCore):
     _fields_ = ['UDF', 'FTVL', 'BPTR', 'NELM', 'NORD']
     # Allow set() to be called before init_record:
     dtype = None
+
+    _default_ = ()
 
     def init_record(self, record):
         self.dtype = DbfCodeToNumpy[record.FTVL]
@@ -327,7 +330,6 @@ class WaveformBase(ProcessDeviceSupportCore):
 class waveform(WaveformBase, ProcessDeviceSupportIn):
     _record_type_ = 'waveform'
     _device_name_ = 'devPython_waveform'
-    _default_ = ()
 
     # Because arrays are mutable values it's ever so easy to accidentially call
     # set() with a value which subsequently changes.  To avoid this common class

@@ -107,7 +107,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self.__validate = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
-        self._value = kargs.pop('initial_value', self._default_)
+        self._value = kargs.pop('initial_value', None)
         self.__enable_write = True
         self.__super.__init__(name, **kargs)
 
@@ -115,7 +115,11 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         '''Special record initialisation for out records only: implements
         special record initialisation if an initial value has been specified,
         allowing out records to have a sensible initial value.'''
-        if self._value is not None:
+        if self._value is None:
+            # Cannot set in __init__, as we want the record alarm status to be
+            # set if no value was provided
+            self._value = self._default_
+        else:
             self._write_value(record, self._value)
             if 'MLST' in self._fields_:
                 record.MLST = self._value

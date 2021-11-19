@@ -150,7 +150,13 @@ def _waveform(value, fields):
         # If a value is specified it should be the *only* non keyword
         # argument.
         value, = value
-        value = numpy.array(value)
+
+        if isinstance(value, str):
+            value = value.encode(errors='replace')
+            value = numpy.frombuffer(value + b"\0", dtype=numpy.uint8)
+        else:
+            value = numpy.array(value)
+
         fields['initial_value'] = value
 
         # Pick up default length and datatype from initial value

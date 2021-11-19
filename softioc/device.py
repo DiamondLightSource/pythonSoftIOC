@@ -22,7 +22,6 @@ NO_CONVERT = 2
 NumpyCharCodeToDbr = {
         # The following type codes are supported directly:
         'S':    0,  # DBR_STRING     str_
-        'U':    0,  # DBR_STRING     str_
         'h':    1,  # DBR_SHORT      short  = int16
         'f':    2,  # DBR_FLOAT      single = float32
         'b':    4,  # DBR_CHAR       byte   = int8
@@ -103,7 +102,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
 
     def get(self):
         '''Returns the last written value.'''
-        return self._value_type_(self._value[0])
+        return self._value[0]
 
 
 class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
@@ -171,6 +170,10 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
     # computed dbrcode, waveform length, raw data pointer and pointer to
     # underlying data (for lifetime management).
     def value_to_dbr(self, value):
+
+        if isinstance(value, str):
+            value = value.encode(errors='replace')
+
         # First convert the data directly into an array.  This will help in
         # subsequent processing: this does most of the type coercion.
         value = numpy.require(value, requirements = 'C')
@@ -178,7 +181,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             value.shape = (1,)
         assert value.ndim == 1, 'Can\'t put multidimensional arrays!'
 
-        if value.dtype.char == 'S' or value.dtype.char == 'U':
+        if value.dtype.char == 'S':
             # Need special processing to hack the array so that strings are
             # actually 40 characters long.
             new_value = numpy.empty(value.shape, 'S40')
@@ -219,16 +222,15 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self.__enable_write = True
 
     def get(self):
-        return self._value_type_(self._value)
+        return self._value
 
 
-def _Device(Base, record_type, value_type, mlst=False, default=0, convert=True):
+def _Device(Base, record_type, mlst=False, default=0, convert=True):
     '''Wrapper for generating simple records.'''
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type
         _default_ = default
-        _value_type_ = value_type
         _fields_ = ['UDF', 'VAL']
         _epics_rc = EPICS_OK if convert else NO_CONVERT
         if mlst:
@@ -240,26 +242,20 @@ def _Device(Base, record_type, value_type, mlst=False, default=0, convert=True):
 _In = ProcessDeviceSupportIn
 _Out = ProcessDeviceSupportOut
 
-def _Device_In(record_type, value_type, **kargs):
-    return _Device(_In,  record_type, value_type, **kargs)
+def _Device_In(record_type, **kargs):
+    return _Device(_In,  record_type, **kargs)
 
-def _Device_Out(record_type, value_type, convert=True, mlst=True, **kargs):
-    return _Device(
-        _Out,
-        record_type,
-        value_type,
-        convert=convert,
-        mlst=mlst,
-        **kargs)
+def _Device_Out(record_type, convert=True, mlst=True, **kargs):
+    return _Device(_Out, record_type, convert=convert, mlst=mlst, **kargs)
 
-longin = _Device_In('longin', int)
-longout = _Device_Out('longout', int)
-bi = _Device_In('bi', int, convert=False)
-bo = _Device_Out('bo', int, convert=False)
-stringin = _Device_In('stringin', str, mlst=False, default='')
-stringout = _Device_Out('stringout', str, mlst=False, default='')
-mbbi = _Device_In('mbbi', int, convert=False)
-mbbo = _Device_Out('mbbo', int, convert=False)
+longin = _Device_In('longin')
+longout = _Device_Out('longout')
+bi = _Device_In('bi', convert=False)
+bo = _Device_Out('bo', convert=False)
+stringin = _Device_In('stringin', mlst=False, default='')
+stringout = _Device_Out('stringout', mlst=False, default='')
+mbbi = _Device_In('mbbi', convert=False)
+mbbo = _Device_Out('mbbo', convert=False)
 
 
 dset_process_linconv = (
@@ -274,7 +270,6 @@ class ai(ProcessDeviceSupportIn):
     _record_type_ = 'ai'
     _device_name_ = 'devPython_ai'
     _default_ = 0.0
-    _value_type_ = float
     _fields_ = ['UDF', 'VAL']
     _dset_extra_ = dset_process_linconv
     _epics_rc = NO_CONVERT
@@ -291,7 +286,6 @@ class ao(ProcessDeviceSupportOut):
     _record_type_ = 'ao'
     _device_name_ = 'devPython_ao'
     _default_ = 0.0
-    _value_type_ = float
     _fields_ = ['UDF', 'VAL', 'MLST']
     _dset_extra_ = dset_process_linconv
     _epics_rc = NO_CONVERT
@@ -310,7 +304,6 @@ class WaveformBase(ProcessDeviceSupportCore):
     dtype = None
 
     _default_ = ()
-    _value_type_ = list
 
     def init_record(self, record):
         self.dtype = DbfCodeToNumpy[record.FTVL]

@@ -378,7 +378,11 @@ class waveform_out(WaveformBase, ProcessDeviceSupportOut):
                 dtype = numpy.uint8
             )
 
-        super().set(value, process)
+        # Ensure we always convert incoming value into numpy array, regardless
+        # of whether the record has been initialised or not
+        datatype, length, data, array = self.value_to_dbr(value)
+
+        super().set(array, process)
 
 
 # Ensure the .dbd file is loaded.

@@ -37,7 +37,8 @@ def clear_records():
 
 def idfn(fixture_value):
     """Provide a nice name for the tests in the results list"""
-    return fixture_value[0].__name__ + "-" + fixture_value[3].__name__
+    return fixture_value[0].__name__ + "-" + type(fixture_value[1]).__name__ \
+        + "-" + fixture_value[3].__name__  # TODO: May not need this part
 
 # TODO:
 # - unicode chars in strings
@@ -54,19 +55,29 @@ def idfn(fixture_value):
         (builder.stringIn, "abc", "abc", str),
         (builder.mbbIn, 1, 1, int),
         (builder.mbbOut, 1, 1, int),
-        (builder.WaveformIn, [1, 2, 3], [1, 2, 3], list),
-        (builder.WaveformOut, [1, 2, 3], [1, 2, 3], list),
+        (
+            builder.WaveformIn,
+            [1, 2, 3],
+            numpy.array([1, 2, 3], dtype=numpy.float32),
+            numpy.ndarray
+        ),
+        (
+            builder.WaveformOut,
+            [1, 2, 3],
+            numpy.array([1, 2, 3], dtype=numpy.float32),
+            numpy.ndarray
+        ),
         (
             builder.WaveformIn,
             "ABC",
             numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
-            numpy.array  # TODO: replace with something to name this better?
+            numpy.ndarray
         ),
         (
             builder.WaveformOut,
             "ABC",
             numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
-            numpy.array
+            numpy.ndarray
         )
     ],
     ids=idfn)
@@ -131,6 +142,7 @@ def record_value_asserts(
     if creation_func in [builder.WaveformOut, builder.WaveformIn]:
         assert numpy.array_equal(actual_value, expected_value), \
             f"Arrays not equal: {actual_value} {expected_value}"
+        assert type(actual_value) == expected_type
     else:
         assert actual_value == expected_value
         assert type(actual_value) == expected_type
@@ -164,7 +176,7 @@ def run_test_function(creation_func, expected_value, expected_type, test_func):
     process.start()
 
     try:
-        rec_val = queue.get(timeout=5)
+        rec_val = queue.get() # TODO: add timeout=5
 
         record_value_asserts(
             creation_func,
@@ -172,7 +184,8 @@ def run_test_function(creation_func, expected_value, expected_type, test_func):
             expected_value,
             expected_type)
     finally:
-        process.join()
+        process.terminate()
+        process.join(timeout=3)
 
 def test_value_retrieval_pre_init_initial_value(
         clear_records,

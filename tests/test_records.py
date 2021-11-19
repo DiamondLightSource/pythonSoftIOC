@@ -60,6 +60,12 @@ def idfn(fixture_value):
             builder.WaveformIn,
             "ABC",
             numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
+            numpy.array  # TODO: replace with something to name this better?
+        ),
+        (
+            builder.WaveformOut,
+            "ABC",
+            numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
             numpy.array
         )
     ],

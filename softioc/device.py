@@ -350,20 +350,35 @@ class waveform(WaveformBase, ProcessDeviceSupportIn):
             # the correct behaviour when treating a character array as a string.
             # Note that the trailing null is needed to work around problems with
             # some clients.
-            value = numpy.fromstring(value + '\0', dtype = 'uint8')
+            value = numpy.frombuffer(
+                value.encode(errors="replace") + b'\0',
+                dtype = numpy.uint8
+            )
 
         value = numpy.require(value, dtype = self.dtype)
-        self._value = (+value, severity, alarm, timestamp)
         if value.shape == ():
             value.shape = (1,)
         assert value.ndim == 1, 'Can\'t write multidimensional arrays'
 
-        self.trigger()
-
+        super().set(value, severity, alarm, timestamp)
 
 class waveform_out(WaveformBase, ProcessDeviceSupportOut):
     _record_type_ = 'waveform'
     _device_name_ = 'devPython_waveform_out'
+
+    def set(self, value, process=True):
+        # TODO: This check exists in multiple places
+        if isinstance(value, str):
+            # Convert a string into an array of characters.  This will produce
+            # the correct behaviour when treating a character array as a string.
+            # Note that the trailing null is needed to work around problems with
+            # some clients.
+            value = numpy.frombuffer(
+                value.encode(errors="replace") + b'\0',
+                dtype = numpy.uint8
+            )
+
+        super().set(value, process)
 
 
 # Ensure the .dbd file is loaded.

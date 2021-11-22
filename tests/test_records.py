@@ -53,6 +53,18 @@ def idfn(fixture_value):
         (builder.boolIn, 1, 1, int),
         (builder.stringOut, "abc", "abc", str),
         (builder.stringIn, "abc", "abc", str),
+        (
+            builder.stringOut,
+            "this string is much longer than 40 characters",
+            "this string is much longer than 40 char",
+            str
+        ),
+        (
+            builder.stringIn,
+            "this string is much longer than 40 characters",
+            "this string is much longer than 40 char",
+            str
+        ),
         (builder.mbbIn, 1, 1, int),
         (builder.mbbOut, 1, 1, int),
         (
@@ -82,8 +94,13 @@ def idfn(fixture_value):
     ],
     ids=idfn)
 def record_values(request):
-    """A collection of record creation functions, an initial value, an expected
-    returned value, and the expected type of the returned value"""
+    """A list of parameters for record value setting/getting tests.
+
+    Fields are:
+    - Record builder function
+    - Input value passed to .set() or used in initial_value on record creation
+    - Expected output value after doing .get()
+    - Expected type of the output value from .get()"""
     return request.param  # One item from the params list
 
 def test_records(tmp_path):
@@ -173,10 +190,11 @@ def run_test_function(creation_func, expected_value, expected_type, test_func):
     """Helper function to handle the multiprocessing process"""
     queue = multiprocessing.Queue()
     process = multiprocessing.Process(target=test_func, args=(queue,))
+    # TODO: Above line doesn't work as we need for Windows.
     process.start()
 
     try:
-        rec_val = queue.get() # TODO: add timeout=5
+        rec_val = queue.get()  # TODO: add timeout=5
 
         record_value_asserts(
             creation_func,

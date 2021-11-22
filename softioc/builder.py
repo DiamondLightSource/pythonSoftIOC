@@ -23,6 +23,7 @@ def _in_record(record, name, **fields):
 
     fields.setdefault('SCAN', 'I/O Intr')
     if 'initial_value' in fields:
+        # TODO: Ask about this, as doing .set won't set this extra field?
         fields.setdefault('PINI', 'YES')
     fields.setdefault('DISP', 1)
     return getattr(PythonDevice, record)(name, **fields)

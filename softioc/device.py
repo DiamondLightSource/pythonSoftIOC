@@ -51,6 +51,10 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     # from record init or processing
     _epics_rc = EPICS_OK
 
+    # Function to convert an incoming Python value into EPICS-appropriate form.
+    def _value_to_epics(self, value):
+        return value
+
     # Default implementations of read and write, overwritten where necessary.
     def _read_value(self, record):
         return getattr(record, 'VAL')
@@ -67,11 +71,13 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         # reading a single value is atomic.  We therefore cluster all our
         # variable state into a single tuple which represents a single value
         # to be processed.
+
+        value = self._value_to_epics(
+            kargs.pop('initial_value', self._default_))
+
         #    The tuple contains everything needed to be written: the value,
         # severity, alarm and optional timestamp.
-        self._value = (
-            kargs.pop('initial_value', self._default_),
-            alarm.NO_ALARM, alarm.UDF_ALARM, None)
+        self._value = (value, alarm.NO_ALARM, alarm.UDF_ALARM, None)
         self.__super.__init__(name, **kargs)
 
     def _process(self, record, _value=None):
@@ -91,6 +97,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
             severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM, timestamp=None):
         '''Updates the stored value and triggers an update.  The alarm
         severity and timestamp can also be specified if appropriate.'''
+        value = self._value_to_epics(value)
         self._value = (value, severity, alarm, timestamp)
         self.trigger()
 
@@ -123,7 +130,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self.__validate = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
-        self._value = kargs.pop('initial_value', None)
+        self._value = self._value_to_epics(kargs.pop('initial_value', None))
         self.__enable_write = True
         self.__super.__init__(name, **kargs)
 
@@ -208,6 +215,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
     def set(self, value, process=True):
         '''Special routine to set the value directly.'''
+        value = self._value_to_epics(value)
         try:
             _record = self._record
         except AttributeError:
@@ -225,7 +233,13 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return self._value
 
 
-def _Device(Base, record_type, mlst=False, default=0, convert=True):
+def _Device(
+        Base,
+        record_type,
+        mlst=False,
+        default=0,
+        convert=True,
+        value_to_epics=None):
     '''Wrapper for generating simple records.'''
     class GenericDevice(Base):
         _record_type_ = record_type
@@ -233,6 +247,9 @@ def _Device(Base, record_type, mlst=False, default=0, convert=True):
         _default_ = default
         _fields_ = ['UDF', 'VAL']
         _epics_rc = EPICS_OK if convert else NO_CONVERT
+        if value_to_epics:
+            _value_to_epics = \
+                staticmethod(value_to_epics)
         if mlst:
             _fields_.append('MLST')
 
@@ -248,12 +265,20 @@ def _Device_In(record_type, **kargs):
 def _Device_Out(record_type, convert=True, mlst=True, **kargs):
     return _Device(_Out, record_type, convert=convert, mlst=mlst, **kargs)
 
+
+def truncate_string(value):
+    """Trim a string to EPICS 40 (39 with null byte) character limit"""
+    return value[:39] if isinstance(value, str) else None
+    # TODO: Come back to this if we have to handle byte strings?
+
 longin = _Device_In('longin')
 longout = _Device_Out('longout')
 bi = _Device_In('bi', convert=False)
 bo = _Device_Out('bo', convert=False)
-stringin = _Device_In('stringin', mlst=False, default='')
-stringout = _Device_Out('stringout', mlst=False, default='')
+stringin = _Device_In('stringin', mlst=False, default='',
+                      value_to_epics=truncate_string)
+stringout = _Device_Out('stringout', mlst=False, default='',
+                        value_to_epics=truncate_string)
 mbbi = _Device_In('mbbi', convert=False)
 mbbo = _Device_Out('mbbo', convert=False)
 

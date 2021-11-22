@@ -174,7 +174,7 @@ def record_value_asserts(
 
     if creation_func in [builder.WaveformOut, builder.WaveformIn]:
         assert numpy.array_equal(actual_value, expected_value), \
-            f"Arrays not equal: {actual_value} {expected_value}"
+            "Arrays not equal: {} {}".format(actual_value, expected_value)
         assert type(actual_value) == expected_type
     else:
         assert actual_value == expected_value

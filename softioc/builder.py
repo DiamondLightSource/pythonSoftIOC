@@ -154,6 +154,8 @@ def _waveform(value, fields):
 
         if isinstance(value, str):
             value = value.encode(errors='replace')
+
+        if isinstance(value, bytes):
             value = numpy.frombuffer(value + b"\0", dtype=numpy.uint8)
         else:
             value = numpy.array(value)

@@ -357,6 +357,25 @@ class WaveformBase(ProcessDeviceSupportCore):
             self.dtype.itemsize * nord)
         record.NORD = nord
 
+def handle_strings(value):
+    """Handles strings and bytearrays as values for Waveforms. Returns the
+    string converted to a numpy array."""
+
+    if isinstance(value, str):
+        value = value.encode(errors="replace")
+
+    if isinstance(value, bytes):
+        # Convert a string into an array of characters.  This will produce
+        # the correct behaviour when treating a character array as a string.
+        # Note that the trailing null is needed to work around problems with
+        # some clients.
+        value = numpy.frombuffer(
+            value + b'\0',  # TODO: This also exists in builder.py
+            dtype = numpy.uint8
+        )
+
+    return value
+
 
 class waveform(WaveformBase, ProcessDeviceSupportIn):
     _record_type_ = 'waveform'
@@ -366,49 +385,38 @@ class waveform(WaveformBase, ProcessDeviceSupportIn):
     # set() with a value which subsequently changes.  To avoid this common class
     # of bug, at the cost of duplicated code and data, here we ensure a copy is
     # taken of the value.
-    def set(self, value,
-            severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM, timestamp=None):
-        '''Updates the stored value and triggers an update.  The alarm
-        severity and timestamp can also be specified if appropriate.'''
-        if isinstance(value, str):
-            # Convert a string into an array of characters.  This will produce
-            # the correct behaviour when treating a character array as a string.
-            # Note that the trailing null is needed to work around problems with
-            # some clients.
-            value = numpy.frombuffer(
-                value.encode(errors="replace") + b'\0',
-                dtype = numpy.uint8
-            )
+    def _value_to_epics(self, value):
+
+        # Caused by no initial_value being specified
+        if value is None:
+            return value
+
+        value = handle_strings(value)
 
         value = numpy.require(value, dtype = self.dtype)
         if value.shape == ():
             value.shape = (1,)
         assert value.ndim == 1, 'Can\'t write multidimensional arrays'
 
-        super().set(value, severity, alarm, timestamp)
+        return value
 
 class waveform_out(WaveformBase, ProcessDeviceSupportOut):
     _record_type_ = 'waveform'
     _device_name_ = 'devPython_waveform_out'
 
-    def set(self, value, process=True):
-        # TODO: This check exists in multiple places
-        if isinstance(value, str):
-            # Convert a string into an array of characters.  This will produce
-            # the correct behaviour when treating a character array as a string.
-            # Note that the trailing null is needed to work around problems with
-            # some clients.
-            value = numpy.frombuffer(
-                value.encode(errors="replace") + b'\0',
-                dtype = numpy.uint8
-            )
+    def _value_to_epics(self, value):
+
+        # Caused by no initial_value being specified
+        if value is None:
+            return value
+
+        value = handle_strings(value)
 
         # Ensure we always convert incoming value into numpy array, regardless
         # of whether the record has been initialised or not
         datatype, length, data, array = self.value_to_dbr(value)
 
-        super().set(array, process)
-
+        return array
 
 # Ensure the .dbd file is loaded.
 dbLoadDatabase("device.dbd", os.path.dirname(__file__), None)

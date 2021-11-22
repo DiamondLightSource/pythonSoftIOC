@@ -38,7 +38,7 @@ def clear_records():
 def idfn(fixture_value):
     """Provide a nice name for the tests in the results list"""
     return fixture_value[0].__name__ + "-" + type(fixture_value[1]).__name__ \
-        + "-" + fixture_value[3].__name__  # TODO: May not need this part
+        + "-" + fixture_value[3].__name__
 
 # TODO:
 # - unicode chars in strings
@@ -89,6 +89,20 @@ def idfn(fixture_value):
             builder.WaveformOut,
             "ABC",
             numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
+            numpy.ndarray
+        ),
+        (
+            builder.WaveformIn,
+            b"HELLO\0WORLD",
+            numpy.array([72, 69, 76, 76, 79,  0, 87, 79, 82, 76, 68, 0],
+                        dtype=numpy.uint8),
+            numpy.ndarray
+        ),
+        (
+            builder.WaveformOut,
+            b"HELLO\0WORLD",
+            numpy.array([72, 69, 76, 76, 79,  0, 87, 79, 82, 76, 68, 0],
+                        dtype=numpy.uint8),
             numpy.ndarray
         )
     ],

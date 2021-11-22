@@ -53,6 +53,8 @@ def idfn(fixture_value):
         (builder.boolIn, 1, 1, int),
         (builder.stringOut, "abc", "abc", str),
         (builder.stringIn, "abc", "abc", str),
+        (builder.stringOut, b"abc", "abc", str),
+        (builder.stringIn, b"abc", "abc", str),
         (
             builder.stringOut,
             "this string is much longer than 40 characters",

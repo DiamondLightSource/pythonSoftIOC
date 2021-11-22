@@ -268,6 +268,8 @@ def _Device_Out(record_type, convert=True, mlst=True, **kargs):
 
 def truncate_string(value):
     """Trim a string to EPICS 40 (39 with null byte) character limit"""
+    if isinstance(value, bytes):
+        value = value.decode(errors="replace")  # TODO: Remove and let it fail?
     return value[:39] if isinstance(value, str) else None
     # TODO: Come back to this if we have to handle byte strings?
 

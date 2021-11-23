@@ -1,3 +1,4 @@
+import ctypes
 import multiprocessing
 import numpy
 import os
@@ -40,19 +41,25 @@ def idfn(fixture_value):
     return fixture_value[0].__name__ + "-" + type(fixture_value[1]).__name__ \
         + "-" + fixture_value[3].__name__
 
-# TODO:
-# - unicode chars in strings
-# - bytestrings
-# - too long strings, exactly 40 char strings, empty strings.
 @pytest.fixture(params=[
         (builder.aOut, 5.5, 5.5, float),
         (builder.aIn, 5.5, 5.5, float),
+        (builder.aOut, 3, 3., float),
+        (builder.aIn, 3, 3., float),
+        (builder.aOut, ctypes.c_float(3.5), 3.5, float),
+        (builder.aIn, ctypes.c_float(3.5), 3.5, float),
         (builder.longOut, 5, 5, int),
         (builder.longIn, 5, 5, int),
+        (builder.longOut, 9.9, 9, int),
+        (builder.longIn, 9.9, 9, int),
+        (builder.longOut, ctypes.c_int(6), 6, int),
+        (builder.longIn, ctypes.c_int(6), 6, int),
         (builder.boolOut, 1, 1, int),
         (builder.boolIn, 1, 1, int),
         (builder.stringOut, "abc", "abc", str),
         (builder.stringIn, "abc", "abc", str),
+        (builder.stringOut, "", "", str),
+        (builder.stringIn, "", "", str),
         (builder.stringOut, b"abc", "abc", str),
         (builder.stringIn, b"abc", "abc", str),
         (builder.stringOut, b"a\xcfb", "a�b", str),  # Invalid UTF-8
@@ -87,7 +94,6 @@ def idfn(fixture_value):
             numpy.array([1, 2, 3], dtype=numpy.float32),
             numpy.ndarray
         ),
-        # TODO: Check dtype of this data - should be float!
         (
             builder.WaveformIn,
             "ABC",

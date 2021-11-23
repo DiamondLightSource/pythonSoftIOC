@@ -266,14 +266,26 @@ def _Device_Out(record_type, convert=True, mlst=True, **kargs):
     return _Device(_Out, record_type, convert=convert, mlst=mlst, **kargs)
 
 
+def convert_to_int(value):
+    """Convert any type into its integer representation"""
+    if type(value) == c_int:
+        return value.value
+    return int(value) if value else None
+
+def convert_to_float(value):
+    """Convert any type into its float representation"""
+    if type(value) == c_float:
+        return value.value
+    return float(value) if value else None
+
 def truncate_string(value):
     """Trim a string to EPICS 40 (39 with null byte) character limit"""
     if isinstance(value, bytes):
         value = value.decode(errors="replace")  # TODO: Remove and let it fail?
     return value[:39] if isinstance(value, str) else None
 
-longin = _Device_In('longin')
-longout = _Device_Out('longout')
+longin = _Device_In('longin', value_to_epics=convert_to_int)
+longout = _Device_Out('longout', value_to_epics=convert_to_int)
 bi = _Device_In('bi', convert=False)
 bo = _Device_Out('bo', convert=False)
 stringin = _Device_In('stringin', mlst=False, default='',
@@ -299,6 +311,7 @@ class ai(ProcessDeviceSupportIn):
     _fields_ = ['UDF', 'VAL']
     _dset_extra_ = dset_process_linconv
     _epics_rc = NO_CONVERT
+    _value_to_epics = staticmethod(convert_to_float)
 
     def _process(self, record):
         _value = self._value
@@ -315,6 +328,7 @@ class ao(ProcessDeviceSupportOut):
     _fields_ = ['UDF', 'VAL', 'MLST']
     _dset_extra_ = dset_process_linconv
     _epics_rc = NO_CONVERT
+    _value_to_epics = staticmethod(convert_to_float)
 
 
 

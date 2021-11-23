@@ -61,6 +61,45 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     def _write_value(self, record, value):
         setattr(record, 'VAL', value)
 
+    # Converts a Python value into a form suitable for sending over channel
+    # access.  Derived from the corresponding cothread implementation.  Returns
+    # computed dbrcode, waveform length, raw data pointer and pointer to
+    # underlying data (for lifetime management).
+    def value_to_dbr(self, value):
+
+        if isinstance(value, str):
+            value = value.encode(errors='replace')
+
+        # First convert the data directly into an array.  This will help in
+        # subsequent processing: this does most of the type coercion.
+        value = numpy.require(value, requirements = 'C')
+        if value.shape == ():
+            value.shape = (1,)
+        assert value.ndim == 1, 'Can\'t put multidimensional arrays!'
+
+        if value.dtype.char == 'S':
+            # Need special processing to hack the array so that strings are
+            # actually 40 characters long.
+            new_value = numpy.empty(value.shape, 'S40')
+            new_value[:] = value
+            value = new_value
+
+        try:
+            dbrtype = NumpyCharCodeToDbr[value.dtype.char]
+        except KeyError:
+            # One more special case.  caput() of a list of integers on a 64-bit
+            # system will fail at this point because they were automatically
+            # converted to 64-bit integers.  Catch this special case and fix it
+            # up by silently converting to 32-bit integers.  Not really the
+            # right thing to do (as data can be quietly lost), but the
+            # alternative isn't nice to use either.
+            if value.dtype.char == 'l':
+                value = numpy.require(value, dtype = numpy.int32)
+                dbrtype = 5
+            else:
+                raise
+
+        return dbrtype, len(value), value.ctypes.data, value
 
 class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
     _link_ = 'INP'
@@ -171,47 +210,6 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if self.__on_update and self.__enable_write:
             dispatcher(self.__on_update, value)
         return EPICS_OK
-
-    # Converts a Python value into a form suitable for sending over channel
-    # access.  Derived from the corresponding cothread implementation.  Returns
-    # computed dbrcode, waveform length, raw data pointer and pointer to
-    # underlying data (for lifetime management).
-    def value_to_dbr(self, value):
-
-        if isinstance(value, str):
-            value = value.encode(errors='replace')
-
-        # First convert the data directly into an array.  This will help in
-        # subsequent processing: this does most of the type coercion.
-        value = numpy.require(value, requirements = 'C')
-        if value.shape == ():
-            value.shape = (1,)
-        assert value.ndim == 1, 'Can\'t put multidimensional arrays!'
-
-        if value.dtype.char == 'S':
-            # Need special processing to hack the array so that strings are
-            # actually 40 characters long.
-            new_value = numpy.empty(value.shape, 'S40')
-            new_value[:] = value
-            value = new_value
-
-        try:
-            dbrtype = NumpyCharCodeToDbr[value.dtype.char]
-        except KeyError:
-            # One more special case.  caput() of a list of integers on a 64-bit
-            # system will fail at this point because they were automatically
-            # converted to 64-bit integers.  Catch this special case and fix it
-            # up by silently converting to 32-bit integers.  Not really the
-            # right thing to do (as data can be quietly lost), but the
-            # alternative isn't nice to use either.
-            if value.dtype.char == 'l':
-                value = numpy.require(value, dtype = numpy.int32)
-                dbrtype = 5
-            else:
-                raise
-
-        return dbrtype, len(value), value.ctypes.data, value
-
 
     def set(self, value, process=True):
         '''Special routine to set the value directly.'''
@@ -372,66 +370,47 @@ class WaveformBase(ProcessDeviceSupportCore):
             self.dtype.itemsize * nord)
         record.NORD = nord
 
-def handle_strings(value):
-    """Handles strings and bytearrays as values for Waveforms. Returns the
-    string converted to a numpy array."""
+    def _handle_strings(self, value):
+        """Handles strings and bytearrays as values for Waveforms. Returns the
+        string converted to a numpy array."""
 
-    if isinstance(value, str):
-        value = value.encode(errors="replace")
+        if isinstance(value, str):
+            value = value.encode(errors="replace")
 
-    if isinstance(value, bytes):
-        # Convert a string into an array of characters.  This will produce
-        # the correct behaviour when treating a character array as a string.
-        # Note that the trailing null is needed to work around problems with
-        # some clients.
-        value = numpy.frombuffer(
-            value + b'\0',  # TODO: This also exists in builder.py
-            dtype = numpy.uint8
-        )
-
-    return value
-
-
-class waveform(WaveformBase, ProcessDeviceSupportIn):
-    _record_type_ = 'waveform'
-    _device_name_ = 'devPython_waveform'
-
-    # Because arrays are mutable values it's ever so easy to accidentially call
-    # set() with a value which subsequently changes.  To avoid this common class
-    # of bug, at the cost of duplicated code and data, here we ensure a copy is
-    # taken of the value.
-    def _value_to_epics(self, value):
-
-        # Caused by no initial_value being specified
-        if value is None:
-            return value
-
-        value = handle_strings(value)
-
-        value = numpy.require(value, dtype = self.dtype)
-        if value.shape == ():
-            value.shape = (1,)
-        assert value.ndim == 1, 'Can\'t write multidimensional arrays'
+        if isinstance(value, bytes):
+            # Convert a string into an array of characters.  This will produce
+            # the correct behaviour when treating a character array as a string.
+            # Note that the trailing null is needed to work around problems with
+            # some clients. Note this also exists in builder.py's _waveform().
+            value = numpy.frombuffer(
+                value + b'\0',
+                dtype = numpy.uint8
+            )
 
         return value
 
-class waveform_out(WaveformBase, ProcessDeviceSupportOut):
-    _record_type_ = 'waveform'
-    _device_name_ = 'devPython_waveform_out'
-
     def _value_to_epics(self, value):
 
         # Caused by no initial_value being specified
         if value is None:
             return value
 
-        value = handle_strings(value)
+        value = self._handle_strings(value)
 
         # Ensure we always convert incoming value into numpy array, regardless
         # of whether the record has been initialised or not
         datatype, length, data, array = self.value_to_dbr(value)
 
         return array
+
+
+class waveform(WaveformBase, ProcessDeviceSupportIn):
+    _record_type_ = 'waveform'
+    _device_name_ = 'devPython_waveform'
+
+class waveform_out(WaveformBase, ProcessDeviceSupportOut):
+    _record_type_ = 'waveform'
+    _device_name_ = 'devPython_waveform_out'
 
 # Ensure the .dbd file is loaded.
 dbLoadDatabase("device.dbd", os.path.dirname(__file__), None)

@@ -223,7 +223,7 @@ def run_test_function(creation_func, expected_value, expected_type, test_func):
     process.start()
 
     try:
-        rec_val = queue.get()  # TODO: add timeout=5
+        rec_val = queue.get(timeout=5)
 
         record_value_asserts(
             creation_func,

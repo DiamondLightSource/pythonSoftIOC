@@ -265,13 +265,13 @@ def _Device_Out(record_type, convert=True, mlst=True, **kargs):
 
 
 def convert_to_int(value):
-    """Convert any type into its integer representation"""
+    """Attempt to convert any type into its integer representation"""
     if type(value) == c_int:
         return value.value
     return int(value) if value else None
 
 def convert_to_float(value):
-    """Convert any type into its float representation"""
+    """Attempt to convert any type into its float representation"""
     if type(value) == c_float:
         return value.value
     return float(value) if value else None
@@ -279,7 +279,7 @@ def convert_to_float(value):
 def truncate_string(value):
     """Trim a string to EPICS 40 (39 with null byte) character limit"""
     if isinstance(value, bytes):
-        value = value.decode(errors="replace")  # TODO: Remove and let it fail?
+        value = value.decode(errors="replace")
     return value[:39] if isinstance(value, str) else None
 
 longin = _Device_In('longin', value_to_epics=convert_to_int)

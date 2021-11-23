@@ -36,7 +36,7 @@ def clear_records():
     _clear_records()
 
 def idfn(fixture_value):
-    """Provide a nice name for the tests in the results list"""
+    """Provide a nice name for the tests in the record_values fixture"""
     return fixture_value[0].__name__ + "-" + type(fixture_value[1]).__name__ \
         + "-" + fixture_value[3].__name__
 
@@ -55,6 +55,12 @@ def idfn(fixture_value):
         (builder.stringIn, "abc", "abc", str),
         (builder.stringOut, b"abc", "abc", str),
         (builder.stringIn, b"abc", "abc", str),
+        (builder.stringOut, b"a\xcfb", "a�b", str),  # Invalid UTF-8
+        (builder.stringIn, b"a\xcfb", "a�b", str),  # Invalid UTF-8
+        (builder.stringOut, b"a\xe2\x82\xacb", "a€b", str),  # Valid UTF-8
+        (builder.stringIn, b"a\xe2\x82\xacb", "a€b", str),  # Valid UTF-8
+        (builder.stringOut, "a€b", "a€b", str),  # Valid UTF-8
+        (builder.stringIn, "a€b", "a€b", str),  # Valid UTF-8
         (
             builder.stringOut,
             "this string is much longer than 40 characters",
@@ -81,6 +87,7 @@ def idfn(fixture_value):
             numpy.array([1, 2, 3], dtype=numpy.float32),
             numpy.ndarray
         ),
+        # TODO: Check dtype of this data - should be float!
         (
             builder.WaveformIn,
             "ABC",

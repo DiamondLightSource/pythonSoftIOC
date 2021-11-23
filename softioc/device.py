@@ -271,7 +271,6 @@ def truncate_string(value):
     if isinstance(value, bytes):
         value = value.decode(errors="replace")  # TODO: Remove and let it fail?
     return value[:39] if isinstance(value, str) else None
-    # TODO: Come back to this if we have to handle byte strings?
 
 longin = _Device_In('longin')
 longout = _Device_Out('longout')

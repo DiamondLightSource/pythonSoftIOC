@@ -1,8 +1,9 @@
 import os
+import sys
 import time
-from ctypes import *
 import numpy
 
+from ctypes import *
 from . import alarm
 from .fields import DbfCodeToNumpy, DbrToDbfCode
 from .imports import dbLoadDatabase, recGblResetAlarms, db_put_field
@@ -278,9 +279,12 @@ def convert_to_float(value):
 
 def truncate_string(value):
     """Trim a string to EPICS 40 (39 with null byte) character limit"""
-    if isinstance(value, bytes):
-        value = value.decode(errors="replace")
-    return value[:39] if isinstance(value, str) else None
+    if sys.version_info >= (3,):
+        if isinstance(value, bytes):
+            value = value.decode(errors="replace")
+        return value[:39] if isinstance(value, str) else None
+    else:
+        return value[:39] if isinstance(value, str) else None
 
 longin = _Device_In('longin', value_to_epics=convert_to_int)
 longout = _Device_Out('longout', value_to_epics=convert_to_int)

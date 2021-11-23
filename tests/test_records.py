@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 import ctypes
 import multiprocessing
 import numpy
 import os
 import pytest
+
+from enum import Enum
 
 from softioc import builder, softioc
 from epicsdbbuilder import ResetRecords
@@ -215,26 +218,7 @@ def test_value_retrieval_pre_init_set(
         expected_type)
 
 
-def run_test_function(creation_func, expected_value, expected_type, test_func):
-    """Helper function to handle the multiprocessing process"""
-    queue = multiprocessing.Queue()
-    process = multiprocessing.Process(target=test_func, args=(queue,))
-    # TODO: Above line doesn't work as we need for Windows.
-    process.start()
-
-    try:
-        rec_val = queue.get(timeout=5)
-
-        record_value_asserts(
-            creation_func,
-            rec_val,
-            expected_value,
-            expected_type)
-    finally:
-        process.terminate()
-        process.join(timeout=3)
-
-def test_value_retrieval_pre_init_initial_value(
+def test_value_pre_init_initial_value(
         clear_records,
         record_values):
     """Test that records provide the expected values on get calls when using
@@ -250,60 +234,77 @@ def test_value_retrieval_pre_init_initial_value(
         expected_value,
         expected_type)
 
-def test_value_retrieval_post_init_set(record_values):
+class TestEnum(Enum):
+    """Enum to control when the record's value should be set"""
+    INITIAL_VALUE = 1
+    SET_BEFORE_INIT = 2
+    SET_AFTER_INIT = 3
+
+def value_test_function(creation_func, initial_value, queue, test_enum):
+    kwarg = {}
+
+    if test_enum == TestEnum.INITIAL_VALUE:
+        kwarg.update({"initial_value": initial_value})
+    elif creation_func in [builder.WaveformIn, builder.WaveformOut]:
+        kwarg = {"length": 50}  # Required when no value on creation
+        # Related to this issue:
+        # https://github.com/dls-controls/pythonSoftIOC/issues/37
+
+
+    out_rec = creation_func("out-record", **kwarg)
+
+    if test_enum == TestEnum.SET_BEFORE_INIT:
+        out_rec.set(initial_value)
+
+    builder.LoadDatabase()
+    softioc.iocInit()
+
+    if test_enum == TestEnum.SET_AFTER_INIT:
+        out_rec.set(initial_value)
+
+    queue.put(out_rec.get())
+
+
+def run_test_function(record_values, test_enum):
+    """Run the test function using multiprocessing and check returned value is
+    expected value"""
+
+    creation_func, initial_value, expected_value, expected_type = record_values
+
+    queue = multiprocessing.Queue()
+    process = multiprocessing.Process(
+        target=value_test_function,
+        args=(creation_func, initial_value, queue, test_enum)
+    )
+
+    process.start()
+
+    try:
+        rec_val = queue.get(timeout=5)
+
+        record_value_asserts(
+            creation_func,
+            rec_val,
+            expected_value,
+            expected_type)
+    finally:
+        process.terminate()
+        process.join(timeout=3)
+
+def test_value_post_init_set(record_values):
     """Test that records provide the expected values on get calls when using
     .set() before IOC initialisation and .get() after initialisation"""
 
-    creation_func, initial_value, expected_value, expected_type = record_values
+    run_test_function(record_values, TestEnum.SET_BEFORE_INIT)
 
-    def inner_func(queue):
-        kwarg = {}
-        if creation_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
-
-        out_rec = creation_func("out-record", **kwarg)
-        out_rec.set(initial_value)
-
-        builder.LoadDatabase()
-        softioc.iocInit()
-
-        queue.put(out_rec.get())
-
-    run_test_function(creation_func, expected_value, expected_type, inner_func)
-
-def test_value_retrieval_post_init_initial_value(record_values):
+def test_value_post_init_initial_value(record_values):
     """Test that records provide the expected values on get calls when using
     initial_value during record creation and .get() after IOC initialisation"""
 
-    creation_func, initial_value, expected_value, expected_type = record_values
+    run_test_function(record_values, TestEnum.INITIAL_VALUE)
 
-    def inner_func(queue):
-        out_rec = creation_func("out-record", initial_value=initial_value)
-
-        builder.LoadDatabase()
-        softioc.iocInit()
-
-        queue.put(out_rec.get())
-
-    run_test_function(creation_func, expected_value, expected_type, inner_func)
-
-def test_value_retrieval_post_init_set_after_init(record_values):
+def test_value_post_init_set_after_init(record_values):
     """Test that records provide the expected values on get calls when using
     .set() and .get() after IOC initialisation"""
 
-    creation_func, initial_value, expected_value, expected_type = record_values
-
-    def inner_func(queue):
-        kwarg = {}
-        if creation_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
-
-        out_rec = creation_func("out-record", **kwarg)
-
-        builder.LoadDatabase()
-        softioc.iocInit()
-        out_rec.set(initial_value)
-
-        queue.put(out_rec.get())
-
-    run_test_function(creation_func, expected_value, expected_type, inner_func)
+    run_test_function(record_values, TestEnum.SET_AFTER_INIT)

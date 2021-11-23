@@ -13,16 +13,6 @@ from epicsdbbuilder import ResetRecords
 from softioc.device_core import RecordLookup
 import sim_records
 
-# Counter for unique record number
-counter = 0
-
-@pytest.fixture
-def record_number():
-    """Unique counter for record naming"""
-    global counter
-    counter += 1
-    return counter
-
 
 def _clear_records():
     # Remove any records created at epicsdbbuilder layer

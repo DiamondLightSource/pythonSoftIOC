@@ -196,7 +196,7 @@ def record_value_asserts(
     else:
         # Python2 handles UTF-8 differently so needs extra encoding
         if sys.version_info < (3,) and expected_type == str:
-            expected_value = expected_value.encode('utf-8')
+            expected_value = expected_value.decode(errors="replace")
 
         assert actual_value == expected_value
         assert type(actual_value) == expected_type

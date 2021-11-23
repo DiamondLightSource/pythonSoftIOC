@@ -284,6 +284,7 @@ def truncate_string(value):
             value = value.decode(errors="replace")
         return value[:39] if isinstance(value, str) else None
     else:
+        # Python2 strings are equivalent to Python3 bytestrings
         return value[:39] if isinstance(value, str) else None
 
 longin = _Device_In('longin', value_to_epics=convert_to_int)

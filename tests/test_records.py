@@ -4,6 +4,7 @@ import multiprocessing
 import numpy
 import os
 import pytest
+import sys
 
 from enum import Enum
 
@@ -193,6 +194,10 @@ def record_value_asserts(
             "Arrays not equal: {} {}".format(actual_value, expected_value)
         assert type(actual_value) == expected_type
     else:
+        # Python2 handles UTF-8 differently so needs extra encoding
+        if sys.version_info == (2, 7) and expected_type == str:
+            expected_value = expected_value.encode('utf-8')
+
         assert actual_value == expected_value
         assert type(actual_value) == expected_type
 

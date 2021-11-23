@@ -8,7 +8,7 @@ import sys
 
 from enum import Enum
 
-from softioc import builder, softioc, asyncio_dispatcher
+from softioc import builder, softioc
 from epicsdbbuilder import ResetRecords
 from softioc.device_core import RecordLookup
 import sim_records
@@ -196,7 +196,7 @@ def record_value_asserts(
     else:
         # Python2 handles UTF-8 differently so needs extra encoding
         if sys.version_info < (3,) and expected_type == str:
-            expected_value = expected_value.decode(errors="replace")
+            expected_value = expected_value.encode('utf-8')
 
         assert actual_value == expected_value
         assert type(actual_value) == expected_type
@@ -261,10 +261,8 @@ def value_test_function(creation_func, initial_value, queue, set_enum):
     if set_enum == SetValueEnum.SET_BEFORE_INIT:
         out_rec.set(initial_value)
 
-    dispatcher = asyncio_dispatcher.AsyncioDispatcher()
-
     builder.LoadDatabase()
-    softioc.iocInit(dispatcher)
+    softioc.iocInit()
 
     if set_enum == SetValueEnum.SET_AFTER_INIT:
         out_rec.set(initial_value)

@@ -234,16 +234,16 @@ def test_value_pre_init_initial_value(
         expected_value,
         expected_type)
 
-class TestEnum(Enum):
-    """Enum to control when the record's value should be set"""
+class SetValueEnum(Enum):
+    """Enum to control when and how the record's value should be set"""
     INITIAL_VALUE = 1
     SET_BEFORE_INIT = 2
     SET_AFTER_INIT = 3
 
-def value_test_function(creation_func, initial_value, queue, test_enum):
+def value_test_function(creation_func, initial_value, queue, set_enum):
     kwarg = {}
 
-    if test_enum == TestEnum.INITIAL_VALUE:
+    if set_enum == SetValueEnum.INITIAL_VALUE:
         kwarg.update({"initial_value": initial_value})
     elif creation_func in [builder.WaveformIn, builder.WaveformOut]:
         kwarg = {"length": 50}  # Required when no value on creation
@@ -253,19 +253,19 @@ def value_test_function(creation_func, initial_value, queue, test_enum):
 
     out_rec = creation_func("out-record", **kwarg)
 
-    if test_enum == TestEnum.SET_BEFORE_INIT:
+    if set_enum == SetValueEnum.SET_BEFORE_INIT:
         out_rec.set(initial_value)
 
     builder.LoadDatabase()
     softioc.iocInit()
 
-    if test_enum == TestEnum.SET_AFTER_INIT:
+    if set_enum == SetValueEnum.SET_AFTER_INIT:
         out_rec.set(initial_value)
 
     queue.put(out_rec.get())
 
 
-def run_test_function(record_values, test_enum):
+def run_test_function(record_values, set_enum):
     """Run the test function using multiprocessing and check returned value is
     expected value"""
 
@@ -274,7 +274,7 @@ def run_test_function(record_values, test_enum):
     queue = multiprocessing.Queue()
     process = multiprocessing.Process(
         target=value_test_function,
-        args=(creation_func, initial_value, queue, test_enum)
+        args=(creation_func, initial_value, queue, set_enum)
     )
 
     process.start()
@@ -295,16 +295,16 @@ def test_value_post_init_set(record_values):
     """Test that records provide the expected values on get calls when using
     .set() before IOC initialisation and .get() after initialisation"""
 
-    run_test_function(record_values, TestEnum.SET_BEFORE_INIT)
+    run_test_function(record_values, SetValueEnum.SET_BEFORE_INIT)
 
 def test_value_post_init_initial_value(record_values):
     """Test that records provide the expected values on get calls when using
     initial_value during record creation and .get() after IOC initialisation"""
 
-    run_test_function(record_values, TestEnum.INITIAL_VALUE)
+    run_test_function(record_values, SetValueEnum.INITIAL_VALUE)
 
 def test_value_post_init_set_after_init(record_values):
     """Test that records provide the expected values on get calls when using
     .set() and .get() after IOC initialisation"""
 
-    run_test_function(record_values, TestEnum.SET_AFTER_INIT)
+    run_test_function(record_values, SetValueEnum.SET_AFTER_INIT)

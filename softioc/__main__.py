@@ -3,7 +3,7 @@ import sys
 from argparse import ArgumentParser
 import subprocess
 
-from softioc import __version__
+from . import __version__
 
 
 def main(args=None):
@@ -14,7 +14,7 @@ def main(args=None):
         "arg", help="Any arguments to pass to the script", nargs="*")
     parsed_args = parser.parse_args(args)
     # Execute as subprocess
-    cmd = [sys.executable, parsed_args.script, *parsed_args.arg]
+    cmd = [sys.executable, parsed_args.script] + parsed_args.arg
     subprocess.Popen(cmd).communicate()
 
 

@@ -13,6 +13,11 @@ from epicsdbbuilder import ResetRecords
 from softioc.device_core import RecordLookup
 import sim_records
 
+requires_cothread = pytest.mark.skipif(
+                        sys.platform.startswith("win"),
+                        reason="Cothread doesn't work on windows"
+                    )
+
 
 def _clear_records():
     # Remove any records created at epicsdbbuilder layer
@@ -186,12 +191,12 @@ def record_value_asserts(
     else:
         # Python2 handles UTF-8 differently so needs extra encoding
         if sys.version_info < (3,) and expected_type == str:
-            expected_value = expected_value.decode(errors="replace")
+            expected_value = expected_value.decode("utf-8", errors="replace")
 
         assert actual_value == expected_value
         assert type(actual_value) == expected_type
 
-def test_value_retrieval_pre_init_set(
+def test_value_pre_init_set(
         clear_records,
         record_values):
     """Test that records provide the expected values on get calls when using
@@ -286,18 +291,21 @@ def run_test_function(record_values, set_enum):
         process.terminate()
         process.join(timeout=3)
 
+@requires_cothread
 def test_value_post_init_set(record_values):
     """Test that records provide the expected values on get calls when using
     .set() before IOC initialisation and .get() after initialisation"""
 
     run_test_function(record_values, SetValueEnum.SET_BEFORE_INIT)
 
+@requires_cothread
 def test_value_post_init_initial_value(record_values):
     """Test that records provide the expected values on get calls when using
     initial_value during record creation and .get() after IOC initialisation"""
 
     run_test_function(record_values, SetValueEnum.INITIAL_VALUE)
 
+@requires_cothread
 def test_value_post_init_set_after_init(record_values):
     """Test that records provide the expected values on get calls when using
     .set() and .get() after IOC initialisation"""

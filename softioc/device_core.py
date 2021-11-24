@@ -126,8 +126,7 @@ class DeviceSupportCore(DeviceCommon):
         # Hang onto the values we publish to EPICS to ensure that they persist!
         # We also need to ensure that the device name persits.
         cls.__dset = dset
-        if sys.version_info >= (3,):
-            cls._device_name_ = cls._device_name_.encode()
+        cls._device_name_ = cls._device_name_.encode()
         imports.registryDeviceSupportAdd(cls._device_name_, byref(cls.__dset))
 
 

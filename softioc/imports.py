@@ -34,27 +34,19 @@ def expect_true(status, function, args):
     assert status, 'Expected True'
 
 
-if sys.version_info < (3,):
-    # Python 2
-    auto_encode = c_char_p
-    def auto_decode(result, func, args):
-        return result
 
-else:
-    # Python 3
+# Encode all strings to c_char_p
+class auto_encode(c_char_p):
+    encoded = []
+    @classmethod
+    def from_param(cls, value):
+        if value is None:
+            return value
+        else:
+            return value.encode()
 
-    # Encode all strings to c_char_p
-    class auto_encode(c_char_p):
-        encoded = []
-        @classmethod
-        def from_param(cls, value):
-            if value is None:
-                return value
-            else:
-                return value.encode()
-
-    def auto_decode(result, func, args):
-        return result.decode()
+def auto_decode(result, func, args):
+    return result.decode()
 
 
 # int registryDeviceSupportAdd(

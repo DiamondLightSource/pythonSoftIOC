@@ -27,12 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python: [cp27, cp36, cp37, cp38, cp39]
-
-        exclude:
-          # No cothread or asyncio for windows python 2.7 so doesn't work
-          - os: windows-latest
-            python: cp27
+        python: [cp36, cp37, cp38, cp39]
 
         include:
           # Put coverage in the project directory for mac

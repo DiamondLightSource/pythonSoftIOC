@@ -7,4 +7,6 @@
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.languageServer": "Pylance",
+    "files.trimTrailingWhitespace": true,
+    "files.trimFinalNewlines": true,
 }

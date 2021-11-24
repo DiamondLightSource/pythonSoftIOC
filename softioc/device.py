@@ -284,9 +284,9 @@ def truncate_string(value):
             value = value.decode(errors="replace")
         return value[:39] if isinstance(value, str) else None
     else:
-        if isinstance(value, bytes):
+        if isinstance(value, bytes):  # bytes == str in Python2
             value = value.decode("utf-8", errors="replace")
-        return value[:39] if isinstance(value, str) else None
+        return value[:39] if isinstance(value, unicode) else None
 
 longin = _Device_In('longin', value_to_epics=convert_to_int)
 longout = _Device_Out('longout', value_to_epics=convert_to_int)

@@ -61,12 +61,12 @@ def idfn(fixture_value):
         (builder.stringIn, "", "", str),
         (builder.stringOut, b"abc", "abc", str),
         (builder.stringIn, b"abc", "abc", str),
-        (builder.stringOut, b"a\xcfb", "a�b", str),  # Invalid UTF-8
-        (builder.stringIn, b"a\xcfb", "a�b", str),  # Invalid UTF-8
-        (builder.stringOut, b"a\xe2\x82\xacb", "a€b", str),  # Valid UTF-8
-        (builder.stringIn, b"a\xe2\x82\xacb", "a€b", str),  # Valid UTF-8
-        (builder.stringOut, "a€b", "a€b", str),  # Valid UTF-8
-        (builder.stringIn, "a€b", "a€b", str),  # Valid UTF-8
+        (builder.stringOut, b"a\xcfb", u"a�b", str),  # Invalid UTF-8
+        (builder.stringIn, b"a\xcfb", u"a�b", str),  # Invalid UTF-8
+        (builder.stringOut, b"a\xe2\x82\xacb", u"a€b", str),  # Valid UTF-8
+        (builder.stringIn, b"a\xe2\x82\xacb", u"a€b", str),  # Valid UTF-8
+        (builder.stringOut, u"a€b", u"a€b", str),  # Valid UTF-8
+        (builder.stringIn, u"a€b", u"a€b", str),  # Valid UTF-8
         (
             builder.stringOut,
             "this string is much longer than 40 characters",
@@ -189,10 +189,6 @@ def record_value_asserts(
             "Arrays not equal: {} {}".format(actual_value, expected_value)
         assert type(actual_value) == expected_type
     else:
-        # Python2 handles UTF-8 differently so needs extra encoding
-        if sys.version_info < (3,) and expected_type == str:
-            expected_value = expected_value.decode("utf-8", errors="replace")
-
         assert actual_value == expected_value
         assert type(actual_value) == expected_type
 

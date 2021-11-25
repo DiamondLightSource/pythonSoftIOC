@@ -11,6 +11,22 @@ Unreleased_
 
 Nothing yet
 
+3.2.1_ - 2021-11-25
+-------------------
+
+Changed:
+
+- `Allow installation for python 3.6 <../../pull/51>`
+
+Added:
+
+- Provide logging for exceptions raised in callbacks 
+
+Fixed:
+
+- `Fixup atexit handling <../../pull/35>`
+- `Fix main in Python2 <../../pull/63>`
+
 3.2_ - 2021-08-31
 -----------------
 

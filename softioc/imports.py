@@ -45,9 +45,6 @@ class auto_encode(c_char_p):
         else:
             return value.encode()
 
-def auto_decode(result, func, args):
-    return result.decode()
-
 
 # int registryDeviceSupportAdd(
 #     const char *name,const struct dset *pdset);

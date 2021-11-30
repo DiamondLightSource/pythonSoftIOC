@@ -13,11 +13,6 @@
 #include <asTrapWrite.h>
 #include <asDbLib.h>
 
-/* In Python3 this function has been renamed. */
-#if PY_MAJOR_VERSION >= 3
-#define PyInt_FromLong(value)   PyLong_FromLong(value)
-#endif
-
 /* Reference stealing version of PyDict_SetItemString */
 static void set_dict_item_steal(
     PyObject *dict, const char *name, PyObject *py_value)
@@ -28,7 +23,7 @@ static void set_dict_item_steal(
 
 /* Helper for function below. */
 #define ADD_ENUM(dict, name) \
-    set_dict_item_steal(dict, #name, PyInt_FromLong(name))
+    set_dict_item_steal(dict, #name, PyLong_FromLong(name))
 
 /* Alas, EPICS has changed the numerical assignments of the DBF_ enums between
  * versions, so to avoid unpleasant surprises, we compute thes values here in C
@@ -226,7 +221,7 @@ static struct PyMethodDef softioc_methods[] = {
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
-#if PY_MAJOR_VERSION >= 3
+
 static struct PyModuleDef softioc_module = {
   PyModuleDef_HEAD_INIT,
     "softioc._extension",
@@ -234,19 +229,8 @@ static struct PyModuleDef softioc_module = {
     -1,
     softioc_methods,
 };
-#endif
 
-#if PY_MAJOR_VERSION >= 3
-#  define PyMOD(NAME) PyObject* PyInit_##NAME (void)
-#else
-#  define PyMOD(NAME) void init##NAME (void)
-#endif
-
-PyMOD(_extension)
+PyObject *PyInit__extension(void)
 {
-#if PY_MAJOR_VERSION >= 3
     return PyModule_Create(&softioc_module);
-#else
-    Py_InitModule("softioc._extension", softioc_methods);
-#endif
 }

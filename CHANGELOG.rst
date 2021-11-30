@@ -9,7 +9,9 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased_
 -----------
 
-Nothing yet
+Changed:
+
+- `Remove python2 support <../../pull/64>`
 
 3.2.1_ - 2021-11-25
 -------------------
@@ -20,7 +22,7 @@ Changed:
 
 Added:
 
-- Provide logging for exceptions raised in callbacks 
+- Provide logging for exceptions raised in callbacks
 
 Fixed:
 

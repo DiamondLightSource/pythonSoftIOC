@@ -7,12 +7,6 @@ import sys
 
 import pytest
 
-if sys.version_info < (3,):
-    # Python2 has no asyncio, so ignore these tests
-    collect_ignore = [
-        "test_asyncio.py", "sim_asyncio_ioc.py", "sim_asyncio_ioc_override.py"
-    ]
-
 class SubprocessIOC:
     def __init__(self, ioc_py):
         self.pv_prefix = "".join(

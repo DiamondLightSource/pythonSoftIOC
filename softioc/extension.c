@@ -230,11 +230,7 @@ static struct PyModuleDef softioc_module = {
     softioc_methods,
 };
 
-
-#define PyMOD(NAME) PyObject* PyInit_##NAME (void)
-
-
-PyMOD(_extension)
+PyObject *PyInit__extension(void)
 {
     return PyModule_Create(&softioc_module);
 }

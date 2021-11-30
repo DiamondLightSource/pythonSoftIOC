@@ -124,7 +124,7 @@ class DeviceSupportCore(DeviceCommon):
                 setattr(dset, method_name, callback)
 
         # Hang onto the values we publish to EPICS to ensure that they persist!
-        # We also need to ensure that the device name persits.
+        # We also need to ensure that the device name persists.
         cls.__dset = dset
         cls._device_name_ = cls._device_name_.encode()
         imports.registryDeviceSupportAdd(cls._device_name_, byref(cls.__dset))

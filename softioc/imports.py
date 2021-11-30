@@ -37,7 +37,6 @@ def expect_true(status, function, args):
 
 # Encode all strings to c_char_p
 class auto_encode(c_char_p):
-    encoded = []
     @classmethod
     def from_param(cls, value):
         if value is None:

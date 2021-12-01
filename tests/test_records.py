@@ -413,6 +413,7 @@ def test_value_none_rejected_set_before_init(clear_records, record_funcs):
         record = record_funcs("SOME-NAME", **kwarg)
         record.set(None)
 
+@requires_cothread
 def test_value_none_rejected_set_after_init(record_funcs):
     """Test that setting \"None\" using .set() after IOc init raises an
     exception"""

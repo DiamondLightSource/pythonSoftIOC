@@ -69,7 +69,7 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     def value_to_dbr(self, value):
 
         if isinstance(value, str):
-            value = value.encode(errors='replace')
+            value = value.encode(errors = 'replace')
 
         # First convert the data directly into an array.  This will help in
         # subsequent processing: this does most of the type coercion.
@@ -416,6 +416,7 @@ class waveform(WaveformBase, ProcessDeviceSupportIn):
 class waveform_out(WaveformBase, ProcessDeviceSupportOut):
     _record_type_ = 'waveform'
     _device_name_ = 'devPython_waveform_out'
+
 
 # Ensure the .dbd file is loaded.
 dbLoadDatabase("device.dbd", os.path.dirname(__file__), None)

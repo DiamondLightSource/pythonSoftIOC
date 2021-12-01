@@ -14,9 +14,9 @@ from softioc.device_core import RecordLookup
 import sim_records
 
 requires_cothread = pytest.mark.skipif(
-                        sys.platform.startswith("win"),
-                        reason="Cothread doesn't work on windows"
-                    )
+    sys.platform.startswith("win"),
+    reason="Cothread doesn't work on windows"
+)
 
 
 def _clear_records():

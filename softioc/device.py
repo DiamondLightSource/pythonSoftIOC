@@ -54,7 +54,8 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
 
     # Function to convert an incoming Python value into EPICS-appropriate form.
     def _value_to_epics(self, value):
-        return value
+        # Method must be overriden, just defined for type checking/assistance
+        raise NotImplementedError
 
     # Default implementations of read and write, overwritten where necessary.
     def _read_value(self, record):
@@ -170,8 +171,16 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self.__validate = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
-        self._value = self._value_to_epics(kargs.pop('initial_value', None))
         self.__enable_write = True
+
+        if "initial_value" in kargs:
+            value = kargs.pop('initial_value')
+            if value is None:
+                raise ValueError("\"None\" is not a valid initial_value")
+            self._value = self._value_to_epics(value)
+        else:
+            self._value = None
+
         self.__super.__init__(name, **kargs)
 
     def init_record(self, record):
@@ -236,10 +245,10 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 def _Device(
         Base,
         record_type,
+        value_to_epics,
         mlst=False,
         default=0,
-        convert=True,
-        value_to_epics=None):
+        convert=True):
     '''Wrapper for generating simple records.'''
     class GenericDevice(Base):
         _record_type_ = record_type
@@ -247,9 +256,7 @@ def _Device(
         _default_ = default
         _fields_ = ['UDF', 'VAL']
         _epics_rc = EPICS_OK if convert else NO_CONVERT
-        if value_to_epics:
-            _value_to_epics = \
-                staticmethod(value_to_epics)
+        _value_to_epics = staticmethod(value_to_epics)
         if mlst:
             _fields_.append('MLST')
 
@@ -259,44 +266,37 @@ def _Device(
 _In = ProcessDeviceSupportIn
 _Out = ProcessDeviceSupportOut
 
-def _Device_In(record_type, **kargs):
-    return _Device(_In,  record_type, **kargs)
+def _Device_In(record_type, value_to_epics, **kargs):
+    return _Device(_In,  record_type, value_to_epics, **kargs)
 
-def _Device_Out(record_type, convert=True, mlst=True, **kargs):
-    return _Device(_Out, record_type, convert=convert, mlst=mlst, **kargs)
+def _Device_Out(record_type, value_to_epics, convert=True, mlst=True, **kargs):
+    return _Device(_Out,
+                   record_type,
+                   value_to_epics,
+                   convert=convert,
+                   mlst=mlst,
+                   **kargs)
 
 
-def convert_to_int(value):
-    """Attempt to convert any type into its integer representation"""
-    if type(value) == c_int:
-        return value.value
-    # Can't just check value, as default value of 0 is false!
-    return int(value) if value is not None else None
-
-def convert_to_float(value):
-    """Attempt to convert any type into its float representation"""
-    if type(value) == c_float:
-        return value.value
-    # Can't just check value, as default value of 0.0 is false!
-    return float(value) if value is not None else None
-
-def truncate_string(value):
+def epics_string(value):
     """Trim a string to EPICS 40 (39 with null byte) character limit"""
+    if value is None:
+        raise ValueError("\"None\" not a valid value")
+
     if isinstance(value, bytes):
         value = value.decode(errors="replace")
-    return value[:39] if isinstance(value, str) else None
+
+    return str(value)[:39]
 
 
-longin = _Device_In('longin', value_to_epics=convert_to_int)
-longout = _Device_Out('longout', value_to_epics=convert_to_int)
-bi = _Device_In('bi', convert=False, value_to_epics=convert_to_int)
-bo = _Device_Out('bo', convert=False, value_to_epics=convert_to_int)
-stringin = _Device_In('stringin', mlst=False, default='',
-                      value_to_epics=truncate_string)
-stringout = _Device_Out('stringout', mlst=False, default='',
-                        value_to_epics=truncate_string)
-mbbi = _Device_In('mbbi', convert=False)
-mbbo = _Device_Out('mbbo', convert=False)
+longin = _Device_In('longin', int)
+longout = _Device_Out('longout', int)
+bi = _Device_In('bi', int, convert=False)
+bo = _Device_Out('bo', int, convert=False)
+stringin = _Device_In('stringin',  epics_string, mlst=False, default='')
+stringout = _Device_Out('stringout',  epics_string, mlst=False, default='')
+mbbi = _Device_In('mbbi', int, convert=False)
+mbbo = _Device_Out('mbbo', int, convert=False)
 
 
 dset_process_linconv = (
@@ -314,7 +314,7 @@ class ai(ProcessDeviceSupportIn):
     _fields_ = ['UDF', 'VAL']
     _dset_extra_ = dset_process_linconv
     _epics_rc = NO_CONVERT
-    _value_to_epics = staticmethod(convert_to_float)
+    _value_to_epics = staticmethod(float)
 
     def _process(self, record):
         _value = self._value
@@ -331,7 +331,7 @@ class ao(ProcessDeviceSupportOut):
     _fields_ = ['UDF', 'VAL', 'MLST']
     _dset_extra_ = dset_process_linconv
     _epics_rc = NO_CONVERT
-    _value_to_epics = staticmethod(convert_to_float)
+    _value_to_epics = staticmethod(float)
 
 
 
@@ -398,7 +398,7 @@ class WaveformBase(ProcessDeviceSupportCore):
 
         # Only None when WaveformOut record is not given an initial_value
         if value is None:
-            return value
+            raise ValueError("\"None\" not a valid value")
 
         value = self._handle_strings(value)
 

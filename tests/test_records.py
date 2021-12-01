@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-import ctypes
 import multiprocessing
 import numpy
 import os
@@ -35,8 +33,32 @@ def clear_records():
     yield
     _clear_records()
 
+def record_funcs_names(fixture_value):
+    """Provide a nice name for the record_funcs fixture"""
+    return fixture_value.__name__
 
-def idfn(fixture_value):
+
+@pytest.fixture(params=[
+        builder.aIn,
+        builder.aOut,
+        builder.longIn,
+        builder.longOut,
+        builder.boolIn,
+        builder.boolOut,
+        builder.stringIn,
+        builder.stringOut,
+        builder.mbbIn,
+        builder.mbbOut,
+        builder.WaveformIn,
+        builder.WaveformOut,
+    ],
+    ids=record_funcs_names)
+def record_funcs(request):
+    """The list of record creation functions"""
+    return request.param
+
+
+def record_values_names(fixture_value):
     """Provide a nice name for the tests in the record_values fixture"""
     return fixture_value[0].__name__ + "-" + type(fixture_value[1]).__name__ \
         + "-" + fixture_value[3].__name__
@@ -46,14 +68,10 @@ def idfn(fixture_value):
         (builder.aIn, 5.5, 5.5, float),
         (builder.aOut, 3, 3., float),
         (builder.aIn, 3, 3., float),
-        (builder.aOut, ctypes.c_float(3.5), 3.5, float),
-        (builder.aIn, ctypes.c_float(3.5), 3.5, float),
         (builder.longOut, 5, 5, int),
         (builder.longIn, 5, 5, int),
         (builder.longOut, 9.9, 9, int),
         (builder.longIn, 9.9, 9, int),
-        (builder.longOut, ctypes.c_int(6), 6, int),
-        (builder.longIn, ctypes.c_int(6), 6, int),
         (builder.boolOut, 1, 1, int),
         (builder.boolIn, 1, 1, int),
         (builder.boolOut, True, 1, int),
@@ -125,7 +143,7 @@ def idfn(fixture_value):
             numpy.ndarray
         )
     ],
-    ids=idfn)
+    ids=record_values_names)
 def record_values(request):
     """A list of parameters for record value setting/getting tests.
 
@@ -372,3 +390,64 @@ def test_value_default_post_init(creation_func, expected_value, expected_type):
     tmp = list((creation_func, expected_value, expected_type))
     tmp.insert(1, None)
     run_test_function(tuple(tmp), SetValueEnum.NO_VALUE)
+
+
+def test_value_none_rejected_initial_value(clear_records, record_funcs):
+    """Test that setting \"None\" as the initial_value raises an exception"""
+
+    kwarg = {}
+    if record_funcs in [builder.WaveformIn, builder.WaveformOut]:
+        kwarg = {"length": 50}  # Required when no value on creation
+
+    with pytest.raises((ValueError, TypeError)):
+        record_funcs("SOME-NAME", initial_value=None, **kwarg)
+
+def test_value_none_rejected_set_before_init(clear_records, record_funcs):
+    """Test that setting \"None\" using .set() raises an exception"""
+
+    kwarg = {}
+    if record_funcs in [builder.WaveformIn, builder.WaveformOut]:
+        kwarg = {"length": 50}  # Required when no value on creation
+
+    with pytest.raises((ValueError, TypeError)):
+        record = record_funcs("SOME-NAME", **kwarg)
+        record.set(None)
+
+def test_value_none_rejected_set_after_init(record_funcs):
+    """Test that setting \"None\" using .set() after IOc init raises an
+    exception"""
+
+    def inner_func(record_func, queue):
+        """Start the IOC and catch the expected exception"""
+        kwarg = {}
+        if record_funcs in [builder.WaveformIn, builder.WaveformOut]:
+            kwarg = {"length": 50}  # Required when no value on creation
+
+        record = record_funcs("SOME-NAME", **kwarg)
+
+        builder.LoadDatabase()
+        softioc.iocInit()
+
+        try:
+            record.set(None)
+        except Exception as e:
+            queue.put(e)
+
+        queue.put(Exception("FAIL:Test did not raise exception during .set()"))
+
+
+    queue = multiprocessing.Queue()
+    process = multiprocessing.Process(
+        target=inner_func,
+        args=(record_funcs, queue)
+    )
+
+    process.start()
+
+    try:
+        exception = queue.get(timeout=5)
+
+        assert isinstance(exception, (ValueError, TypeError))
+    finally:
+        process.terminate()
+        process.join(timeout=3)

@@ -179,8 +179,9 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         special record initialisation if an initial value has been specified,
         allowing out records to have a sensible initial value.'''
         if self._value is None:
-            # Cannot set in __init__, as we want the record alarm status to be
-            # set if no value was provided
+            # Cannot set in __init__ (like we do for In records), as we want
+            # the record alarm status to be set if no value was provided
+            # Probably related to PythonSoftIOC issue #53
             self._value = self._default_
         else:
             self._write_value(record, self._value)
@@ -269,29 +270,27 @@ def convert_to_int(value):
     """Attempt to convert any type into its integer representation"""
     if type(value) == c_int:
         return value.value
-    return int(value) if value else None
+    # Can't just check value, as default value of 0 is false!
+    return int(value) if value is not None else None
 
 def convert_to_float(value):
     """Attempt to convert any type into its float representation"""
     if type(value) == c_float:
         return value.value
-    return float(value) if value else None
+    # Can't just check value, as default value of 0.0 is false!
+    return float(value) if value is not None else None
 
 def truncate_string(value):
     """Trim a string to EPICS 40 (39 with null byte) character limit"""
-    if sys.version_info >= (3,):
-        if isinstance(value, bytes):
-            value = value.decode(errors="replace")
-        return value[:39] if isinstance(value, str) else None
-    else:
-        if isinstance(value, bytes):  # bytes == str in Python2
-            value = value.decode("utf-8", errors="replace")
-        return value[:39] if isinstance(value, unicode) else None
+    if isinstance(value, bytes):
+        value = value.decode(errors="replace")
+    return value[:39] if isinstance(value, str) else None
+
 
 longin = _Device_In('longin', value_to_epics=convert_to_int)
 longout = _Device_Out('longout', value_to_epics=convert_to_int)
-bi = _Device_In('bi', convert=False)
-bo = _Device_Out('bo', convert=False)
+bi = _Device_In('bi', convert=False, value_to_epics=convert_to_int)
+bo = _Device_Out('bo', convert=False, value_to_epics=convert_to_int)
 stringin = _Device_In('stringin', mlst=False, default='',
                       value_to_epics=truncate_string)
 stringout = _Device_Out('stringout', mlst=False, default='',
@@ -347,7 +346,7 @@ class WaveformBase(ProcessDeviceSupportCore):
     # Allow set() to be called before init_record:
     dtype = None
 
-    _default_ = ()
+    _default_ = numpy.array([])
 
     def init_record(self, record):
         self.dtype = DbfCodeToNumpy[record.FTVL]
@@ -397,7 +396,7 @@ class WaveformBase(ProcessDeviceSupportCore):
 
     def _value_to_epics(self, value):
 
-        # Caused by no initial_value being specified
+        # Only None when WaveformOut record is not given an initial_value
         if value is None:
             return value
 

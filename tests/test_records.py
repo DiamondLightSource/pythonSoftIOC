@@ -35,6 +35,7 @@ def clear_records():
     yield
     _clear_records()
 
+
 def idfn(fixture_value):
     """Provide a nice name for the tests in the record_values fixture"""
     return fixture_value[0].__name__ + "-" + type(fixture_value[1]).__name__ \
@@ -235,6 +236,7 @@ class SetValueEnum(Enum):
     INITIAL_VALUE = 1
     SET_BEFORE_INIT = 2
     SET_AFTER_INIT = 3
+    NO_VALUE = 4
 
 def value_test_function(creation_func, initial_value, queue, set_enum):
     kwarg = {}
@@ -307,3 +309,62 @@ def test_value_post_init_set_after_init(record_values):
     .set() and .get() after IOC initialisation"""
 
     run_test_function(record_values, SetValueEnum.SET_AFTER_INIT)
+
+@pytest.mark.parametrize("creation_func,expected_value,expected_type", [
+    (builder.aOut, None, type(None)),
+    (builder.aIn, 0.0, float),
+    (builder.longOut, None, type(None)),
+    (builder.longIn, 0, int),
+    (builder.boolOut, None, type(None)),
+    (builder.boolIn, 0, int),
+    (builder.stringOut, None, type(None)),
+    (builder.stringIn, "", str),
+    (builder.mbbOut, None, type(None)),
+    (builder.mbbIn, 0, int),
+    (builder.WaveformOut, None, type(None)),
+    (builder.WaveformIn, [], numpy.ndarray),
+])
+def test_value_default_pre_init(
+        creation_func,
+        expected_value,
+        expected_type,
+        clear_records):
+    """Test that the correct default values are returned from .get() (before
+    record initialisation) when no initial_value or .set() is done"""
+
+    kwarg = {}
+    if creation_func in [builder.WaveformIn, builder.WaveformOut]:
+        kwarg = {"length": 50}  # Required when no value on creation
+
+    out_rec = creation_func("out-record", **kwarg)
+    record_value_asserts(
+        creation_func,
+        out_rec.get(),
+        expected_value,
+        expected_type)
+
+
+@requires_cothread
+@pytest.mark.parametrize("creation_func,expected_value,expected_type", [
+    (builder.aOut, 0.0, float),
+    (builder.aIn, 0.0, float),
+    (builder.longOut, 0, int),
+    (builder.longIn, 0, int),
+    (builder.boolOut, 0, int),
+    (builder.boolIn, 0, int),
+    (builder.stringOut, "", str),
+    (builder.stringIn, "", str),
+    (builder.mbbOut, 0, int),
+    (builder.mbbIn, 0, int),
+    (builder.WaveformOut, [], numpy.ndarray),
+    (builder.WaveformIn, [], numpy.ndarray),
+])
+def test_value_default_post_init(creation_func, expected_value, expected_type):
+    """Test that records provide the expected default value after they are
+    initialised, having never had a value set"""
+
+    # Add a dummy initial_value to the tuple, so we can use the same framework
+    # as the other tests
+    tmp = list((creation_func, expected_value, expected_type))
+    tmp.insert(1, None)
+    run_test_function(tuple(tmp), SetValueEnum.NO_VALUE)

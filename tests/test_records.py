@@ -413,33 +413,31 @@ def test_value_none_rejected_set_before_init(clear_records, record_funcs):
         record = record_funcs("SOME-NAME", **kwarg)
         record.set(None)
 
+def none_value_test_func(record_func, queue):
+    """Start the IOC and catch the expected exception"""
+    kwarg = {}
+    if record_func in [builder.WaveformIn, builder.WaveformOut]:
+        kwarg = {"length": 50}  # Required when no value on creation
+
+    record = record_func("SOME-NAME", **kwarg)
+
+    builder.LoadDatabase()
+    softioc.iocInit()
+
+    try:
+        record.set(None)
+    except Exception as e:
+        queue.put(e)
+
+    queue.put(Exception("FAIL:Test did not raise exception during .set()"))
+
 @requires_cothread
 def test_value_none_rejected_set_after_init(record_funcs):
     """Test that setting \"None\" using .set() after IOc init raises an
     exception"""
-
-    def inner_func(record_func, queue):
-        """Start the IOC and catch the expected exception"""
-        kwarg = {}
-        if record_funcs in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
-
-        record = record_funcs("SOME-NAME", **kwarg)
-
-        builder.LoadDatabase()
-        softioc.iocInit()
-
-        try:
-            record.set(None)
-        except Exception as e:
-            queue.put(e)
-
-        queue.put(Exception("FAIL:Test did not raise exception during .set()"))
-
-
     queue = multiprocessing.Queue()
     process = multiprocessing.Process(
-        target=inner_func,
+        target=none_value_test_func,
         args=(record_funcs, queue)
     )
 

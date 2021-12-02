@@ -2,8 +2,8 @@ import os
 import sys
 import time
 import numpy
-
 from ctypes import *
+
 from . import alarm
 from .fields import DbfCodeToNumpy, DbrToDbfCode
 from .imports import dbLoadDatabase, recGblResetAlarms, db_put_field
@@ -21,19 +21,19 @@ EPICS_ERROR = 1
 NO_CONVERT = 2
 
 NumpyCharCodeToDbr = {
-        # The following type codes are supported directly:
-        'S':    0,  # DBR_STRING     str_
-        'h':    1,  # DBR_SHORT      short  = int16
-        'f':    2,  # DBR_FLOAT      single = float32
-        'b':    4,  # DBR_CHAR       byte   = int8
-        'i':    5,  # DBR_LONG       intc   = int32
-        'd':    6,  # DBR_DOUBLE     float_ = float64
-        # These are supported as related types
-        'H':    1,  # DBR_SHORT      ushort = uint16
-        '?':    4,  # DBR_CHAR       bool_
-        'B':    4,  # DBR_CHAR       ubyte  = uint8
-        'I':    5,  # DBR_LONG       uintc  = uint32
-    }
+    # The following type codes are supported directly:
+    'S':    0,  # DBR_STRING     str_
+    'h':    1,  # DBR_SHORT      short  = int16
+    'f':    2,  # DBR_FLOAT      single = float32
+    'b':    4,  # DBR_CHAR       byte   = int8
+    'i':    5,  # DBR_LONG       intc   = int32
+    'd':    6,  # DBR_DOUBLE     float_ = float64
+    # These are supported as related types
+    'H':    1,  # DBR_SHORT      ushort = uint16
+    '?':    4,  # DBR_CHAR       bool_
+    'B':    4,  # DBR_CHAR       ubyte  = uint8
+    'I':    5,  # DBR_LONG       uintc  = uint32
+}
 if numpy.int_().itemsize == 4:
     NumpyCharCodeToDbr.update({'l': 5, 'L': 5})   # int_, uint
 

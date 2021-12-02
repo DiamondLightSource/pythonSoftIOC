@@ -174,10 +174,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         self.__enable_write = True
 
         if "initial_value" in kargs:
-            value = kargs.pop('initial_value')
-            if value is None:
-                raise ValueError("\"None\" is not a valid initial_value")
-            self._value = self._value_to_epics(value)
+            self._value = self._value_to_epics(kargs.pop('initial_value'))
         else:
             self._value = None
 
@@ -387,10 +384,7 @@ class WaveformBase(ProcessDeviceSupportCore):
             # the correct behaviour when treating a character array as a string.
             # Note that the trailing null is needed to work around problems with
             # some clients. Note this also exists in builder.py's _waveform().
-            value = numpy.frombuffer(
-                value + b'\0',
-                dtype = numpy.uint8
-            )
+            value = numpy.frombuffer(value + b'\0', dtype = numpy.uint8)
 
         return value
 

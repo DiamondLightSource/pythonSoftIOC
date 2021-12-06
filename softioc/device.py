@@ -277,9 +277,6 @@ def _Device_Out(record_type, value_to_epics, convert=True, mlst=True, **kargs):
 
 def epics_string(value):
     """Trim a string to EPICS 40 (39 with null byte) character limit"""
-    if value is None:
-        raise ValueError("\"None\" not a valid value")
-
     if isinstance(value, bytes):
         value = value.decode(errors="replace")
 

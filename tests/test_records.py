@@ -57,6 +57,12 @@ def record_funcs(request):
     """The list of record creation functions"""
     return request.param
 
+@pytest.fixture
+def record_funcs_reject_none(record_funcs):
+    """The list of record creation functions that reject 'None' as a value"""
+    if record_funcs in [builder.stringIn, builder.stringOut]:
+        pytest.skip(msg="None is valid value for string records")
+    return record_funcs
 
 def record_values_names(fixture_value):
     """Provide a nice name for the tests in the record_values fixture"""
@@ -392,25 +398,29 @@ def test_value_default_post_init(creation_func, expected_value, expected_type):
     run_test_function(tuple(tmp), SetValueEnum.NO_VALUE)
 
 
-def test_value_none_rejected_initial_value(clear_records, record_funcs):
+def test_value_none_rejected_initial_value(
+        clear_records,
+        record_funcs_reject_none):
     """Test that setting \"None\" as the initial_value raises an exception"""
 
     kwarg = {}
-    if record_funcs in [builder.WaveformIn, builder.WaveformOut]:
+    if record_funcs_reject_none in [builder.WaveformIn, builder.WaveformOut]:
         kwarg = {"length": 50}  # Required when no value on creation
 
     with pytest.raises((ValueError, TypeError)):
-        record_funcs("SOME-NAME", initial_value=None, **kwarg)
+        record_funcs_reject_none("SOME-NAME", initial_value=None, **kwarg)
 
-def test_value_none_rejected_set_before_init(clear_records, record_funcs):
+def test_value_none_rejected_set_before_init(
+        clear_records,
+        record_funcs_reject_none):
     """Test that setting \"None\" using .set() raises an exception"""
 
     kwarg = {}
-    if record_funcs in [builder.WaveformIn, builder.WaveformOut]:
+    if record_funcs_reject_none in [builder.WaveformIn, builder.WaveformOut]:
         kwarg = {"length": 50}  # Required when no value on creation
 
     with pytest.raises((ValueError, TypeError)):
-        record = record_funcs("SOME-NAME", **kwarg)
+        record = record_funcs_reject_none("SOME-NAME", **kwarg)
         record.set(None)
 
 def none_value_test_func(record_func, queue):
@@ -432,13 +442,13 @@ def none_value_test_func(record_func, queue):
     queue.put(Exception("FAIL:Test did not raise exception during .set()"))
 
 @requires_cothread
-def test_value_none_rejected_set_after_init(record_funcs):
+def test_value_none_rejected_set_after_init(record_funcs_reject_none):
     """Test that setting \"None\" using .set() after IOc init raises an
     exception"""
     queue = multiprocessing.Queue()
     process = multiprocessing.Process(
         target=none_value_test_func,
-        args=(record_funcs, queue)
+        args=(record_funcs_reject_none, queue)
     )
 
     process.start()

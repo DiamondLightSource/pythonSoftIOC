@@ -378,6 +378,12 @@ def run_test_function(
                 timeout=TIMEOUT,
                 **get_kwargs)
 
+            from cothread.dbr import ca_float, ca_array, ca_str, ca_int
+            if type(rec_val) in (ca_float, ca_array, ca_str, ca_int):
+                # '+' is used to convert values returned from cothread, which
+                # are AugmentedValues, back into their Python native forms
+                rec_val = +rec_val
+
 
         record_value_asserts(
             creation_func,
@@ -397,13 +403,6 @@ def record_value_asserts(
         expected_type):
     """Asserts that the expected value and expected type are matched with
     the actual value. Handles both scalar and waveform data"""
-    from cothread.dbr import ca_float, ca_array, ca_str, ca_int
-    if type(actual_value) in (ca_float, ca_array, ca_str, ca_int):
-        # '+' is used to convert values returned from cothread, which are
-        # AugmentedValues, back into their Python native forms
-        actual_value = +actual_value
-
-
     if type(expected_value) == float and isnan(expected_value):
         assert isnan(actual_value)  # NaN != Nan, so needs special case
     elif creation_func in [builder.WaveformOut, builder.WaveformIn]:

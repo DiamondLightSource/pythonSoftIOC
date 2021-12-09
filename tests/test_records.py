@@ -325,146 +325,235 @@ def run_test_function(record_values, set_enum):
         process.terminate()
         process.join(timeout=3)
 
-@requires_cothread
-def test_value_post_init_set(record_values):
-    """Test that records provide the expected values on get calls when using
-    .set() before IOC initialisation and .get() after initialisation"""
-
-    run_test_function(record_values, SetValueEnum.SET_BEFORE_INIT)
-
-@requires_cothread
-def test_value_post_init_initial_value(record_values):
-    """Test that records provide the expected values on get calls when using
-    initial_value during record creation and .get() after IOC initialisation"""
-
-    run_test_function(record_values, SetValueEnum.INITIAL_VALUE)
-
-@requires_cothread
-def test_value_post_init_set_after_init(record_values):
-    """Test that records provide the expected values on get calls when using
-    .set() and .get() after IOC initialisation"""
-
-    run_test_function(record_values, SetValueEnum.SET_AFTER_INIT)
-
-@pytest.mark.parametrize("creation_func,expected_value,expected_type", [
-    (builder.aOut, None, type(None)),
-    (builder.aIn, 0.0, float),
-    (builder.longOut, None, type(None)),
-    (builder.longIn, 0, int),
-    (builder.boolOut, None, type(None)),
-    (builder.boolIn, 0, int),
-    (builder.stringOut, None, type(None)),
-    (builder.stringIn, "", str),
-    (builder.mbbOut, None, type(None)),
-    (builder.mbbIn, 0, int),
-    (builder.WaveformOut, None, type(None)),
-    (builder.WaveformIn, [], numpy.ndarray),
-])
-def test_value_default_pre_init(
+def record_value_asserts(
         creation_func,
+        actual_value,
         expected_value,
-        expected_type,
-        clear_records):
-    """Test that the correct default values are returned from .get() (before
-    record initialisation) when no initial_value or .set() is done"""
-
-    kwarg = {}
-    if creation_func in [builder.WaveformIn, builder.WaveformOut]:
-        kwarg = {"length": 50}  # Required when no value on creation
-
-    out_rec = creation_func("out-record", **kwarg)
-    record_value_asserts(
-        creation_func,
-        out_rec.get(),
-        expected_value,
-        expected_type)
+        expected_type):
+    """Asserts that the expected value and expected type are matched with
+    the actual value. Handles both scalar and waveform data"""
+    if type(expected_value) == float and isnan(expected_value):
+        assert isnan(actual_value)  # NaN != Nan, so needs special case
+    elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
+        assert numpy.array_equal(actual_value, expected_value), \
+            "Arrays not equal: {} {}".format(actual_value, expected_value)
+        assert type(actual_value) == expected_type
+    else:
+        assert actual_value == expected_value
+        assert type(actual_value) == expected_type
 
 
-@requires_cothread
-@pytest.mark.parametrize("creation_func,expected_value,expected_type", [
-    (builder.aOut, 0.0, float),
-    (builder.aIn, 0.0, float),
-    (builder.longOut, 0, int),
-    (builder.longIn, 0, int),
-    (builder.boolOut, 0, int),
-    (builder.boolIn, 0, int),
-    (builder.stringOut, "", str),
-    (builder.stringIn, "", str),
-    (builder.mbbOut, 0, int),
-    (builder.mbbIn, 0, int),
-    (builder.WaveformOut, [], numpy.ndarray),
-    (builder.WaveformIn, [], numpy.ndarray),
-])
-def test_value_default_post_init(creation_func, expected_value, expected_type):
-    """Test that records provide the expected default value after they are
-    initialised, having never had a value set"""
+def test_records(tmp_path):
+    path = str(tmp_path / "records.db")
+    builder.WriteRecords(path)
+    expected = os.path.join(os.path.dirname(__file__), "expected_records.db")
+    assert open(path).readlines()[5:] == open(expected).readlines()
 
-    # Add a dummy initial_value to the tuple, so we can use the same framework
-    # as the other tests
-    tmp = list((creation_func, expected_value, expected_type))
-    tmp.insert(1, None)
-    run_test_function(tuple(tmp), SetValueEnum.NO_VALUE)
+def test_enum_length_restriction():
+    with pytest.raises(AssertionError):
+        builder.mbbIn(
+                "ManyLabels", "one", "two", "three", "four", "five", "six",
+                "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
+                "fourteen", "fifteen", "sixteen", "seventeen")
+
+class TestGetValue:
+    """Tests that use .get() to check whether values applied with .set()
+    or initial_value return the expected value"""
+    def test_value_pre_init_set(
+            set,
+            clear_records,
+            record_values):
+        """Test that records provide the expected values on get calls when using
+        .set() and .get() before IOC initialisation occurs"""
+
+        creation_func, initial_value, expected_value, expected_type = \
+            record_values
+
+        kwarg = {}
+        if creation_func in [builder.WaveformIn, builder.WaveformOut]:
+            kwarg = {"length": 50}  # Required when no value on creation
+
+        out_rec = creation_func("out-record", **kwarg)
+        out_rec.set(initial_value)
+
+        record_value_asserts(
+            creation_func,
+            out_rec.get(),
+            expected_value,
+            expected_type)
 
 
-def test_value_none_rejected_initial_value(
-        clear_records,
-        record_funcs_reject_none):
-    """Test that setting \"None\" as the initial_value raises an exception"""
+    def test_value_pre_init_initial_value(
+            set,
+            clear_records,
+            record_values):
+        """Test that records provide the expected values on get calls when using
+        initial_value and .get() before IOC initialisation occurs"""
 
-    kwarg = {}
-    if record_funcs_reject_none in [builder.WaveformIn, builder.WaveformOut]:
-        kwarg = {"length": 50}  # Required when no value on creation
+        creation_func, initial_value, expected_value, expected_type = \
+            record_values
 
-    with pytest.raises((ValueError, TypeError)):
-        record_funcs_reject_none("SOME-NAME", initial_value=None, **kwarg)
+        out_rec = creation_func("out-record", initial_value=initial_value)
 
-def test_value_none_rejected_set_before_init(
-        clear_records,
-        record_funcs_reject_none):
-    """Test that setting \"None\" using .set() raises an exception"""
+        record_value_asserts(
+            creation_func,
+            out_rec.get(),
+            expected_value,
+            expected_type)
 
-    kwarg = {}
-    if record_funcs_reject_none in [builder.WaveformIn, builder.WaveformOut]:
-        kwarg = {"length": 50}  # Required when no value on creation
+    @requires_cothread
+    def test_value_post_init_set(set, record_values):
+        """Test that records provide the expected values on get calls when using
+        .set() before IOC initialisation and .get() after initialisation"""
 
-    with pytest.raises((ValueError, TypeError)):
-        record = record_funcs_reject_none("SOME-NAME", **kwarg)
-        record.set(None)
+        run_test_function(record_values, SetValueEnum.SET_BEFORE_INIT)
 
-def none_value_test_func(record_func, queue):
-    """Start the IOC and catch the expected exception"""
-    kwarg = {}
-    if record_func in [builder.WaveformIn, builder.WaveformOut]:
-        kwarg = {"length": 50}  # Required when no value on creation
+    @requires_cothread
+    def test_value_post_init_initial_value(set, record_values):
+        """Test that records provide the expected values on get calls when using
+        initial_value during record creation and .get() after IOC initialisation
+        """
 
-    record = record_func("SOME-NAME", **kwarg)
+        run_test_function(record_values, SetValueEnum.INITIAL_VALUE)
 
-    builder.LoadDatabase()
-    softioc.iocInit()
+    @requires_cothread
+    def test_value_post_init_set_after_init(set, record_values):
+        """Test that records provide the expected values on get calls when using
+        .set() and .get() after IOC initialisation"""
 
-    try:
-        record.set(None)
-    except Exception as e:
-        queue.put(e)
+        run_test_function(record_values, SetValueEnum.SET_AFTER_INIT)
 
-    queue.put(Exception("FAIL:Test did not raise exception during .set()"))
+class TestDefaultValue:
+    """Tests related to default values"""
 
-@requires_cothread
-def test_value_none_rejected_set_after_init(record_funcs_reject_none):
-    """Test that setting \"None\" using .set() after IOc init raises an
-    exception"""
-    queue = multiprocessing.Queue()
-    process = multiprocessing.Process(
-        target=none_value_test_func,
-        args=(record_funcs_reject_none, queue)
-    )
+    @pytest.mark.parametrize("creation_func,expected_value,expected_type", [
+        (builder.aOut, None, type(None)),
+        (builder.aIn, 0.0, float),
+        (builder.longOut, None, type(None)),
+        (builder.longIn, 0, int),
+        (builder.boolOut, None, type(None)),
+        (builder.boolIn, 0, int),
+        (builder.stringOut, None, type(None)),
+        (builder.stringIn, "", str),
+        (builder.mbbOut, None, type(None)),
+        (builder.mbbIn, 0, int),
+        (builder.WaveformOut, None, type(None)),
+        (builder.WaveformIn, [], numpy.ndarray),
+    ])
+    def test_value_default_pre_init(
+            self,
+            creation_func,
+            expected_value,
+            expected_type,
+            clear_records):
+        """Test that the correct default values are returned from .get() (before
+        record initialisation) when no initial_value or .set() is done"""
 
-    process.start()
+        kwarg = {}
+        if creation_func in [builder.WaveformIn, builder.WaveformOut]:
+            kwarg = {"length": 50}  # Required when no value on creation
 
-    try:
-        exception = queue.get(timeout=5)
+        out_rec = creation_func("out-record", **kwarg)
+        record_value_asserts(
+            creation_func,
+            out_rec.get(),
+            expected_value,
+            expected_type)
 
-        assert isinstance(exception, (ValueError, TypeError))
-    finally:
-        process.terminate()
-        process.join(timeout=3)
+    @requires_cothread
+    @pytest.mark.parametrize("creation_func,expected_value,expected_type", [
+        (builder.aOut, 0.0, float),
+        (builder.aIn, 0.0, float),
+        (builder.longOut, 0, int),
+        (builder.longIn, 0, int),
+        (builder.boolOut, 0, int),
+        (builder.boolIn, 0, int),
+        (builder.stringOut, "", str),
+        (builder.stringIn, "", str),
+        (builder.mbbOut, 0, int),
+        (builder.mbbIn, 0, int),
+        (builder.WaveformOut, [], numpy.ndarray),
+        (builder.WaveformIn, [], numpy.ndarray),
+    ])
+    def test_value_default_post_init(
+            self,
+            creation_func,
+            expected_value,
+            expected_type):
+        """Test that records provide the expected default value after they are
+        initialised, having never had a value set"""
+
+        # Add a dummy initial_value to the tuple, so we can use the same
+        # framework as the other tests
+        tmp = list((creation_func, expected_value, expected_type))
+        tmp.insert(1, None)
+        run_test_function(tuple(tmp), SetValueEnum.NO_VALUE)
+
+class TestNoneValue:
+    """Various tests regarding record value of None"""
+    def test_value_none_rejected_initial_value(
+            self,
+            clear_records,
+            record_funcs_reject_none):
+        """Test setting \"None\" as the initial_value raises an exception"""
+
+        kwarg = {}
+        if record_funcs_reject_none in \
+                [builder.WaveformIn, builder.WaveformOut]:
+            kwarg = {"length": 50}  # Required when no value on creation
+
+        with pytest.raises((ValueError, TypeError)):
+            record_funcs_reject_none("SOME-NAME", initial_value=None, **kwarg)
+
+    def test_value_none_rejected_set_before_init(
+            self,
+            clear_records,
+            record_funcs_reject_none):
+        """Test that setting \"None\" using .set() raises an exception"""
+
+        kwarg = {}
+        if record_funcs_reject_none in \
+                [builder.WaveformIn, builder.WaveformOut]:
+            kwarg = {"length": 50}  # Required when no value on creation
+
+        with pytest.raises((ValueError, TypeError)):
+            record = record_funcs_reject_none("SOME-NAME", **kwarg)
+            record.set(None)
+
+    def none_value_test_func(self, record_func, queue):
+        """Start the IOC and catch the expected exception"""
+        kwarg = {}
+        if record_func in [builder.WaveformIn, builder.WaveformOut]:
+            kwarg = {"length": 50}  # Required when no value on creation
+
+        record = record_func("SOME-NAME", **kwarg)
+
+        builder.LoadDatabase()
+        softioc.iocInit()
+
+        try:
+            record.set(None)
+        except Exception as e:
+            queue.put(e)
+
+        queue.put(Exception("FAIL:Test did not raise exception during .set()"))
+
+    @requires_cothread
+    def test_value_none_rejected_set_after_init(self, record_funcs_reject_none):
+        """Test that setting \"None\" using .set() after IOc init raises an
+        exception"""
+        queue = multiprocessing.Queue()
+        process = multiprocessing.Process(
+            target=self.none_value_test_func,
+            args=(record_funcs_reject_none, queue)
+        )
+
+        process.start()
+
+        try:
+            exception = queue.get(timeout=5)
+
+            assert isinstance(exception, (ValueError, TypeError))
+        finally:
+            process.terminate()
+            process.join(timeout=3)

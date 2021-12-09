@@ -274,7 +274,8 @@ class SetValueEnum(Enum):
     INITIAL_VALUE = 1
     SET_BEFORE_INIT = 2
     SET_AFTER_INIT = 3
-    NO_VALUE = 4
+    NO_SET = 4
+    CAPUT = 5
 
 class GetValueEnum(Enum):
     """Enum to control whether values are retrieved using .get() or caget()"""
@@ -327,7 +328,8 @@ def run_test_function(
         set_enum: SetValueEnum,
         get_enum: GetValueEnum):
     """Run the test function using multiprocessing and check returned value is
-    expected value"""
+    expected value. set_enum and get_enum determine when the record's value is
+    set and how the value is retrieved, respectively."""
 
     creation_func, initial_value, expected_value, expected_type = record_values
 
@@ -342,17 +344,40 @@ def run_test_function(
 
     ioc_process.start()
 
+    # Infer some required keywords from parameters
+    put_kwargs = {}
+    get_kwargs = {}
+    if creation_func in [builder.WaveformOut, builder.WaveformIn]:
+        from cothread.dbr import DBR_CHAR_STR
+        if type(initial_value) in [str, bytes]:
+            put_kwargs.update({"datatype": DBR_CHAR_STR})
+            get_kwargs.update({"count": len(initial_value) + 1})
+
+
     try:
+        from cothread.catools import caget, caput, _channel_cache
+
+        # cothread remembers connected IOCs. As we restart the same named
+        # IOC multiple times, we have to purge the cache else the
+        # result from caget/caput cache would be a DisconnectError during the
+        # second test
+        _channel_cache.purge()
+
+        if set_enum == SetValueEnum.CAPUT:
+            caput(
+                DEVICE_NAME + ":" + RECORD_NAME,
+                initial_value,
+                wait=True,
+                **put_kwargs)
+
         if get_enum == GetValueEnum.GET:
             rec_val = queue.get(timeout=TIMEOUT)
         else:
-            from cothread.catools import caget, _channel_cache
-            rec_val = caget(DEVICE_NAME + ":" + RECORD_NAME, timeout=TIMEOUT)
-            # cothread remembers connected IOCs. As we restart the same named
-            # IOC multiple times, we have to purge the cache else the
-            # result from caget cache would be a DisconnectError during the
-            # second test
-            _channel_cache.purge()
+            rec_val = caget(
+                DEVICE_NAME + ":" + RECORD_NAME,
+                timeout=TIMEOUT,
+                **get_kwargs)
+
 
         record_value_asserts(
             creation_func,
@@ -409,7 +434,7 @@ class TestGetValue:
     """Tests that use .get() to check whether values applied with .set()
     or initial_value return the expected value"""
     def test_value_pre_init_set(
-            set,
+            self,
             clear_records,
             record_values):
         """Test that records provide the expected values on get calls when using
@@ -433,7 +458,7 @@ class TestGetValue:
 
 
     def test_value_pre_init_initial_value(
-            set,
+            self,
             clear_records,
             record_values):
         """Test that records provide the expected values on get calls when using
@@ -451,7 +476,7 @@ class TestGetValue:
             expected_type)
 
     @requires_cothread
-    def test_value_post_init_set(set, record_values):
+    def test_value_post_init_set(self, record_values):
         """Test that records provide the expected values on get calls when using
         .set() before IOC initialisation and .get() after initialisation"""
 
@@ -461,7 +486,7 @@ class TestGetValue:
             GetValueEnum.GET)
 
     @requires_cothread
-    def test_value_post_init_initial_value(set, record_values):
+    def test_value_post_init_initial_value(self, record_values):
         """Test that records provide the expected values on get calls when using
         initial_value during record creation and .get() after IOC initialisation
         """
@@ -472,7 +497,7 @@ class TestGetValue:
             GetValueEnum.GET)
 
     @requires_cothread
-    def test_value_post_init_set_after_init(set, record_values):
+    def test_value_post_init_set_after_init(self, record_values):
         """Test that records provide the expected values on get calls when using
         .set() and .get() after IOC initialisation"""
 
@@ -481,6 +506,7 @@ class TestGetValue:
             SetValueEnum.SET_AFTER_INIT,
             GetValueEnum.GET)
 
+@requires_cothread
 class TestCagetValue:
     """Tests that use Caget to check whether values applied with .set()
     or initial_value return the expected value"""
@@ -506,6 +532,42 @@ class TestCagetValue:
         run_test_function(
             record_values,
             SetValueEnum.SET_BEFORE_INIT,
+            GetValueEnum.CAGET)
+
+    @requires_cothread
+    def test_value_post_init_initial_value(self, record_values):
+        """Test that records provide the expected values on get calls when using
+        initial_value during record creation and caget after IOC initialisation
+        """
+
+        run_test_function(
+            record_values,
+            SetValueEnum.INITIAL_VALUE,
+            GetValueEnum.GET)
+
+    @requires_cothread
+    def test_value_post_init_set_after_init(self, record_values):
+        """Test that records provide the expected values on get calls when using
+        .set() and caget after IOC initialisation"""
+
+        run_test_function(
+            record_values,
+            SetValueEnum.SET_AFTER_INIT,
+            GetValueEnum.GET)
+
+    def test_value_post_init_caput(self, record_values):
+        """Test that records provide the expected values on get calls when using
+        .set() before IOC initialisation and caget after initialisation"""
+
+        if (
+            record_values[0] in [builder.stringIn, builder.stringOut]
+            and len(record_values[1]) > 40
+        ):
+            pytest.skip("CAPut blocks strings > 40 characters.")
+
+        run_test_function(
+            record_values,
+            SetValueEnum.CAPUT,
             GetValueEnum.CAGET)
 
 
@@ -573,7 +635,7 @@ class TestDefaultValue:
         # framework as the other tests
         tmp = list((creation_func, expected_value, expected_type))
         tmp.insert(1, None)
-        run_test_function(tuple(tmp), SetValueEnum.NO_VALUE, GetValueEnum.GET)
+        run_test_function(tuple(tmp), SetValueEnum.NO_SET, GetValueEnum.GET)
 
 class TestNoneValue:
     """Various tests regarding record value of None"""

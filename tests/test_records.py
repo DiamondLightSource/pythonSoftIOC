@@ -5,6 +5,7 @@ import pytest
 import sys
 
 from enum import Enum
+from math import isnan, inf, nan
 
 from softioc import builder, softioc
 from epicsdbbuilder import ResetRecords
@@ -74,6 +75,12 @@ def record_values_names(fixture_value):
         (builder.aIn, 5.5, 5.5, float),
         (builder.aOut, 3, 3., float),
         (builder.aIn, 3, 3., float),
+        (builder.aOut, inf, inf, float),
+        (builder.aIn, inf, inf, float),
+        (builder.aOut, -inf, -inf, float),
+        (builder.aIn, -inf, -inf, float),
+        (builder.aOut, nan, nan, float),
+        (builder.aIn, nan, nan, float),
         (builder.longOut, 5, 5, int),
         (builder.longIn, 5, 5, int),
         (builder.longOut, 9.9, 9, int),
@@ -212,8 +219,9 @@ def record_value_asserts(
         expected_type):
     """Asserts that the expected value and expected type are matched with
     the actual value. Handles both scalar and waveform data"""
-
-    if creation_func in [builder.WaveformOut, builder.WaveformIn]:
+    if type(expected_value) == float and isnan(expected_value):
+        assert isnan(actual_value)  # NaN != Nan, so needs special case
+    elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
         assert numpy.array_equal(actual_value, expected_value), \
             "Arrays not equal: {} {}".format(actual_value, expected_value)
         assert type(actual_value) == expected_type

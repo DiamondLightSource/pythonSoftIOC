@@ -378,11 +378,7 @@ def run_test_function(
                 timeout=TIMEOUT,
                 **get_kwargs)
 
-            from cothread.dbr import ca_float, ca_array, ca_str, ca_int
-            if type(rec_val) in (ca_float, ca_array, ca_str, ca_int):
-                # '+' is used to convert values returned from cothread, which
-                # are AugmentedValues, back into their Python native forms
-                rec_val = +rec_val
+            rec_val = +rec_val
 
 
         record_value_asserts(

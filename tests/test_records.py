@@ -3,14 +3,16 @@ import numpy
 import os
 import pytest
 import sys
+import asyncio
 
 from enum import Enum
 from math import isnan, inf, nan
 
-from softioc import builder, softioc
-from epicsdbbuilder import ResetRecords
+# Must import softioc before epicsdbbuilder
 from softioc.device_core import RecordLookup
-import sim_records
+from softioc import asyncio_dispatcher, builder, softioc
+
+from epicsdbbuilder import ResetRecords
 
 requires_cothread = pytest.mark.skipif(
     sys.platform.startswith("win"),
@@ -68,7 +70,7 @@ def record_funcs_reject_none(record_funcs):
 def record_values_names(fixture_value):
     """Provide a nice name for the tests in the record_values fixture"""
     return fixture_value[0].__name__ + "-" + type(fixture_value[1]).__name__ \
-        + "-" + fixture_value[3].__name__
+        + "-" + str(fixture_value[1])
 
 @pytest.fixture(params=[
         (builder.aOut, 5.5, 5.5, float),
@@ -274,7 +276,19 @@ class SetValueEnum(Enum):
     SET_AFTER_INIT = 3
     NO_VALUE = 4
 
-def value_test_function(creation_func, initial_value, queue, set_enum):
+class GetValueEnum(Enum):
+    """Enum to control whether values are retrieved using .get() or caget()"""
+    GET = 1
+    CAGET = 2
+
+
+DEVICE_NAME = "SOFT-IOC-TESTS"
+RECORD_NAME = "OUT-RECORD"
+TIMEOUT = 3
+
+def run_ioc(creation_func, initial_value, queue, set_enum):
+    """Creates a record and starts the IOC. `initial_value` will be set on
+    the record at different times based on the `set_enum` parameter."""
     kwarg = {}
 
     if set_enum == SetValueEnum.INITIAL_VALUE:
@@ -285,36 +299,60 @@ def value_test_function(creation_func, initial_value, queue, set_enum):
         # https://github.com/dls-controls/pythonSoftIOC/issues/37
 
 
-    out_rec = creation_func("out-record", **kwarg)
+    builder.SetDeviceName(DEVICE_NAME)
+    out_rec = creation_func(RECORD_NAME, **kwarg)
 
     if set_enum == SetValueEnum.SET_BEFORE_INIT:
         out_rec.set(initial_value)
 
+    dispatcher = asyncio_dispatcher.AsyncioDispatcher()
     builder.LoadDatabase()
-    softioc.iocInit()
+    softioc.iocInit(dispatcher)
 
     if set_enum == SetValueEnum.SET_AFTER_INIT:
         out_rec.set(initial_value)
 
-    queue.put(out_rec.get())
+    if queue is not None:
+        queue.put(out_rec.get())
+    else:
+        # Keep process alive while main thread works.
+        asyncio.run_coroutine_threadsafe(
+            asyncio.sleep(TIMEOUT),
+            dispatcher.loop
+        ).result()
 
 
-def run_test_function(record_values, set_enum):
+def run_test_function(
+        record_values,
+        set_enum: SetValueEnum,
+        get_enum: GetValueEnum):
     """Run the test function using multiprocessing and check returned value is
     expected value"""
 
     creation_func, initial_value, expected_value, expected_type = record_values
 
-    queue = multiprocessing.Queue()
-    process = multiprocessing.Process(
-        target=value_test_function,
+    queue = None
+    if get_enum == GetValueEnum.GET:
+        queue = multiprocessing.Queue()
+
+    ioc_process = multiprocessing.Process(
+        target=run_ioc,
         args=(creation_func, initial_value, queue, set_enum)
     )
 
-    process.start()
+    ioc_process.start()
 
     try:
-        rec_val = queue.get(timeout=5)
+        if get_enum == GetValueEnum.GET:
+            rec_val = queue.get(timeout=TIMEOUT)
+        else:
+            from cothread.catools import caget, _channel_cache
+            rec_val = caget(DEVICE_NAME + ":" + RECORD_NAME, timeout=TIMEOUT)
+            # cothread remembers connected IOCs. As we restart the same named
+            # IOC multiple times, we have to purge the cache else the
+            # result from caget cache would be a DisconnectError during the
+            # second test
+            _channel_cache.purge()
 
         record_value_asserts(
             creation_func,
@@ -322,8 +360,10 @@ def run_test_function(record_values, set_enum):
             expected_value,
             expected_type)
     finally:
-        process.terminate()
-        process.join(timeout=3)
+        ioc_process.terminate()
+        ioc_process.join(timeout=TIMEOUT)
+        if ioc_process.exitcode is None:
+            pytest.fail("Process did not terminate")
 
 def record_value_asserts(
         creation_func,
@@ -332,6 +372,13 @@ def record_value_asserts(
         expected_type):
     """Asserts that the expected value and expected type are matched with
     the actual value. Handles both scalar and waveform data"""
+    from cothread.dbr import ca_float, ca_array, ca_str, ca_int
+    if type(actual_value) in (ca_float, ca_array, ca_str, ca_int):
+        # '+' is used to convert values returned from cothread, which are
+        # AugmentedValues, back into their Python native forms
+        actual_value = +actual_value
+
+
     if type(expected_value) == float and isnan(expected_value):
         assert isnan(actual_value)  # NaN != Nan, so needs special case
     elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
@@ -344,6 +391,8 @@ def record_value_asserts(
 
 
 def test_records(tmp_path):
+    import sim_records
+
     path = str(tmp_path / "records.db")
     builder.WriteRecords(path)
     expected = os.path.join(os.path.dirname(__file__), "expected_records.db")
@@ -406,7 +455,10 @@ class TestGetValue:
         """Test that records provide the expected values on get calls when using
         .set() before IOC initialisation and .get() after initialisation"""
 
-        run_test_function(record_values, SetValueEnum.SET_BEFORE_INIT)
+        run_test_function(
+            record_values,
+            SetValueEnum.SET_BEFORE_INIT,
+            GetValueEnum.GET)
 
     @requires_cothread
     def test_value_post_init_initial_value(set, record_values):
@@ -414,14 +466,48 @@ class TestGetValue:
         initial_value during record creation and .get() after IOC initialisation
         """
 
-        run_test_function(record_values, SetValueEnum.INITIAL_VALUE)
+        run_test_function(
+            record_values,
+            SetValueEnum.INITIAL_VALUE,
+            GetValueEnum.GET)
 
     @requires_cothread
     def test_value_post_init_set_after_init(set, record_values):
         """Test that records provide the expected values on get calls when using
         .set() and .get() after IOC initialisation"""
 
-        run_test_function(record_values, SetValueEnum.SET_AFTER_INIT)
+        run_test_function(
+            record_values,
+            SetValueEnum.SET_AFTER_INIT,
+            GetValueEnum.GET)
+
+class TestCagetValue:
+    """Tests that use Caget to check whether values applied with .set()
+    or initial_value return the expected value"""
+
+    def set_xfail(self, record_values):
+        """Set xfail where appropraite for pythonSoftIOC issues"""
+        if record_values[0] in (
+                builder.aIn,
+                builder.longIn,
+                builder.boolIn,
+                builder.stringIn,
+                builder.mbbIn,
+                builder.WaveformIn):
+            pytest.xfail(".set() on In records doesn't update correctly. "
+                         "pythonSoftIOC issue #67")
+
+    def test_value_post_init_set(self, record_values):
+        """Test that records provide the expected values on get calls when using
+        .set() before IOC initialisation and caget after initialisation"""
+
+        self.set_xfail(record_values)
+
+        run_test_function(
+            record_values,
+            SetValueEnum.SET_BEFORE_INIT,
+            GetValueEnum.CAGET)
+
 
 class TestDefaultValue:
     """Tests related to default values"""
@@ -487,7 +573,7 @@ class TestDefaultValue:
         # framework as the other tests
         tmp = list((creation_func, expected_value, expected_type))
         tmp.insert(1, None)
-        run_test_function(tuple(tmp), SetValueEnum.NO_VALUE)
+        run_test_function(tuple(tmp), SetValueEnum.NO_VALUE, GetValueEnum.GET)
 
 class TestNoneValue:
     """Various tests regarding record value of None"""

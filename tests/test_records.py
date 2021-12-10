@@ -20,6 +20,12 @@ requires_cothread = pytest.mark.skipif(
 )
 
 
+# Test parameters
+DEVICE_NAME = "SOFT-IOC-TESTS"
+RECORD_NAME = "OUT-RECORD"
+TIMEOUT = 5  # Seconds
+
+
 def _clear_records():
     # Remove any records created at epicsdbbuilder layer
     ResetRecords()
@@ -282,10 +288,6 @@ class GetValueEnum(Enum):
     GET = 1
     CAGET = 2
 
-
-DEVICE_NAME = "SOFT-IOC-TESTS"
-RECORD_NAME = "OUT-RECORD"
-TIMEOUT = 3
 
 def run_ioc(creation_func, initial_value, queue, set_enum):
     """Creates a record and starts the IOC. `initial_value` will be set on

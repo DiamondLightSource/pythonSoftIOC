@@ -321,12 +321,16 @@ def run_ioc(creation_func, initial_value, queue, set_enum):
 
     if queue is not None:
         queue.put(out_rec.get())
-    else:
-        # Keep process alive while main thread works.
-        asyncio.run_coroutine_threadsafe(
-            asyncio.sleep(TIMEOUT),
-            dispatcher.loop
-        ).result()
+        # Some tests need to do a caput and then cause another .get() to happen
+        val = queue.get(timeout=TIMEOUT)
+        if val:
+            queue.put(out_rec.get())
+
+    # Keep process alive while main thread works.
+    asyncio.run_coroutine_threadsafe(
+        asyncio.sleep(TIMEOUT),
+        dispatcher.loop
+    ).result()
 
 
 def run_test_function(
@@ -371,11 +375,16 @@ def run_test_function(
         _channel_cache.purge()
 
         if set_enum == SetValueEnum.CAPUT:
+            if queue:
+                queue.get(timeout=TIMEOUT)
             caput(
                 DEVICE_NAME + ":" + RECORD_NAME,
                 initial_value,
                 wait=True,
                 **put_kwargs)
+
+            if queue:
+                queue.put("Do another get!")
             # Ensure IOC process has time to execute.
             # I saw failures on MacOS where it appeared the IOC had not
             # processed the put'ted value as the caget returned the same value
@@ -400,6 +409,9 @@ def run_test_function(
             expected_value,
             expected_type)
     finally:
+        # Purge cache to suppress spurious "IOC disconnected" exceptions
+        _channel_cache.purge()
+
         ioc_process.terminate()
         ioc_process.join(timeout=TIMEOUT)
         if ioc_process.exitcode is None:
@@ -415,13 +427,30 @@ def record_value_asserts(
     if type(expected_value) == float and isnan(expected_value):
         assert isnan(actual_value)  # NaN != Nan, so needs special case
     elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
-        assert numpy.array_equal(actual_value, expected_value), \
+
+        # Special case for lack of default value on Out records before init
+        if actual_value is None and expected_value is None:
+            assert type(actual_value) == expected_type
+            return
+
+        # Using .get() on the array returns entire length, not just filled part.
+        # Confirm this by ensuring sliced part of array is all zeros
+        assert not numpy.any(actual_value[expected_value.size:])
+        truncated_value = actual_value[:expected_value.size]
+        assert numpy.array_equal(truncated_value, expected_value), \
             "Arrays not equal: {} {}".format(actual_value, expected_value)
         assert type(actual_value) == expected_type
     else:
         assert actual_value == expected_value
         assert type(actual_value) == expected_type
 
+
+def skip_long_strings(record_values):
+    if (
+        record_values[0] in [builder.stringIn, builder.stringOut]
+        and len(record_values[1]) > 40
+    ):
+        pytest.skip("CAPut blocks strings > 40 characters.")
 
 def test_records(tmp_path):
     import sim_records
@@ -514,6 +543,27 @@ class TestGetValue:
             SetValueEnum.SET_AFTER_INIT,
             GetValueEnum.GET)
 
+    @requires_cothread
+    def test_value_post_init_caput(self, record_values):
+        """Test that records provide the expected values on get calls when using
+        caput and .get() after IOC initialisation"""
+
+        if record_values[0] in [
+                builder.aIn,
+                builder.boolIn,
+                builder.longIn,
+                builder.mbbIn,
+                builder.stringIn,
+                builder.WaveformIn]:
+            pytest.skip("CAPut to In records doesn't propogate to .get()")
+
+        skip_long_strings(record_values)
+
+        run_test_function(
+            record_values,
+            SetValueEnum.CAPUT,
+            GetValueEnum.GET)
+
 @requires_cothread
 class TestCagetValue:
     """Tests that use Caget to check whether values applied with .set()
@@ -551,7 +601,7 @@ class TestCagetValue:
         run_test_function(
             record_values,
             SetValueEnum.INITIAL_VALUE,
-            GetValueEnum.GET)
+            GetValueEnum.CAGET)
 
     @requires_cothread
     def test_value_post_init_set_after_init(self, record_values):
@@ -561,17 +611,13 @@ class TestCagetValue:
         run_test_function(
             record_values,
             SetValueEnum.SET_AFTER_INIT,
-            GetValueEnum.GET)
+            GetValueEnum.CAGET)
 
     def test_value_post_init_caput(self, record_values):
         """Test that records provide the expected values on get calls when using
         .set() before IOC initialisation and caget after initialisation"""
 
-        if (
-            record_values[0] in [builder.stringIn, builder.stringOut]
-            and len(record_values[1]) > 40
-        ):
-            pytest.skip("CAPut blocks strings > 40 characters.")
+        skip_long_strings(record_values)
 
         run_test_function(
             record_values,
@@ -594,7 +640,7 @@ class TestDefaultValue:
         (builder.mbbOut, None, type(None)),
         (builder.mbbIn, 0, int),
         (builder.WaveformOut, None, type(None)),
-        (builder.WaveformIn, [], numpy.ndarray),
+        (builder.WaveformIn, numpy.empty(0), numpy.ndarray),
     ])
     def test_value_default_pre_init(
             self,
@@ -604,6 +650,7 @@ class TestDefaultValue:
             clear_records):
         """Test that the correct default values are returned from .get() (before
         record initialisation) when no initial_value or .set() is done"""
+        # Out records do not have default values until records are initialized
 
         kwarg = {}
         if creation_func in [builder.WaveformIn, builder.WaveformOut]:
@@ -628,8 +675,8 @@ class TestDefaultValue:
         (builder.stringIn, "", str),
         (builder.mbbOut, 0, int),
         (builder.mbbIn, 0, int),
-        (builder.WaveformOut, [], numpy.ndarray),
-        (builder.WaveformIn, [], numpy.ndarray),
+        (builder.WaveformOut, numpy.empty(0), numpy.ndarray),
+        (builder.WaveformIn, numpy.empty(0), numpy.ndarray),
     ])
     def test_value_default_post_init(
             self,

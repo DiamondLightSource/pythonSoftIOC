@@ -23,7 +23,11 @@ requires_cothread = pytest.mark.skipif(
 # Test parameters
 DEVICE_NAME = "SOFT-IOC-TESTS"
 RECORD_NAME = "OUT-RECORD"
-TIMEOUT = 5  # Seconds
+TIMEOUT = 10  # Seconds
+# Value is so large to accomodate very slow GitHub MacOS CI runners.
+# Most platforms only need a timeout of 3 to 5 seconds.
+# Not a particular problem on faster platforms - this is never used as a sleep
+# so tests will still run fast on platforms that can handle it.
 
 
 def _clear_records():

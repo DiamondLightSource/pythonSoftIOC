@@ -357,6 +357,7 @@ def run_test_function(
 
 
     try:
+        from cothread import Yield
         from cothread.catools import caget, caput, _channel_cache
 
         # cothread remembers connected IOCs. As we restart the same named
@@ -371,6 +372,11 @@ def run_test_function(
                 initial_value,
                 wait=True,
                 **put_kwargs)
+            # Ensure IOC process has time to execute.
+            # I saw failures on MacOS where it appeared the IOC had not
+            # processed the put'ted value as the caget returned the same value
+            # as was originally passed in.
+            Yield(timeout=TIMEOUT)
 
         if get_enum == GetValueEnum.GET:
             rec_val = queue.get(timeout=TIMEOUT)
@@ -379,7 +385,8 @@ def run_test_function(
                 DEVICE_NAME + ":" + RECORD_NAME,
                 timeout=TIMEOUT,
                 **get_kwargs)
-
+            # '+' operator used to convert cothread's types into Python native
+            # types e.g. "+ca_int" -> int
             rec_val = +rec_val
 
 

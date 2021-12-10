@@ -174,9 +174,9 @@ def record_values(request):
 
     Fields are:
     - Record builder function
-    - Input value passed to .set() or used in initial_value on record creation
-    - Expected output value after doing .get()
-    - Expected type of the output value from .get()"""
+    - Input value passed to .set()/initial_value/caput
+    - Expected output value after doing .get()/caget
+    - Expected type of the output value from .get()/caget"""
     return request.param  # One item from the params list
 
 def test_records(tmp_path):
@@ -624,6 +624,9 @@ class TestCagetValue:
             SetValueEnum.CAPUT,
             GetValueEnum.CAGET)
 
+def default_values_names(fixture_value):
+    """Provide nice name for default_values fixture"""
+    return fixture_value[0].__name__
 
 class TestDefaultValue:
     """Tests related to default values"""
@@ -663,34 +666,50 @@ class TestDefaultValue:
             expected_value,
             expected_type)
 
-    @requires_cothread
-    @pytest.mark.parametrize("creation_func,expected_value,expected_type", [
-        (builder.aOut, 0.0, float),
-        (builder.aIn, 0.0, float),
-        (builder.longOut, 0, int),
-        (builder.longIn, 0, int),
-        (builder.boolOut, 0, int),
-        (builder.boolIn, 0, int),
-        (builder.stringOut, "", str),
-        (builder.stringIn, "", str),
-        (builder.mbbOut, 0, int),
-        (builder.mbbIn, 0, int),
-        (builder.WaveformOut, numpy.empty(0), numpy.ndarray),
-        (builder.WaveformIn, numpy.empty(0), numpy.ndarray),
-    ])
-    def test_value_default_post_init(
-            self,
-            creation_func,
-            expected_value,
-            expected_type):
-        """Test that records provide the expected default value after they are
-        initialised, having never had a value set"""
 
-        # Add a dummy initial_value to the tuple, so we can use the same
-        # framework as the other tests
-        tmp = list((creation_func, expected_value, expected_type))
-        tmp.insert(1, None)
-        run_test_function(tuple(tmp), SetValueEnum.NO_SET, GetValueEnum.GET)
+
+    @pytest.fixture(params= [
+        (builder.aOut, None, 0.0, float),
+        (builder.aIn, None, 0.0, float),
+        (builder.longOut, None, 0, int),
+        (builder.longIn, None, 0, int),
+        (builder.boolOut, None, 0, int),
+        (builder.boolIn, None, 0, int),
+        (builder.stringOut, None, "", str),
+        (builder.stringIn, None, "", str),
+        (builder.mbbOut, None, 0, int),
+        (builder.mbbIn, None, 0, int),
+        (builder.WaveformOut, None, numpy.empty(0), numpy.ndarray),
+        (builder.WaveformIn, None, numpy.empty(0), numpy.ndarray),
+    ], ids=default_values_names)
+    def default_values(self, request):
+        """Fixture for default values for initialised records.
+
+         Fields are:
+        - Record builder function
+        - (UNUSED) fake initial value, so parameters are same as other fixtures
+        - Input value passed to .set()/initial_value/caput
+        - Expected output value after doing .get()/caget
+        - Expected type of the output value from .get()/caget"""
+        return request.param
+
+
+    @requires_cothread
+    def test_value_default_post_init(self, default_values):
+        """Test that records return the expected default value from .get after
+        they are initialised, having never had a value set"""
+
+        run_test_function(default_values, SetValueEnum.NO_SET, GetValueEnum.GET)
+
+    @requires_cothread
+    def test_value_default_post_init_caget(self, default_values):
+        """Test that records return the expected default value from CAGet after
+        they are initialised, having never had a value set"""
+
+        run_test_function(
+            default_values,
+            SetValueEnum.NO_SET,
+            GetValueEnum.CAGET)
 
 class TestNoneValue:
     """Various tests regarding record value of None"""
@@ -743,7 +762,7 @@ class TestNoneValue:
 
     @requires_cothread
     def test_value_none_rejected_set_after_init(self, record_funcs_reject_none):
-        """Test that setting \"None\" using .set() after IOc init raises an
+        """Test that setting \"None\" using .set() after IOC init raises an
         exception"""
         queue = multiprocessing.Queue()
         process = multiprocessing.Process(

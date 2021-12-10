@@ -98,7 +98,7 @@ class _Record(object):
         if field == 'TIME':
             return self.__get_time(address)
         elif field_type == DBF_STRING:
-            return string_at(cast(address, c_char_p)).decode()
+            return string_at(cast(address, c_char_p)).decode(errors="replace")
         elif field_type in [DBF_INLINK, DBF_OUTLINK]:
             return cast(address, POINTER(c_char_p))[0].decode()
         else:

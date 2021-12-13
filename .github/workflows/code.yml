@@ -60,14 +60,14 @@ jobs:
           python-version: "3.7"
 
       - name: Install Python Dependencies
-        run: pip install build
+        run: pip install build cibuildwheel
 
       - name: Build Sdist
         if: matrix.sdist
         run: python -m build --sdist .
 
       - name: Build Wheel
-        uses: pypa/cibuildwheel@v2.3.0
+        run: cibuildwheel --output-dir dist
         env:
           CIBW_BUILD: ${{ matrix.python }}*64
           CIBW_TEST_EXTRAS: dev
@@ -83,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dist
-          path: ./wheelhouse/*.whl
+          path: dist/softioc*
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2

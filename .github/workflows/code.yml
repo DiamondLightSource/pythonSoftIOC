@@ -54,6 +54,9 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Print Tree
+        run: tree /F
+
       - name: Install Python
         uses: actions/setup-python@v2
         with:

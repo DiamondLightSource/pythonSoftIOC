@@ -83,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dist
-          path: dist/softioc*
+          path: ./wheelhouse/*.whl
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2

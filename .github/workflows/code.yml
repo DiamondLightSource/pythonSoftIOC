@@ -79,8 +79,8 @@ jobs:
           CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux1_x86_64
           CIBW_SKIP: "*-musllinux*" # epicscorelibs doesn't build on musllinux platforms
           # Some debugging variables to work out why subfolder not on Windows
-          CIBW_BEFORE_ALL_WINDOWS: tree /F
-          CIBW_BEFORE_ALL_LINUX: tree
+          CIBW_BEFORE_ALL_WINDOWS: tree /F > dist/tree.txt
+          CIBW_BEFORE_ALL_LINUX: ls pythonSoftIoc/softioc > dist/tree.txt
 
       - name: Upload Wheel and Sdist
         uses: actions/upload-artifact@v2

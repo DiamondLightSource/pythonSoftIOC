@@ -59,6 +59,9 @@ jobs:
         with:
           python-version: "3.7"
 
+      - name: Install Python Dependencies
+        run: pip install build
+
       - name: Build Sdist
         if: matrix.sdist
         run: python -m build --sdist .

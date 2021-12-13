@@ -60,7 +60,7 @@ jobs:
           python-version: "3.7"
 
       - name: Install Python Dependencies
-        run: pip install build cibuildwheel==1.* # The 2.* releases dropped Python2 support.
+        run: pip install build cibuildwheel
 
       - name: Build Sdist
         if: matrix.sdist

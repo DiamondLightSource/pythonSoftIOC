@@ -293,7 +293,7 @@ class GetValueEnum(Enum):
     CAGET = 2
 
 
-def run_ioc(creation_func, initial_value, queue, set_enum):
+def run_ioc(creation_func, initial_value, conn, set_enum, get_enum):
     """Creates a record and starts the IOC. `initial_value` will be set on
     the record at different times based on the `set_enum` parameter."""
     kwarg = {}
@@ -316,15 +316,21 @@ def run_ioc(creation_func, initial_value, queue, set_enum):
     builder.LoadDatabase()
     softioc.iocInit(dispatcher)
 
+    conn.send("IOC started")
+
     if set_enum == SetValueEnum.SET_AFTER_INIT:
         out_rec.set(initial_value)
 
-    if queue is not None:
-        queue.put(out_rec.get())
+    if get_enum == GetValueEnum.GET:
+        conn.send(out_rec.get())
         # Some tests need to do a caput and then cause another .get() to happen
-        val = queue.get(timeout=TIMEOUT)
-        if val:
-            queue.put(out_rec.get())
+        if set_enum == SetValueEnum.CAPUT:
+            if conn.poll(TIMEOUT):
+                val = conn.recv()
+                if val is not None:
+                    conn.send(out_rec.get())
+
+    conn.close()
 
     # Keep process alive while main thread works.
     asyncio.run_coroutine_threadsafe(
@@ -343,16 +349,20 @@ def run_test_function(
 
     creation_func, initial_value, expected_value, expected_type = record_values
 
-    queue = None
-    if get_enum == GetValueEnum.GET:
-        queue = multiprocessing.Queue()
+    parent_conn, child_conn = multiprocessing.Pipe()
 
     ioc_process = multiprocessing.Process(
         target=run_ioc,
-        args=(creation_func, initial_value, queue, set_enum)
+        args=(creation_func, initial_value, child_conn, set_enum, get_enum)
     )
 
     ioc_process.start()
+
+    # Wait for message that IOC has started
+    if parent_conn.poll(TIMEOUT):
+        parent_conn.recv()
+    else:
+        pytest.fail("IOC process did not start before TIMEOUT expired")
 
     # Infer some required keywords from parameters
     put_kwargs = {}
@@ -375,16 +385,19 @@ def run_test_function(
         _channel_cache.purge()
 
         if set_enum == SetValueEnum.CAPUT:
-            if queue:
-                queue.get(timeout=TIMEOUT)
+            if get_enum == GetValueEnum.GET:
+                if parent_conn.poll(TIMEOUT):
+                    parent_conn.recv()
+                else:
+                    pytest.fail("IOC did not provide initial record value")
             caput(
                 DEVICE_NAME + ":" + RECORD_NAME,
                 initial_value,
                 wait=True,
                 **put_kwargs)
 
-            if queue:
-                queue.put("Do another get!")
+            if get_enum == GetValueEnum.GET:
+                parent_conn.send("Do another get!")
             # Ensure IOC process has time to execute.
             # I saw failures on MacOS where it appeared the IOC had not
             # processed the put'ted value as the caget returned the same value
@@ -392,7 +405,10 @@ def run_test_function(
             Yield(timeout=TIMEOUT)
 
         if get_enum == GetValueEnum.GET:
-            rec_val = queue.get(timeout=TIMEOUT)
+            if parent_conn.poll(TIMEOUT):
+                rec_val = parent_conn.recv()
+            else:
+                pytest.fail("IOC did not provide record value in queue")
         else:
             rec_val = caget(
                 DEVICE_NAME + ":" + RECORD_NAME,

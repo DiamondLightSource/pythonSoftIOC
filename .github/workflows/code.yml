@@ -107,7 +107,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: Unit Test Results (${{ matrix.os }}/${{ matrix.python }})
+          name: Unit Test Results (${{ matrix.os }}-${{ matrix.python }})
           path: dist/pytest-results.xml
 
   publish-test-results:

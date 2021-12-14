@@ -45,6 +45,7 @@ coverage.xml
 *.mypy_cache
 *.pytest_cache
 cov.xml
+pytest-results.xml
 
 # DLS build dir and virtual environment
 /prefix/

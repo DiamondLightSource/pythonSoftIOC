@@ -18,12 +18,13 @@ PythonDevice = pythonSoftIoc.PythonDevice()
 
 
 def _in_record(record, name, **fields):
-    '''For input records we provide some automatic extra features: scanning
-    and initialisation as appropriate.'''
+    '''For input records we provide some automatic extra features: scanning,
+    initialisation as appropriate, and blocking puts from outside the IOC.'''
 
     fields.setdefault('SCAN', 'I/O Intr')
     if 'initial_value' in fields:
         fields.setdefault('PINI', 'YES')
+    fields.setdefault('DISP', 1)
     return getattr(PythonDevice, record)(name, **fields)
 
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>softioc.builder &mdash; pythonSoftIOC 3.2.1+1.g5034531 documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 3.2.1+5.g3866562 documentation</title>
   
 
   
@@ -241,12 +241,13 @@
 
 
 <span class="k">def</span> <span class="nf">_in_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;For input records we provide some automatic extra features: scanning</span>
-<span class="sd">    and initialisation as appropriate.&#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39;For input records we provide some automatic extra features: scanning,</span>
+<span class="sd">    initialisation as appropriate, and blocking puts from outside the IOC.&#39;&#39;&#39;</span>
 
     <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SCAN&#39;</span><span class="p">,</span> <span class="s1">&#39;I/O Intr&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;initial_value&#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
         <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;PINI&#39;</span><span class="p">,</span> <span class="s1">&#39;YES&#39;</span><span class="p">)</span>
+    <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;DISP&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">PythonDevice</span><span class="p">,</span> <span class="n">record</span><span class="p">)(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span>
 
 

@@ -60,7 +60,8 @@ jobs:
           python-version: "3.7"
 
       - name: Install Python Dependencies
-        run: pip install build cibuildwheel
+        # Pin cibuildwheel due to https://github.com/pypa/cibuildwheel/issues/962
+        run: pip install build cibuildwheel==2.2.2
 
       - name: Build Sdist
         if: matrix.sdist

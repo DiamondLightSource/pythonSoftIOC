@@ -54,8 +54,8 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: Print Tree
-        run: tree /F
+      - name: Print softioc dir
+        run: dir softioc
 
       - name: Install Python
         uses: actions/setup-python@v2
@@ -63,7 +63,7 @@ jobs:
           python-version: "3.7"
 
       - name: Install Python Dependencies
-        run: pip install build cibuildwheel==1.* # The 2.* releases dropped Python2 support.
+        run: pip install build cibuildwheel
 
       - name: Build Sdist
         if: matrix.sdist
@@ -82,9 +82,7 @@ jobs:
           CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux1_x86_64
           CIBW_SKIP: "*-musllinux*" # epicscorelibs doesn't build on musllinux platforms
           # Some debugging variables to work out why subfolder not on Windows
-          CIBW_BEFORE_ALL_WINDOWS: tree /F
-          CIBW_BEFORE_ALL_LINUX: ls
-          CIBW_BUILD_VERBOSITY: 3
+          CIBW_BEFORE_ALL_WINDOWS: dir softioc
 
       - name: Upload Wheel and Sdist
         uses: actions/upload-artifact@v2

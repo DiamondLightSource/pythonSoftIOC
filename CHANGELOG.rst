@@ -12,6 +12,7 @@ Unreleased_
 Changed:
 
 - `Remove python2 support <../../pull/64>`
+- `Default DISP to TRUE for all In records <../../pull/74>`
 
 3.2.1_ - 2021-11-25
 -------------------

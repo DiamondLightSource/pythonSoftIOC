@@ -19,18 +19,13 @@ from epicsdbbuilder import ResetRecords
 from softioc.pythonSoftIoc import RecordWrapper
 
 requires_cothread = pytest.mark.skipif(
-    sys.platform.startswith("win"),
-    reason="Cothread doesn't work on windows"
+    sys.platform.startswith("win"), reason="Cothread doesn't work on windows"
 )
 
 
 # Test parameters
 DEVICE_NAME = "SOFT-IOC-TESTS"
 TIMEOUT = 5  # Seconds
-# Value is so large to accomodate very slow GitHub MacOS CI runners.
-# Most platforms only need a timeout of 3 to 5 seconds.
-# Not a particular problem on faster platforms - this is never used as a sleep
-# so tests will still run fast on platforms that can handle it.
 
 
 def _clear_records():
@@ -49,12 +44,14 @@ def clear_records():
     yield
     _clear_records()
 
+
 def record_funcs_names(fixture_value):
     """Provide a nice name for the record_funcs fixture"""
     return fixture_value.__name__
 
 
-@pytest.fixture(params=[
+@pytest.fixture(
+    params=[
         builder.aIn,
         builder.aOut,
         builder.longIn,
@@ -68,10 +65,12 @@ def record_funcs_names(fixture_value):
         builder.WaveformIn,
         builder.WaveformOut,
     ],
-    ids=record_funcs_names)
+    ids=record_funcs_names,
+)
 def record_funcs(request):
     """The list of record creation functions"""
     return request.param
+
 
 @pytest.fixture
 def record_funcs_reject_none(record_funcs):
@@ -80,135 +79,135 @@ def record_funcs_reject_none(record_funcs):
         pytest.skip(msg="None is valid value for string records")
     return record_funcs
 
+
 def record_values_names(fixture_value):
     """Provide a nice name for the tests in the record_values fixture"""
-    return fixture_value[1].__name__ + "-" + type(fixture_value[2]).__name__ \
-        + "-" + str(fixture_value[3])
+    return (
+        fixture_value[1].__name__
+        + "-"
+        + type(fixture_value[2]).__name__
+        + "-"
+        + str(fixture_value[3])
+    )
+
 
 record_values_list = [
-        ("aIn_float",     builder.aIn, 5.5, 5.5, float),
-        ("aOut_float",    builder.aOut, 5.5, 5.5, float),
-        ("aIn_int",       builder.aIn, 3, 3., float),
-        ("aOut_int",      builder.aOut, 3, 3., float),
-        ("aIn_inf",       builder.aIn, inf, inf, float),
-        ("aOut_inf",      builder.aOut, inf, inf, float),
-        ("aIn_neginf",    builder.aIn, -inf, -inf, float),
-        ("aOut_neginf",   builder.aOut, -inf, -inf, float),
-        ("aIn_nan",       builder.aIn, nan, nan, float),
-        ("aOut_nan",      builder.aOut, nan, nan, float),
-        ("longIn_int",    builder.longIn, 5, 5, int),
-        ("longOut_int",   builder.longOut, 5, 5, int),
-        ("longIn_float",  builder.longIn, 9.9, 9, int),
-        ("longOut_float", builder.longOut, 9.9, 9, int),
-        ("boolIn_int",    builder.boolIn, 1, 1, int),
-        ("boolOut_int",   builder.boolOut, 1, 1, int),
-        ("boolIn_true",   builder.boolIn, True, 1, int),
-        ("boolOut_true",  builder.boolOut, True, 1, int),
-        ("boolIn_false",  builder.boolIn, False, 0, int),
-        ("boolOut_false", builder.boolOut, False, 0, int),
-        ("mbbIn_int",     builder.mbbIn, 1, 1, int),
-        ("mbbOut_int",    builder.mbbOut, 1, 1, int),
-        ("strIn_abc",     builder.stringIn, "abc", "abc", str),
-        ("strOut_abc",    builder.stringOut, "abc", "abc", str),
-        ("strIn_empty",   builder.stringIn, "", "", str),
-        ("strOut_empty",  builder.stringOut, "", "", str),
-        ("strIn_bytes",   builder.stringIn, b"abc", "abc", str),
-        ("strOut_bytes",  builder.stringOut, b"abc", "abc", str),
-        ("strin_utf8",    builder.stringIn, "a€b", "a€b", str),  # Valid UTF-8
-        ("strOut_utf8",   builder.stringOut, "a€b", "a€b", str),  # Valid UTF-8
-        (
-            "strIn_badutf8",
-            builder.stringIn,
-            b"a\xcfb",  # Invalid UTF-8
-            "a�b",
-            str
+    ("aIn_float", builder.aIn, 5.5, 5.5, float),
+    ("aOut_float", builder.aOut, 5.5, 5.5, float),
+    ("aIn_int", builder.aIn, 3, 3.0, float),
+    ("aOut_int", builder.aOut, 3, 3.0, float),
+    ("aIn_inf", builder.aIn, inf, inf, float),
+    ("aOut_inf", builder.aOut, inf, inf, float),
+    ("aIn_neginf", builder.aIn, -inf, -inf, float),
+    ("aOut_neginf", builder.aOut, -inf, -inf, float),
+    ("aIn_nan", builder.aIn, nan, nan, float),
+    ("aOut_nan", builder.aOut, nan, nan, float),
+    ("longIn_int", builder.longIn, 5, 5, int),
+    ("longOut_int", builder.longOut, 5, 5, int),
+    ("longIn_float", builder.longIn, 9.9, 9, int),
+    ("longOut_float", builder.longOut, 9.9, 9, int),
+    ("boolIn_int", builder.boolIn, 1, 1, int),
+    ("boolOut_int", builder.boolOut, 1, 1, int),
+    ("boolIn_true", builder.boolIn, True, 1, int),
+    ("boolOut_true", builder.boolOut, True, 1, int),
+    ("boolIn_false", builder.boolIn, False, 0, int),
+    ("boolOut_false", builder.boolOut, False, 0, int),
+    ("mbbIn_int", builder.mbbIn, 1, 1, int),
+    ("mbbOut_int", builder.mbbOut, 1, 1, int),
+    ("strIn_abc", builder.stringIn, "abc", "abc", str),
+    ("strOut_abc", builder.stringOut, "abc", "abc", str),
+    ("strIn_empty", builder.stringIn, "", "", str),
+    ("strOut_empty", builder.stringOut, "", "", str),
+    ("strIn_bytes", builder.stringIn, b"abc", "abc", str),
+    ("strOut_bytes", builder.stringOut, b"abc", "abc", str),
+    ("strin_utf8", builder.stringIn, "a€b", "a€b", str),  # Valid UTF-8
+    ("strOut_utf8", builder.stringOut, "a€b", "a€b", str),  # Valid UTF-8
+    ("strIn_badutf8", builder.stringIn, b"a\xcfb", "a�b", str),  # Invalid UTF-8
+    (
+        "strOut_badutf8",
+        builder.stringOut,
+        b"a\xcfb",  # Invalid UTF-8
+        "a�b",
+        str,
+    ),
+    (
+        "strIn_byteutf8",
+        builder.stringIn,
+        b"a\xe2\x82\xacb",  # Valid UTF-8
+        "a€b",
+        str,
+    ),
+    (
+        "strOut_byteutf8",
+        builder.stringOut,
+        b"a\xe2\x82\xacb",  # Valid UTF-8
+        "a€b",
+        str,
+    ),
+    (
+        "strIn_longstr",
+        builder.stringIn,
+        "this string is much longer than 40 characters",
+        "this string is much longer than 40 char",
+        str,
+    ),
+    (
+        "strOut_longstr",
+        builder.stringOut,
+        "this string is much longer than 40 characters",
+        "this string is much longer than 40 char",
+        str,
+    ),
+    (
+        "wIn_list",
+        builder.WaveformIn,
+        [1, 2, 3],
+        numpy.array([1, 2, 3], dtype=numpy.float32),
+        numpy.ndarray,
+    ),
+    (
+        "wOut_list",
+        builder.WaveformOut,
+        [1, 2, 3],
+        numpy.array([1, 2, 3], dtype=numpy.float32),
+        numpy.ndarray,
+    ),
+    (
+        "wIn_str",
+        builder.WaveformIn,
+        "ABC",
+        numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
+        numpy.ndarray,
+    ),
+    (
+        "wOut_str",
+        builder.WaveformOut,
+        "ABC",
+        numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
+        numpy.ndarray,
+    ),
+    (
+        "wIn_bytes",
+        builder.WaveformIn,
+        b"HELLO\0WORLD",
+        numpy.array(
+            [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68, 0], dtype=numpy.uint8
         ),
-        (
-            "strOut_badutf8",
-            builder.stringOut,
-            b"a\xcfb",  # Invalid UTF-8
-            "a�b",
-            str
+        numpy.ndarray,
+    ),
+    (
+        "wOut_bytes",
+        builder.WaveformOut,
+        b"HELLO\0WORLD",
+        numpy.array(
+            [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68, 0], dtype=numpy.uint8
         ),
-        (
-            "strIn_byteutf8",
-            builder.stringIn,
-            b"a\xe2\x82\xacb",  # Valid UTF-8
-            "a€b",
-            str
-        ),
-        (
-            "strOut_byteutf8",
-            builder.stringOut,
-            b"a\xe2\x82\xacb",  # Valid UTF-8
-            "a€b",
-            str
-        ),
-        (
-            "strIn_longstr",
-            builder.stringIn,
-            "this string is much longer than 40 characters",
-            "this string is much longer than 40 char",
-            str
-        ),
-        (
-            "strOut_longstr",
-            builder.stringOut,
-            "this string is much longer than 40 characters",
-            "this string is much longer than 40 char",
-            str
-        ),
-        (
-            "wIn_list",
-            builder.WaveformIn,
-            [1, 2, 3],
-            numpy.array([1, 2, 3], dtype=numpy.float32),
-            numpy.ndarray
-        ),
-        (
-            "wOut_list",
-            builder.WaveformOut,
-            [1, 2, 3],
-            numpy.array([1, 2, 3], dtype=numpy.float32),
-            numpy.ndarray
-        ),
-        (
-            "wIn_str",
-            builder.WaveformIn,
-            "ABC",
-            numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
-            numpy.ndarray
-        ),
-        (
-            "wOut_str",
-            builder.WaveformOut,
-            "ABC",
-            numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
-            numpy.ndarray
-        ),
-        (
-            "wIn_bytes",
-            builder.WaveformIn,
-            b"HELLO\0WORLD",
-            numpy.array([72, 69, 76, 76, 79,  0, 87, 79, 82, 76, 68, 0],
-                        dtype=numpy.uint8),
-            numpy.ndarray
-        ),
-        (
-            "wOut_bytes",
-            builder.WaveformOut,
-            b"HELLO\0WORLD",
-            numpy.array([72, 69, 76, 76, 79,  0, 87, 79, 82, 76, 68, 0],
-                        dtype=numpy.uint8),
-            numpy.ndarray
-        )
-    ]
+        numpy.ndarray,
+    ),
+]
 
 
-@pytest.fixture(
-    params=record_values_list,
-    ids=record_values_names
-    )
+@pytest.fixture(params=record_values_list, ids=record_values_names)
 def record_values(request):
     """A list of parameters for record value setting/getting tests.
 
@@ -219,19 +218,39 @@ def record_values(request):
     - Expected type of the output value from .get()/caget"""
     return request.param  # One item from the params list
 
+
 def test_records(tmp_path):
     import sim_records
+
     path = str(tmp_path / "records.db")
     builder.WriteRecords(path)
     expected = os.path.join(os.path.dirname(__file__), "expected_records.db")
     assert open(path).readlines()[5:] == open(expected).readlines()
 
+
 def test_enum_length_restriction():
     with pytest.raises(AssertionError):
         builder.mbbIn(
-                "ManyLabels", "one", "two", "three", "four", "five", "six",
-                "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
-                "fourteen", "fifteen", "sixteen", "seventeen")
+            "ManyLabels",
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+            "ten",
+            "eleven",
+            "twelve",
+            "thirteen",
+            "fourteen",
+            "fifteen",
+            "sixteen",
+            "seventeen",
+        )
+
 
 def test_DISP_defaults_on():
     """Test that all IN record types have DISP=1 set by default"""
@@ -259,6 +278,7 @@ def test_DISP_defaults_on():
         # Note: DISP attribute won't exist if field not specified
         assert record.DISP.Value() == 1
 
+
 def test_DISP_can_be_overridden():
     """Test that DISP can be forced off for In records"""
 
@@ -268,10 +288,8 @@ def test_DISP_can_be_overridden():
 
 
 def record_value_asserts(
-        creation_func,
-        actual_value,
-        expected_value,
-        expected_type):
+    creation_func, actual_value, expected_value, expected_type
+):
     """Asserts that the expected value and expected type are matched with
     the actual value. Handles both scalar and waveform data"""
     try:
@@ -287,31 +305,42 @@ def record_value_asserts(
             # Using .get() on the array returns entire length, not just filled
             # part. Confirm this by ensuring sliced part of array is all zeros
             assert not numpy.any(actual_value[expected_value.size:])
-            truncated_value = actual_value[:expected_value.size]
-            assert numpy.array_equal(truncated_value, expected_value), \
-                "Arrays not equal: {} {}".format(actual_value, expected_value)
+            truncated_value = actual_value[: expected_value.size]
+            assert numpy.array_equal(
+                truncated_value, expected_value
+            ), "Arrays not equal: {} {}".format(actual_value, expected_value)
             assert type(actual_value) == expected_type
         else:
             assert actual_value == expected_value
             assert type(actual_value) == expected_type
     except Exception as e:
         msg = (
-            "Failed with parameters: " + str(creation_func) + ", " +
-            str(actual_value) + ", " + str(expected_value) + ", "
-            + str(expected_type))
+            "Failed with parameters: "
+            + str(creation_func)
+            + ", "
+            + str(actual_value)
+            + ", "
+            + str(expected_value)
+            + ", "
+            + str(expected_type)
+        )
         logging.error(msg, exc_info=e)
         raise e
 
+
 class SetValueEnum(Enum):
     """Enum to control when and how the record's value should be set"""
+
     INITIAL_VALUE = 1
     SET_BEFORE_INIT = 2
     SET_AFTER_INIT = 3
     NO_SET = 4
     CAPUT = 5
 
+
 class GetValueEnum(Enum):
     """Enum to control whether values are retrieved using .get() or caget()"""
+
     GET = 1
     CAGET = 2
 
@@ -333,7 +362,7 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
             creation_func,
             initial_value,
             expected_value,
-            expected_type
+            expected_type,
         ) = configuration
 
         if set_enum == SetValueEnum.INITIAL_VALUE:
@@ -342,7 +371,6 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
             kwarg = {"length": 50}  # Required when no value on creation
             # Related to this issue:
             # https://github.com/dls-controls/pythonSoftIOC/issues/37
-
 
         out_rec = creation_func(record_name, **kwarg)
 
@@ -363,7 +391,7 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
             creation_func,
             initial_value,
             expected_value,
-            expected_type
+            expected_type,
         ) = configuration
 
         if set_enum == SetValueEnum.SET_AFTER_INIT:
@@ -384,15 +412,13 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
     # Keep process alive while main thread works.
     # This is most applicable to CAGET tests.
     asyncio.run_coroutine_threadsafe(
-        asyncio.sleep(TIMEOUT),
-        dispatcher.loop
+        asyncio.sleep(TIMEOUT), dispatcher.loop
     ).result()
 
 
 def run_test_function(
-        record_configurations: list,
-        set_enum: SetValueEnum,
-        get_enum: GetValueEnum):
+    record_configurations: list, set_enum: SetValueEnum, get_enum: GetValueEnum
+):
     """Run the test function using multiprocessing and check returned value is
     expected value. set_enum and get_enum determine when the record's value is
     set and how the value is retrieved, respectively."""
@@ -401,7 +427,7 @@ def run_test_function(
 
     ioc_process = multiprocessing.Process(
         target=run_ioc,
-        args=(record_configurations, child_conn, set_enum, get_enum)
+        args=(record_configurations, child_conn, set_enum, get_enum),
     )
 
     ioc_process.start()
@@ -411,9 +437,6 @@ def run_test_function(
         parent_conn.recv()
     else:
         pytest.fail("IOC process did not start before TIMEOUT expired")
-
-
-
 
     try:
         from cothread import Yield
@@ -431,7 +454,7 @@ def run_test_function(
                 creation_func,
                 initial_value,
                 expected_value,
-                expected_type
+                expected_type,
             ) = configuration
 
             # Infer some required keywords from parameters
@@ -439,6 +462,7 @@ def run_test_function(
             get_kwargs = {}
             if creation_func in [builder.WaveformOut, builder.WaveformIn]:
                 from cothread.dbr import DBR_CHAR_STR
+
                 if type(initial_value) in [str, bytes]:
                     put_kwargs.update({"datatype": DBR_CHAR_STR})
                     get_kwargs.update({"count": len(initial_value) + 1})
@@ -453,7 +477,8 @@ def run_test_function(
                     DEVICE_NAME + ":" + record_name,
                     initial_value,
                     wait=True,
-                    **put_kwargs)
+                    **put_kwargs
+                )
 
                 if get_enum == GetValueEnum.GET:
                     parent_conn.send("Do another get!")
@@ -472,17 +497,15 @@ def run_test_function(
                 rec_val = caget(
                     DEVICE_NAME + ":" + record_name,
                     timeout=TIMEOUT,
-                    **get_kwargs)
+                    **get_kwargs
+                )
                 # '+' operator used to convert cothread's types into Python
                 # native types e.g. "+ca_int" -> int
                 rec_val = +rec_val
 
-
             record_value_asserts(
-                creation_func,
-                rec_val,
-                expected_value,
-                expected_type)
+                creation_func, rec_val, expected_value, expected_type
+            )
     finally:
         # Purge cache to suppress spurious "IOC disconnected" exceptions
         _channel_cache.purge()
@@ -504,10 +527,8 @@ def skip_long_strings(record_values):
 class TestGetValue:
     """Tests that use .get() to check whether values applied with .set(),
     initial_value, or caput return the expected value"""
-    def test_value_pre_init_set(
-            self,
-            clear_records,
-            record_values):
+
+    def test_value_pre_init_set(self, clear_records, record_values):
         """Test that records provide the expected values on get calls when using
         .set() and .get() before IOC initialisation occurs"""
 
@@ -516,7 +537,7 @@ class TestGetValue:
             creation_func,
             initial_value,
             expected_value,
-            expected_type
+            expected_type,
         ) = record_values
 
         kwarg = {}
@@ -527,16 +548,10 @@ class TestGetValue:
         out_rec.set(initial_value)
 
         record_value_asserts(
-            creation_func,
-            out_rec.get(),
-            expected_value,
-            expected_type)
+            creation_func, out_rec.get(), expected_value, expected_type
+        )
 
-
-    def test_value_pre_init_initial_value(
-            self,
-            clear_records,
-            record_values):
+    def test_value_pre_init_initial_value(self, clear_records, record_values):
         """Test that records provide the expected values on get calls when using
         initial_value and .get() before IOC initialisation occurs"""
 
@@ -545,25 +560,22 @@ class TestGetValue:
             creation_func,
             initial_value,
             expected_value,
-            expected_type
+            expected_type,
         ) = record_values
 
         out_rec = creation_func(record_name, initial_value=initial_value)
 
         record_value_asserts(
-            creation_func,
-            out_rec.get(),
-            expected_value,
-            expected_type)
+            creation_func, out_rec.get(), expected_value, expected_type
+        )
 
     @requires_cothread
     def test_value_post_init_set(self):
         """Test that records provide the expected values on get calls when using
         .set() before IOC initialisation and .get() after initialisation"""
         run_test_function(
-            record_values_list,
-            SetValueEnum.SET_BEFORE_INIT,
-            GetValueEnum.GET)
+            record_values_list, SetValueEnum.SET_BEFORE_INIT, GetValueEnum.GET
+        )
 
     @requires_cothread
     def test_value_post_init_initial_value(self):
@@ -571,18 +583,16 @@ class TestGetValue:
         initial_value during record creation and .get() after IOC initialisation
         """
         run_test_function(
-            record_values_list,
-            SetValueEnum.INITIAL_VALUE,
-            GetValueEnum.GET)
+            record_values_list, SetValueEnum.INITIAL_VALUE, GetValueEnum.GET
+        )
 
     @requires_cothread
     def test_value_post_init_set_after_init(self):
         """Test that records provide the expected values on get calls when using
         .set() and .get() after IOC initialisation"""
         run_test_function(
-            record_values_list,
-            SetValueEnum.SET_AFTER_INIT,
-            GetValueEnum.GET)
+            record_values_list, SetValueEnum.SET_AFTER_INIT, GetValueEnum.GET
+        )
 
     @requires_cothread
     def test_value_post_init_caput(self):
@@ -600,20 +610,18 @@ class TestGetValue:
                 continue
 
             if item[1] not in [
-                    builder.aIn,
-                    builder.boolIn,
-                    builder.longIn,
-                    builder.mbbIn,
-                    builder.stringIn,
-                    builder.WaveformIn]:
+                builder.aIn,
+                builder.boolIn,
+                builder.longIn,
+                builder.mbbIn,
+                builder.stringIn,
+                builder.WaveformIn,
+            ]:
                 # In records block caput
                 filtered_list.append(item)
 
+        run_test_function(filtered_list, SetValueEnum.CAPUT, GetValueEnum.GET)
 
-        run_test_function(
-            filtered_list,
-            SetValueEnum.CAPUT,
-            GetValueEnum.GET)
 
 @requires_cothread
 class TestCagetValue:
@@ -630,18 +638,18 @@ class TestCagetValue:
             # .set() on In records doesn't update correctly.
             # pythonSoftIOC issue #67
             if item[1] not in (
-                    builder.aIn,
-                    builder.longIn,
-                    builder.boolIn,
-                    builder.stringIn,
-                    builder.mbbIn,
-                    builder.WaveformIn):
+                builder.aIn,
+                builder.longIn,
+                builder.boolIn,
+                builder.stringIn,
+                builder.mbbIn,
+                builder.WaveformIn,
+            ):
                 filtered_list.append(item)
 
         run_test_function(
-            filtered_list,
-            SetValueEnum.SET_BEFORE_INIT,
-            GetValueEnum.CAGET)
+            filtered_list, SetValueEnum.SET_BEFORE_INIT, GetValueEnum.CAGET
+        )
 
     @requires_cothread
     def test_value_post_init_initial_value(self):
@@ -650,9 +658,8 @@ class TestCagetValue:
         """
 
         run_test_function(
-            record_values_list,
-            SetValueEnum.INITIAL_VALUE,
-            GetValueEnum.CAGET)
+            record_values_list, SetValueEnum.INITIAL_VALUE, GetValueEnum.CAGET
+        )
 
     @requires_cothread
     def test_value_post_init_set_after_init(self):
@@ -660,9 +667,8 @@ class TestCagetValue:
         .set() and caget after IOC initialisation"""
 
         run_test_function(
-            record_values_list,
-            SetValueEnum.SET_AFTER_INIT,
-            GetValueEnum.CAGET)
+            record_values_list, SetValueEnum.SET_AFTER_INIT, GetValueEnum.CAGET
+        )
 
     def test_value_post_init_caput(self):
         """Test that records provide the expected values on get calls when using
@@ -679,71 +685,58 @@ class TestCagetValue:
                 continue
 
             if item[1] not in [
-                    builder.aIn,
-                    builder.boolIn,
-                    builder.longIn,
-                    builder.mbbIn,
-                    builder.stringIn,
-                    builder.WaveformIn]:
+                builder.aIn,
+                builder.boolIn,
+                builder.longIn,
+                builder.mbbIn,
+                builder.stringIn,
+                builder.WaveformIn,
+            ]:
                 # In records block caput
                 filtered_list.append(item)
 
-        run_test_function(
-            filtered_list,
-            SetValueEnum.CAPUT,
-            GetValueEnum.CAGET)
-
+        run_test_function(filtered_list, SetValueEnum.CAPUT, GetValueEnum.CAGET)
 
 
 default_values_list = [
-        ("default_aOut", builder.aOut, None, 0.0, float),
-        ("default_aIn", builder.aIn, None, 0.0, float),
-        ("default_longOut", builder.longOut, None, 0, int),
-        ("default_longIn", builder.longIn, None, 0, int),
-        ("default_boolOut", builder.boolOut, None, 0, int),
-        ("default_boolIn", builder.boolIn, None, 0, int),
-        ("default_stringOut", builder.stringOut, None, "", str),
-        ("default_stringIn", builder.stringIn, None, "", str),
-        ("default_mbbOut", builder.mbbOut, None, 0, int),
-        ("default_mbbIn", builder.mbbIn, None, 0, int),
-        (
-            "default_wOut",
-            builder.WaveformOut,
-            None,
-            numpy.empty(0),
-            numpy.ndarray
-        ),
-        (
-            "default_wIn",
-            builder.WaveformIn,
-            None,
-            numpy.empty(0),
-            numpy.ndarray
-        ),
-    ]
+    ("default_aOut", builder.aOut, None, 0.0, float),
+    ("default_aIn", builder.aIn, None, 0.0, float),
+    ("default_longOut", builder.longOut, None, 0, int),
+    ("default_longIn", builder.longIn, None, 0, int),
+    ("default_boolOut", builder.boolOut, None, 0, int),
+    ("default_boolIn", builder.boolIn, None, 0, int),
+    ("default_stringOut", builder.stringOut, None, "", str),
+    ("default_stringIn", builder.stringIn, None, "", str),
+    ("default_mbbOut", builder.mbbOut, None, 0, int),
+    ("default_mbbIn", builder.mbbIn, None, 0, int),
+    ("default_wOut", builder.WaveformOut, None, numpy.empty(0), numpy.ndarray),
+    ("default_wIn", builder.WaveformIn, None, numpy.empty(0), numpy.ndarray),
+]
+
+
 class TestDefaultValue:
     """Tests related to default values"""
 
-    @pytest.mark.parametrize("creation_func,expected_value,expected_type", [
-        (builder.aOut, None, type(None)),
-        (builder.aIn, 0.0, float),
-        (builder.longOut, None, type(None)),
-        (builder.longIn, 0, int),
-        (builder.boolOut, None, type(None)),
-        (builder.boolIn, 0, int),
-        (builder.stringOut, None, type(None)),
-        (builder.stringIn, "", str),
-        (builder.mbbOut, None, type(None)),
-        (builder.mbbIn, 0, int),
-        (builder.WaveformOut, None, type(None)),
-        (builder.WaveformIn, numpy.empty(0), numpy.ndarray),
-    ])
+    @pytest.mark.parametrize(
+        "creation_func,expected_value,expected_type",
+        [
+            (builder.aOut, None, type(None)),
+            (builder.aIn, 0.0, float),
+            (builder.longOut, None, type(None)),
+            (builder.longIn, 0, int),
+            (builder.boolOut, None, type(None)),
+            (builder.boolIn, 0, int),
+            (builder.stringOut, None, type(None)),
+            (builder.stringIn, "", str),
+            (builder.mbbOut, None, type(None)),
+            (builder.mbbIn, 0, int),
+            (builder.WaveformOut, None, type(None)),
+            (builder.WaveformIn, numpy.empty(0), numpy.ndarray),
+        ],
+    )
     def test_value_default_pre_init(
-            self,
-            creation_func,
-            expected_value,
-            expected_type,
-            clear_records):
+        self, creation_func, expected_value, expected_type, clear_records
+    ):
         """Test that the correct default values are returned from .get() (before
         record initialisation) when no initial_value or .set() is done"""
         # Out records do not have default values until records are initialized
@@ -754,10 +747,8 @@ class TestDefaultValue:
 
         out_rec = creation_func("out-record", **kwarg)
         record_value_asserts(
-            creation_func,
-            out_rec.get(),
-            expected_value,
-            expected_type)
+            creation_func, out_rec.get(), expected_value, expected_type
+        )
 
     @requires_cothread
     def test_value_default_post_init(self):
@@ -765,9 +756,8 @@ class TestDefaultValue:
         they are initialised, having never had a value set"""
 
         run_test_function(
-            default_values_list,
-            SetValueEnum.NO_SET,
-            GetValueEnum.GET)
+            default_values_list, SetValueEnum.NO_SET, GetValueEnum.GET
+        )
 
     @requires_cothread
     def test_value_default_post_init_caget(self):
@@ -775,35 +765,38 @@ class TestDefaultValue:
         they are initialised, having never had a value set"""
 
         run_test_function(
-            default_values_list,
-            SetValueEnum.NO_SET,
-            GetValueEnum.CAGET)
+            default_values_list, SetValueEnum.NO_SET, GetValueEnum.CAGET
+        )
+
 
 class TestNoneValue:
     """Various tests regarding record value of None"""
+
     def test_value_none_rejected_initial_value(
-            self,
-            clear_records,
-            record_funcs_reject_none):
+        self, clear_records, record_funcs_reject_none
+    ):
         """Test setting \"None\" as the initial_value raises an exception"""
 
         kwarg = {}
-        if record_funcs_reject_none in \
-                [builder.WaveformIn, builder.WaveformOut]:
+        if record_funcs_reject_none in [
+            builder.WaveformIn,
+            builder.WaveformOut,
+        ]:
             kwarg = {"length": 50}  # Required when no value on creation
 
         with pytest.raises((ValueError, TypeError)):
             record_funcs_reject_none("SOME-NAME", initial_value=None, **kwarg)
 
     def test_value_none_rejected_set_before_init(
-            self,
-            clear_records,
-            record_funcs_reject_none):
+        self, clear_records, record_funcs_reject_none
+    ):
         """Test that setting \"None\" using .set() raises an exception"""
 
         kwarg = {}
-        if record_funcs_reject_none in \
-                [builder.WaveformIn, builder.WaveformOut]:
+        if record_funcs_reject_none in [
+            builder.WaveformIn,
+            builder.WaveformOut,
+        ]:
             kwarg = {"length": 50}  # Required when no value on creation
 
         with pytest.raises((ValueError, TypeError)):
@@ -835,7 +828,7 @@ class TestNoneValue:
         queue = multiprocessing.Queue()
         process = multiprocessing.Process(
             target=self.none_value_test_func,
-            args=(record_funcs_reject_none, queue)
+            args=(record_funcs_reject_none, queue),
         )
 
         process.start()

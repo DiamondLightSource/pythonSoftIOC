@@ -224,6 +224,7 @@ def test_DISP_can_be_overridden():
     record = builder.longIn("DISP-OFF", DISP=0)
     # Note: DISP attribute won't exist if field not specified
     assert record.DISP.Value() == 0
+
 def record_value_asserts(
         creation_func,
         actual_value,
@@ -234,7 +235,17 @@ def record_value_asserts(
     if type(expected_value) == float and isnan(expected_value):
         assert isnan(actual_value)  # NaN != Nan, so needs special case
     elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
-        assert numpy.array_equal(actual_value, expected_value), \
+
+        # Special case for lack of default value on Out records before init
+        if actual_value is None and expected_value is None:
+            assert type(actual_value) == expected_type
+            return
+
+        # Using .get() on the array returns entire length, not just filled part.
+        # Confirm this by ensuring sliced part of array is all zeros
+        assert not numpy.any(actual_value[expected_value.size:])
+        truncated_value = actual_value[:expected_value.size]
+        assert numpy.array_equal(truncated_value, expected_value), \
             "Arrays not equal: {} {}".format(actual_value, expected_value)
         assert type(actual_value) == expected_type
     else:
@@ -433,33 +444,6 @@ def run_test_function(
         if ioc_process.exitcode is None:
             pytest.fail("Process did not terminate")
 
-def record_value_asserts(
-        creation_func,
-        actual_value,
-        expected_value,
-        expected_type):
-    """Asserts that the expected value and expected type are matched with
-    the actual value. Handles both scalar and waveform data"""
-    if type(expected_value) == float and isnan(expected_value):
-        assert isnan(actual_value)  # NaN != Nan, so needs special case
-    elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
-
-        # Special case for lack of default value on Out records before init
-        if actual_value is None and expected_value is None:
-            assert type(actual_value) == expected_type
-            return
-
-        # Using .get() on the array returns entire length, not just filled part.
-        # Confirm this by ensuring sliced part of array is all zeros
-        assert not numpy.any(actual_value[expected_value.size:])
-        truncated_value = actual_value[:expected_value.size]
-        assert numpy.array_equal(truncated_value, expected_value), \
-            "Arrays not equal: {} {}".format(actual_value, expected_value)
-        assert type(actual_value) == expected_type
-    else:
-        assert actual_value == expected_value
-        assert type(actual_value) == expected_type
-
 
 def skip_long_strings(record_values):
     if (
@@ -468,20 +452,6 @@ def skip_long_strings(record_values):
     ):
         pytest.skip("CAPut blocks strings > 40 characters.")
 
-def test_records(tmp_path):
-    import sim_records
-
-    path = str(tmp_path / "records.db")
-    builder.WriteRecords(path)
-    expected = os.path.join(os.path.dirname(__file__), "expected_records.db")
-    assert open(path).readlines()[5:] == open(expected).readlines()
-
-def test_enum_length_restriction():
-    with pytest.raises(AssertionError):
-        builder.mbbIn(
-                "ManyLabels", "one", "two", "three", "four", "five", "six",
-                "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
-                "fourteen", "fifteen", "sixteen", "seventeen")
 
 class TestGetValue:
     """Tests that use .get() to check whether values applied with .set()

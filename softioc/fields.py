@@ -26,6 +26,7 @@ for name, value in get_DBF_values().items():
 # downstream for no good purpose -- for example, enums are of type DBF_ULONG,
 # but this cannot be written with caput.)
 DbfCodeToCtypes = {
+    DBF_STRING: c_char * 40,
     DBF_CHAR: c_byte,
     DBF_UCHAR: c_ubyte,
     DBF_SHORT: c_int16,
@@ -98,9 +99,11 @@ class _Record(object):
         if field == 'TIME':
             return self.__get_time(address)
         elif field_type == DBF_STRING:
-            return string_at(cast(address, c_char_p)).decode()
+            raw_string = string_at(cast(address, c_char_p))
+            return raw_string.decode(errors = 'replace')
         elif field_type in [DBF_INLINK, DBF_OUTLINK]:
-            return cast(address, POINTER(c_char_p))[0].decode()
+            raw_string = cast(address, POINTER(c_char_p))[0]
+            return raw_string.decode(errors = 'replace')
         else:
             ctypes_type = DbfCodeToCtypes[field_type]
             return cast(address, POINTER(ctypes_type))[0]
@@ -120,6 +123,23 @@ class _Record(object):
         else:
             ctypes_type = DbfCodeToCtypes[field_type]
             cast(address, POINTER(ctypes_type))[0] = value
+
+    # Directly write EPICS compatible value to .VAL field
+    def write_val(self, value):
+        offset, size, field_type = self.fields['VAL']
+        address = c_void_p(offset + self.record.value)
+
+        ctypes_type = DbfCodeToCtypes[field_type]
+        assert sizeof(value) == size, \
+            'Incompatible field and value: %d %d' % (sizeof(value), size)
+        cast(address, POINTER(ctypes_type))[0] = value
+
+    def read_val(self):
+        offset, size, field_type = self.fields['VAL']
+        address = c_void_p(offset + self.record.value)
+        ctypes_type = DbfCodeToCtypes[field_type]
+        return cast(address, POINTER(ctypes_type)).contents
+
 
     def __get_time(self, address):
         timestamp = cast(address, POINTER(ca_timestamp))[0]

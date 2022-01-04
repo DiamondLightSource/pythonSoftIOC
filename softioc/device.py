@@ -1,11 +1,11 @@
 import os
 import time
-import inspect
+import ctypes
 from ctypes import *
 import numpy
 
 from . import alarm
-from .fields import DbfCodeToNumpy, DbrToDbfCode
+from . import fields
 from .imports import dbLoadDatabase, recGblResetAlarms, db_put_field
 from .device_core import DeviceSupportCore, RecordLookup
 
@@ -33,19 +33,46 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
 
     # For some record types we want to return a different return code either
     # from record init or processing
-    _epics_rc = EPICS_OK
+    _epics_rc_ = EPICS_OK
 
-    # Default implementations of read and write, overwritten where necessary.
+
+    # Most subclasses (all except waveforms) define a ctypes constructor for the
+    # underlying EPICS compatible value.
+    def _value_to_epics(self, value):
+        return self._ctype_(value)
+
+    def _epics_to_value(self, epics):
+        return epics.value
+
+    def _default_value(self):
+        return self._ctype_()
+
+    def _compare_values(self, value1, value2):
+        return value1.value == value2.value
+
+
+    # This method is called during Out record processing to return the
+    # underlying value in Python format.
     def _read_value(self, record):
-        return getattr(record, 'VAL')
+        return record.read_val()
+
+    # This method is called during In record processing to update the
+    # underlying value (the value must be in EPICS compatible format).  This is
+    # also called during Out record initialisation and value reversion when
+    # required.
     def _write_value(self, record, value):
-        setattr(record, 'VAL', value)
+        record.write_val(value)
 
 
 class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
     _link_ = 'INP'
 
     def __init__(self, name, **kargs):
+        if 'initial_value' in kargs:
+            value = self._value_to_epics(kargs.pop('initial_value'))
+        else:
+            value = self._default_value()
+
         # We implement update locking via a simple trick which relies on the
         # Python global interpreter lock: this ensures that assigning or
         # reading a single value is atomic.  We therefore cluster all our
@@ -53,28 +80,26 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         # to be processed.
         #    The tuple contains everything needed to be written: the value,
         # severity, alarm and optional timestamp.
-        self._value = (
-            kargs.pop('initial_value', self._default_),
-            alarm.NO_ALARM, alarm.UDF_ALARM, None)
+        self._value = (value, alarm.NO_ALARM, alarm.UDF_ALARM, None)
         self.__super.__init__(name, **kargs)
 
-    def _process(self, record, _value=None):
+    def _process(self, record):
         # For input process we copy the value stored in the instance to the
         # record.  The alarm status is also updated, and a custom timestamp
         # can also be set.
-        if _value is None:
-            _value = self._value
-        value, severity, alarm, timestamp = _value
+        value, severity, alarm, timestamp = self._value
         self._write_value(record, value)
         self.process_severity(record, severity, alarm)
         if timestamp is not None:
             record.TIME = timestamp
-        return self._epics_rc
+        record.UDF = 0
+        return self._epics_rc_
 
     def set(self, value,
             severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM, timestamp=None):
         '''Updates the stored value and triggers an update.  The alarm
         severity and timestamp can also be specified if appropriate.'''
+        value = self._value_to_epics(value)
         self._value = (value, severity, alarm, timestamp)
         self.trigger()
 
@@ -86,7 +111,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
 
     def get(self):
         '''Returns the last written value.'''
-        return self._value[0]
+        return self._epics_to_value(self._value[0])
 
 
 class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
@@ -107,101 +132,65 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self.__validate = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
-        self._value = kargs.pop('initial_value', None)
         self.__enable_write = True
+
+        if 'initial_value' in kargs:
+            self._value = self._value_to_epics(kargs.pop('initial_value'))
+        else:
+            self._value = None
+
         self.__super.__init__(name, **kargs)
 
     def init_record(self, record):
         '''Special record initialisation for out records only: implements
         special record initialisation if an initial value has been specified,
         allowing out records to have a sensible initial value.'''
-        if self._value is not None:
+        if self._value is None:
+            # Cannot set in __init__ (like we do for In records), as we want
+            # the record alarm status to be set if no value was provided
+            # Probably related to PythonSoftIOC issue #53
+            self._value = self._default_value()
+        else:
             self._write_value(record, self._value)
             if 'MLST' in self._fields_:
                 record.MLST = self._value
             record.TIME = time.time()
             record.UDF = 0
             recGblResetAlarms(record)
-        return self._epics_rc
+        return self._epics_rc_
 
     def _process(self, record):
         '''Processing suitable for output records.  Performs immediate value
         validation and asynchronous update notification.'''
         value = self._read_value(record)
-        if numpy.all(value == self._value) and not self.__always_update:
+        if not self.__always_update and \
+                self._compare_values(value, self._value):
             # If the value isn't making a change then don't do anything.
             return EPICS_OK
+
+        python_value = self._epics_to_value(value)
         if self.__enable_write and self.__validate and \
-                not self.__validate(self, value):
-            # Asynchronous validation rejects value.  It's up to the
-            # validation routine to do any logging.  In this case restore the
-            # last good value.
-            if self._value is not None:
-                self._write_value(record, self._value)
+                not self.__validate(self, python_value):
+            # Asynchronous validation rejects value, so restore the last good
+            # value.
+            self._write_value(record, self._value)
             return EPICS_ERROR
+        else:
+            # Value is good.  Hang onto it, let users know the value has changed
+            self._value = value
+            record.UDF = 0
+            if self.__on_update and self.__enable_write:
+                dispatcher(self.__on_update, python_value)
+            return EPICS_OK
 
-        self._value = value
-        if self.__on_update and self.__enable_write:
-            dispatcher(self.__on_update, value)
-        return EPICS_OK
 
-
-    NumpyCharCodeToDbr = {
-        # The following type codes are supported directly:
-        'S':    0,  # DBR_STRING     str_
-        'h':    1,  # DBR_SHORT      short  = int16
-        'f':    2,  # DBR_FLOAT      single = float32
-        'b':    4,  # DBR_CHAR       byte   = int8
-        'i':    5,  # DBR_LONG       intc   = int32
-        'd':    6,  # DBR_DOUBLE     float_ = float64
-        # These are supported as related types
-        'H':    1,  # DBR_SHORT      ushort = uint16
-        '?':    4,  # DBR_CHAR       bool_
-        'B':    4,  # DBR_CHAR       ubyte  = uint8
-        'I':    5,  # DBR_LONG       uintc  = uint32
-    }
-    if numpy.int_().itemsize == 4:
-        NumpyCharCodeToDbr.update({'l': 5, 'L': 5})   # int_, uint
-
-    # Converts a Python value into a form suitable for sending over channel
-    # access.  Derived from the corresponding cothread implementation.  Returns
-    # computed dbrcode, waveform length, raw data pointer and pointer to
-    # underlying data (for lifetime management).
-    def value_to_dbr(self, value):
-        # First convert the data directly into an array.  This will help in
-        # subsequent processing: this does most of the type coercion.
-        value = numpy.require(value, requirements = 'C')
-        if value.shape == ():
-            value.shape = (1,)
-        assert value.ndim == 1, 'Can\'t put multidimensional arrays!'
-
-        if value.dtype.char == 'S':
-            # Need special processing to hack the array so that strings are
-            # actually 40 characters long.
-            new_value = numpy.empty(value.shape, 'S40')
-            new_value[:] = value
-            value = new_value
-
-        try:
-            dbrtype = self.NumpyCharCodeToDbr[value.dtype.char]
-        except KeyError:
-            # One more special case.  caput() of a list of integers on a 64-bit
-            # system will fail at this point because they were automatically
-            # converted to 64-bit integers.  Catch this special case and fix it
-            # up by silently converting to 32-bit integers.  Not really the
-            # right thing to do (as data can be quietly lost), but the
-            # alternative isn't nice to use either.
-            if value.dtype.char == 'l':
-                value = numpy.require(value, dtype = numpy.int32)
-                dbrtype = 5
-            else:
-                raise
-
-        return dbrtype, len(value), value.ctypes.data, value
+    def _value_to_dbr(self, value):
+        return self._dbf_type_, 1, addressof(value), value
 
 
     def set(self, value, process=True):
         '''Special routine to set the value directly.'''
+        value = self._value_to_epics(value)
         try:
             _record = self._record
         except AttributeError:
@@ -209,24 +198,25 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             # initialisation occurs
             self._value = value
         else:
-            datatype, length, data, array = self.value_to_dbr(value)
+            # The array parameter is used to keep the raw pointer alive
+            dbf_code, length, data, array = self._value_to_dbr(value)
             self.__enable_write = process
-            db_put_field(
-                _record.NAME, DbrToDbfCode[datatype], data, length)
+            db_put_field(_record.NAME, dbf_code, data, length)
             self.__enable_write = True
 
     def get(self):
-        return self._value
+        return self._epics_to_value(self._value)
 
 
-def _Device(Base, record_type, mlst=False, default=0, convert=True):
+def _Device(Base, record_type, ctype, dbf_type, epics_rc, mlst = False):
     '''Wrapper for generating simple records.'''
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type
-        _default_ = default
         _fields_ = ['UDF', 'VAL']
-        _epics_rc = EPICS_OK if convert else NO_CONVERT
+        _epics_rc_ = epics_rc
+        _ctype_ = staticmethod(ctype)
+        _dbf_type_ = dbf_type
         if mlst:
             _fields_.append('MLST')
 
@@ -236,20 +226,46 @@ def _Device(Base, record_type, mlst=False, default=0, convert=True):
 _In = ProcessDeviceSupportIn
 _Out = ProcessDeviceSupportOut
 
-def _Device_In(type, **kargs):
-    return _Device(_In,  type, **kargs)
+def _Device_In(*args, **kargs):
+    return _Device(_In, mlst = False, *args, **kargs)
 
-def _Device_Out(type, convert=True, mlst=True):
-    return _Device(_Out, type, convert=convert, mlst=mlst, default=None)
+def _Device_Out(*args, **kargs):
+    return _Device(_Out, mlst = True, *args, **kargs)
 
-longin = _Device_In('longin')
-longout = _Device_Out('longout')
-bi = _Device_In('bi', convert=False)
-bo = _Device_Out('bo', convert=False)
-stringin = _Device_In('stringin', mlst=False, default='')
-stringout = _Device_Out('stringout', mlst=False)
-mbbi = _Device_In('mbbi', convert=False)
-mbbo = _Device_Out('mbbo', convert=False)
+longin  = _Device_In ('longin',  c_int32,  fields.DBF_LONG,  EPICS_OK)
+longout = _Device_Out('longout', c_int32,  fields.DBF_LONG,  EPICS_OK)
+bi      = _Device_In ('bi',      c_uint16, fields.DBF_CHAR,  NO_CONVERT)
+bo      = _Device_Out('bo',      c_uint16, fields.DBF_CHAR,  NO_CONVERT)
+mbbi    = _Device_In ('mbbi',    c_uint16, fields.DBF_SHORT, NO_CONVERT)
+mbbo    = _Device_Out('mbbo',    c_uint16, fields.DBF_SHORT, NO_CONVERT)
+
+
+class EpicsString:
+    _fields_ = ['UDF', 'VAL']
+    _epics_rc_ = EPICS_OK
+    _ctype_ = c_char * 40
+    _dbf_type_ = fields.DBF_STRING
+
+    def _value_to_epics(self, value):
+        if isinstance(value, str):
+            value = value.encode()
+        # It's a little odd: we can't simply construct a value from the byte
+        # string, but we can update the array in an existing value
+        result = self._ctype_()
+        result.value = value
+        return result
+
+    def _epics_to_value(self, epics):
+        return epics.value.decode(errors = 'replace')
+
+
+class stringin(EpicsString, ProcessDeviceSupportIn):
+    _record_type_ = 'stringin'
+    _device_name_ = 'devPython_stringin'
+
+class stringout(EpicsString, ProcessDeviceSupportOut):
+    _record_type_ = 'stringout'
+    _device_name_ = 'devPython_stringout'
 
 
 dset_process_linconv = (
@@ -263,26 +279,26 @@ dset_process_linconv = (
 class ai(ProcessDeviceSupportIn):
     _record_type_ = 'ai'
     _device_name_ = 'devPython_ai'
-    _default_ = 0.0
     _fields_ = ['UDF', 'VAL']
     _dset_extra_ = dset_process_linconv
-    _epics_rc = NO_CONVERT
+    _epics_rc_ = NO_CONVERT
+    _ctype_ = c_double
+    _dbf_type_ = fields.DBF_DOUBLE
 
     def _process(self, record):
-        _value = self._value
-        self.__super._process(record, _value)
         # Because we're returning NO_CONVERT we need to do the .UDF updating
         # ourself (otherwise the record support layer does this).
-        record.UDF = int(numpy.isnan(_value[0]))
-        return NO_CONVERT
+        record.UDF = int(numpy.isnan(self._value[0]))
+        return self.__super._process(record)
 
 class ao(ProcessDeviceSupportOut):
     _record_type_ = 'ao'
     _device_name_ = 'devPython_ao'
     _fields_ = ['UDF', 'VAL', 'MLST']
     _dset_extra_ = dset_process_linconv
-    _epics_rc = NO_CONVERT
-
+    _epics_rc_ = NO_CONVERT
+    _ctype_ = c_double
+    _dbf_type_ = fields.DBF_DOUBLE
 
 
 class WaveformBase(ProcessDeviceSupportCore):
@@ -296,8 +312,12 @@ class WaveformBase(ProcessDeviceSupportCore):
     # Allow set() to be called before init_record:
     dtype = None
 
+    _default_ = numpy.array([])
+
     def init_record(self, record):
-        self.dtype = DbfCodeToNumpy[record.FTVL]
+        self._nelm = record.NELM
+        self._dbf_type_ = record.FTVL
+        self.dtype = fields.DbfCodeToNumpy[record.FTVL]
         return self.__super.init_record(record)
 
     def _read_value(self, record):
@@ -310,9 +330,6 @@ class WaveformBase(ProcessDeviceSupportCore):
 
     def _write_value(self, record, value):
         value = numpy.require(value, dtype = self.dtype)
-        if value.shape == ():
-            value.shape = (1,)
-        assert value.ndim == 1, 'Can\'t write multidimensional arrays'
 
         nelm = record.NELM
         nord = len(value)
@@ -323,35 +340,49 @@ class WaveformBase(ProcessDeviceSupportCore):
             self.dtype.itemsize * nord)
         record.NORD = nord
 
+    def _compare_values(self, value, other):
+        return numpy.all(value == other)
 
-class waveform(WaveformBase, ProcessDeviceSupportIn):
-    _record_type_ = 'waveform'
-    _device_name_ = 'devPython_waveform'
-    _default_ = ()
-
-    # Because arrays are mutable values it's ever so easy to accidentially call
-    # set() with a value which subsequently changes.  To avoid this common class
-    # of bug, at the cost of duplicated code and data, here we ensure a copy is
-    # taken of the value.
-    def set(self, value,
-            severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM, timestamp=None):
-        '''Updates the stored value and triggers an update.  The alarm
-        severity and timestamp can also be specified if appropriate.'''
+    def _value_to_epics(self, value):
+        '''Handles strings and bytearrays as values for Waveforms. Returns the
+        string converted to a numpy array.'''
         if isinstance(value, str):
+            value = value.encode(errors = 'replace')
+        if isinstance(value, bytes):
             # Convert a string into an array of characters.  This will produce
             # the correct behaviour when treating a character array as a string.
             # Note that the trailing null is needed to work around problems with
-            # some clients.
-            value = numpy.fromstring(value + '\0', dtype = 'uint8')
+            # some clients. Note this also exists in builder.py's _waveform().
+            value = numpy.frombuffer(value + b'\0', dtype = numpy.uint8)
 
+        # Ensure we always convert incoming value into numpy array, regardless
+        # of whether the record has been initialised or not
         value = numpy.require(value, dtype = self.dtype)
-        self._value = (+value, severity, alarm, timestamp)
         if value.shape == ():
             value.shape = (1,)
         assert value.ndim == 1, 'Can\'t write multidimensional arrays'
 
-        self.trigger()
+        # Truncate value to fit
+        if hasattr(self, '_nelm'):
+            value = value[:self._nelm]
 
+        # Because arrays are mutable values it's ever so easy to accidentially
+        # call set() with a value which subsequently changes.  To avoid this
+        # common class of bug, at the cost of duplicated code and data, here we
+        # ensure a copy is taken of the value.
+        return +value
+
+    def _epics_to_value(self, value):
+        return value
+
+    def _value_to_dbr(self, value):
+        value = numpy.require(value, dtype = self.dtype)
+        return self._dbf_type_, len(value), value.ctypes.data, value
+
+
+class waveform(WaveformBase, ProcessDeviceSupportIn):
+    _record_type_ = 'waveform'
+    _device_name_ = 'devPython_waveform'
 
 class waveform_out(WaveformBase, ProcessDeviceSupportOut):
     _record_type_ = 'waveform'
@@ -359,4 +390,4 @@ class waveform_out(WaveformBase, ProcessDeviceSupportOut):
 
 
 # Ensure the .dbd file is loaded.
-dbLoadDatabase("device.dbd", os.path.dirname(__file__), None)
+dbLoadDatabase('device.dbd', os.path.dirname(__file__), None)

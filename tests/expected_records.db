@@ -53,7 +53,7 @@ record(longout, "TS-DI-TEST-01:LONGOUT")
 record(waveform, "TS-DI-TEST-01:LONGSTRING")
 {
     field(DISP, "1")
-    field(DTYP, "Python")
+    field(DTYP, "PythonLongStringIn")
     field(FTVL, "UCHAR")
     field(INP,  "@TS-DI-TEST-01:LONGSTRING")
     field(NELM, "256")

@@ -247,12 +247,11 @@ class EpicsString:
     _dbf_type_ = fields.DBF_STRING
 
     def _value_to_epics(self, value):
-        if isinstance(value, str):
-            value = value.encode()
         # It's a little odd: we can't simply construct a value from the byte
-        # string, but we can update the array in an existing value
+        # string, but we can update the array in an existing value.
+        # Value being written must be a string.
         result = self._ctype_()
-        result.value = value
+        result.value = value.encode()
         return result
 
     def _epics_to_value(self, epics):
@@ -345,17 +344,6 @@ class WaveformBase(ProcessDeviceSupportCore):
         return numpy.all(value == other)
 
     def _value_to_epics(self, value):
-        '''Handles strings and bytearrays as values for Waveforms. Returns the
-        string converted to a numpy array.'''
-        if isinstance(value, str):
-            value = value.encode(errors = 'replace')
-        if isinstance(value, bytes):
-            # Convert a string into an array of characters.  This will produce
-            # the correct behaviour when treating a character array as a string.
-            # Note that the trailing null is needed to work around problems with
-            # some clients. Note this also exists in builder.py's _waveform().
-            value = numpy.frombuffer(value + b'\0', dtype = numpy.uint8)
-
         # Ensure we always convert incoming value into numpy array, regardless
         # of whether the record has been initialised or not
         value = numpy.require(value, dtype = self.dtype)
@@ -388,6 +376,40 @@ class waveform(WaveformBase, ProcessDeviceSupportIn):
 class waveform_out(WaveformBase, ProcessDeviceSupportOut):
     _record_type_ = 'waveform'
     _device_name_ = 'devPython_waveform_out'
+
+
+# Convert string into numpy array of char
+def encode_string(value, length = None):
+    value = value.encode(errors = 'replace')
+    # Convert a string into an array of characters.  This will produce
+    # the correct behaviour when treating a character array as a string.
+    # Note that the trailing null is needed to work around problems with
+    # some clients.
+    value = numpy.frombuffer(value + b'\0', dtype = numpy.uint8)
+
+    # Truncate value to fit
+    if length:
+        value = value[:length]
+    return value
+
+
+class LongStringBase(WaveformBase):
+    dtype = numpy.dtype('uint8')
+
+    def _value_to_epics(self, value):
+        return encode_string(value, getattr(self, '_nelm', None))
+
+    def _epics_to_value(self, value):
+        return value.decode(errors = 'replace')
+
+
+class long_stringin(LongStringBase, ProcessDeviceSupportIn):
+    _record_type_ = 'waveform'
+    _device_name_ = 'devPython_long_stringin'
+
+class long_stringout(LongStringBase, ProcessDeviceSupportOut):
+    _record_type_ = 'waveform'
+    _device_name_ = 'devPython_long_stringout'
 
 
 # Ensure the .dbd file is loaded.

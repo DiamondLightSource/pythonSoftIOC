@@ -57,7 +57,7 @@ t_waveform_in = Waveform('WAVEFORM', wf)
 t_waveform_out = WaveformOut('WAVEFORM_OUT', wf, on_update = on_update)
 t_waveform_in2 = Waveform('WAVEFORM2', length = 10)
 
-t_longstring_in = Waveform('LONGSTRING', length = 256, datatype = numpy.uint8)
+t_longstring_in = longStringIn('LONGSTRING', length = 256)
 
 
 def Update():

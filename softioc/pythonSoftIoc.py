@@ -92,6 +92,12 @@ class PythonDevice(object):
         cls.waveform_out = cls.makeRecord(
             epicsdbbuilder.records.waveform, device.waveform_out,
             'PythonWfOut')
+        cls.long_stringin = cls.makeRecord(
+            epicsdbbuilder.records.waveform, device.long_stringin,
+            'PythonLongStringIn')
+        cls.long_stringout = cls.makeRecord(
+            epicsdbbuilder.records.waveform, device.long_stringout,
+            'PythonLongStringOut')
 
     class makeRecord:
         def __init__(self, builder, record, dtyp = 'Python'):

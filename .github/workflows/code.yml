@@ -75,8 +75,8 @@ jobs:
           # Disable auditwheel as it isn't compatible with setuptools_dso approach
           # https://github.com/mdavidsaver/setuptools_dso/issues/17
           CIBW_REPAIR_WHEEL_COMMAND: ""
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux1
-          CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux1_x86_64
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux2014_x86_64
 
       - name: Upload Wheel and Sdist
         uses: actions/upload-artifact@v2

@@ -232,12 +232,12 @@ def _Device_In(*args, **kargs):
 def _Device_Out(*args, **kargs):
     return _Device(_Out, mlst = True, *args, **kargs)
 
-longin  = _Device_In ('longin',  c_int32,  fields.DBF_LONG,  EPICS_OK)
-longout = _Device_Out('longout', c_int32,  fields.DBF_LONG,  EPICS_OK)
-bi      = _Device_In ('bi',      c_uint16, fields.DBF_CHAR,  NO_CONVERT)
-bo      = _Device_Out('bo',      c_uint16, fields.DBF_CHAR,  NO_CONVERT)
-mbbi    = _Device_In ('mbbi',    c_uint16, fields.DBF_SHORT, NO_CONVERT)
-mbbo    = _Device_Out('mbbo',    c_uint16, fields.DBF_SHORT, NO_CONVERT)
+longin = _Device_In('longin', c_int32, fields.DBF_LONG, EPICS_OK)
+longout = _Device_Out('longout', c_int32, fields.DBF_LONG, EPICS_OK)
+bi = _Device_In('bi', c_uint16, fields.DBF_CHAR, NO_CONVERT)
+bo = _Device_Out('bo', c_uint16, fields.DBF_CHAR, NO_CONVERT)
+mbbi = _Device_In('mbbi', c_uint16, fields.DBF_SHORT, NO_CONVERT)
+mbbo = _Device_Out('mbbo', c_uint16, fields.DBF_SHORT, NO_CONVERT)
 
 
 class EpicsString:
@@ -312,7 +312,8 @@ class WaveformBase(ProcessDeviceSupportCore):
     # Allow set() to be called before init_record:
     dtype = None
 
-    _default_ = numpy.array([])
+    def _default_value(self):
+        return numpy.array([])
 
     def init_record(self, record):
         self._nelm = record.NELM

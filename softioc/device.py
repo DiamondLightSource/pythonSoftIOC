@@ -52,7 +52,7 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
 
 
     # This method is called during Out record processing to return the
-    # underlying value in Python format.
+    # underlying value in EPICS format.
     def _read_value(self, record):
         return record.read_val()
 
@@ -240,6 +240,13 @@ mbbi = _Device_In('mbbi', c_uint16, fields.DBF_SHORT, NO_CONVERT)
 mbbo = _Device_Out('mbbo', c_uint16, fields.DBF_SHORT, NO_CONVERT)
 
 
+def _string_at(value, count):
+    # Need string_at() twice to ensure string is size limited *and* null
+    # terminated.
+    value = ctypes.string_at(ctypes.string_at(value, count))
+    # Convert bytes to unicode string
+    return value.decode(errors = 'replace')
+
 class EpicsString:
     _fields_ = ['UDF', 'VAL']
     _epics_rc_ = EPICS_OK
@@ -249,13 +256,20 @@ class EpicsString:
     def _value_to_epics(self, value):
         # It's a little odd: we can't simply construct a value from the byte
         # string, but we can update the array in an existing value.
-        # Value being written must be a string.
+        # Value being written must be a string, and will be automatically null
+        # terminated where possible.
         result = self._ctype_()
         result.value = value.encode()
         return result
 
     def _epics_to_value(self, epics):
-        return epics.value.decode(errors = 'replace')
+        return _string_at(epics, 40)
+
+    def _read_value(self, record):
+        # For strings we need to take a copy of the value read
+        result = self._ctype_()
+        result.value = record.read_val().value
+        return result
 
 
 class stringin(EpicsString, ProcessDeviceSupportIn):
@@ -400,7 +414,7 @@ class LongStringBase(WaveformBase):
         return encode_string(value, getattr(self, '_nelm', None))
 
     def _epics_to_value(self, value):
-        return value.decode(errors = 'replace')
+        return _string_at(value.ctypes, len(value))
 
 
 class long_stringin(LongStringBase, ProcessDeviceSupportIn):

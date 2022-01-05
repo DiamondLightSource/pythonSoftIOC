@@ -58,12 +58,15 @@ def record_funcs_names(fixture_value):
         builder.longOut,
         builder.boolIn,
         builder.boolOut,
+        builder.Action,
         builder.stringIn,
         builder.stringOut,
         builder.mbbIn,
         builder.mbbOut,
         builder.WaveformIn,
         builder.WaveformOut,
+        builder.longStringIn,
+        builder.longStringOut,
     ],
     ids=record_funcs_names,
 )
@@ -112,6 +115,9 @@ record_values_list = [
     ("boolOut_true", builder.boolOut, True, 1, int),
     ("boolIn_false", builder.boolIn, False, 0, int),
     ("boolOut_false", builder.boolOut, False, 0, int),
+    ("Action_int", builder.Action, 1, 1, int),
+    ("Action_true", builder.Action, True, 1, int),
+    ("Action_false", builder.Action, False, 0, int),
     ("mbbIn_int", builder.mbbIn, 1, 1, int),
     ("mbbOut_int", builder.mbbOut, 1, 1, int),
     ("strIn_abc", builder.stringIn, "abc", "abc", str),
@@ -217,6 +223,48 @@ record_values_list = [
         "%a€b",
         numpy.array([37, 97, 226, 130, 172, 98, 0], dtype=numpy.uint8),
         numpy.ndarray,
+    ),
+    (
+        "longStringIn_str",
+        builder.longStringIn,
+        "ABC",
+        "ABC",
+        str,
+    ),
+    (
+        "longStringOut_str",
+        builder.longStringOut,
+        "ABC",
+        "ABC",
+        str,
+    ),
+    (
+        "longStringIn_bytes",
+        builder.longStringIn,
+        b"HELLO\0WORLD",
+        "HELLO",
+        str,
+    ),
+    (
+        "longStringOut_bytes",
+        builder.longStringOut,
+        b"HELLO\0WORLD",
+        "HELLO",
+        str,
+    ),
+    (
+        "longStringIn_unicode",
+        builder.longStringIn,
+        "%a€b",
+        "%a€b",
+        str
+    ),
+    (
+        "longStringOut_unicode",
+        builder.longStringOut,
+        "%a€b",
+        "%a€b",
+        str
     ),
 ]
 
@@ -719,12 +767,15 @@ default_values_list = [
     ("default_longIn", builder.longIn, None, 0, int),
     ("default_boolOut", builder.boolOut, None, 0, int),
     ("default_boolIn", builder.boolIn, None, 0, int),
+    ("default_Action", builder.Action, None, 0, int),
     ("default_stringOut", builder.stringOut, None, "", str),
     ("default_stringIn", builder.stringIn, None, "", str),
     ("default_mbbOut", builder.mbbOut, None, 0, int),
     ("default_mbbIn", builder.mbbIn, None, 0, int),
     ("default_wOut", builder.WaveformOut, None, numpy.empty(0), numpy.ndarray),
     ("default_wIn", builder.WaveformIn, None, numpy.empty(0), numpy.ndarray),
+    ("default_longStringOut", builder.longStringOut, None, "", str),
+    ("default_longStringIn", builder.longStringIn, None, "", str),
 ]
 
 
@@ -740,12 +791,15 @@ class TestDefaultValue:
             (builder.longIn, 0, int),
             (builder.boolOut, None, type(None)),
             (builder.boolIn, 0, int),
+            (builder.Action, None, type(None)),
             (builder.stringOut, None, type(None)),
             (builder.stringIn, "", str),
             (builder.mbbOut, None, type(None)),
             (builder.mbbIn, 0, int),
             (builder.WaveformOut, None, type(None)),
             (builder.WaveformIn, numpy.empty(0), numpy.ndarray),
+            (builder.longStringOut, "", str),
+            (builder.longStringIn, "", str),
         ],
     )
     def test_value_default_pre_init(
@@ -786,6 +840,9 @@ class TestDefaultValue:
 class TestNoneValue:
     """Various tests regarding record value of None"""
 
+    # We expect using None as a value will trigger one of these exceptions
+    expected_exceptions = (ValueError, TypeError, AttributeError)
+
     def test_value_none_rejected_initial_value(
         self, clear_records, record_funcs_reject_none
     ):
@@ -798,7 +855,7 @@ class TestNoneValue:
         ]:
             kwarg = {"length": 50}  # Required when no value on creation
 
-        with pytest.raises((ValueError, TypeError)):
+        with pytest.raises(self.expected_exceptions):
             record_funcs_reject_none("SOME-NAME", initial_value=None, **kwarg)
 
     def test_value_none_rejected_set_before_init(
@@ -813,7 +870,7 @@ class TestNoneValue:
         ]:
             kwarg = {"length": 50}  # Required when no value on creation
 
-        with pytest.raises((ValueError, TypeError)):
+        with pytest.raises(self.expected_exceptions):
             record = record_funcs_reject_none("SOME-NAME", **kwarg)
             record.set(None)
 
@@ -850,12 +907,14 @@ class TestNoneValue:
         try:
             exception = queue.get(timeout=5)
 
-            assert isinstance(exception, (ValueError, TypeError))
+            assert isinstance(exception, self.expected_exceptions)
         finally:
             process.terminate()
             process.join(timeout=3)
 
-
+def fixture_names(params):
+    """Provide nice names for the out_records fixture in TestValidate class"""
+    return params[0].__name__
 class TestValidate:
     """Tests related to the validate callback"""
 
@@ -863,11 +922,14 @@ class TestValidate:
         params=[
             (builder.aOut, 7.89, 0),
             (builder.boolOut, 1, 0),
+            (builder.Action, 1, 0),
             (builder.longOut, 7, 0),
             (builder.stringOut, "HI", ""),
             (builder.mbbOut, 2, 0),
             (builder.WaveformOut, [10, 11, 12], []),
-        ]
+            (builder.longStringOut, "A LONGER HELLO", ""),
+        ],
+        ids=fixture_names
     )
     def out_records(self, request):
         """The list of Out records and an associated value to set """
@@ -973,7 +1035,7 @@ class TestValidate:
         process.start()
 
         try:
-            queue.get(timeout=5)  # Get the expected IOc initialised message
+            queue.get(timeout=5)  # Get the expected IOC initialised message
 
             from cothread.catools import caget, caput, _channel_cache
 

@@ -204,6 +204,20 @@ record_values_list = [
         ),
         numpy.ndarray,
     ),
+    (
+        "wIn_unicode",
+        builder.WaveformIn,
+        "%a€b",
+        numpy.array([37, 97, 226, 130, 172, 98, 0], dtype=numpy.uint8),
+        numpy.ndarray,
+    ),
+    (
+        "wOut_unicode",
+        builder.WaveformOut,
+        "%a€b",
+        numpy.array([37, 97, 226, 130, 172, 98, 0], dtype=numpy.uint8),
+        numpy.ndarray,
+    ),
 ]
 
 
@@ -353,7 +367,7 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
 
     records: List[RecordWrapper] = []
 
-    # Loop over given list and create the records
+    # Create records from the given list
     for configuration in record_configurations:
         kwarg = {}
 
@@ -837,6 +851,152 @@ class TestNoneValue:
             exception = queue.get(timeout=5)
 
             assert isinstance(exception, (ValueError, TypeError))
+        finally:
+            process.terminate()
+            process.join(timeout=3)
+
+
+class TestValidate:
+    """Tests related to the validate callback"""
+
+    @pytest.fixture(
+        params=[
+            (builder.aOut, 7.89, 0),
+            (builder.boolOut, 1, 0),
+            (builder.longOut, 7, 0),
+            (builder.stringOut, "HI", ""),
+            (builder.mbbOut, 2, 0),
+            (builder.WaveformOut, [10, 11, 12], []),
+        ]
+    )
+    def out_records(self, request):
+        """The list of Out records and an associated value to set """
+        return request.param
+
+    def validate_always_pass(self, record, new_val):
+        """Validation method that always allows changes"""
+        return True
+
+    def validate_always_fail(self, record, new_val):
+        """Validation method that always rejects changes"""
+        return False
+
+    def validate_ioc_test_func(self, record_func, queue, validate_pass: bool):
+        """Start the IOC with the specified validate method"""
+
+        builder.SetDeviceName(DEVICE_NAME)
+
+        kwarg = {}
+        if record_func in [builder.WaveformIn, builder.WaveformOut]:
+            kwarg = {"length": 50}  # Required when no value on creation
+
+        kwarg.update(
+            {
+                "validate": self.validate_always_pass
+                if validate_pass
+                else self.validate_always_fail
+            }
+        )
+
+        record_func("VALIDATE-RECORD", **kwarg)
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        queue.put("IOC ready")
+
+        # Keep process alive while main thread works.
+        # This is most applicable to CAGET tests.
+        asyncio.run_coroutine_threadsafe(
+            asyncio.sleep(TIMEOUT), dispatcher.loop
+        ).result()
+
+
+    @requires_cothread
+    def test_validate_allows_updates(self, out_records):
+        """Test that record values are updated correctly when validate
+        method allows it """
+
+        creation_func, value, _ = out_records
+
+        queue = multiprocessing.Queue()
+        process = multiprocessing.Process(
+            target=self.validate_ioc_test_func,
+            args=(creation_func, queue, True),
+        )
+
+        process.start()
+
+        try:
+            queue.get(timeout=5)  # Get the expected IOc initialised message
+
+            from cothread.catools import caget, caput, _channel_cache
+
+            # See other places in this file for why we call it
+            _channel_cache.purge()
+
+            put_ret = caput(
+                DEVICE_NAME + ":" + "VALIDATE-RECORD",
+                value,
+                wait=True,
+            )
+            assert put_ret.ok, "caput did not succeed"
+
+            ret_val = caget(
+                DEVICE_NAME + ":" + "VALIDATE-RECORD",
+                timeout=3
+            )
+
+            if creation_func in [builder.WaveformOut, builder.WaveformIn]:
+                assert numpy.array_equal(ret_val, value)
+            else:
+                assert ret_val == value
+
+        finally:
+            process.terminate()
+            process.join(timeout=3)
+
+    @requires_cothread
+    def test_validate_blocks_updates(self, out_records):
+        """Test that record values are not updated when validate method
+        always blocks updates"""
+
+        creation_func, value, default = out_records
+
+        queue = multiprocessing.Queue()
+        process = multiprocessing.Process(
+            target=self.validate_ioc_test_func,
+            args=(creation_func, queue, False),
+        )
+
+        process.start()
+
+        try:
+            queue.get(timeout=5)  # Get the expected IOc initialised message
+
+            from cothread.catools import caget, caput, _channel_cache
+
+            # See other places in this file for why we call it
+            _channel_cache.purge()
+
+            put_ret = caput(
+                DEVICE_NAME + ":" + "VALIDATE-RECORD",
+                value,
+                wait=True,
+            )
+            assert put_ret.ok, "caput did not succeed"
+
+            ret_val = caget(
+                DEVICE_NAME + ":" + "VALIDATE-RECORD",
+                timeout=3
+            )
+
+            if creation_func in [builder.WaveformOut, builder.WaveformIn]:
+                assert numpy.array_equal(ret_val, default)
+            else:
+                assert ret_val == default
+
         finally:
             process.terminate()
             process.join(timeout=3)

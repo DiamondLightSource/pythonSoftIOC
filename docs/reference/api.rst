@@ -267,7 +267,7 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
         mbbOut(name, *options, **fields)
 
     Create ``mbbi`` and ``mbbo`` records.  Up to 16 options can be specified as
-    either an option name or a tuple of tw fields.  The name or first field of
+    either an option name or a tuple of two fields.  The name or first field of
     the tuple names the option, and the second optional field is the option
     severity.  For example::
 

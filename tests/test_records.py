@@ -27,6 +27,10 @@ requires_cothread = pytest.mark.skipif(
 DEVICE_NAME = "SOFT-IOC-TESTS"
 TIMEOUT = 5  # Seconds
 
+VERY_LONG_STRING = "This is a fairly long string, the kind that someone " \
+    "might think to put into a record that can theoretically hold a huge " \
+    "string and so lets test it and prove that shall we?"
+
 
 def _clear_records():
     # Remove any records created at epicsdbbuilder layer
@@ -236,6 +240,20 @@ record_values_list = [
         builder.longStringOut,
         "ABC",
         "ABC",
+        str,
+    ),
+    (
+        "longStringIn_long_str",
+        builder.longStringIn,
+        VERY_LONG_STRING,
+        VERY_LONG_STRING,
+        str,
+    ),
+    (
+        "longStringOut_long_str",
+        builder.longStringOut,
+        VERY_LONG_STRING,
+        VERY_LONG_STRING,
         str,
     ),
     (

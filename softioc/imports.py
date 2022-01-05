@@ -12,19 +12,19 @@ from . import _extension
 
 # These are in the extension
 def get_DBF_values():
-    """Return {DBF_name: DBF_int_value} mapping"""
+    '''Return {DBF_name: DBF_int_value} mapping'''
     return _extension.get_DBF_values()
 
 def get_field_offsets(record_type):
-    """Return {field_name: (offset, size, field_type)}"""
+    '''Return {field_name: (offset, size, field_type)}'''
     return _extension.get_field_offsets(record_type)
 
 def db_put_field(name, dbr_type, pbuffer, length):
-    """Put field where pbuffer is void* pointer. Returns RC"""
+    '''Put field where pbuffer is void* pointer. Returns RC'''
     return _extension.db_put_field(name, dbr_type, pbuffer, length)
 
 def install_pv_logging(acf_file):
-    """Install pv logging"""
+    '''Install pv logging'''
     _extension.install_pv_logging(acf_file)
 
 def expect_success(status, function, args):

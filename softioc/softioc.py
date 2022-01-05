@@ -18,7 +18,7 @@ def epicsAtPyExit():
 
 
 def iocInit(dispatcher=None):
-    """This must be called exactly once after loading all EPICS database files.
+    '''This must be called exactly once after loading all EPICS database files.
     After this point the EPICS IOC is running and serving PVs.
 
     Args:
@@ -28,7 +28,7 @@ def iocInit(dispatcher=None):
 
     See Also:
         `softioc.asyncio_dispatcher` is a dispatcher for `asyncio` applications
-    """
+    '''
     if dispatcher is None:
         # Fallback to cothread
         import cothread
@@ -263,7 +263,7 @@ def _add_records_from_file(dirname, file, substitutions):
     # possibly can put them out of order, but it works well enough for
     # devIocStats
     with open(os.path.join(dirname, file)) as f:
-        lines, include_subs = [], ""
+        lines, include_subs = [], ''
         for line in f.readlines():
             line = line.rstrip()
             if line.startswith('substitute'):
@@ -274,7 +274,7 @@ def _add_records_from_file(dirname, file, substitutions):
                 # include "iocQueue.db"
                 subs = substitutions
                 if substitutions and include_subs:
-                    subs = substitutions + ", " + include_subs
+                    subs = substitutions + ', ' + include_subs
                 else:
                     subs = substitutions + include_subs
                 _add_records_from_file(dirname, line.split('"')[1], subs)

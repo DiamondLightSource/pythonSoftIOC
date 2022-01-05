@@ -74,7 +74,7 @@ class RecordFactory(object):
         self.fields = get_field_offsets(record_type)
         missing = set(fields) - set(self.fields)
         assert not missing, \
-            "Fields not supported by %s: %s" % (record_type, sorted(missing))
+            'Fields not supported by %s: %s' % (record_type, sorted(missing))
 
     def __call__(self, record):
         '''Converts a raw pointer to a record structure into a _Record object

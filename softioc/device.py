@@ -323,7 +323,7 @@ class WaveformBase(ProcessDeviceSupportCore):
     #   NORD    Currently reported length of array (0 <= NORD <= NELM)
     _fields_ = ['UDF', 'FTVL', 'BPTR', 'NELM', 'NORD']
     # Allow set() to be called before init_record:
-    dtype = None
+    _dtype = None
 
     def _default_value(self):
         return numpy.array([])
@@ -331,19 +331,19 @@ class WaveformBase(ProcessDeviceSupportCore):
     def init_record(self, record):
         self._nelm = record.NELM
         self._dbf_type_ = record.FTVL
-        self.dtype = fields.DbfCodeToNumpy[record.FTVL]
+        self._dtype = fields.DbfCodeToNumpy[record.FTVL]
         return self.__super.init_record(record)
 
     def _read_value(self, record):
         nord = record.NORD
-        result = numpy.empty(nord, dtype = self.dtype)
+        result = numpy.empty(nord, dtype = self._dtype)
         memmove(
             result.ctypes.data_as(c_void_p), record.BPTR,
-            self.dtype.itemsize * nord)
+            self._dtype.itemsize * nord)
         return result
 
     def _write_value(self, record, value):
-        value = numpy.require(value, dtype = self.dtype)
+        value = numpy.require(value, dtype = self._dtype)
 
         nelm = record.NELM
         nord = len(value)
@@ -351,7 +351,7 @@ class WaveformBase(ProcessDeviceSupportCore):
             nord = nelm
         memmove(
             record.BPTR, value.ctypes.data_as(c_void_p),
-            self.dtype.itemsize * nord)
+            self._dtype.itemsize * nord)
         record.NORD = nord
 
     def _compare_values(self, value, other):
@@ -360,7 +360,7 @@ class WaveformBase(ProcessDeviceSupportCore):
     def _value_to_epics(self, value):
         # Ensure we always convert incoming value into numpy array, regardless
         # of whether the record has been initialised or not
-        value = numpy.require(value, dtype = self.dtype)
+        value = numpy.require(value, dtype = self._dtype)
         if value.shape == ():
             value.shape = (1,)
         assert value.ndim == 1, 'Can\'t write multidimensional arrays'
@@ -379,7 +379,7 @@ class WaveformBase(ProcessDeviceSupportCore):
         return value
 
     def _value_to_dbr(self, value):
-        value = numpy.require(value, dtype = self.dtype)
+        value = numpy.require(value, dtype = self._dtype)
         return self._dbf_type_, len(value), value.ctypes.data, value
 
 
@@ -392,26 +392,21 @@ class waveform_out(WaveformBase, ProcessDeviceSupportOut):
     _device_name_ = 'devPython_waveform_out'
 
 
-# Convert string into numpy array of char
-def encode_string(value, length = None):
-    value = value.encode(errors = 'replace')
-    # Convert a string into an array of characters.  This will produce
-    # the correct behaviour when treating a character array as a string.
-    # Note that the trailing null is needed to work around problems with
-    # some clients.
-    value = numpy.frombuffer(value + b'\0', dtype = numpy.uint8)
-
-    # Truncate value to fit
-    if length:
-        value = value[:length]
-    return value
-
-
 class LongStringBase(WaveformBase):
-    dtype = numpy.dtype('uint8')
+    _dtype = numpy.dtype('uint8')
 
     def _value_to_epics(self, value):
-        return encode_string(value, getattr(self, '_nelm', None))
+        value = value.encode(errors = 'replace')
+        # Convert a string into an array of characters.  This will produce
+        # the correct behaviour when treating a character array as a string.
+        # Note that the trailing null is needed to work around problems with
+        # some clients.
+        value = numpy.frombuffer(value + b'\0', dtype = numpy.uint8)
+
+        # Truncate value to fit
+        if hasattr(self, '_nelm'):
+            value = value[:self._nelm]
+        return value
 
     def _epics_to_value(self, value):
         return _string_at(value.ctypes, len(value))

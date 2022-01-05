@@ -182,31 +182,25 @@ def WaveformOut(name, *value, **fields):
     return PythonDevice.waveform_out(name, **fields)
 
 
-def _long_string(value, fields):
-    if 'initial_value' in fields:
-        assert not value, 'Can\'t specify initial value twice!'
-        value = (fields.pop('initial_value'),)
-
-    if value:
-        # If a value is specified it should be the *only* non keyword
-        # argument.
-        value, = value
-        fields['initial_value'] = value
-        length = len(value)
-    else:
-        # No value specified, so require length and datatype to be specified.
+def _long_string(fields):
+    if 'length' in fields:
         length = fields.pop('length')
+    elif 'initial_value' in fields:
+        length = len(fields['initial_value'].encode(errors = 'replace')) + 1
+    else:
+        # Default length of 256
+        length = 256
 
     fields['NELM'] = length
     fields['FTVL'] = 'UCHAR'
 
 
-def longStringIn(name, *value, **fields):
-    _long_string(value, fields)
+def longStringIn(name, **fields):
+    _long_string(fields)
     return _in_record('long_stringin', name, **fields)
 
-def longStringOut(name, *value, **fields):
-    _long_string(value, fields)
+def longStringOut(name, **fields):
+    _long_string(fields)
     return PythonDevice.long_stringout(name, **fields)
 
 

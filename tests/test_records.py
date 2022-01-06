@@ -930,7 +930,7 @@ class TestNoneValue:
             process.terminate()
             process.join(timeout=3)
 
-def fixture_names(params):
+def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
     return params[0].__name__
 class TestValidate:
@@ -947,7 +947,7 @@ class TestValidate:
             (builder.WaveformOut, [10, 11, 12], []),
             (builder.longStringOut, "A LONGER HELLO", ""),
         ],
-        ids=fixture_names
+        ids=validate_fixture_names
     )
     def out_records(self, request):
         """The list of Out records and an associated value to set """
@@ -992,18 +992,17 @@ class TestValidate:
             asyncio.sleep(TIMEOUT), dispatcher.loop
         ).result()
 
-
-    @requires_cothread
-    def test_validate_allows_updates(self, out_records):
-        """Test that record values are updated correctly when validate
-        method allows it """
-
-        creation_func, value, _ = out_records
+    def validate_test_runner(
+            self,
+            creation_func,
+            new_value,
+            expected_value,
+            validate_pass: bool):
 
         queue = multiprocessing.Queue()
         process = multiprocessing.Process(
             target=self.validate_ioc_test_func,
-            args=(creation_func, queue, True),
+            args=(creation_func, queue, validate_pass),
         )
 
         process.start()
@@ -1018,7 +1017,7 @@ class TestValidate:
 
             put_ret = caput(
                 DEVICE_NAME + ":" + "VALIDATE-RECORD",
-                value,
+                new_value,
                 wait=True,
             )
             assert put_ret.ok, "caput did not succeed"
@@ -1029,13 +1028,24 @@ class TestValidate:
             )
 
             if creation_func in [builder.WaveformOut, builder.WaveformIn]:
-                assert numpy.array_equal(ret_val, value)
+                assert numpy.array_equal(ret_val, expected_value)
             else:
-                assert ret_val == value
+                assert ret_val == expected_value
 
         finally:
             process.terminate()
             process.join(timeout=3)
+
+
+    @requires_cothread
+    def test_validate_allows_updates(self, out_records):
+        """Test that record values are updated correctly when validate
+        method allows it """
+
+        creation_func, value, _ = out_records
+
+        self.validate_test_runner(creation_func, value, value, True)
+
 
     @requires_cothread
     def test_validate_blocks_updates(self, out_records):
@@ -1044,39 +1054,4 @@ class TestValidate:
 
         creation_func, value, default = out_records
 
-        queue = multiprocessing.Queue()
-        process = multiprocessing.Process(
-            target=self.validate_ioc_test_func,
-            args=(creation_func, queue, False),
-        )
-
-        process.start()
-
-        try:
-            queue.get(timeout=5)  # Get the expected IOC initialised message
-
-            from cothread.catools import caget, caput, _channel_cache
-
-            # See other places in this file for why we call it
-            _channel_cache.purge()
-
-            put_ret = caput(
-                DEVICE_NAME + ":" + "VALIDATE-RECORD",
-                value,
-                wait=True,
-            )
-            assert put_ret.ok, "caput did not succeed"
-
-            ret_val = caget(
-                DEVICE_NAME + ":" + "VALIDATE-RECORD",
-                timeout=3
-            )
-
-            if creation_func in [builder.WaveformOut, builder.WaveformIn]:
-                assert numpy.array_equal(ret_val, default)
-            else:
-                assert ret_val == default
-
-        finally:
-            process.terminate()
-            process.join(timeout=3)
+        self.validate_test_runner(creation_func, value, default, False)

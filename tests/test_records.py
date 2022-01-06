@@ -388,12 +388,12 @@ def record_value_asserts(
             truncated_value = actual_value[: expected_value.size]
             assert numpy.array_equal(
                 truncated_value, expected_value
-            ), "Arrays not equal: {} {}".format(actual_value, expected_value)
+            ), f"Arrays not equal: {actual_value} {expected_value}"
             assert type(actual_value) == expected_type
         else:
             assert actual_value == expected_value
             assert type(actual_value) == expected_type
-    except Exception as e:
+    except AssertionError as e:
         msg = (
             "Failed with parameters: "
             + str(creation_func)
@@ -404,7 +404,11 @@ def record_value_asserts(
             + ", "
             + str(expected_type)
         )
-        logging.error(msg, exc_info=e)
+        # Add the parameters into the exception message. Seems to be the
+        # cleanest place to add it, as doing a print() or a logging.error()
+        # both cause the message to appear in a separate section of the pytest
+        # results, which can be difficult to spot
+        e.args += (msg,)
         raise e
 
 

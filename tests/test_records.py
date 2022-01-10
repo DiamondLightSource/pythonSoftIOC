@@ -49,8 +49,8 @@ def clear_records():
     _clear_records()
 
 
-def record_funcs_names(fixture_value):
-    """Provide a nice name for the record_funcs fixture"""
+def record_func_names(fixture_value):
+    """Provide a nice name for the record_func fixture"""
     return fixture_value.__name__
 
 
@@ -72,20 +72,11 @@ def record_funcs_names(fixture_value):
         builder.longStringIn,
         builder.longStringOut,
     ],
-    ids=record_funcs_names,
+    ids=record_func_names,
 )
-def record_funcs(request):
+def record_func(request):
     """The list of record creation functions"""
     return request.param
-
-
-@pytest.fixture
-def record_funcs_reject_none(record_funcs):
-    """The list of record creation functions that reject 'None' as a value"""
-    if record_funcs in [builder.stringIn, builder.stringOut]:
-        pytest.skip(msg="None is valid value for string records")
-    return record_funcs
-
 
 def record_values_names(fixture_value):
     """Provide a nice name for the tests in the record_values fixture"""
@@ -111,8 +102,6 @@ record_values_list = [
     ("aOut_nan", builder.aOut, nan, nan, float),
     ("longIn_int", builder.longIn, 5, 5, int),
     ("longOut_int", builder.longOut, 5, 5, int),
-    ("longIn_float", builder.longIn, 9.9, 9, int),
-    ("longOut_float", builder.longOut, 9.9, 9, int),
     ("boolIn_int", builder.boolIn, 1, 1, int),
     ("boolOut_int", builder.boolOut, 1, 1, int),
     ("boolIn_true", builder.boolIn, True, 1, int),
@@ -128,32 +117,8 @@ record_values_list = [
     ("strOut_abc", builder.stringOut, "abc", "abc", str),
     ("strIn_empty", builder.stringIn, "", "", str),
     ("strOut_empty", builder.stringOut, "", "", str),
-    ("strIn_bytes", builder.stringIn, b"abc", "abc", str),
-    ("strOut_bytes", builder.stringOut, b"abc", "abc", str),
-    ("strin_utf8", builder.stringIn, "a€b", "a€b", str),  # Valid UTF-8
-    ("strOut_utf8", builder.stringOut, "a€b", "a€b", str),  # Valid UTF-8
-    ("strIn_badutf8", builder.stringIn, b"a\xcfb", "a�b", str),  # Invalid UTF-8
-    (
-        "strOut_badutf8",
-        builder.stringOut,
-        b"a\xcfb",  # Invalid UTF-8
-        "a�b",
-        str,
-    ),
-    (
-        "strIn_byteutf8",
-        builder.stringIn,
-        b"a\xe2\x82\xacb",  # Valid UTF-8
-        "a€b",
-        str,
-    ),
-    (
-        "strOut_byteutf8",
-        builder.stringOut,
-        b"a\xe2\x82\xacb",  # Valid UTF-8
-        "a€b",
-        str,
-    ),
+    ("strin_utf8", builder.stringIn, "%a€b", "%a€b", str),  # Valid UTF-8
+    ("strOut_utf8", builder.stringOut, "%a€b", "%a€b", str),  # Valid UTF-8
     (
         "strIn_longstr",
         builder.stringIn,
@@ -866,34 +831,31 @@ class TestNoneValue:
     expected_exceptions = (ValueError, TypeError, AttributeError)
 
     def test_value_none_rejected_initial_value(
-        self, clear_records, record_funcs_reject_none
+        self, clear_records, record_func
     ):
         """Test setting \"None\" as the initial_value raises an exception"""
 
         kwarg = {}
-        if record_funcs_reject_none in [
+        if record_func in [
             builder.WaveformIn,
             builder.WaveformOut,
         ]:
             kwarg = {"length": 50}  # Required when no value on creation
 
         with pytest.raises(self.expected_exceptions):
-            record_funcs_reject_none("SOME-NAME", initial_value=None, **kwarg)
+            record_func("SOME-NAME", initial_value=None, **kwarg)
 
     def test_value_none_rejected_set_before_init(
-        self, clear_records, record_funcs_reject_none
+        self, clear_records, record_func
     ):
         """Test that setting \"None\" using .set() raises an exception"""
 
         kwarg = {}
-        if record_funcs_reject_none in [
-            builder.WaveformIn,
-            builder.WaveformOut,
-        ]:
+        if record_func in [builder.WaveformIn, builder.WaveformOut]:
             kwarg = {"length": 50}  # Required when no value on creation
 
         with pytest.raises(self.expected_exceptions):
-            record = record_funcs_reject_none("SOME-NAME", **kwarg)
+            record = record_func("SOME-NAME", **kwarg)
             record.set(None)
 
     def none_value_test_func(self, record_func, queue):
@@ -915,13 +877,13 @@ class TestNoneValue:
         queue.put(Exception("FAIL:Test did not raise exception during .set()"))
 
     @requires_cothread
-    def test_value_none_rejected_set_after_init(self, record_funcs_reject_none):
+    def test_value_none_rejected_set_after_init(self, record_func):
         """Test that setting \"None\" using .set() after IOC init raises an
         exception"""
         queue = multiprocessing.Queue()
         process = multiprocessing.Process(
             target=self.none_value_test_func,
-            args=(record_funcs_reject_none, queue),
+            args=(record_func, queue),
         )
 
         process.start()

@@ -120,20 +120,6 @@ record_values_list = [
     ("strin_utf8", builder.stringIn, "%a€b", "%a€b", str),  # Valid UTF-8
     ("strOut_utf8", builder.stringOut, "%a€b", "%a€b", str),  # Valid UTF-8
     (
-        "strIn_longstr",
-        builder.stringIn,
-        "this string is much longer than 40 characters",
-        "this string is much longer than 40 char",
-        str,
-    ),
-    (
-        "strOut_longstr",
-        builder.stringOut,
-        "this string is much longer than 40 characters",
-        "this string is much longer than 40 char",
-        str,
-    ),
-    (
         "wIn_list",
         builder.WaveformIn,
         [1, 2, 3],
@@ -148,17 +134,31 @@ record_values_list = [
         numpy.ndarray,
     ),
     (
-        "wIn_str",
+        "wIn_int",
         builder.WaveformIn,
-        "ABC",
-        numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
+        567,
+        numpy.array([567], dtype=numpy.int32),
         numpy.ndarray,
     ),
     (
-        "wOut_str",
+        "wOut_int",
         builder.WaveformOut,
-        "ABC",
-        numpy.array([65, 66, 67, 0], dtype=numpy.uint8),
+        567,
+        numpy.array([567], dtype=numpy.int32),
+        numpy.ndarray,
+    ),
+    (
+        "wIn_float",
+        builder.WaveformIn,
+        12.345,
+        numpy.array([12.345], dtype=numpy.float32),
+        numpy.ndarray,
+    ),
+    (
+        "wOut_float",
+        builder.WaveformOut,
+        12.345,
+        numpy.array([12.345], dtype=numpy.float32),
         numpy.ndarray,
     ),
     (
@@ -177,20 +177,6 @@ record_values_list = [
         numpy.array(
             [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68, 0], dtype=numpy.uint8
         ),
-        numpy.ndarray,
-    ),
-    (
-        "wIn_unicode",
-        builder.WaveformIn,
-        "%a€b",
-        numpy.array([37, 97, 226, 130, 172, 98, 0], dtype=numpy.uint8),
-        numpy.ndarray,
-    ),
-    (
-        "wOut_unicode",
-        builder.WaveformOut,
-        "%a€b",
-        numpy.array([37, 97, 226, 130, 172, 98, 0], dtype=numpy.uint8),
         numpy.ndarray,
     ),
     (
@@ -219,20 +205,6 @@ record_values_list = [
         builder.longStringOut,
         VERY_LONG_STRING,
         VERY_LONG_STRING,
-        str,
-    ),
-    (
-        "longStringIn_bytes",
-        builder.longStringIn,
-        b"HELLO\0WORLD",
-        "HELLO",
-        str,
-    ),
-    (
-        "longStringOut_bytes",
-        builder.longStringOut,
-        b"HELLO\0WORLD",
-        "HELLO",
         str,
     ),
     (
@@ -507,14 +479,10 @@ def run_test_function(
             ) = configuration
 
             # Infer some required keywords from parameters
-            put_kwargs = {}
-            get_kwargs = {}
-            if creation_func in [builder.WaveformOut, builder.WaveformIn]:
+            kwargs = {}
+            if creation_func in [builder.longStringIn, builder.longStringOut]:
                 from cothread.dbr import DBR_CHAR_STR
-
-                if type(initial_value) in [str, bytes]:
-                    put_kwargs.update({"datatype": DBR_CHAR_STR})
-                    get_kwargs.update({"count": len(initial_value) + 1})
+                kwargs.update({"datatype": DBR_CHAR_STR})
 
             if set_enum == SetValueEnum.CAPUT:
                 if get_enum == GetValueEnum.GET:
@@ -526,7 +494,7 @@ def run_test_function(
                     DEVICE_NAME + ":" + record_name,
                     initial_value,
                     wait=True,
-                    **put_kwargs
+                    **kwargs
                 )
 
                 if get_enum == GetValueEnum.GET:
@@ -546,7 +514,7 @@ def run_test_function(
                 rec_val = caget(
                     DEVICE_NAME + ":" + record_name,
                     timeout=TIMEOUT,
-                    **get_kwargs
+                    **kwargs,
                 )
                 # '+' operator used to convert cothread's types into Python
                 # native types e.g. "+ca_int" -> int
@@ -830,32 +798,41 @@ class TestNoneValue:
     # We expect using None as a value will trigger one of these exceptions
     expected_exceptions = (ValueError, TypeError, AttributeError)
 
+
+    @pytest.fixture
+    def record_func_reject_none(self, record_func):
+        """Parameterized fixture for all records that reject None"""
+        if record_func in [builder.WaveformIn, builder.WaveformOut]:
+            pytest.skip("None is accepted by Waveform records, as numpy "
+                        "treats it as NaN")
+        return record_func
+
     def test_value_none_rejected_initial_value(
-        self, clear_records, record_func
+        self, clear_records, record_func_reject_none
     ):
         """Test setting \"None\" as the initial_value raises an exception"""
 
         kwarg = {}
-        if record_func in [
+        if record_func_reject_none in [
             builder.WaveformIn,
             builder.WaveformOut,
         ]:
             kwarg = {"length": 50}  # Required when no value on creation
 
         with pytest.raises(self.expected_exceptions):
-            record_func("SOME-NAME", initial_value=None, **kwarg)
+            record_func_reject_none("SOME-NAME", initial_value=None, **kwarg)
 
     def test_value_none_rejected_set_before_init(
-        self, clear_records, record_func
+        self, clear_records, record_func_reject_none
     ):
         """Test that setting \"None\" using .set() raises an exception"""
 
         kwarg = {}
-        if record_func in [builder.WaveformIn, builder.WaveformOut]:
+        if record_func_reject_none in [builder.WaveformIn, builder.WaveformOut]:
             kwarg = {"length": 50}  # Required when no value on creation
 
         with pytest.raises(self.expected_exceptions):
-            record = record_func("SOME-NAME", **kwarg)
+            record = record_func_reject_none("SOME-NAME", **kwarg)
             record.set(None)
 
     def none_value_test_func(self, record_func, queue):
@@ -877,13 +854,13 @@ class TestNoneValue:
         queue.put(Exception("FAIL:Test did not raise exception during .set()"))
 
     @requires_cothread
-    def test_value_none_rejected_set_after_init(self, record_func):
+    def test_value_none_rejected_set_after_init(self, record_func_reject_none):
         """Test that setting \"None\" using .set() after IOC init raises an
         exception"""
         queue = multiprocessing.Queue()
         process = multiprocessing.Process(
             target=self.none_value_test_func,
-            args=(record_func, queue),
+            args=(record_func_reject_none, queue),
         )
 
         process.start()
@@ -974,23 +951,30 @@ class TestValidate:
         process.start()
 
         try:
-            queue.get(timeout=5)  # Get the expected IOc initialised message
+            queue.get(timeout=5)  # Get the expected IOC initialised message
 
             from cothread.catools import caget, caput, _channel_cache
 
             # See other places in this file for why we call it
             _channel_cache.purge()
 
+            kwargs = {}
+            if creation_func in [builder.longStringIn, builder.longStringOut]:
+                from cothread.dbr import DBR_CHAR_STR
+                kwargs.update({"datatype": DBR_CHAR_STR})
+
             put_ret = caput(
                 DEVICE_NAME + ":" + "VALIDATE-RECORD",
                 new_value,
                 wait=True,
+                **kwargs,
             )
             assert put_ret.ok, "caput did not succeed"
 
             ret_val = caget(
                 DEVICE_NAME + ":" + "VALIDATE-RECORD",
-                timeout=3
+                timeout=3,
+                **kwargs
             )
 
             if creation_func in [builder.WaveformOut, builder.WaveformIn]:

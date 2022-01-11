@@ -121,7 +121,7 @@ NumpyCharCodeToFtvl = {
     'l':    'LONG',         # int_
     'f':    'FLOAT',        # single
     'd':    'DOUBLE',       # float_
-#     'S':    'STRING',       # str_
+# noqa    'S':    'STRING',       # str_
 
     # The following type codes are weakly supported by pretending that
     # they're related types.
@@ -138,7 +138,7 @@ NumpyCharCodeToFtvl = {
 
 # Coverts FTVL string to numpy type
 DbfStringToNumpy = {
-#     'STRING':   numpy.dtype('S40'),       # Don't think we want this!
+# noqa    'STRING':   numpy.dtype('S40'),       # Don't think we want this!
     'CHAR':     numpy.dtype('int8'),
     'UCHAR':    numpy.dtype('uint8'),
     'SHORT':    numpy.dtype('int16'),

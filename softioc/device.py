@@ -315,6 +315,9 @@ class ao(ProcessDeviceSupportOut):
 
 
 def _require_waveform(value, dtype):
+    if isinstance(value, bytes):
+        # Special case hack for byte arrays.  Surprisingly tricky:
+        value = numpy.frombuffer(value, dtype = numpy.uint8)
     value = numpy.require(value, dtype = dtype)
     if value.shape == ():
         value.shape = (1,)

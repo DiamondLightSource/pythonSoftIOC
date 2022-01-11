@@ -314,6 +314,14 @@ class ao(ProcessDeviceSupportOut):
     _dbf_type_ = fields.DBF_DOUBLE
 
 
+def _require_waveform(value, dtype):
+    value = numpy.require(value, dtype = dtype)
+    if value.shape == ():
+        value.shape = (1,)
+    assert value.ndim == 1, 'Can\'t write multidimensional arrays'
+    return value
+
+
 class WaveformBase(ProcessDeviceSupportCore):
     _link_ = 'INP'
     # In the waveform record class, the following four fields are key:
@@ -322,16 +330,15 @@ class WaveformBase(ProcessDeviceSupportCore):
     #   NELM    Length of allocated array in number of elements
     #   NORD    Currently reported length of array (0 <= NORD <= NELM)
     _fields_ = ['UDF', 'FTVL', 'BPTR', 'NELM', 'NORD']
-    # Allow set() to be called before init_record:
-    _dtype = None
 
-    def _default_value(self):
-        return numpy.array([])
+
+    def __init__(self, name, _wf_nelm, _wf_dtype, **kargs):
+        self._dtype = _wf_dtype
+        self._nelm = _wf_nelm
+        self.__super.__init__(name, **kargs)
 
     def init_record(self, record):
-        self._nelm = record.NELM
         self._dbf_type_ = record.FTVL
-        self._dtype = fields.DbfCodeToNumpy[record.FTVL]
         return self.__super.init_record(record)
 
     def _read_value(self, record):
@@ -343,12 +350,7 @@ class WaveformBase(ProcessDeviceSupportCore):
         return result
 
     def _write_value(self, record, value):
-        value = numpy.require(value, dtype = self._dtype)
-
-        nelm = record.NELM
         nord = len(value)
-        if nord > nelm:
-            nord = nelm
         memmove(
             record.BPTR, value.ctypes.data_as(c_void_p),
             self._dtype.itemsize * nord)
@@ -360,26 +362,17 @@ class WaveformBase(ProcessDeviceSupportCore):
     def _value_to_epics(self, value):
         # Ensure we always convert incoming value into numpy array, regardless
         # of whether the record has been initialised or not
-        value = numpy.require(value, dtype = self._dtype)
-        if value.shape == ():
-            value.shape = (1,)
-        assert value.ndim == 1, 'Can\'t write multidimensional arrays'
-
-        # Truncate value to fit
-        if hasattr(self, '_nelm'):
-            value = value[:self._nelm]
-
+        value = _require_waveform(value, self._dtype)
         # Because arrays are mutable values it's ever so easy to accidentially
         # call set() with a value which subsequently changes.  To avoid this
         # common class of bug, at the cost of duplicated code and data, here we
-        # ensure a copy is taken of the value.
-        return +value
+        # ensure a copy is taken of the value, after pruning to length.
+        return +value[:self._nelm]
 
     def _epics_to_value(self, value):
         return value
 
     def _value_to_dbr(self, value):
-        value = numpy.require(value, dtype = self._dtype)
         return self._dbf_type_, len(value), value.ctypes.data, value
 
 

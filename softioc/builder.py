@@ -7,7 +7,8 @@ from epicsdbbuilder import *
 InitialiseDbd()
 LoadDbdFile(os.path.join(os.path.dirname(__file__), 'device.dbd'))
 
-from . import pythonSoftIoc  # noqa
+from . import device, pythonSoftIoc  # noqa
+
 PythonDevice = pythonSoftIoc.PythonDevice()
 
 
@@ -120,7 +121,7 @@ NumpyCharCodeToFtvl = {
     'l':    'LONG',         # int_
     'f':    'FLOAT',        # single
     'd':    'DOUBLE',       # float_
-    'S':    'STRING',       # str_
+#     'S':    'STRING',       # str_
 
     # The following type codes are weakly supported by pretending that
     # they're related types.
@@ -135,6 +136,19 @@ NumpyCharCodeToFtvl = {
     #   O   object_         U   unicode_        V   void
 }
 
+# Coverts FTVL string to numpy type
+DbfStringToNumpy = {
+#     'STRING':   numpy.dtype('S40'),       # Don't think we want this!
+    'CHAR':     numpy.dtype('int8'),
+    'UCHAR':    numpy.dtype('uint8'),
+    'SHORT':    numpy.dtype('int16'),
+    'USHORT':   numpy.dtype('uint16'),
+    'LONG':     numpy.dtype('int32'),
+    'ULONG':    numpy.dtype('uint32'),
+    'FLOAT':    numpy.dtype('float32'),
+    'DOUBLE':   numpy.dtype('float64'),
+}
+
 
 def _waveform(value, fields):
     '''Helper routine for waveform construction.  If a value is given it is
@@ -146,29 +160,34 @@ def _waveform(value, fields):
         assert not value, 'Can\'t specify initial value twice!'
         value = (fields.pop('initial_value'),)
 
-    if value:
-        # If a value is specified it should be the *only* non keyword
-        # argument.
-        value, = value
-        value = numpy.array(value)
-        fields['initial_value'] = value
-
-        # Pick up default length and datatype from initial value
-        length = len(value)
-        FTVL = NumpyCharCodeToFtvl[value.dtype.char]
-    else:
-        # No value specified, so require length and datatype to be specified.
-        length = fields.pop('length')
-        FTVL = 'FLOAT'
-
-    datatype = fields.pop('datatype', None)
-    if datatype is not None:
+    # Datatype can be specified as keyword argument, taken from FTVL, or derived
+    # from the initial value
+    if 'datatype' in fields:
         assert 'FTVL' not in fields, \
             'Can\'t specify FTVL and datatype together'
-        FTVL = NumpyCharCodeToFtvl[numpy.dtype(datatype).char]
+        datatype = numpy.dtype(fields.pop('datatype'))
+    elif 'FTVL' in fields:
+        datatype = DbfStringToNumpy[fields['FTVL']]
+    else:
+        # No datatype specified, will have to infer from initial value
+        datatype = None
+
+    if value:
+        # If a value is specified it should be the *only* non keyword argument.
+        value, = value
+        initial_value = device._require_waveform(value, datatype)
+        length = fields.pop('length', len(initial_value))
+    else:
+        initial_value = numpy.array([], dtype = datatype)
+        length = fields.pop('length')
+    datatype = initial_value.dtype
+
+    fields['initial_value'] = initial_value
+    fields['_wf_nelm'] = length
+    fields['_wf_dtype'] = datatype
 
     fields['NELM'] = length
-    fields.setdefault('FTVL', FTVL)
+    fields['FTVL'] = NumpyCharCodeToFtvl[datatype.char]
 
 
 def Waveform(name, *value, **fields):
@@ -190,6 +209,10 @@ def _long_string(fields):
     else:
         # Default length of 256
         length = 256
+
+    fields.setdefault('initial_value', '')
+    fields['_wf_nelm'] = length
+    fields['_wf_dtype'] = numpy.dtype('uint8')
 
     fields['NELM'] = length
     fields['FTVL'] = 'UCHAR'

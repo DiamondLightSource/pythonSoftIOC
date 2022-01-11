@@ -123,14 +123,14 @@ record_values_list = [
         "wIn_list",
         builder.WaveformIn,
         [1, 2, 3],
-        numpy.array([1, 2, 3], dtype=numpy.float32),
+        numpy.array([1, 2, 3], dtype=numpy.int64),
         numpy.ndarray,
     ),
     (
         "wOut_list",
         builder.WaveformOut,
         [1, 2, 3],
-        numpy.array([1, 2, 3], dtype=numpy.float32),
+        numpy.array([1, 2, 3], dtype=numpy.int64),
         numpy.ndarray,
     ),
     (
@@ -151,14 +151,14 @@ record_values_list = [
         "wIn_float",
         builder.WaveformIn,
         12.345,
-        numpy.array([12.345], dtype=numpy.float32),
+        numpy.array([12.345], dtype=numpy.float64),
         numpy.ndarray,
     ),
     (
         "wOut_float",
         builder.WaveformOut,
         12.345,
-        numpy.array([12.345], dtype=numpy.float32),
+        numpy.array([12.345], dtype=numpy.float64),
         numpy.ndarray,
     ),
     (
@@ -460,8 +460,11 @@ def run_test_function(
         pytest.fail("IOC process did not start before TIMEOUT expired")
 
     try:
+        # Cannot do these imports before the subprocess starts, as cothread
+        # isn't threadsafe (in the way we require)
         from cothread import Yield
         from cothread.catools import caget, caput, _channel_cache
+        from cothread.dbr import DBR_CHAR_STR
 
         # cothread remembers connected IOCs. As we potentially restart the same
         # named IOC multiple times, we have to purge the cache else the
@@ -480,9 +483,15 @@ def run_test_function(
 
             # Infer some required keywords from parameters
             kwargs = {}
+            put_kwarg = {}
             if creation_func in [builder.longStringIn, builder.longStringOut]:
-                from cothread.dbr import DBR_CHAR_STR
                 kwargs.update({"datatype": DBR_CHAR_STR})
+
+            if (creation_func in [builder.WaveformIn, builder.WaveformOut]
+                    and type(initial_value) is bytes):
+                # Want to put bytestrings using this, but then retrieve the
+                # value as an array so NOT specify datatype there
+                put_kwarg.update({"datatype": DBR_CHAR_STR})
 
             if set_enum == SetValueEnum.CAPUT:
                 if get_enum == GetValueEnum.GET:
@@ -494,7 +503,8 @@ def run_test_function(
                     DEVICE_NAME + ":" + record_name,
                     initial_value,
                     wait=True,
-                    **kwargs
+                    **kwargs,
+                    **put_kwarg,
                 )
 
                 if get_enum == GetValueEnum.GET:
@@ -691,16 +701,10 @@ class TestCagetValue:
         """Test that records provide the expected values on get calls when using
         .set() before IOC initialisation and caget after initialisation"""
 
-        # Various conditions mean we cannot use the entire list of cases
+        # Various conditions (e.g.) mean we cannot use the entire list of cases
         filtered_list = []
         for item in record_values_list:
-            if (
-                item[1] in [builder.stringIn, builder.stringOut]
-                and len(item[2]) > 40
-            ):
-                # caput blocks long strings
-                continue
-
+            # In records block caputs
             if item[1] not in [
                 builder.aIn,
                 builder.boolIn,
@@ -708,8 +712,8 @@ class TestCagetValue:
                 builder.mbbIn,
                 builder.stringIn,
                 builder.WaveformIn,
+                builder.longStringIn,
             ]:
-                # In records block caput
                 filtered_list.append(item)
 
         run_test_function(filtered_list, SetValueEnum.CAPUT, GetValueEnum.CAGET)
@@ -751,7 +755,7 @@ class TestDefaultValue:
             (builder.stringIn, "", str),
             (builder.mbbOut, None, type(None)),
             (builder.mbbIn, 0, int),
-            (builder.WaveformOut, None, type(None)),
+            (builder.WaveformOut, numpy.empty(0), numpy.ndarray),
             (builder.WaveformIn, numpy.empty(0), numpy.ndarray),
             (builder.longStringOut, "", str),
             (builder.longStringIn, "", str),

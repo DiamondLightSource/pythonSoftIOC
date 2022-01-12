@@ -149,7 +149,12 @@ def _waveform(value, fields):
     if 'datatype' in fields:
         assert 'FTVL' not in fields, \
             'Can\'t specify FTVL and datatype together'
-        datatype = numpy.dtype(fields.pop('datatype'))
+        datatype = fields.pop('datatype')
+        if datatype == int or datatype == 'int':
+            # Convert Python int to 32-bit integer, it's all we can handle
+            datatype = numpy.dtype('int32')
+        else:
+            datatype = numpy.dtype(datatype)
     elif 'FTVL' in fields:
         datatype = numpy.dtype(DbfStringToNumpy[fields['FTVL']])
     else:
@@ -163,7 +168,7 @@ def _waveform(value, fields):
         length = fields.pop('length', len(initial_value))
 
         # Special case for [u]int64: if the initial value comes in as 64 bit
-        # integers cannot represent that, so recast it as [u]int32
+        # integers we cannot represent that, so recast it as [u]int32
         if datatype is None:
             if initial_value.dtype == numpy.int64:
                 initial_value = numpy.require(initial_value, numpy.int32)

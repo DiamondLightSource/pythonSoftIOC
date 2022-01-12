@@ -205,7 +205,12 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self.__enable_write = True
 
     def get(self):
-        return self._epics_to_value(self._value)
+        if self._value is None:
+            # Before startup complete if no value set return default value
+            value = self._default_value()
+        else:
+            value = self._value
+        return self._epics_to_value(value)
 
 
 def _Device(Base, record_type, ctype, dbf_type, epics_rc, mlst = False):

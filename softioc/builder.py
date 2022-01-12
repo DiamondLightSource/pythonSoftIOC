@@ -109,44 +109,28 @@ def Action(name, **fields):
     return boolOut(name, always_update = True, **fields)
 
 
-# Converts numpy character code to FTVL value.
-NumpyCharCodeToFtvl = {
-    # The following type codes are supported directly:
-    'B':    'UCHAR',        # ubyte
-    'b':    'CHAR',         # byte
-    'H':    'USHORT',       # ushort
-    'h':    'SHORT',        # short
-    'i':    'LONG',         # intc
-    'L':    'ULONG',        # uint
-    'l':    'LONG',         # int_
-    'f':    'FLOAT',        # single
-    'd':    'DOUBLE',       # float_
-# noqa    'S':    'STRING',       # str_
-
-    # The following type codes are weakly supported by pretending that
-    # they're related types.
-    '?':    'CHAR',         # bool_
-    'p':    'LONG',         # intp
-    'I':    'ULONG',        # uintc
-    'P':    'ULONG',        # uintp
-
-    # The following type codes are not supported at all:
-    #   q   longlong        Q   ulonglong       g   longfloat
-    #   F   csingle         D   complex_        G   clongfloat
-    #   O   object_         U   unicode_        V   void
+# Converts numpy dtype name to FTVL value.
+NumpyDtypeToDbf = {
+    'int8':     'CHAR',
+    'uint8':    'UCHAR',
+    'int16':    'SHORT',
+    'uint16':   'USHORT',
+    'int32':    'LONG',
+    'uint32':   'ULONG',
+    'float32':  'FLOAT',
+    'float64':  'DOUBLE',
 }
 
 # Coverts FTVL string to numpy type
 DbfStringToNumpy = {
-# noqa    'STRING':   numpy.dtype('S40'),       # Don't think we want this!
-    'CHAR':     numpy.dtype('int8'),
-    'UCHAR':    numpy.dtype('uint8'),
-    'SHORT':    numpy.dtype('int16'),
-    'USHORT':   numpy.dtype('uint16'),
-    'LONG':     numpy.dtype('int32'),
-    'ULONG':    numpy.dtype('uint32'),
-    'FLOAT':    numpy.dtype('float32'),
-    'DOUBLE':   numpy.dtype('float64'),
+    'CHAR':     'int8',
+    'UCHAR':    'uint8',
+    'SHORT':    'int16',
+    'USHORT':   'uint16',
+    'LONG':     'int32',
+    'ULONG':    'uint32',
+    'FLOAT':    'float32',
+    'DOUBLE':   'float64',
 }
 
 
@@ -167,7 +151,7 @@ def _waveform(value, fields):
             'Can\'t specify FTVL and datatype together'
         datatype = numpy.dtype(fields.pop('datatype'))
     elif 'FTVL' in fields:
-        datatype = DbfStringToNumpy[fields['FTVL']]
+        datatype = numpy.dtype(DbfStringToNumpy[fields['FTVL']])
     else:
         # No datatype specified, will have to infer from initial value
         datatype = None
@@ -177,6 +161,14 @@ def _waveform(value, fields):
         value, = value
         initial_value = device._require_waveform(value, datatype)
         length = fields.pop('length', len(initial_value))
+
+        # Special case for [u]int64: if the initial value comes in as 64 bit
+        # integers cannot represent that, so recast it as [u]int32
+        if datatype is None:
+            if initial_value.dtype == numpy.int64:
+                initial_value = numpy.require(initial_value, numpy.int32)
+            elif initial_value.dtype == numpy.uint64:
+                initial_value = numpy.require(initial_value, numpy.uint32)
     else:
         initial_value = numpy.array([], dtype = datatype)
         length = fields.pop('length')
@@ -187,7 +179,7 @@ def _waveform(value, fields):
     fields['_wf_dtype'] = datatype
 
     fields['NELM'] = length
-    fields['FTVL'] = NumpyCharCodeToFtvl[datatype.char]
+    fields['FTVL'] = NumpyDtypeToDbf[datatype.name]
 
 
 def Waveform(name, *value, **fields):

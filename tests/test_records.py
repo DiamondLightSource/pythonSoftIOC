@@ -78,6 +78,17 @@ def record_func(request):
     """The list of record creation functions"""
     return request.param
 
+# A list of all In records, used to filter out various tests
+in_records = [
+    builder.aIn,
+    builder.boolIn,
+    builder.longIn,
+    builder.mbbIn,
+    builder.stringIn,
+    builder.WaveformIn,
+    builder.longStringIn,
+]
+
 def record_values_names(fixture_value):
     """Provide a nice name for the tests in the record_values fixture"""
     return (
@@ -137,14 +148,14 @@ record_values_list = [
         "wIn_int",
         builder.WaveformIn,
         567,
-        numpy.array([567], dtype=numpy.int32),
+        numpy.array([567.], dtype=numpy.float64),
         numpy.ndarray,
     ),
     (
         "wOut_int",
         builder.WaveformOut,
         567,
-        numpy.array([567], dtype=numpy.int32),
+        numpy.array([567.], dtype=numpy.float64),
         numpy.ndarray,
     ),
     (
@@ -627,14 +638,7 @@ class TestGetValue:
                 # caput blocks strings longer than 40 characters
                 continue
 
-            if item[1] not in [
-                builder.aIn,
-                builder.boolIn,
-                builder.longIn,
-                builder.mbbIn,
-                builder.stringIn,
-                builder.WaveformIn,
-            ]:
+            if item[1] not in in_records:
                 # In records block caput
                 filtered_list.append(item)
 
@@ -655,14 +659,7 @@ class TestCagetValue:
         for item in record_values_list:
             # .set() on In records doesn't update correctly.
             # pythonSoftIOC issue #67
-            if item[1] not in (
-                builder.aIn,
-                builder.longIn,
-                builder.boolIn,
-                builder.stringIn,
-                builder.mbbIn,
-                builder.WaveformIn,
-            ):
+            if item[1] not in in_records:
                 filtered_list.append(item)
 
         run_test_function(
@@ -696,15 +693,7 @@ class TestCagetValue:
         filtered_list = []
         for item in record_values_list:
             # In records block caputs
-            if item[1] not in [
-                builder.aIn,
-                builder.boolIn,
-                builder.longIn,
-                builder.mbbIn,
-                builder.stringIn,
-                builder.WaveformIn,
-                builder.longStringIn,
-            ]:
+            if item[1] not in in_records:
                 filtered_list.append(item)
 
         run_test_function(filtered_list, SetValueEnum.CAPUT, GetValueEnum.CAGET)

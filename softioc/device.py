@@ -365,7 +365,7 @@ class WaveformBase(ProcessDeviceSupportCore):
         record.NORD = nord
 
     def _compare_values(self, value, other):
-        return numpy.all(value == other)
+        return len(value) == len(other) and numpy.all(value == other)
 
     def _value_to_epics(self, value):
         # Ensure we always convert incoming value into numpy array, regardless

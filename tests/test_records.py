@@ -131,17 +131,31 @@ record_values_list = [
     ("strin_utf8", builder.stringIn, "%a€b", "%a€b", str),  # Valid UTF-8
     ("strOut_utf8", builder.stringOut, "%a€b", "%a€b", str),  # Valid UTF-8
     (
-        "wIn_list",
+        "wIn_list_int",
         builder.WaveformIn,
         [1, 2, 3],
-        numpy.array([1, 2, 3], dtype=numpy.int64),
+        numpy.array([1, 2, 3], dtype=numpy.int32),
         numpy.ndarray,
     ),
     (
-        "wOut_list",
+        "wOut_list_int",
         builder.WaveformOut,
         [1, 2, 3],
-        numpy.array([1, 2, 3], dtype=numpy.int64),
+        numpy.array([1, 2, 3], dtype=numpy.int32),
+        numpy.ndarray,
+    ),
+    (
+        "wIn_list_float",
+        builder.WaveformIn,
+        [1.5, 2.6, 3.7],
+        numpy.array([1.5, 2.6, 3.7], dtype=numpy.float64),
+        numpy.ndarray,
+    ),
+    (
+        "wOut_list_float",
+        builder.WaveformOut,
+        [1.5, 2.6, 3.7],
+        numpy.array([1.5, 2.6, 3.7], dtype=numpy.float64),
         numpy.ndarray,
     ),
     (
@@ -531,6 +545,17 @@ def run_test_function(
                 # '+' operator used to convert cothread's types into Python
                 # native types e.g. "+ca_int" -> int
                 rec_val = +rec_val
+
+                if (
+                    creation_func in [builder.WaveformOut, builder.WaveformIn]
+                    and expected_value.dtype in [numpy.float64, numpy.int32]
+                ):
+                    print(
+                        "caget cannot distinguish between a waveform with 1"
+                        "element and a scalar value, and so always returns a "
+                        "scalar. Therefore we skip this check.")
+                    continue
+
 
             record_value_asserts(
                 creation_func, rec_val, expected_value, expected_type

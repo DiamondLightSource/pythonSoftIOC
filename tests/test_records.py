@@ -166,7 +166,7 @@ record_values_list = [
         builder.WaveformIn,
         b"HELLO\0WORLD",
         numpy.array(
-            [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68, 0], dtype=numpy.uint8
+            [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68], dtype=numpy.uint8
         ),
         numpy.ndarray,
     ),
@@ -175,7 +175,7 @@ record_values_list = [
         builder.WaveformOut,
         b"HELLO\0WORLD",
         numpy.array(
-            [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68, 0], dtype=numpy.uint8
+            [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68], dtype=numpy.uint8
         ),
         numpy.ndarray,
     ),

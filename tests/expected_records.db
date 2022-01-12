@@ -57,6 +57,7 @@ record(waveform, "TS-DI-TEST-01:LONGSTRING")
     field(FTVL, "UCHAR")
     field(INP,  "@TS-DI-TEST-01:LONGSTRING")
     field(NELM, "256")
+    field(PINI, "YES")
     field(SCAN, "I/O Intr")
 }
 
@@ -97,6 +98,7 @@ record(waveform, "TS-DI-TEST-01:SIN")
     field(FTVL, "DOUBLE")
     field(INP,  "@TS-DI-TEST-01:SIN")
     field(NELM, "1024")
+    field(PINI, "YES")
     field(SCAN, "I/O Intr")
 }
 
@@ -145,9 +147,10 @@ record(waveform, "TS-DI-TEST-01:WAVEFORM2")
 {
     field(DISP, "1")
     field(DTYP, "Python")
-    field(FTVL, "FLOAT")
+    field(FTVL, "DOUBLE")
     field(INP,  "@TS-DI-TEST-01:WAVEFORM2")
     field(NELM, "10")
+    field(PINI, "YES")
     field(SCAN, "I/O Intr")
 }
 

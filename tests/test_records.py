@@ -313,19 +313,7 @@ def record_value_asserts(
         if type(expected_value) == float and isnan(expected_value):
             assert isnan(actual_value)  # NaN != Nan, so needs special case
         elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
-
-            # Special case for lack of default value on Out records before init
-            if actual_value is None and expected_value is None:
-                assert type(actual_value) == expected_type
-                return
-
-            # Using .get() on the array returns entire length, not just filled
-            # part. Confirm this by ensuring sliced part of array is all zeros
-            assert not numpy.any(actual_value[expected_value.size:])
-            truncated_value = actual_value[: expected_value.size]
-            assert numpy.array_equal(
-                truncated_value, expected_value
-            ), f"Arrays not equal: {actual_value} {expected_value}"
+            assert numpy.array_equal(actual_value, expected_value)
             assert type(actual_value) == expected_type
         else:
             assert actual_value == expected_value
@@ -489,9 +477,12 @@ def run_test_function(
 
             if (creation_func in [builder.WaveformIn, builder.WaveformOut]
                     and type(initial_value) is bytes):
-                # Want to put bytestrings using this, but then retrieve the
-                # value as an array so NOT specify datatype there
-                put_kwarg.update({"datatype": DBR_CHAR_STR})
+                # There's a bug in caput that means DBR_CHAR_STR doesn't
+                # truncate the array of the target record, meaning .get()
+                # returns all NELM rather than just NORD elements. Instead we
+                # encode the data ourselves
+                initial_value = numpy.frombuffer(
+                    initial_value, dtype = numpy.uint8)
 
             if set_enum == SetValueEnum.CAPUT:
                 if get_enum == GetValueEnum.GET:
@@ -744,16 +735,16 @@ class TestDefaultValue:
     @pytest.mark.parametrize(
         "creation_func,expected_value,expected_type",
         [
-            (builder.aOut, None, type(None)),
+            (builder.aOut, 0.0, float),
             (builder.aIn, 0.0, float),
-            (builder.longOut, None, type(None)),
+            (builder.longOut, 0, int),
             (builder.longIn, 0, int),
-            (builder.boolOut, None, type(None)),
+            (builder.boolOut, 0, int),
             (builder.boolIn, 0, int),
-            (builder.Action, None, type(None)),
-            (builder.stringOut, None, type(None)),
+            (builder.Action, 0, int),
+            (builder.stringOut, "", str),
             (builder.stringIn, "", str),
-            (builder.mbbOut, None, type(None)),
+            (builder.mbbOut, 0, int),
             (builder.mbbIn, 0, int),
             (builder.WaveformOut, numpy.empty(0), numpy.ndarray),
             (builder.WaveformIn, numpy.empty(0), numpy.ndarray),

@@ -374,8 +374,9 @@ class WaveformBase(ProcessDeviceSupportCore):
         # Because arrays are mutable values it's ever so easy to accidentially
         # call set() with a value which subsequently changes.  To avoid this
         # common class of bug, at the cost of duplicated code and data, here we
-        # ensure a copy is taken of the value, after pruning to length.
-        return +value[:self._nelm]
+        # ensure a copy is taken of the value.
+        assert len(value) <= self._nelm, 'Value too long for waveform'
+        return +value
 
     def _epics_to_value(self, value):
         return value

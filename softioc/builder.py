@@ -179,6 +179,8 @@ def _waveform(value, fields):
         length = fields.pop('length')
     datatype = initial_value.dtype
 
+    assert length > 0, 'Array cannot be of zero length'
+
     fields['initial_value'] = initial_value
     fields['_wf_nelm'] = length
     fields['_wf_dtype'] = datatype

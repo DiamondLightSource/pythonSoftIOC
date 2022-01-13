@@ -343,8 +343,7 @@ record creation function.
     Sets up the prefix part of the record name, referred to here as the "device"
     part.  This function must be called before creating any records.
     Note that
-    only this function need be used, the three other functions below are
-    entirely optional.
+    only this function need be used, function below is entirely optional.
 
 ..  function:: UnsetDevice()
 

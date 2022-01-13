@@ -308,13 +308,28 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
     if given, or defaults to ``'FLOAT'``.
 
 
-The following function generates a specialised record.
+The following functions generates specialised records.
 
 ..  function:: Action(name, **fields)
 
     Creates a record (using `boolOut`) which will always call the `on_update`
-    method when processed.  Used for action records.  The `on_update` keyword
-    should always be passed.
+    method when processed.  Used for action records.  Either the `on_update` or
+    `on_update_name` keyword should always be passed.
+
+..  function::
+        longStringIn(name, **fields)
+        longStringOut(name, **fields)
+
+    Creates a Waveform record specialised to contain Python (Unicode) strings.
+    Only accepts string values, and only returns string values. `initial_value`
+    and ``length`` keywords accepted as per Waveform records.
+
+    If no ``length`` or `initial_value` is provided a default length of 256 is used.
+
+    .. note::
+        If you wish to store byte strings, use a ``WaveformIn/Out`` record
+
+
 
 
 The following functions manage record names.  The record device name must be

@@ -404,10 +404,8 @@ class LongStringBase(WaveformBase):
         # Note that the trailing null is needed to work around problems with
         # some clients.
         value = numpy.frombuffer(value + b'\0', dtype = numpy.uint8)
-
-        # Truncate value to fit
-        if hasattr(self, '_nelm'):
-            value = value[:self._nelm]
+        # Ensure string isn't too long to fit into waveform
+        assert len(value) <= self._nelm, 'Value too long for waveform'
         return value
 
     def _epics_to_value(self, value):

@@ -11,9 +11,9 @@ Unreleased_
 
 Changed:
 
-- `Remove python2 support <../../pull/64>`
-- `Default DISP to TRUE for all In records <../../pull/74>`
-- `Overhaul record value setting/getting <../../pull/60>`
+- `Remove python2 support <../../pull/64>`_
+- `Default DISP to TRUE for all In records <../../pull/74>`_
+- `Overhaul record value setting/getting <../../pull/60>`_
 
 Added:
 - New longStringIn/longStringOut record types
@@ -23,7 +23,7 @@ Added:
 
 Changed:
 
-- `Allow installation for python 3.6 <../../pull/51>`
+- `Allow installation for python 3.6 <../../pull/51>`_
 
 Added:
 
@@ -31,8 +31,8 @@ Added:
 
 Fixed:
 
-- `Fixup atexit handling <../../pull/35>`
-- `Fix main in Python2 <../../pull/63>`
+- `Fixup atexit handling <../../pull/35>`_
+- `Fix main in Python2 <../../pull/63>`_
 
 3.2_ - 2021-08-31
 -----------------

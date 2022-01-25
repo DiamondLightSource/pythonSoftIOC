@@ -35,8 +35,8 @@ C files and built libraries. If it is necessary to update any of them, the
 safest way to do that is::
 
     $ Ensure all changes are committed/saved/backed up
-    $ pipenv --rm
     $ pipenv run gitclean
+    $ pipenv --rm
     $ rm Pipfile.lock
     $ Update dependencies in setup.cfg / pyproject.toml
     $ pipenv install --dev

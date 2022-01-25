@@ -82,3 +82,14 @@ def clear_records():
     _clear_records()
     yield
     _clear_records()
+
+def enable_code_coverage():
+    """Ensure code coverage works as expected for `multiprocesses` tests.
+    This method should be called just before any `multiprocess.Process` call
+    is made."""
+    try:
+        from pytest_cov.embed import cleanup_on_sigterm
+    except ImportError:
+        pass
+    else:
+        cleanup_on_sigterm()

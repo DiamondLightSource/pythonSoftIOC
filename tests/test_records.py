@@ -4,7 +4,7 @@ import os
 import pytest
 import asyncio
 
-from conftest import requires_cothread, _clear_records
+from conftest import requires_cothread, _clear_records, enable_code_coverage
 
 from softioc import asyncio_dispatcher, builder, softioc
 
@@ -181,6 +181,9 @@ class TestValidate:
             validate_pass: bool):
 
         queue = multiprocessing.Queue()
+
+        enable_code_coverage()
+
         process = multiprocessing.Process(
             target=self.validate_ioc_test_func,
             args=(creation_func, queue, validate_pass),

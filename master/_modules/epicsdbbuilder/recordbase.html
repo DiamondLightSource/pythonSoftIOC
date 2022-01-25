@@ -1,81 +1,37 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>epicsdbbuilder.recordbase &mdash; pythonSoftIOC 3.2.1+5.g3866562 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
-
-  
-  
+  <title>epicsdbbuilder.recordbase &mdash; pythonSoftIOC 3.2.1+6.g91fc8e3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/softioc-favicon.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> pythonSoftIOC
-          
-
-          
-            
             <img src="../../_static/softioc-logo.svg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 master
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -83,19 +39,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-  
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/installation.html">Installation Tutorial</a></li>
@@ -121,111 +65,38 @@
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
-            
-          
-  <!-- Add versions for selected branches + tags -->
-  <p class="caption">
-    <span class="caption-text">Versions</span>
-  </p>
-  <ul id="versions"/>
-  <script>
-    // Add any branches to appear in the side pane here, tags will be added below
-    // Will only appear if docs are built and pushed in gh-pages
-    var versions = ['main', 'master'];
-    var dirs = new Set();
-    function addVersion(name) {
-      if (dirs.has(name)) {
-        var li = document.createElement("li");
-        var a = document.createElement("a");
-        a.href = 'https://dls-controls.github.io/pythonSoftIOC/' + name;
-        a.innerText = name;
-        li.appendChild(a)
-        document.getElementById('versions').appendChild(li);
-      }
-    }
-    Promise.all([
-      // Find gh-pages directories and populate `dirs`
-      fetch("https://api.github.com/repos/dls-controls/pythonSoftIOC/contents?ref=gh-pages")
-      .then(response => response.json())
-      .then(data => data.forEach(function(e) {
-        if (e.type == "dir") dirs.add(e.name);
-      })),
-      // Add tags to `versions`
-      fetch('https://api.github.com/repos/dls-controls/pythonSoftIOC/tags')
-        .then(response => response.json())
-        .then(data => data.forEach(function(e) {
-          versions.push(e.name);
-        }))
-      ]).then(_ => versions.forEach(addVersion))
-  </script>
-
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: rgb(7, 43, 93)" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">pythonSoftIOC</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-        
       <li>epicsdbbuilder.recordbase</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for epicsdbbuilder.recordbase</h1><div class="highlight"><pre>
 <span></span><span class="sd">&#39;&#39;&#39;Support for generating epics records.&#39;&#39;&#39;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">recordnames</span>
 <span class="kn">from</span> <span class="nn">.recordset</span> <span class="kn">import</span> <span class="n">recordset</span>
@@ -334,9 +205,10 @@
 
         <span class="c1"># These assignment have to be directly into the dictionary to</span>
         <span class="c1"># bypass the tricksy use of __setattr__.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__fields&#39;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__aliases&#39;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__metadata&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__fields&#39;</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__aliases&#39;</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__comments&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;__infos&#39;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__setattr</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">recordnames</span><span class="o">.</span><span class="n">RecordName</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
 
         <span class="c1"># Support the special &#39;address&#39; field as an alias for either INP or</span>
@@ -353,34 +225,52 @@
 
         <span class="n">recordset</span><span class="o">.</span><span class="n">PublishRecord</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
-
     <span class="k">def</span> <span class="nf">add_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__aliases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__aliases</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">add_comment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comment</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;# &#39;</span> <span class="o">+</span> <span class="n">comment</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#% &#39;</span> <span class="o">+</span> <span class="n">metadata</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">add_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__infos</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">info</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__dbd_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+        <span class="n">field_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="o">.</span><span class="n">dbEntry</span><span class="o">.</span><span class="n">iterate_fields</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">field_set</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">field_name</span>
+                <span class="n">field_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">field_set</span><span class="p">,</span> <span class="s2">&quot;DBD for </span><span class="si">%s</span><span class="s2"> doesn&#39;t contain </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">field_set</span><span class="p">))</span>
 
     <span class="c1"># Call to generate database description of this record.  Outputs record</span>
     <span class="c1"># definition in .db file format.  Hooks for meta-data can go here.</span>
-    <span class="k">def</span> <span class="nf">Print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">Print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">alphabetical</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__metadata</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#%&#39;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">comment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__comments</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">comment</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;record(</span><span class="si">%s</span><span class="s1">, &quot;</span><span class="si">%s</span><span class="s1">&quot;)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
         <span class="c1"># Print the fields in alphabetical order.  This is more convenient</span>
         <span class="c1"># to the eye and has the useful side effect of bypassing a bug</span>
         <span class="c1"># where DTYPE needs to be specified before INP or OUT fields.</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">sort</span> <span class="o">=</span> <span class="nb">sorted</span> <span class="k">if</span> <span class="n">alphabetical</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dbd_order</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;ValidateLater&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__ValidateField</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__FormatFieldForDb</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="n">padding</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>  <span class="c1"># To align field values</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    field(</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__aliases</span><span class="p">)):</span>
+        <span class="n">sort</span> <span class="o">=</span> <span class="nb">sorted</span> <span class="k">if</span> <span class="n">alphabetical</span> <span class="k">else</span> <span class="nb">list</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    alias(&quot;</span><span class="si">%s</span><span class="s1">&quot;)&#39;</span> <span class="o">%</span> <span class="n">alias</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__infos</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__FormatFieldForDb</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    info(</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">output</span><span class="p">)</span>
 
 
@@ -432,6 +322,10 @@
     <span class="k">def</span> <span class="nf">__FormatFieldForDb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;FormatDb&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">FormatDb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fieldname</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="c1"># JSON values in EPICS database as per</span>
+            <span class="c1"># https://epics.anl.gov/base/R7-0/6-docs/links.html</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">    &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">quote_string</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
@@ -667,38 +561,56 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2008, Diamond Light Source.
+    <p>&#169; Copyright 2008, Diamond Light Source.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
    
+  <div id="other-versions-div" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" style="visibility: hidden">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Other Versions</span>
+      master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl id="other-versions-dl"/>
+    </div>
+  </div>
+  <script>
+    function addVersion(name) {
+      var dd = document.createElement("dd");
+      var a = document.createElement("a");
+      a.href = "../../../" + name;
+      a.innerText = name;
+      dd.appendChild(a);
+      document.getElementById('other-versions-dl').appendChild(dd);
+    }
+    // Get versions.txt and add a version for each line
+    fetch("../../../versions.txt").then(response => {
+      if (response.ok) {
+        document.getElementById('other-versions-div').style.visibility = "visible";
+        return response.text().then(text => text.split(/\r?\n/).forEach(addVersion))
+      }
+    });
+  </script>
+
 
 </body>
 </html>

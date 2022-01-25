@@ -26,6 +26,21 @@ While 100% code coverage does not make a library bug-free, it significantly
 reduces the number of easily caught bugs! Please make sure coverage remains the
 same or is improved by a pull request!
 
+
+Updating Dependencies
+---------------------
+
+pythonSoftIoc has a variety of types of dependencies, from Python module to
+C files and built libraries. If it is necessary to update any of them, the
+safest way to do that is::
+
+    $ Ensure all changes are committed/saved/backed up
+    $ pipenv --rm
+    $ pipenv run gitclean
+    $ rm Pipfile.lock
+    $ Update dependencies in setup.cfg / pyproject.toml
+    $ pipenv install --dev
+
 Code Styling
 ------------
 

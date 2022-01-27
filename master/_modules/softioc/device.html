@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.device &mdash; pythonSoftIOC 3.2.1+148.gec8ab8f documentation</title>
+  <title>softioc.device &mdash; pythonSoftIOC 3.2.1+146.g8125cbd documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -146,7 +146,10 @@
     <span class="c1"># This method is called during Out record processing to return the</span>
     <span class="c1"># underlying value in EPICS format.</span>
     <span class="k">def</span> <span class="nf">_read_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">record</span><span class="o">.</span><span class="n">read_val</span><span class="p">()</span>
+        <span class="c1"># Take a true copy of the value read to avoid accidental sharing</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctype_</span><span class="p">()</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">read_val</span><span class="p">()</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="c1"># This method is called during In record processing to update the</span>
     <span class="c1"># underlying value (the value must be in EPICS compatible format).  This is</span>
@@ -361,12 +364,6 @@
 
     <span class="k">def</span> <span class="nf">_epics_to_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epics</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_string_at</span><span class="p">(</span><span class="n">epics</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_read_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-        <span class="c1"># For strings we need to take a copy of the value read</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctype_</span><span class="p">()</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">read_val</span><span class="p">()</span><span class="o">.</span><span class="n">value</span>
-        <span class="k">return</span> <span class="n">result</span>
 
 
 <span class="k">class</span> <span class="nc">stringin</span><span class="p">(</span><span class="n">EpicsString</span><span class="p">,</span> <span class="n">ProcessDeviceSupportIn</span><span class="p">):</span>

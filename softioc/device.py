@@ -54,7 +54,10 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     # This method is called during Out record processing to return the
     # underlying value in EPICS format.
     def _read_value(self, record):
-        return record.read_val()
+        # Take a true copy of the value read to avoid accidental sharing
+        result = self._ctype_()
+        result.value = record.read_val().value
+        return result
 
     # This method is called during In record processing to update the
     # underlying value (the value must be in EPICS compatible format).  This is
@@ -269,12 +272,6 @@ class EpicsString:
 
     def _epics_to_value(self, epics):
         return _string_at(epics, 40)
-
-    def _read_value(self, record):
-        # For strings we need to take a copy of the value read
-        result = self._ctype_()
-        result.value = record.read_val().value
-        return result
 
 
 class stringin(EpicsString, ProcessDeviceSupportIn):

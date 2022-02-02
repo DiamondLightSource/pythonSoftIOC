@@ -167,11 +167,8 @@ class TestValidate:
 
         queue.put("IOC ready")
 
-        # Keep process alive while main thread works.
-        # This is most applicable to CAGET tests.
-        asyncio.run_coroutine_threadsafe(
-            asyncio.sleep(TIMEOUT), dispatcher.loop
-        ).result()
+        # Keep process alive while main thread runs CAGET
+        queue.get(timeout=5)
 
     def validate_test_runner(
             self,
@@ -224,7 +221,7 @@ class TestValidate:
                 assert ret_val == expected_value
 
         finally:
-            process.terminate()
+            queue.put("EXIT")
             process.join(timeout=3)
 
 

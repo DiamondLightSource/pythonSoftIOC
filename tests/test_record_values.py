@@ -2,7 +2,6 @@ import multiprocessing
 from typing import List
 import numpy
 import pytest
-import asyncio
 
 from enum import Enum
 from math import isnan, inf, nan
@@ -350,13 +349,13 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
                     if val is not None:
                         conn.send(record.get())
 
-    conn.close()
-
     # Keep process alive while main thread works.
     # This is most applicable to CAGET tests.
-    asyncio.run_coroutine_threadsafe(
-        asyncio.sleep(TIMEOUT), dispatcher.loop
-    ).result()
+    while (True):
+        if conn.poll(TIMEOUT):
+            val = conn.recv()
+            if val == "EXIT":
+                break
 
 
 def run_test_function(
@@ -475,7 +474,10 @@ def run_test_function(
         # Purge cache to suppress spurious "IOC disconnected" exceptions
         _channel_cache.purge()
 
-        ioc_process.terminate()
+
+        parent_conn.send("EXIT")
+
+        # ioc_process.terminate()
         ioc_process.join(timeout=TIMEOUT)
         if ioc_process.exitcode is None:
             pytest.fail("Process did not terminate")

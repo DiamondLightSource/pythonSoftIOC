@@ -351,16 +351,19 @@ class TestOnUpdate:
         always_update is False and the put'ed value is always different"""
         self.on_update_runner(out_records, False, False)
 
+    @requires_cothread
     def test_on_update_false_true(self, out_records):
         """Test that on_update works correctly for all out records when
         always_update is False and the put'ed value is always the same"""
         self.on_update_runner(out_records, False, True)
 
+    @requires_cothread
     def test_on_update_true_true(self, out_records):
         """Test that on_update works correctly for all out records when
         always_update is True and the put'ed value is always the same"""
         self.on_update_runner(out_records, True, True)
 
+    @requires_cothread
     def test_on_update_true_false(self, out_records):
         """Test that on_update works correctly for all out records when
         always_update is True and the put'ed value is always different"""

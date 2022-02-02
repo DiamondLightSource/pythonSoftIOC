@@ -6,7 +6,7 @@ import pytest
 from enum import Enum
 from math import isnan, inf, nan
 
-from conftest import requires_cothread, enable_code_coverage
+from conftest import requires_cothread
 
 from softioc import asyncio_dispatcher, builder, softioc
 from softioc.pythonSoftIoc import RecordWrapper
@@ -366,8 +366,6 @@ def run_test_function(
     set and how the value is retrieved, respectively."""
 
     parent_conn, child_conn = multiprocessing.Pipe()
-
-    enable_code_coverage()
 
     ioc_process = multiprocessing.Process(
         target=run_ioc,
@@ -780,8 +778,6 @@ class TestNoneValue:
         """Test that setting \"None\" using .set() after IOC init raises an
         exception"""
         queue = multiprocessing.Queue()
-
-        enable_code_coverage()
 
         process = multiprocessing.Process(
             target=self.none_value_test_func,

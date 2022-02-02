@@ -83,10 +83,10 @@ def clear_records():
     yield
     _clear_records()
 
+@pytest.fixture(autouse=True)
 def enable_code_coverage():
     """Ensure code coverage works as expected for `multiprocesses` tests.
-    This method should be called just before any `multiprocess.Process` call
-    is made."""
+    As its harmless for other types of test, we always run this fixture."""
     try:
         from pytest_cov.embed import cleanup_on_sigterm
     except ImportError:

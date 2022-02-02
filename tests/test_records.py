@@ -4,7 +4,7 @@ import os
 import pytest
 import asyncio
 
-from conftest import requires_cothread, _clear_records, enable_code_coverage
+from conftest import requires_cothread, _clear_records
 
 from softioc import asyncio_dispatcher, builder, softioc
 
@@ -179,8 +179,6 @@ class TestValidate:
 
         queue = multiprocessing.Queue()
 
-        enable_code_coverage()
-
         process = multiprocessing.Process(
             target=self.validate_ioc_test_func,
             args=(creation_func, queue, validate_pass),
@@ -193,7 +191,7 @@ class TestValidate:
 
             from cothread.catools import caget, caput, _channel_cache
 
-            # See other places in this file for why we call it
+            # Suppress potential spurious warnings
             _channel_cache.purge()
 
             kwargs = {}
@@ -202,7 +200,7 @@ class TestValidate:
                 kwargs.update({"datatype": DBR_CHAR_STR})
 
             put_ret = caput(
-                DEVICE_NAME + ":" + "VALIDATE-RECORD",
+                DEVICE_NAME + ":VALIDATE-RECORD",
                 new_value,
                 wait=True,
                 **kwargs,
@@ -210,7 +208,7 @@ class TestValidate:
             assert put_ret.ok, "caput did not succeed"
 
             ret_val = caget(
-                DEVICE_NAME + ":" + "VALIDATE-RECORD",
+                DEVICE_NAME + ":VALIDATE-RECORD",
                 timeout=3,
                 **kwargs
             )
@@ -221,6 +219,8 @@ class TestValidate:
                 assert ret_val == expected_value
 
         finally:
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
             queue.put("EXIT")
             process.join(timeout=3)
 
@@ -243,3 +243,125 @@ class TestValidate:
         creation_func, value, default = out_records
 
         self.validate_test_runner(creation_func, value, default, False)
+
+class TestOnUpdate:
+    """Tests related to the on_update callback, with and without
+    always_update set"""
+
+    @pytest.fixture(
+        params=[
+            builder.aOut,
+            builder.boolOut,
+            # builder.Action, This is just boolOut + always_update
+            builder.longOut,
+            builder.stringOut,
+            builder.mbbOut,
+            builder.WaveformOut,
+            builder.longStringOut,
+        ]
+    )
+    def out_records(self, request):
+        """The list of Out records to test """
+        return request.param
+
+    def on_update_test_func(self, record_func, queue, always_update):
+
+        def on_update_func(new_val):
+            """Increments li record each time main out record receives caput"""
+            nonlocal li
+            li.set(li.get() + 1)
+
+        builder.SetDeviceName(DEVICE_NAME)
+
+        kwarg = {}
+        if record_func is builder.WaveformOut:
+            kwarg = {"length": 50}  # Required when no value on creation
+
+        record_func(
+            "ON-UPDATE-RECORD",
+            on_update=on_update_func,
+            always_update=always_update,
+            **kwarg)
+
+        li = builder.longIn("ON-UPDATE-COUNTER-RECORD", initial_value=0)
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        queue.put("IOC ready")
+
+        # Keep process alive while main thread runs CAGET
+        queue.get(timeout=TIMEOUT)
+
+    def on_update_runner(self, creation_func, always_update, put_same_value):
+        queue = multiprocessing.Queue()
+
+        process = multiprocessing.Process(
+            target=self.on_update_test_func,
+            args=(creation_func, queue, always_update),
+        )
+
+        process.start()
+
+        try:
+            queue.get(timeout=5)  # Get the expected IOC initialised message
+
+            from cothread.catools import caget, caput, _channel_cache
+
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            # Use this number to put to records - don't start at 0 as many
+            # record types default to 0 and we usually want to put a different
+            # value to force processing to occur
+            count = 1
+
+            while count < 4:
+                put_ret = caput(
+                    DEVICE_NAME + ":ON-UPDATE-RECORD",
+                    9 if put_same_value else count,
+                    wait=True,
+                )
+                assert put_ret.ok, "caput did not succeed"
+                count += 1
+
+            ret_val = caget(
+                DEVICE_NAME + ":ON-UPDATE-COUNTER-RECORD",
+                timeout=3,
+            )
+
+            # Expected value is either 3 (incremented once per caput)
+            # or 1 (incremented on first caput and not subsequent ones)
+            expected_val = 3
+            if put_same_value and not always_update:
+                expected_val = 1
+
+            assert ret_val == expected_val
+
+        finally:
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+            queue.put("EXIT")
+            process.join(timeout=3)
+
+    @requires_cothread
+    def test_on_update_false_false(self, out_records):
+        """Test that on_update works correctly for all out records when
+        always_update is False and the put'ed value is always different"""
+        self.on_update_runner(out_records, False, False)
+
+    def test_on_update_false_true(self, out_records):
+        """Test that on_update works correctly for all out records when
+        always_update is False and the put'ed value is always the same"""
+        self.on_update_runner(out_records, False, True)
+
+    def test_on_update_true_true(self, out_records):
+        """Test that on_update works correctly for all out records when
+        always_update is True and the put'ed value is always the same"""
+        self.on_update_runner(out_records, True, True)
+
+    def test_on_update_true_false(self, out_records):
+        """Test that on_update works correctly for all out records when
+        always_update is True and the put'ed value is always different"""
+        self.on_update_runner(out_records, True, False)

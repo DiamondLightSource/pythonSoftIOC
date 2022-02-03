@@ -267,7 +267,7 @@ class EpicsString:
         # Value being written must be a string, and will be automatically null
         # terminated where possible.
         result = self._ctype_()
-        result.value = value.encode()
+        result.value = value.encode() + b'\0'
         return result
 
     def _epics_to_value(self, epics):

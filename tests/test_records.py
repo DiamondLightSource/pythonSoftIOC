@@ -2,9 +2,13 @@ import multiprocessing
 import numpy
 import os
 import pytest
-import asyncio
 
-from conftest import requires_cothread, _clear_records, WAVEFORM_LENGTH
+from conftest import (
+    create_random_prefix,
+    requires_cothread,
+    _clear_records,
+    WAVEFORM_LENGTH,
+)
 
 from softioc import asyncio_dispatcher, builder, softioc
 
@@ -84,6 +88,44 @@ def test_DISP_can_be_overridden():
     record = builder.longIn("DISP-OFF", DISP=0)
     # Note: DISP attribute won't exist if field not specified
     assert record.DISP.Value() == 0
+
+
+def test_waveform_construction():
+    """Test the various ways to construct a Waveform records all produce
+    correct results"""
+
+    wi = builder.WaveformIn("WI1", [1, 2, 3])
+    assert wi.NELM.Value() == 3
+
+    wi = builder.WaveformIn("WI2", initial_value=[1, 2, 3, 4])
+    assert wi.NELM.Value() == 4
+
+    wi = builder.WaveformIn("WI3", length=5)
+    assert wi.NELM.Value() == 5
+
+    wi = builder.WaveformIn("WI4", NELM=6)
+    assert wi.NELM.Value() == 6
+
+    wi = builder.WaveformIn("WI5", [1, 2, 3], length=7)
+    assert wi.NELM.Value() == 7
+
+    wi = builder.WaveformIn("WI6", initial_value=[1, 2, 3], length=8)
+    assert wi.NELM.Value() == 8
+
+    wi = builder.WaveformIn("WI7", [1, 2, 3], NELM=9)
+    assert wi.NELM.Value() == 9
+
+    wi = builder.WaveformIn("WI8", initial_value=[1, 2, 3], NELM=10)
+    assert wi.NELM.Value() == 10
+
+    # Specifying neither value nor length should produce an error
+    with pytest.raises(AssertionError):
+        builder.WaveformIn("WI9")
+
+    # Specifying both value and initial_value should produce an error
+    with pytest.raises(AssertionError):
+        builder.WaveformIn("WI10", [1, 2, 4], initial_value=[5, 6])
+
 
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
@@ -238,14 +280,15 @@ class TestOnUpdate:
         """The list of Out records to test """
         return request.param
 
-    def on_update_test_func(self, record_func, queue, always_update):
-
+    def on_update_test_func(
+        self, device_name, record_func, queue, always_update
+    ):
         def on_update_func(new_val):
             """Increments li record each time main out record receives caput"""
             nonlocal li
             li.set(li.get() + 1)
 
-        builder.SetDeviceName(DEVICE_NAME)
+        builder.SetDeviceName(device_name)
 
         kwarg = {}
         if record_func is builder.WaveformOut:
@@ -271,9 +314,11 @@ class TestOnUpdate:
     def on_update_runner(self, creation_func, always_update, put_same_value):
         queue = multiprocessing.Queue()
 
+        device_name = create_random_prefix()
+
         process = multiprocessing.Process(
             target=self.on_update_test_func,
-            args=(creation_func, queue, always_update),
+            args=(device_name, creation_func, queue, always_update),
         )
 
         process.start()
@@ -293,17 +338,20 @@ class TestOnUpdate:
 
             while count < 4:
                 put_ret = caput(
-                    DEVICE_NAME + ":ON-UPDATE-RECORD",
+                    device_name + ":ON-UPDATE-RECORD",
                     9 if put_same_value else count,
                     wait=True,
                 )
-                assert put_ret.ok, "caput did not succeed"
+                assert put_ret.ok, f"caput did not succeed: {put_ret.errorcode}"
                 count += 1
 
             ret_val = caget(
-                DEVICE_NAME + ":ON-UPDATE-COUNTER-RECORD",
+                device_name + ":ON-UPDATE-COUNTER-RECORD",
                 timeout=3,
             )
+            assert ret_val.ok, \
+                f"caget did not succeed: {ret_val.errorcode}, {ret_val}"
+
 
             # Expected value is either 3 (incremented once per caput)
             # or 1 (incremented on first caput and not subsequent ones)

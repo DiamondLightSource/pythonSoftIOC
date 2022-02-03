@@ -19,11 +19,13 @@ requires_cothread = pytest.mark.skipif(
 # Length picked to match string record length, so we can re-use test strings.
 WAVEFORM_LENGTH = 40
 
+def create_random_prefix():
+    """Create 12-character random string, for generating unique Device Names"""
+    return "".join(random.choice(string.ascii_uppercase) for _ in range(12))
+
 class SubprocessIOC:
     def __init__(self, ioc_py):
-        self.pv_prefix = "".join(
-            random.choice(string.ascii_uppercase) for _ in range(12)
-        )
+        self.pv_prefix = create_random_prefix()
         sim_ioc = os.path.join(os.path.dirname(__file__), ioc_py)
         cmd = [sys.executable, sim_ioc, self.pv_prefix]
         self.proc = subprocess.Popen(

@@ -824,7 +824,7 @@ class TestInvalidValues:
 
     def test_long_string_rejects_overlong_strings(self):
         """Test that longStringIn & longStringOut records reject
-        strings >=39 chars"""
+        strings >=`WAVEFORM_LENGTH` chars"""
         OVERLONG_STR = MAX_LEN_STR + "A"
 
         with pytest.raises(AssertionError):
@@ -847,7 +847,7 @@ class TestInvalidValues:
             lso = builder.longStringIn("LSTROUT2", length=WAVEFORM_LENGTH)
             lso.set(OVERLONG_STR)
 
-        # And a different way to initialise the records to trigger same behaviour:
+        # And a different way to initialise records to trigger same behaviour:
         with pytest.raises(AssertionError):
             lsi = builder.longStringIn("LSTRIN3", initial_value="ABC")
             lsi.set(OVERLONG_STR)
@@ -869,7 +869,7 @@ class TestInvalidValues:
         with pytest.raises(AssertionError):
             builder.longStringOut("L_OUT", length=0)
 
-    def test_waveform_rejects_overlonglong_values(self):
+    def test_waveform_rejects_overlong_values(self):
         """Test that Waveform records throw an exception when an overlong
         value is written"""
         w_in = builder.WaveformIn("W_IN", [1, 2, 3])

@@ -15,6 +15,10 @@ requires_cothread = pytest.mark.skipif(
     sys.platform.startswith("win"), reason="Cothread doesn't work on windows"
 )
 
+# Default length used to initialise Waveform and longString records.
+# Length picked to match string record length, so we can re-use test strings.
+WAVEFORM_LENGTH = 40
+
 class SubprocessIOC:
     def __init__(self, ioc_py):
         self.pv_prefix = "".join(
@@ -76,9 +80,9 @@ def _clear_records():
     # https://github.com/dls-controls/pythonSoftIOC/issues/56
     RecordLookup._RecordDirectory.clear()
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def clear_records():
-    """Fixture to delete all records before and after a test."""
+    """Deletes all records before and after every test"""
     _clear_records()
     yield
     _clear_records()

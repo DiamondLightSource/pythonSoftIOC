@@ -4,7 +4,7 @@ import os
 import pytest
 import asyncio
 
-from conftest import requires_cothread, _clear_records
+from conftest import requires_cothread, _clear_records, WAVEFORM_LENGTH
 
 from softioc import asyncio_dispatcher, builder, softioc
 
@@ -14,7 +14,7 @@ from softioc import asyncio_dispatcher, builder, softioc
 DEVICE_NAME = "RECORD-TESTS"
 TIMEOUT = 5  # Seconds
 
-def test_records(tmp_path, clear_records):
+def test_records(tmp_path):
     # Ensure we definitely unload all records that may be hanging over from
     # previous tests, then create exactly one instance of expected records.
     from sim_records import create_records
@@ -85,32 +85,6 @@ def test_DISP_can_be_overridden():
     # Note: DISP attribute won't exist if field not specified
     assert record.DISP.Value() == 0
 
-def test_waveform_disallows_zero_length(clear_records):
-    """Test that WaveformIn/Out records throw an exception when being
-    initialized with a zero length array"""
-    with pytest.raises(AssertionError):
-        builder.WaveformIn("W_IN", [])
-    with pytest.raises(AssertionError):
-        builder.WaveformOut("W_OUT", [])
-
-def test_waveform_disallows_too_long_values(clear_records):
-    """Test that Waveform and longString records throw an exception when
-    an overlong value is written"""
-    w_in = builder.WaveformIn("W_IN", [1, 2, 3])
-    w_out = builder.WaveformOut("W_OUT", [1, 2, 3])
-
-    ls_in = builder.longStringIn("LS_IN", initial_value="ABC")
-    ls_out = builder.longStringOut("LS_OUT", initial_value="ABC")
-
-    with pytest.raises(AssertionError):
-        w_in.set([1, 2, 3, 4])
-    with pytest.raises(AssertionError):
-        w_out.set([1, 2, 3, 4])
-    with pytest.raises(AssertionError):
-        ls_in.set("ABCD")
-    with pytest.raises(AssertionError):
-        ls_out.set("ABCD")
-
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
     return params[0].__name__
@@ -149,7 +123,7 @@ class TestValidate:
 
         kwarg = {}
         if record_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         kwarg.update(
             {
@@ -275,7 +249,7 @@ class TestOnUpdate:
 
         kwarg = {}
         if record_func is builder.WaveformOut:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         record_func(
             "ON-UPDATE-RECORD",

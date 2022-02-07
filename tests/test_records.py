@@ -2,9 +2,15 @@ import multiprocessing
 import numpy
 import os
 import pytest
-import asyncio
 
-from conftest import requires_cothread, _clear_records
+from conftest import (
+    create_random_prefix,
+    requires_cothread,
+    _clear_records,
+    WAVEFORM_LENGTH,
+    TIMEOUT,
+    select_and_recv
+)
 
 from softioc import asyncio_dispatcher, builder, softioc
 
@@ -12,9 +18,8 @@ from softioc import asyncio_dispatcher, builder, softioc
 
 # Test parameters
 DEVICE_NAME = "RECORD-TESTS"
-TIMEOUT = 5  # Seconds
 
-def test_records(tmp_path, clear_records):
+def test_records(tmp_path):
     # Ensure we definitely unload all records that may be hanging over from
     # previous tests, then create exactly one instance of expected records.
     from sim_records import create_records
@@ -85,31 +90,43 @@ def test_DISP_can_be_overridden():
     # Note: DISP attribute won't exist if field not specified
     assert record.DISP.Value() == 0
 
-def test_waveform_disallows_zero_length(clear_records):
-    """Test that WaveformIn/Out records throw an exception when being
-    initialized with a zero length array"""
-    with pytest.raises(AssertionError):
-        builder.WaveformIn("W_IN", [])
-    with pytest.raises(AssertionError):
-        builder.WaveformOut("W_OUT", [])
 
-def test_waveform_disallows_too_long_values(clear_records):
-    """Test that Waveform and longString records throw an exception when
-    an overlong value is written"""
-    w_in = builder.WaveformIn("W_IN", [1, 2, 3])
-    w_out = builder.WaveformOut("W_OUT", [1, 2, 3])
+def test_waveform_construction():
+    """Test the various ways to construct a Waveform records all produce
+    correct results"""
 
-    ls_in = builder.longStringIn("LS_IN", initial_value="ABC")
-    ls_out = builder.longStringOut("LS_OUT", initial_value="ABC")
+    wi = builder.WaveformIn("WI1", [1, 2, 3])
+    assert wi.NELM.Value() == 3
 
+    wi = builder.WaveformIn("WI2", initial_value=[1, 2, 3, 4])
+    assert wi.NELM.Value() == 4
+
+    wi = builder.WaveformIn("WI3", length=5)
+    assert wi.NELM.Value() == 5
+
+    wi = builder.WaveformIn("WI4", NELM=6)
+    assert wi.NELM.Value() == 6
+
+    wi = builder.WaveformIn("WI5", [1, 2, 3], length=7)
+    assert wi.NELM.Value() == 7
+
+    wi = builder.WaveformIn("WI6", initial_value=[1, 2, 3], length=8)
+    assert wi.NELM.Value() == 8
+
+    wi = builder.WaveformIn("WI7", [1, 2, 3], NELM=9)
+    assert wi.NELM.Value() == 9
+
+    wi = builder.WaveformIn("WI8", initial_value=[1, 2, 3], NELM=10)
+    assert wi.NELM.Value() == 10
+
+    # Specifying neither value nor length should produce an error
     with pytest.raises(AssertionError):
-        w_in.set([1, 2, 3, 4])
+        builder.WaveformIn("WI9")
+
+    # Specifying both value and initial_value should produce an error
     with pytest.raises(AssertionError):
-        w_out.set([1, 2, 3, 4])
-    with pytest.raises(AssertionError):
-        ls_in.set("ABCD")
-    with pytest.raises(AssertionError):
-        ls_out.set("ABCD")
+        builder.WaveformIn("WI10", [1, 2, 4], initial_value=[5, 6])
+
 
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
@@ -142,14 +159,19 @@ class TestValidate:
         """Validation method that always rejects changes"""
         return False
 
-    def validate_ioc_test_func(self, record_func, queue, validate_pass: bool):
+    def validate_ioc_test_func(
+            self,
+            device_name,
+            record_func,
+            child_conn,
+            validate_pass: bool):
         """Start the IOC with the specified validate method"""
 
-        builder.SetDeviceName(DEVICE_NAME)
+        builder.SetDeviceName(device_name)
 
         kwarg = {}
         if record_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         kwarg.update(
             {
@@ -165,10 +187,12 @@ class TestValidate:
         builder.LoadDatabase()
         softioc.iocInit(dispatcher)
 
-        queue.put("IOC ready")
+        child_conn.send("R")
 
         # Keep process alive while main thread runs CAGET
-        queue.get(timeout=5)
+        if child_conn.poll(TIMEOUT):
+            val = child_conn.recv()
+            assert val == "D", "Did not receive expected Done character"
 
     def validate_test_runner(
             self,
@@ -177,19 +201,23 @@ class TestValidate:
             expected_value,
             validate_pass: bool):
 
-        queue = multiprocessing.Queue()
+        parent_conn, child_conn = multiprocessing.Pipe()
+
+        device_name = create_random_prefix()
 
         process = multiprocessing.Process(
             target=self.validate_ioc_test_func,
-            args=(creation_func, queue, validate_pass),
+            args=(device_name, creation_func, child_conn, validate_pass),
         )
 
         process.start()
 
-        try:
-            queue.get(timeout=5)  # Get the expected IOC initialised message
+        from cothread.catools import caget, caput, _channel_cache
 
-            from cothread.catools import caget, caput, _channel_cache
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
 
             # Suppress potential spurious warnings
             _channel_cache.purge()
@@ -200,7 +228,7 @@ class TestValidate:
                 kwargs.update({"datatype": DBR_CHAR_STR})
 
             put_ret = caput(
-                DEVICE_NAME + ":VALIDATE-RECORD",
+                device_name + ":VALIDATE-RECORD",
                 new_value,
                 wait=True,
                 **kwargs,
@@ -208,8 +236,8 @@ class TestValidate:
             assert put_ret.ok, "caput did not succeed"
 
             ret_val = caget(
-                DEVICE_NAME + ":VALIDATE-RECORD",
-                timeout=3,
+                device_name + ":VALIDATE-RECORD",
+                timeout=TIMEOUT,
                 **kwargs
             )
 
@@ -221,8 +249,8 @@ class TestValidate:
         finally:
             # Suppress potential spurious warnings
             _channel_cache.purge()
-            queue.put("EXIT")
-            process.join(timeout=3)
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
 
 
     @requires_cothread
@@ -264,18 +292,21 @@ class TestOnUpdate:
         """The list of Out records to test """
         return request.param
 
-    def on_update_test_func(self, record_func, queue, always_update):
+    def on_update_test_func(
+        self, device_name, record_func, conn, always_update
+    ):
+
+        builder.SetDeviceName(device_name)
+
+        li = builder.longIn("ON-UPDATE-COUNTER-RECORD", initial_value=0)
 
         def on_update_func(new_val):
             """Increments li record each time main out record receives caput"""
-            nonlocal li
             li.set(li.get() + 1)
-
-        builder.SetDeviceName(DEVICE_NAME)
 
         kwarg = {}
         if record_func is builder.WaveformOut:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         record_func(
             "ON-UPDATE-RECORD",
@@ -283,31 +314,49 @@ class TestOnUpdate:
             always_update=always_update,
             **kwarg)
 
-        li = builder.longIn("ON-UPDATE-COUNTER-RECORD", initial_value=0)
+        def on_update_done(_):
+            conn.send("C")  # "Complete"
+        # Put to the action record after we've done all other Puts, so we know
+        # all the callbacks have finished processing
+        builder.Action("ON-UPDATE-DONE", on_update=on_update_done)
 
         dispatcher = asyncio_dispatcher.AsyncioDispatcher()
         builder.LoadDatabase()
         softioc.iocInit(dispatcher)
 
-        queue.put("IOC ready")
+        conn.send("R")  # "Ready"
+
+        print("CHILD: Sent R over Connection to Parent")
 
         # Keep process alive while main thread runs CAGET
-        queue.get(timeout=TIMEOUT)
+        if conn.poll(TIMEOUT):
+            val = conn.recv()
+            assert val == "D", "Did not receive expected Done character"
+
+        print("CHILD: Received exit command, child exiting")
 
     def on_update_runner(self, creation_func, always_update, put_same_value):
-        queue = multiprocessing.Queue()
+        parent_conn, child_conn = multiprocessing.Pipe()
+
+        device_name = create_random_prefix()
 
         process = multiprocessing.Process(
             target=self.on_update_test_func,
-            args=(creation_func, queue, always_update),
+            args=(device_name, creation_func, child_conn, always_update),
         )
 
         process.start()
 
-        try:
-            queue.get(timeout=5)  # Get the expected IOC initialised message
+        print("PARENT: Child started, waiting for R command")
 
-            from cothread.catools import caget, caput, _channel_cache
+        from cothread.catools import caget, caput, _channel_cache
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            print("PARENT: received R command")
+
 
             # Suppress potential spurious warnings
             _channel_cache.purge()
@@ -317,19 +366,46 @@ class TestOnUpdate:
             # value to force processing to occur
             count = 1
 
+            print("PARENT: begining While loop")
+
             while count < 4:
                 put_ret = caput(
-                    DEVICE_NAME + ":ON-UPDATE-RECORD",
+                    device_name + ":ON-UPDATE-RECORD",
                     9 if put_same_value else count,
                     wait=True,
                 )
-                assert put_ret.ok, "caput did not succeed"
+                assert put_ret.ok, f"caput did not succeed: {put_ret.errorcode}"
+
+                print(f"PARENT: completed caput with count {count}")
+
                 count += 1
 
-            ret_val = caget(
-                DEVICE_NAME + ":ON-UPDATE-COUNTER-RECORD",
-                timeout=3,
+            print("PARENT: Put'ing to DONE record")
+
+            caput(
+                device_name + ":ON-UPDATE-DONE",
+                1,
+                wait=True,
             )
+
+            print("PARENT: Waiting for C command")
+
+            # Wait for action record to process, so we know all the callbacks
+            # have finished processing (This assumes record callbacks are not
+            # re-ordered, and will run in the same order as the caputs we sent)
+            select_and_recv(parent_conn, "C")
+
+            print("PARENT: Received C command")
+
+            ret_val = caget(
+                device_name + ":ON-UPDATE-COUNTER-RECORD",
+                timeout=TIMEOUT,
+            )
+            assert ret_val.ok, \
+                f"caget did not succeed: {ret_val.errorcode}, {ret_val}"
+
+            print(f"PARENT: Received val from COUNTER: {ret_val}")
+
 
             # Expected value is either 3 (incremented once per caput)
             # or 1 (incremented on first caput and not subsequent ones)
@@ -342,8 +418,13 @@ class TestOnUpdate:
         finally:
             # Suppress potential spurious warnings
             _channel_cache.purge()
-            queue.put("EXIT")
-            process.join(timeout=3)
+
+            print("PARENT:Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            print(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")
 
     @requires_cothread
     def test_on_update_false_false(self, out_records):

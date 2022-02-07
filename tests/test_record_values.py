@@ -6,7 +6,12 @@ import pytest
 from enum import Enum
 from math import isnan, inf, nan
 
-from conftest import requires_cothread
+from conftest import (
+    requires_cothread,
+    WAVEFORM_LENGTH,
+    select_and_recv,
+    TIMEOUT
+)
 
 from softioc import asyncio_dispatcher, builder, softioc
 from softioc.pythonSoftIoc import RecordWrapper
@@ -16,7 +21,9 @@ from softioc.pythonSoftIoc import RecordWrapper
 
 # Test parameters
 DEVICE_NAME = "RECORD-VALUE-TESTS"
-TIMEOUT = 5  # Seconds
+
+# The maximum length string for StringIn/Out records
+MAX_LEN_STR = "a 39 char string exactly maximum length"
 
 VERY_LONG_STRING = "This is a fairly long string, the kind that someone " \
     "might think to put into a record that can theoretically hold a huge " \
@@ -101,6 +108,8 @@ record_values_list = [
     ("mbbOut_int", builder.mbbOut, 1, 1, int),
     ("strIn_abc", builder.stringIn, "abc", "abc", str),
     ("strOut_abc", builder.stringOut, "abc", "abc", str),
+    ("strIn_39chars", builder.stringIn, MAX_LEN_STR, MAX_LEN_STR, str),
+    ("strOut_39chars", builder.stringOut, MAX_LEN_STR, MAX_LEN_STR, str),
     ("strIn_empty", builder.stringIn, "", "", str),
     ("strOut_empty", builder.stringOut, "", "", str),
     ("strin_utf8", builder.stringIn, "%a€b", "%a€b", str),  # Valid UTF-8
@@ -310,7 +319,7 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
         if set_enum == SetValueEnum.INITIAL_VALUE:
             kwarg.update({"initial_value": initial_value})
         elif creation_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
             # Related to this issue:
             # https://github.com/dls-controls/pythonSoftIOC/issues/37
 
@@ -324,7 +333,7 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
     dispatcher = asyncio_dispatcher.AsyncioDispatcher()
     builder.LoadDatabase()
     softioc.iocInit(dispatcher)
-    conn.send("IOC started")
+    conn.send("R")  # "Ready"
 
     # Record list and record config list should always be in line
     for record, configuration in zip(records, record_configurations):
@@ -346,17 +355,18 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
             if set_enum == SetValueEnum.CAPUT:
                 if conn.poll(TIMEOUT):
                     val = conn.recv()
-                    if val is not None:
+                    if val == "G":
                         conn.send(record.get())
+                    else:
+                        pytest.fail(f"Received unexpected character {val}")
 
     # Keep process alive while main thread works.
     # This is most applicable to CAGET tests.
     while (True):
         if conn.poll(TIMEOUT):
             val = conn.recv()
-            if val == "EXIT":
+            if val == "D":  # "Done"
                 break
-
 
 def run_test_function(
     record_configurations: list, set_enum: SetValueEnum, get_enum: GetValueEnum
@@ -374,19 +384,17 @@ def run_test_function(
 
     ioc_process.start()
 
+
     # Wait for message that IOC has started
-    if parent_conn.poll(TIMEOUT):
-        parent_conn.recv()
-    else:
-        pytest.fail("IOC process did not start before TIMEOUT expired")
+    select_and_recv(parent_conn, "R")
+
+    # Cannot do these imports before the subprocess starts, as the subprocess
+    # would inherit cothread's internal state which would break things!
+    from cothread import Yield
+    from cothread.catools import caget, caput, _channel_cache
+    from cothread.dbr import DBR_CHAR_STR
 
     try:
-        # Cannot do these imports before the subprocess starts, as cothread
-        # isn't threadsafe (in the way we require)
-        from cothread import Yield
-        from cothread.catools import caget, caput, _channel_cache
-        from cothread.dbr import DBR_CHAR_STR
-
         # cothread remembers connected IOCs. As we potentially restart the same
         # named IOC multiple times, we have to purge the cache else the
         # result from caget/caput cache would be a DisconnectError during the
@@ -419,10 +427,7 @@ def run_test_function(
 
             if set_enum == SetValueEnum.CAPUT:
                 if get_enum == GetValueEnum.GET:
-                    if parent_conn.poll(TIMEOUT):
-                        parent_conn.recv()
-                    else:
-                        pytest.fail("IOC did not provide initial record value")
+                    select_and_recv(parent_conn)
                 caput(
                     DEVICE_NAME + ":" + record_name,
                     initial_value,
@@ -432,7 +437,8 @@ def run_test_function(
                 )
 
                 if get_enum == GetValueEnum.GET:
-                    parent_conn.send("Do another get!")
+                    parent_conn.send("G")  # "Get"
+
                 # Ensure IOC process has time to execute.
                 # I saw failures on MacOS where it appeared the IOC had not
                 # processed the put'ted value as the caget returned the same
@@ -440,10 +446,7 @@ def run_test_function(
                 Yield(timeout=TIMEOUT)
 
             if get_enum == GetValueEnum.GET:
-                if parent_conn.poll(TIMEOUT):
-                    rec_val = parent_conn.recv()
-                else:
-                    pytest.fail("IOC did not provide record value in queue")
+                rec_val = select_and_recv(parent_conn)
             else:
                 rec_val = caget(
                     DEVICE_NAME + ":" + record_name,
@@ -472,10 +475,8 @@ def run_test_function(
         # Purge cache to suppress spurious "IOC disconnected" exceptions
         _channel_cache.purge()
 
+        parent_conn.send("D")  # "Done"
 
-        parent_conn.send("EXIT")
-
-        # ioc_process.terminate()
         ioc_process.join(timeout=TIMEOUT)
         if ioc_process.exitcode is None:
             pytest.fail("Process did not terminate")
@@ -493,7 +494,7 @@ class TestGetValue:
     """Tests that use .get() to check whether values applied with .set(),
     initial_value, or caput return the expected value"""
 
-    def test_value_pre_init_set(self, clear_records, record_values):
+    def test_value_pre_init_set(self, record_values):
         """Test that records provide the expected values on get calls when using
         .set() and .get() before IOC initialisation occurs"""
 
@@ -507,7 +508,7 @@ class TestGetValue:
 
         kwarg = {}
         if creation_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         out_rec = creation_func(record_name, **kwarg)
         out_rec.set(initial_value)
@@ -678,7 +679,7 @@ class TestDefaultValue:
         ],
     )
     def test_value_default_pre_init(
-        self, creation_func, expected_value, expected_type, clear_records
+        self, creation_func, expected_value, expected_type
     ):
         """Test that the correct default values are returned from .get() (before
         record initialisation) when no initial_value or .set() is done"""
@@ -686,7 +687,7 @@ class TestDefaultValue:
 
         kwarg = {}
         if creation_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         out_rec = creation_func("out-record", **kwarg)
         record_value_asserts(
@@ -728,7 +729,7 @@ class TestNoneValue:
         return record_func
 
     def test_value_none_rejected_initial_value(
-        self, clear_records, record_func_reject_none
+        self, record_func_reject_none
     ):
         """Test setting \"None\" as the initial_value raises an exception"""
 
@@ -737,7 +738,7 @@ class TestNoneValue:
             builder.WaveformIn,
             builder.WaveformOut,
         ]:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         with pytest.raises(self.expected_exceptions):
             record_func_reject_none("SOME-NAME", initial_value=None, **kwarg)
@@ -749,7 +750,7 @@ class TestNoneValue:
 
         kwarg = {}
         if record_func_reject_none in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         with pytest.raises(self.expected_exceptions):
             record = record_func_reject_none("SOME-NAME", **kwarg)
@@ -759,17 +760,22 @@ class TestNoneValue:
         """Start the IOC and catch the expected exception"""
         kwarg = {}
         if record_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": 50}  # Required when no value on creation
+            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
         record = record_func("SOME-NAME", **kwarg)
 
         builder.LoadDatabase()
         softioc.iocInit()
 
+        print("CHILD: Soft IOC started, about to .set(None)")
+
         try:
             record.set(None)
+            print("CHILD: Uh-OH! No exception thrown when setting None!")
         except Exception as e:
             queue.put(e)
+
+        print("CHILD: We really should never get here...")
 
         queue.put(Exception("FAIL:Test did not raise exception during .set()"))
 
@@ -786,10 +792,96 @@ class TestNoneValue:
 
         process.start()
 
+        print("PARENT: Child process started, waiting for returned exception")
+
         try:
-            exception = queue.get(timeout=5)
+            exception = queue.get(timeout=TIMEOUT)
 
             assert isinstance(exception, self.expected_exceptions)
         finally:
+            print("PARENT: Issuing terminate to child process")
             process.terminate()
-            process.join(timeout=3)
+            process.join(timeout=TIMEOUT)
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")
+
+
+class TestInvalidValues:
+    """Tests for values that records should reject"""
+
+    def test_string_rejects_overlong_strings(self):
+        """Test that stringIn & stringOut records reject strings >=39 chars"""
+
+        OVERLONG_STR = MAX_LEN_STR + "A"
+
+        with pytest.raises(ValueError):
+            builder.stringIn("STRIN1", initial_value=OVERLONG_STR)
+
+        with pytest.raises(ValueError):
+            builder.stringOut("STROUT1", initial_value=OVERLONG_STR)
+
+        with pytest.raises(ValueError):
+            si = builder.stringIn("STRIN2")
+            si.set(OVERLONG_STR)
+
+        with pytest.raises(ValueError):
+            so = builder.stringOut("STROUT2", initial_value=OVERLONG_STR)
+            so.set(OVERLONG_STR)
+
+    def test_long_string_rejects_overlong_strings(self):
+        """Test that longStringIn & longStringOut records reject
+        strings >=`WAVEFORM_LENGTH` chars"""
+        OVERLONG_STR = MAX_LEN_STR + "A"
+
+        with pytest.raises(AssertionError):
+            builder.longStringIn(
+                "LSTRIN1",
+                initial_value=OVERLONG_STR,
+                length=WAVEFORM_LENGTH)
+
+        with pytest.raises(AssertionError):
+            builder.longStringOut(
+                "LSTROUT1",
+                initial_value=OVERLONG_STR,
+                length=WAVEFORM_LENGTH)
+
+        with pytest.raises(AssertionError):
+            lsi = builder.longStringIn("LSTRIN2", length=WAVEFORM_LENGTH)
+            lsi.set(OVERLONG_STR)
+
+        with pytest.raises(AssertionError):
+            lso = builder.longStringIn("LSTROUT2", length=WAVEFORM_LENGTH)
+            lso.set(OVERLONG_STR)
+
+        # And a different way to initialise records to trigger same behaviour:
+        with pytest.raises(AssertionError):
+            lsi = builder.longStringIn("LSTRIN3", initial_value="ABC")
+            lsi.set(OVERLONG_STR)
+
+        with pytest.raises(AssertionError):
+            lso = builder.longStringOut("LSTROUT3", initial_value="ABC")
+            lso.set(OVERLONG_STR)
+
+
+    def test_waveform_rejects_zero_length(self):
+        """Test that WaveformIn/Out and longStringIn/Out records throw an
+        exception when being initialized with a zero length array"""
+        with pytest.raises(AssertionError):
+            builder.WaveformIn("W_IN", [])
+        with pytest.raises(AssertionError):
+            builder.WaveformOut("W_OUT", [])
+        with pytest.raises(AssertionError):
+            builder.longStringIn("L_IN", length=0)
+        with pytest.raises(AssertionError):
+            builder.longStringOut("L_OUT", length=0)
+
+    def test_waveform_rejects_overlong_values(self):
+        """Test that Waveform records throw an exception when an overlong
+        value is written"""
+        w_in = builder.WaveformIn("W_IN", [1, 2, 3])
+        w_out = builder.WaveformOut("W_OUT", [1, 2, 3])
+
+        with pytest.raises(AssertionError):
+            w_in.set([1, 2, 3, 4])
+        with pytest.raises(AssertionError):
+            w_out.set([1, 2, 3, 4])

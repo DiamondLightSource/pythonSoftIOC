@@ -134,6 +134,19 @@ DbfStringToNumpy = {
 }
 
 
+def _get_length(fields, default = None):
+    '''Helper function for getting 'length' or 'NELM' from arguments'''
+
+    if 'length' in fields:
+        assert 'NELM' not in fields, 'Cannot specify NELM and length together'
+        return fields.pop('length')
+    elif 'NELM' in fields:
+        return fields.pop('NELM')
+    else:
+        assert default is not None, 'Must specify waveform length'
+        return default
+
+
 def _waveform(value, fields):
     '''Helper routine for waveform construction.  If a value is given it is
     interpreted as an initial value and used to configure length and datatype
@@ -165,7 +178,7 @@ def _waveform(value, fields):
         # If a value is specified it should be the *only* non keyword argument.
         value, = value
         initial_value = device._require_waveform(value, datatype)
-        length = fields.pop('length', len(initial_value))
+        length = _get_length(fields, len(initial_value))
 
         # Special case for [u]int64: if the initial value comes in as 64 bit
         # integers we cannot represent that, so recast it as [u]int32
@@ -176,7 +189,7 @@ def _waveform(value, fields):
                 initial_value = numpy.require(initial_value, numpy.uint32)
     else:
         initial_value = numpy.array([], dtype = datatype)
-        length = fields.pop('length')
+        length = _get_length(fields)
     datatype = initial_value.dtype
 
     assert length > 0, 'Array cannot be of zero length'

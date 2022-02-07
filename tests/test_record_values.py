@@ -764,8 +764,9 @@ class TestNoneValue:
 
         record = record_func("SOME-NAME", **kwarg)
 
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
         builder.LoadDatabase()
-        softioc.iocInit()
+        softioc.iocInit(dispatcher)
 
         print("CHILD: Soft IOC started, about to .set(None)")
 

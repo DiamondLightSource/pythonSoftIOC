@@ -65,3 +65,6 @@ cov.xml
 # so editable installs work. Related:
 # https://github.com/mdavidsaver/setuptools_dso/issues/11
 /epicscorelibs
+
+# VSCode
+/.vscode/*.log

@@ -6,7 +6,12 @@ import pytest
 from enum import Enum
 from math import isnan, inf, nan
 
-from conftest import requires_cothread, WAVEFORM_LENGTH
+from conftest import (
+    requires_cothread,
+    WAVEFORM_LENGTH,
+    select_and_recv,
+    TIMEOUT
+)
 
 from softioc import asyncio_dispatcher, builder, softioc
 from softioc.pythonSoftIoc import RecordWrapper
@@ -16,7 +21,6 @@ from softioc.pythonSoftIoc import RecordWrapper
 
 # Test parameters
 DEVICE_NAME = "RECORD-VALUE-TESTS"
-TIMEOUT = 5  # Seconds
 
 # The maximum length string for StringIn/Out records
 MAX_LEN_STR = "a 39 char string exactly maximum length"
@@ -329,7 +333,7 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
     dispatcher = asyncio_dispatcher.AsyncioDispatcher()
     builder.LoadDatabase()
     softioc.iocInit(dispatcher)
-    conn.send("IOC started")
+    conn.send("R")  # "Ready"
 
     # Record list and record config list should always be in line
     for record, configuration in zip(records, record_configurations):
@@ -351,17 +355,18 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
             if set_enum == SetValueEnum.CAPUT:
                 if conn.poll(TIMEOUT):
                     val = conn.recv()
-                    if val is not None:
+                    if val == "G":
                         conn.send(record.get())
+                    else:
+                        pytest.fail(f"Received unexpected character {val}")
 
     # Keep process alive while main thread works.
     # This is most applicable to CAGET tests.
     while (True):
         if conn.poll(TIMEOUT):
             val = conn.recv()
-            if val == "EXIT":
+            if val == "D":  # "Done"
                 break
-
 
 def run_test_function(
     record_configurations: list, set_enum: SetValueEnum, get_enum: GetValueEnum
@@ -379,19 +384,17 @@ def run_test_function(
 
     ioc_process.start()
 
+
     # Wait for message that IOC has started
-    if parent_conn.poll(TIMEOUT):
-        parent_conn.recv()
-    else:
-        pytest.fail("IOC process did not start before TIMEOUT expired")
+    select_and_recv(parent_conn, "R")
+
+    # Cannot do these imports before the subprocess starts, as the subprocess
+    # would inherit cothread's internal state which would break things!
+    from cothread import Yield
+    from cothread.catools import caget, caput, _channel_cache
+    from cothread.dbr import DBR_CHAR_STR
 
     try:
-        # Cannot do these imports before the subprocess starts, as cothread
-        # isn't threadsafe (in the way we require)
-        from cothread import Yield
-        from cothread.catools import caget, caput, _channel_cache
-        from cothread.dbr import DBR_CHAR_STR
-
         # cothread remembers connected IOCs. As we potentially restart the same
         # named IOC multiple times, we have to purge the cache else the
         # result from caget/caput cache would be a DisconnectError during the
@@ -424,10 +427,7 @@ def run_test_function(
 
             if set_enum == SetValueEnum.CAPUT:
                 if get_enum == GetValueEnum.GET:
-                    if parent_conn.poll(TIMEOUT):
-                        parent_conn.recv()
-                    else:
-                        pytest.fail("IOC did not provide initial record value")
+                    select_and_recv(parent_conn)
                 caput(
                     DEVICE_NAME + ":" + record_name,
                     initial_value,
@@ -437,7 +437,8 @@ def run_test_function(
                 )
 
                 if get_enum == GetValueEnum.GET:
-                    parent_conn.send("Do another get!")
+                    parent_conn.send("G")  # "Get"
+
                 # Ensure IOC process has time to execute.
                 # I saw failures on MacOS where it appeared the IOC had not
                 # processed the put'ted value as the caget returned the same
@@ -445,10 +446,7 @@ def run_test_function(
                 Yield(timeout=TIMEOUT)
 
             if get_enum == GetValueEnum.GET:
-                if parent_conn.poll(TIMEOUT):
-                    rec_val = parent_conn.recv()
-                else:
-                    pytest.fail("IOC did not provide record value in queue")
+                rec_val = select_and_recv(parent_conn)
             else:
                 rec_val = caget(
                     DEVICE_NAME + ":" + record_name,
@@ -477,10 +475,8 @@ def run_test_function(
         # Purge cache to suppress spurious "IOC disconnected" exceptions
         _channel_cache.purge()
 
+        parent_conn.send("D")  # "Done"
 
-        parent_conn.send("EXIT")
-
-        # ioc_process.terminate()
         ioc_process.join(timeout=TIMEOUT)
         if ioc_process.exitcode is None:
             pytest.fail("Process did not terminate")
@@ -771,10 +767,15 @@ class TestNoneValue:
         builder.LoadDatabase()
         softioc.iocInit()
 
+        print("CHILD: Soft IOC started, about to .set(None)")
+
         try:
             record.set(None)
+            print("CHILD: Uh-OH! No exception thrown when setting None!")
         except Exception as e:
             queue.put(e)
+
+        print("CHILD: We really should never get here...")
 
         queue.put(Exception("FAIL:Test did not raise exception during .set()"))
 
@@ -791,13 +792,18 @@ class TestNoneValue:
 
         process.start()
 
+        print("PARENT: Child process started, waiting for returned exception")
+
         try:
-            exception = queue.get(timeout=5)
+            exception = queue.get(timeout=TIMEOUT)
 
             assert isinstance(exception, self.expected_exceptions)
         finally:
+            print("PARENT: Issuing terminate to child process")
             process.terminate()
-            process.join(timeout=3)
+            process.join(timeout=TIMEOUT)
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")
 
 
 class TestInvalidValues:

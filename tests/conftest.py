@@ -19,6 +19,9 @@ requires_cothread = pytest.mark.skipif(
 # Length picked to match string record length, so we can re-use test strings.
 WAVEFORM_LENGTH = 40
 
+# Default timeout for many operations across testing
+TIMEOUT = 10  # Seconds
+
 def create_random_prefix():
     """Create 12-character random string, for generating unique Device Names"""
     return "".join(random.choice(string.ascii_uppercase) for _ in range(12))
@@ -99,3 +102,21 @@ def enable_code_coverage():
         pass
     else:
         cleanup_on_sigterm()
+
+def select_and_recv(conn, expected_char = None):
+    """Wait for the given Connection to have data to receive, and return it.
+    If a character is provided check its correct before returning it.
+    This function imports Cothread, and so must NOT be called before any
+    multiprocessing sub-processes are spawned."""
+    from cothread import select
+    rrdy, _, _ = select([conn], [], [], TIMEOUT)
+    if rrdy:
+        val = conn.recv()
+    else:
+        pytest.fail("Did not receive expected char before TIMEOUT expired")
+
+    if expected_char:
+        assert val == expected_char, \
+            "Expected character did not match"
+
+    return val

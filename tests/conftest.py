@@ -20,7 +20,10 @@ requires_cothread = pytest.mark.skipif(
 WAVEFORM_LENGTH = 40
 
 # Default timeout for many operations across testing
-TIMEOUT = 10  # Seconds
+TIMEOUT = 5  # Seconds
+
+# Address for multiprocessing Listener/Client pair
+ADDRESS = ("localhost", 2345)
 
 def create_random_prefix():
     """Create 12-character random string, for generating unique Device Names"""
@@ -103,13 +106,22 @@ def enable_code_coverage():
     else:
         cleanup_on_sigterm()
 
+
 def select_and_recv(conn, expected_char = None):
     """Wait for the given Connection to have data to receive, and return it.
-    If a character is provided check its correct before returning it.
-    This function imports Cothread, and so must NOT be called before any
-    multiprocessing sub-processes are spawned."""
-    from cothread import select
-    rrdy, _, _ = select([conn], [], [], TIMEOUT)
+    If a character is provided check its correct before returning it."""
+    # Must use cothread's select if cothread is prsent, otherwise we'd block
+    # processing on all cothread processing. But we don't want to use it
+    # unless we have to, as importing cothread can cause issues with forking.
+    if "cothread" in sys.modules:
+        from cothread import select
+        rrdy, _, _ = select([conn], [], [], TIMEOUT)
+    else:
+        # Would use select.select(), but Windows doesn't accept Pipe handles
+        # as selectable objects.
+        if conn.poll(TIMEOUT):
+            rrdy = True
+
     if rrdy:
         val = conn.recv()
     else:

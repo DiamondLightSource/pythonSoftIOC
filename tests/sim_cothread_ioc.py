@@ -1,7 +1,10 @@
 from argparse import ArgumentParser
+from multiprocessing.connection import Client
+import sys
 
 from softioc import softioc, builder, pvlog
 
+from conftest import ADDRESS, select_and_recv
 
 if __name__ == "__main__":
     import cothread
@@ -17,4 +20,14 @@ if __name__ == "__main__":
     # Run the IOC
     builder.LoadDatabase()
     softioc.iocInit()
-    cothread.WaitForQuit()
+
+    with Client(ADDRESS) as conn:
+        conn.send("R")  # "Ready"
+
+        select_and_recv(conn, "D")  # "Done"
+        # Attempt to ensure all buffers flushed - C code (from `import pvlog`)
+        # may not be affected by these calls...
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+        conn.send("D")  # "Ready"

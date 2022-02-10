@@ -1,13 +1,16 @@
-from argparse import ArgumentParser
-
 import asyncio
 import os
 import re
+import sys
+
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from argparse import ArgumentParser
+from multiprocessing.connection import Client
 
 from softioc import softioc, builder, asyncio_dispatcher
 
+from conftest import ADDRESS, select_and_recv
 
 if __name__ == "__main__":
     # Being run as an IOC, so parse args and set prefix
@@ -34,4 +37,18 @@ if __name__ == "__main__":
     builder.LoadDatabase()
     event_loop = asyncio.get_event_loop()
     softioc.iocInit(asyncio_dispatcher.AsyncioDispatcher(event_loop))
-    event_loop.run_forever()
+
+    with Client(ADDRESS) as conn:
+        conn.send("R")  # "Ready"
+
+        # Make sure coverage is written on epicsExit
+        from pytest_cov.embed import cleanup
+        sys._run_exitfuncs = cleanup
+
+        select_and_recv(conn, "D")  # "Done"
+        # Attempt to ensure all buffers flushed - C code (from `import pvlog`)
+        # may not be affected by these calls...
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+        conn.send("D")  # "Done"

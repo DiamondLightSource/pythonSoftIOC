@@ -173,12 +173,10 @@ class TestValidate:
         if record_func in [builder.WaveformIn, builder.WaveformOut]:
             kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
 
-        kwarg.update(
-            {
-                "validate": self.validate_always_pass
-                if validate_pass
-                else self.validate_always_fail
-            }
+        kwarg["validate"] = (
+            self.validate_always_pass
+            if validate_pass
+            else self.validate_always_fail
         )
 
         record_func("VALIDATE-RECORD", **kwarg)

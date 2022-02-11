@@ -317,9 +317,9 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
         ) = configuration
 
         if set_enum == SetValueEnum.INITIAL_VALUE:
-            kwarg.update({"initial_value": initial_value})
+            kwarg["initial_value"] = initial_value
         elif creation_func in [builder.WaveformIn, builder.WaveformOut]:
-            kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value
+            kwarg["length"] = WAVEFORM_LENGTH  # Must specify when no value
             # Related to this issue:
             # https://github.com/dls-controls/pythonSoftIOC/issues/37
 
@@ -414,7 +414,7 @@ def run_test_function(
             kwargs = {}
             put_kwarg = {}
             if creation_func in [builder.longStringIn, builder.longStringOut]:
-                kwargs.update({"datatype": DBR_CHAR_STR})
+                kwargs["datatype"] = DBR_CHAR_STR
 
             if (creation_func in [builder.WaveformIn, builder.WaveformOut]
                     and type(initial_value) is bytes):
@@ -462,7 +462,7 @@ def run_test_function(
                     and expected_value.dtype in [numpy.float64, numpy.int32]
                 ):
                     print(
-                        "caget cannot distinguish between a waveform with 1"
+                        "caget cannot distinguish between a waveform with 1 "
                         "element and a scalar value, and so always returns a "
                         "scalar. Therefore we skip this check.")
                     continue
@@ -774,11 +774,11 @@ class TestNoneValue:
             record.set(None)
             print("CHILD: Uh-OH! No exception thrown when setting None!")
         except Exception as e:
+            print("CHILD: Putting exception into queue", e)
             queue.put(e)
-
-        print("CHILD: We really should never get here...")
-
-        queue.put(Exception("FAIL:Test did not raise exception during .set()"))
+        else:
+            print("CHILD: No exception raised when using None as value!")
+            queue.put(Exception("FAIL: No exception raised during .set()"))
 
     @requires_cothread
     def test_value_none_rejected_set_after_init(self, record_func_reject_none):

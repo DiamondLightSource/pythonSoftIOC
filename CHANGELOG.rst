@@ -6,17 +6,29 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
-Unreleased_
+4.0.1_ - 2022-02-14
 -----------
+
+Removed:
+
+- `Remove python2 support <../../pull/64>`_
 
 Changed:
 
-- `Remove python2 support <../../pull/64>`_
 - `Default DISP to TRUE for all In records <../../pull/74>`_
 - `Overhaul record value setting/getting <../../pull/60>`_
 
 Added:
+
 - New longStringIn/longStringOut record types
+
+Fixed:
+
+- `Zero length waveforms now warn of invalid length <../../pull/55>`_
+- `Out records without explicit initial value are now correctly validated <../../pull/43>`_
+- `stringOut record values can now be correctly set in all cases <../../pull/40>`_
+- `Waveforms will correctly use NELM keyword during initialization <../../pull/37>`_
+
 
 3.2.1_ - 2021-11-25
 -------------------

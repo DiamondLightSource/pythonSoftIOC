@@ -127,6 +127,9 @@ def test_waveform_construction():
     with pytest.raises(AssertionError):
         builder.WaveformIn("WI10", [1, 2, 4], initial_value=[5, 6])
 
+    # Specifying both length and NELM should produce an error
+    with pytest.raises(AssertionError):
+        builder.WaveformIn("WI11", length=11, NELM=12)
 
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""

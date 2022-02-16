@@ -591,16 +591,8 @@ class TestCagetValue:
         """Test that records provide the expected values on get calls when using
         .set() before IOC initialisation and caget after initialisation"""
 
-        # Various conditions mean we cannot use the entire list of cases
-        filtered_list = []
-        for item in record_values_list:
-            # .set() on In records doesn't update correctly.
-            # pythonSoftIOC issue #67
-            if item[1] not in in_records:
-                filtered_list.append(item)
-
         run_test_function(
-            filtered_list, SetValueEnum.SET_BEFORE_INIT, GetValueEnum.CAGET
+            record_values_list, SetValueEnum.SET_BEFORE_INIT, GetValueEnum.CAGET
         )
 
     @requires_cothread

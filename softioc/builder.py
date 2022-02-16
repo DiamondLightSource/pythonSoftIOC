@@ -18,45 +18,52 @@ PythonDevice = pythonSoftIoc.PythonDevice()
 # The SCAN field for all input records defaults to I/O Intr.
 
 
-def _in_record(record, name, **fields):
-    '''For input records we provide some automatic extra features: scanning,
-    initialisation as appropriate, and blocking puts from outside the IOC.'''
-
+def _set_in_defaults(fields):
     fields.setdefault('SCAN', 'I/O Intr')
-    if 'initial_value' in fields:
-        fields.setdefault('PINI', 'YES')
+    fields.setdefault('PINI', 'YES')
     fields.setdefault('DISP', 1)
-    return getattr(PythonDevice, record)(name, **fields)
+
+def _set_out_defaults(fields):
+    fields.setdefault('OMSL', 'supervisory')
+
+# For longout and ao we want DRV{L,H} to match {L,H}OPR by default
+def _set_scalar_out_defaults(fields, DRVL, DRVH):
+    fields['DRVL'] = DRVL
+    fields['DRVH'] = DRVH
+    fields.setdefault('LOPR', DRVL)
+    fields.setdefault('HOPR', DRVH)
 
 
-def aIn(name, LOPR=None, HOPR=None, **fields):
-    return _in_record(
-        'ai', name, LOPR = LOPR, HOPR = HOPR, **fields)
+def aIn(name, LOPR=None, HOPR=None, EGU=None, PREC=None, **fields):
+    _set_in_defaults(fields)
+    return PythonDevice.ai(
+        name, LOPR = LOPR, HOPR = HOPR, EGU = EGU, PREC = PREC, **fields)
 
-def aOut(name, LOPR=None, HOPR=None, **fields):
-    fields.setdefault('DRVL', LOPR)
-    fields.setdefault('DRVH', HOPR)
-    return PythonDevice.ao(
-        name, LOPR = LOPR, HOPR = HOPR, **fields)
+def aOut(name, DRVL=None, DRVH=None, EGU=None, PREC=None, **fields):
+    _set_out_defaults(fields)
+    _set_scalar_out_defaults(fields, DRVL, DRVH)
+    return PythonDevice.ao(name, EGU = EGU, PREC = PREC, **fields)
 
 
 def boolIn(name, ZNAM=None, ONAM=None, **fields):
-    return _in_record('bi', name, ZNAM = ZNAM, ONAM = ONAM, **fields)
+    _set_in_defaults(fields)
+    return PythonDevice.bi(name, ZNAM = ZNAM, ONAM = ONAM, **fields)
 
 def boolOut(name, ZNAM=None, ONAM=None, **fields):
-    return PythonDevice.bo(
-        name, OMSL = 'supervisory', ZNAM = ZNAM, ONAM = ONAM, **fields)
+    _set_out_defaults(fields)
+    return PythonDevice.bo(name, ZNAM = ZNAM, ONAM = ONAM, **fields)
 
 
 def longIn(name, LOPR=None, HOPR=None, EGU=None, **fields):
+    _set_in_defaults(fields)
     fields.setdefault('MDEL', -1)
-    return _in_record(
-        'longin', name, EGU = EGU, LOPR = LOPR, HOPR = HOPR, **fields)
+    return PythonDevice.longin(
+        name, LOPR = LOPR, HOPR = HOPR, EGU = EGU, **fields)
 
 def longOut(name, DRVL=None, DRVH=None, EGU=None, **fields):
-    return PythonDevice.longout(
-        name, OMSL = 'supervisory', DRVL = DRVL, DRVH = DRVH, EGU = EGU,
-        **fields)
+    _set_out_defaults(fields)
+    _set_scalar_out_defaults(fields, DRVL, DRVH)
+    return PythonDevice.longout(name, EGU = EGU, **fields)
 
 
 # Field name prefixes for mbbi/mbbo records.
@@ -92,17 +99,21 @@ def _process_mbb_values(options, fields):
 
 def mbbIn(name, *options, **fields):
     _process_mbb_values(options, fields)
-    return _in_record('mbbi', name, **fields)
+    _set_in_defaults(fields)
+    return PythonDevice.mbbi(name, **fields)
 
 def mbbOut(name, *options, **fields):
     _process_mbb_values(options, fields)
-    return PythonDevice.mbbo(name, OMSL = 'supervisory', **fields)
+    _set_out_defaults(fields)
+    return PythonDevice.mbbo(name, **fields)
 
 
 def stringIn(name, **fields):
-    return _in_record('stringin', name, **fields)
+    _set_in_defaults(fields)
+    return PythonDevice.stringin(name, **fields)
 
 def stringOut(name, **fields):
+    _set_out_defaults(fields)
     return PythonDevice.stringout(name, **fields)
 
 def Action(name, **fields):
@@ -204,7 +215,8 @@ def _waveform(value, fields):
 
 def Waveform(name, *value, **fields):
     _waveform(value, fields)
-    return _in_record('waveform', name, **fields)
+    _set_in_defaults(fields)
+    return PythonDevice.waveform(name, **fields)
 
 WaveformIn = Waveform
 
@@ -232,7 +244,8 @@ def _long_string(fields):
 
 def longStringIn(name, **fields):
     _long_string(fields)
-    return _in_record('long_stringin', name, **fields)
+    _set_in_defaults(fields)
+    return PythonDevice.long_stringin(name, **fields)
 
 def longStringOut(name, **fields):
     _long_string(fields)

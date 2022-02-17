@@ -229,19 +229,20 @@ Test Facilities`_ documentation for more details of each function.
 For all of these functions any EPICS database field can be assigned a value by
 passing it as a keyword argument for the corresponding field name (in upper
 case) or by assigning to the corresponding field of the returned record object.
-Thus the ``**fields`` argument in all of the definitions below refers to both the
-optional keyword arguments listed above and record field names.
+Thus the ``**fields`` argument in all of the definitions below refers to both
+the optional keyword arguments listed above and record field names.
 
 All functions return a wrapped `ProcessDeviceSupportIn` or
 `ProcessDeviceSupportOut` instance.
 
 ..  function::
-        aIn(name, LOPR=None, HOPR=None, **fields)
-        aOut(name, LOPR=None, HOPR=None, **fields)
+        aIn(name, LOPR=None, HOPR=None, EGU=None, PREC=None, **fields)
+        aOut(name, DRVL=None, DRVH=None, EGU=None, PREC=None, **fields)
 
-    Create ``ai`` and ``ao`` records.  The lower and upper limits for the
-    record can be specified, and if specified these will also be used to set the
-    ``EGUL`` and ``EGUF`` fields.
+    Create ``ai`` and ``ao`` records.  The lower and upper limits for the record
+    can be specified.  For ``ao`` records the ``LOPR`` and ``HOPR`` fields will
+    be set by default to the values of the ``DRVL`` and ``DRVH`` fields
+    respectively.
 
 ..  function::
         boolIn(name, ZNAM=None, ONAM=None, **fields)
@@ -255,6 +256,10 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
         longOut(name, DRVL=None, DRVH=None, EGU=None, **fields)
 
     Create ``longin`` and ``longout`` records with specified limits and units.
+    The lower and upper display limits for the record can be specified.  For
+    ``longout`` records the ``LOPR`` and ``HOPR`` fields will be set by default
+    to the values of the ``DRVL`` and ``DRVH`` fields respectively.
+
 
 ..  function::
         stringIn(name, **fields)

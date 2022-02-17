@@ -131,6 +131,55 @@ def test_waveform_construction():
     with pytest.raises(AssertionError):
         builder.WaveformIn("WI11", length=11, NELM=12)
 
+def test_drvhl_hlopr_defaults():
+    """Test the DRVH/L and H/LOPR default settings"""
+    # DRVH/L doesn't exist on In records
+    ai = builder.aIn("FOO")
+    # KeyError as fields with no value are simply not present in
+    # epicsdbbuilder's dictionary of fields
+    with pytest.raises(KeyError):
+        assert ai.LOPR.Value() is None
+    with pytest.raises(KeyError):
+        assert ai.HOPR.Value() is None
+
+    ao = builder.aOut("BAR")
+    with pytest.raises(KeyError):
+        assert ao.LOPR.Value() is None
+    with pytest.raises(KeyError):
+        assert ao.HOPR.Value() is None
+    with pytest.raises(KeyError):
+        assert ao.DRVH.Value() is None
+    with pytest.raises(KeyError):
+        assert ao.DRVL.Value() is None
+
+def test_hlopr_inherits_drvhl():
+    """Test that H/LOPR values are set to the DRVH/L values"""
+    lo = builder.longOut("ABC", DRVH=5, DRVL=10)
+
+    assert lo.DRVH.Value() == 5
+    assert lo.HOPR.Value() == 5
+    assert lo.DRVL.Value() == 10
+    assert lo.LOPR.Value() == 10
+
+def test_hlopr_dvrhl_different_values():
+    """Test you can set H/LOPR and DRVH/L to different values"""
+    ao = builder.aOut("DEF", DRVL=1, LOPR=2, HOPR=3, DRVH=4)
+
+    assert ao.DRVL.Value() == 1
+    assert ao.LOPR.Value() == 2
+    assert ao.HOPR.Value() == 3
+    assert ao.DRVH.Value() == 4
+
+def test_pini_always_on():
+    """Test that PINI is always on for in records regardless of initial_value"""
+    bi = builder.boolIn("AAA")
+    assert bi.PINI.Value() == "YES"
+
+    mbbi = builder.mbbIn("BBB", initial_value=5)
+    assert mbbi.PINI.Value() == "YES"
+
+
+
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
     return params[0].__name__

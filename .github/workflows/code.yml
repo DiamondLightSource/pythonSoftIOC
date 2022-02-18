@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python: [cp36, cp37, cp38, cp39]
+        python: [cp36, cp37, cp38, cp39, cp310]
 
         include:
           # Put coverage and results files in the project directory for mac

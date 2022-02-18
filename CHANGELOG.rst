@@ -10,7 +10,13 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Changed:
+
 - `Improve handling of range settings for scalar records <../../pull/82>`_
+
+Added:
+
+- `Add Python 3.10 support <../../pull/85>`_
 
 4.0.1_ - 2022-02-14
 -------------------

@@ -4,6 +4,7 @@ import os
 import pytest
 
 from conftest import (
+    log,
     create_random_prefix,
     requires_cothread,
     _clear_records,
@@ -376,14 +377,14 @@ class TestOnUpdate:
 
         conn.send("R")  # "Ready"
 
-        print("CHILD: Sent R over Connection to Parent")
+        log("CHILD: Sent R over Connection to Parent")
 
         # Keep process alive while main thread runs CAGET
         if conn.poll(TIMEOUT):
             val = conn.recv()
             assert val == "D", "Did not receive expected Done character"
 
-        print("CHILD: Received exit command, child exiting")
+        log("CHILD: Received exit command, child exiting")
 
     def on_update_runner(self, creation_func, always_update, put_same_value):
         parent_conn, child_conn = multiprocessing.Pipe()
@@ -397,7 +398,7 @@ class TestOnUpdate:
 
         process.start()
 
-        print("PARENT: Child started, waiting for R command")
+        log("PARENT: Child started, waiting for R command")
 
         from cothread.catools import caget, caput, _channel_cache
 
@@ -405,7 +406,7 @@ class TestOnUpdate:
             # Wait for message that IOC has started
             select_and_recv(parent_conn, "R")
 
-            print("PARENT: received R command")
+            log("PARENT: received R command")
 
 
             # Suppress potential spurious warnings
@@ -416,7 +417,7 @@ class TestOnUpdate:
             # value to force processing to occur
             count = 1
 
-            print("PARENT: begining While loop")
+            log("PARENT: begining While loop")
 
             while count < 4:
                 put_ret = caput(
@@ -426,11 +427,11 @@ class TestOnUpdate:
                 )
                 assert put_ret.ok, f"caput did not succeed: {put_ret.errorcode}"
 
-                print(f"PARENT: completed caput with count {count}")
+                log(f"PARENT: completed caput with count {count}")
 
                 count += 1
 
-            print("PARENT: Put'ing to DONE record")
+            log("PARENT: Put'ing to DONE record")
 
             caput(
                 device_name + ":ON-UPDATE-DONE",
@@ -438,14 +439,14 @@ class TestOnUpdate:
                 wait=True,
             )
 
-            print("PARENT: Waiting for C command")
+            log("PARENT: Waiting for C command")
 
             # Wait for action record to process, so we know all the callbacks
             # have finished processing (This assumes record callbacks are not
             # re-ordered, and will run in the same order as the caputs we sent)
             select_and_recv(parent_conn, "C")
 
-            print("PARENT: Received C command")
+            log("PARENT: Received C command")
 
             ret_val = caget(
                 device_name + ":ON-UPDATE-COUNTER-RECORD",
@@ -454,7 +455,7 @@ class TestOnUpdate:
             assert ret_val.ok, \
                 f"caget did not succeed: {ret_val.errorcode}, {ret_val}"
 
-            print(f"PARENT: Received val from COUNTER: {ret_val}")
+            log(f"PARENT: Received val from COUNTER: {ret_val}")
 
 
             # Expected value is either 3 (incremented once per caput)
@@ -469,10 +470,10 @@ class TestOnUpdate:
             # Suppress potential spurious warnings
             _channel_cache.purge()
 
-            print("PARENT:Sending Done command to child")
+            log("PARENT:Sending Done command to child")
             parent_conn.send("D")  # "Done"
             process.join(timeout=TIMEOUT)
-            print(f"PARENT: Join completed with exitcode {process.exitcode}")
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
             if process.exitcode is None:
                 pytest.fail("Process did not terminate")
 

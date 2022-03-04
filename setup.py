@@ -23,7 +23,6 @@ devIocStats_OSI = [
     "devIocStatsWaveform.c",
     "devIocStatsSub.c",
     "devIocStatsTest.c",
-    "devIocStats.h",
 ]
 
 devIocStats_OSD = [
@@ -39,30 +38,19 @@ devIocStats_OSD = [
     "osdSystemInfo.c",
     "osdHostInfo.c",
     "osdPIDInfo.c",
-    "devIocStatsOSD.h",
 ]
 
 devIocStats_src = os.path.join("iocStats", "devIocStats")
 devIocStats_os = os.path.join(devIocStats_src, "os", get_config_var('OS_CLASS'))
 devIocStats_default = os.path.join(devIocStats_src, "os", "default")
 
-def _add_file(f):
-    if f.endswith(".h"):
-        # Only add header files if making an sdist
-        # https://github.com/pypa/packaging-problems/issues/84#issuecomment-383718492
-        should_add = "sdist" in sys.argv
-    else:
-        should_add = True
-    if should_add:
-        sources.append(f)
-
 for f in devIocStats_OSI:
-    _add_file(os.path.join(devIocStats_src, f))
+    sources.append(os.path.join(devIocStats_src, f))
 for f in devIocStats_OSD:
     if os.path.exists(os.path.join(devIocStats_os, f)):
-        _add_file(os.path.join(devIocStats_os, f))
+        sources.append(os.path.join(devIocStats_os, f))
     else:
-        _add_file(os.path.join(devIocStats_default, f))
+        sources.append(os.path.join(devIocStats_default, f))
 
 # Extension with all our C code
 ext = Extension(

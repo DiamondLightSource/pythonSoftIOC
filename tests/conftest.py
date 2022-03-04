@@ -1,3 +1,4 @@
+from datetime import datetime
 import atexit
 import os
 import random
@@ -20,7 +21,7 @@ requires_cothread = pytest.mark.skipif(
 WAVEFORM_LENGTH = 40
 
 # Default timeout for many operations across testing
-TIMEOUT = 5  # Seconds
+TIMEOUT = 10  # Seconds
 
 # Address for multiprocessing Listener/Client pair
 ADDRESS = ("localhost", 2345)
@@ -28,6 +29,12 @@ ADDRESS = ("localhost", 2345)
 def create_random_prefix():
     """Create 12-character random string, for generating unique Device Names"""
     return "".join(random.choice(string.ascii_uppercase) for _ in range(12))
+
+# Can't use logging as it's not multiprocess safe, and
+# alteratives are overkill
+def log(*args):
+    print(datetime.now().strftime("%H:%M:%S"), *args)
+
 
 class SubprocessIOC:
     def __init__(self, ioc_py):

@@ -9,6 +9,7 @@ from math import isnan, inf, nan
 from conftest import (
     requires_cothread,
     WAVEFORM_LENGTH,
+    log,
     select_and_recv,
     TIMEOUT
 )
@@ -28,7 +29,6 @@ MAX_LEN_STR = "a 39 char string exactly maximum length"
 VERY_LONG_STRING = "This is a fairly long string, the kind that someone " \
     "might think to put into a record that can theoretically hold a huge " \
     "string and so lets test it and prove that shall we?"
-
 
 
 def record_func_names(fixture_value):
@@ -461,7 +461,7 @@ def run_test_function(
                     creation_func in [builder.WaveformOut, builder.WaveformIn]
                     and expected_value.dtype in [numpy.float64, numpy.int32]
                 ):
-                    print(
+                    log(
                         "caget cannot distinguish between a waveform with 1 "
                         "element and a scalar value, and so always returns a "
                         "scalar. Therefore we skip this check.")
@@ -760,16 +760,16 @@ class TestNoneValue:
         builder.LoadDatabase()
         softioc.iocInit(dispatcher)
 
-        print("CHILD: Soft IOC started, about to .set(None)")
+        log("CHILD: Soft IOC started, about to .set(None)")
 
         try:
             record.set(None)
-            print("CHILD: Uh-OH! No exception thrown when setting None!")
+            log("CHILD: Uh-OH! No exception thrown when setting None!")
         except Exception as e:
-            print("CHILD: Putting exception into queue", e)
+            log("CHILD: Putting exception into queue %s", e)
             queue.put(e)
         else:
-            print("CHILD: No exception raised when using None as value!")
+            log("CHILD: No exception raised when using None as value!")
             queue.put(Exception("FAIL: No exception raised during .set()"))
 
     @requires_cothread
@@ -785,14 +785,14 @@ class TestNoneValue:
 
         process.start()
 
-        print("PARENT: Child process started, waiting for returned exception")
+        log("PARENT: Child process started, waiting for returned exception")
 
         try:
             exception = queue.get(timeout=TIMEOUT)
 
             assert isinstance(exception, self.expected_exceptions)
         finally:
-            print("PARENT: Issuing terminate to child process")
+            log("PARENT: Issuing terminate to child process")
             process.terminate()
             process.join(timeout=TIMEOUT)
             if process.exitcode is None:

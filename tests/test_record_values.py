@@ -756,6 +756,8 @@ class TestNoneValue:
 
         record = record_func("SOME-NAME", **kwarg)
 
+        log("CHILD: About to start IOC")
+
         dispatcher = asyncio_dispatcher.AsyncioDispatcher()
         builder.LoadDatabase()
         softioc.iocInit(dispatcher)

@@ -93,8 +93,6 @@ jobs:
       - name: Build Wheel
         run: cibuildwheel --output-dir dist
         env:
-          # Force old behaviour of pip - see https://github.com/pypa/cibuildwheel/issues/962
-          CIBW_ENVIRONMENT: PIP_USE_DEPRECATED=out-of-tree-build
           CIBW_BUILD: ${{ matrix.python }}*64
           CIBW_TEST_EXTRAS: dev
           CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }}

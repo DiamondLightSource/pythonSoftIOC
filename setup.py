@@ -40,7 +40,7 @@ devIocStats_OSD = [
     "osdPIDInfo.c",
 ]
 
-devIocStats_src = os.path.join("iocStats", "devIocStats")
+devIocStats_src = os.path.join("softioc", "iocStats", "devIocStats")
 devIocStats_os = os.path.join(devIocStats_src, "os", get_config_var('OS_CLASS'))
 devIocStats_default = os.path.join(devIocStats_src, "os", "default")
 

@@ -19,7 +19,8 @@ from ._version_git import __version__
 iocshRegisterCommon()
 for dbd in ('base.dbd', 'PVAServerRegister.dbd', 'qsrv.dbd'):
     dbLoadDatabase(dbd, os.path.join(path.base_path, 'dbd'), None)
-dbLoadDatabase('devIocStats.dbd', os.path.dirname(__file__), None)
+iocStats = os.path.join(os.path.dirname(__file__), "iocStats", "devIocStats")
+dbLoadDatabase('devIocStats.dbd', iocStats, None)
 
 if registerRecordDeviceDriver(pdbbase):
     raise RuntimeError('Error registering')

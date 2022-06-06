@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.softioc &mdash; pythonSoftIOC 4.0.1+7.g6903754 documentation</title>
+  <title>softioc.softioc &mdash; pythonSoftIOC 4.0.1+10.g79e67ab documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -384,7 +384,8 @@
     <span class="sd">&#39;&#39;&#39;This will load a template for the devIocStats library with the specified</span>
 <span class="sd">    IOC name. This should be called before `iocInit`&#39;&#39;&#39;</span>
     <span class="n">substitutions</span> <span class="o">=</span> <span class="s1">&#39;IOCNAME=&#39;</span> <span class="o">+</span> <span class="n">ioc_name</span> <span class="o">+</span> <span class="s1">&#39;, TODFORMAT=%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span>
-    <span class="n">iocstats_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;iocStatsDb&#39;</span><span class="p">)</span>
+    <span class="n">iocstats_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;iocStats&#39;</span><span class="p">,</span> <span class="s1">&#39;iocAdmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Db&#39;</span><span class="p">)</span>
     <span class="n">_add_records_from_file</span><span class="p">(</span><span class="n">iocstats_dir</span><span class="p">,</span> <span class="s1">&#39;ioc.template&#39;</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">)</span></div>
 
 

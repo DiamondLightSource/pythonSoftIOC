@@ -10,6 +10,11 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Nothing yet
+
+4.0.2_ - 2022-06-06
+-------------------
+
 Changed:
 
 - `Improve handling of range settings for scalar records <../../pull/82>`_
@@ -17,6 +22,11 @@ Changed:
 Added:
 
 - `Add Python 3.10 support <../../pull/85>`_
+
+Fixed:
+
+- `Installing from sdist now works on Windows <../../pull/86>`_
+
 
 4.0.1_ - 2022-02-14
 -------------------
@@ -133,7 +143,8 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 
-.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.0.1...HEAD
+.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.0.2...HEAD
+.. _4.0.2: https://github.com/dls-controls/pythonIoc/compare/4.0.1...4.0.2
 .. _4.0.1: https://github.com/dls-controls/pythonIoc/compare/3.2.1...4.0.1
 .. _3.2.1: https://github.com/dls-controls/pythonIoc/compare/3.2...3.2.1
 .. _3.2: https://github.com/dls-controls/pythonIoc/compare/3.1...3.2

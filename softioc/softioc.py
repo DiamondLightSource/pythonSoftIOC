@@ -292,7 +292,8 @@ def devIocStats(ioc_name):
     '''This will load a template for the devIocStats library with the specified
     IOC name. This should be called before `iocInit`'''
     substitutions = 'IOCNAME=' + ioc_name + ', TODFORMAT=%m/%d/%Y %H:%M:%S'
-    iocstats_dir = os.path.join(os.path.dirname(__file__), 'iocStatsDb')
+    iocstats_dir = os.path.join(
+        os.path.dirname(__file__), 'iocStats', 'iocAdmin', 'Db')
     _add_records_from_file(iocstats_dir, 'ioc.template', substitutions)
 
 

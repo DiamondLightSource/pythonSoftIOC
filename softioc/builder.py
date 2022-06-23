@@ -8,6 +8,8 @@ InitialiseDbd()
 LoadDbdFile(os.path.join(os.path.dirname(__file__), 'device.dbd'))
 
 from . import device, pythonSoftIoc  # noqa
+# Re-export this so users only have to import the builder
+from .device import set_blocking # noqa
 
 PythonDevice = pythonSoftIoc.PythonDevice()
 
@@ -301,5 +303,7 @@ __all__ = [
     'Action',
     # Other builder support functions
     'LoadDatabase',
-    'SetDeviceName', 'UnsetDevice'
+    'SetDeviceName', 'UnsetDevice',
+    # Device support functions
+    'set_blocking'
 ]

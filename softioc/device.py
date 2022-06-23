@@ -14,6 +14,15 @@ from .device_core import DeviceSupportCore, RecordLookup
 # dispatcher(func, *args) will queue a callback to happen
 dispatcher = None
 
+# Global blocking flag, used to mark asynchronous (False) or synchronous (True)
+# processing modes for Out records.
+# Default False to maintain behaviour from previous versions.
+blocking = False
+
+def set_blocking(val):
+    global blocking
+    blocking = val
+
 
 # EPICS processing return codes
 EPICS_OK = 0
@@ -142,6 +151,8 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         else:
             self._value = None
 
+        self._blocking = kargs.pop('blocking', blocking)
+
         self.__super.__init__(name, **kargs)
 
     def init_record(self, record):
@@ -161,6 +172,13 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             record.UDF = 0
             recGblResetAlarms(record)
         return self._epics_rc_
+
+    def __completion(self):
+        pass
+
+    def __wrap_completion(self, value):
+        self.__on_update(value)
+        self.__completion()
 
     def _process(self, record):
         '''Processing suitable for output records.  Performs immediate value
@@ -183,7 +201,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self._value = value
             record.UDF = 0
             if self.__on_update and self.__enable_write:
-                dispatcher(self.__on_update, python_value)
+                dispatcher(self.__wrap_completion, python_value)
             return EPICS_OK
 
 

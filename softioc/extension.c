@@ -1,4 +1,4 @@
-
+/* Provide EPICS functions in Python format */
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <string.h>
@@ -6,12 +6,14 @@
 #define db_accessHFORdb_accessC     // Needed to get correct DBF_ values
 #include <dbAccess.h>
 #include <dbFldTypes.h>
+#include <callback.h>
 #include <dbStaticLib.h>
 #include <asTrapWrite.h>
 #include <epicsVersion.h>
 #include <dbChannel.h>
 #include <asTrapWrite.h>
 #include <asDbLib.h>
+
 
 /* Reference stealing version of PyDict_SetItemString */
 static void set_dict_item_steal(
@@ -209,6 +211,42 @@ static PyObject *install_pv_logging(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+#define CAPSULE_NAME "ProcessDeviceSupportOut.callback"
+
+static void capsule_destructor(PyObject *obj)
+{
+    void *callback = PyCapsule_GetPointer(obj, CAPSULE_NAME);
+    free(callback);
+}
+
+
+static PyObject *create_callback_capsule(PyObject *self, PyObject *args)
+{
+    void *callback = malloc(sizeof(CALLBACK));
+
+    printf("Created CALLBACK struct %p\n", callback);
+
+    return PyCapsule_New(callback, CAPSULE_NAME, &capsule_destructor);
+}
+
+static PyObject *signal_processing_complete(PyObject *self, PyObject *args)
+{
+    int priority;
+    dbCommon *record;
+    PyObject *callback_capsule;
+
+    if (!PyArg_ParseTuple(args, "inO", &priority, &record, &callback_capsule))
+    {
+        return NULL;
+    }
+
+    CALLBACK *callback = PyCapsule_GetPointer(callback_capsule, CAPSULE_NAME);
+
+    callbackRequestProcessCallback(callback, priority, record);
+
+    Py_RETURN_NONE;
+}
+
 static struct PyMethodDef softioc_methods[] = {
     {"get_DBF_values",  get_DBF_values, METH_VARARGS,
      "Get a map of DBF names to values"},
@@ -218,6 +256,10 @@ static struct PyMethodDef softioc_methods[] = {
      "Put a database field to a value"},
     {"install_pv_logging",  install_pv_logging, METH_VARARGS,
      "Install caput logging to stdout"},
+    {"signal_processing_complete",  signal_processing_complete, METH_VARARGS,
+     "Inform EPICS that asynchronous record processing has completed"},
+     {"create_callback_capsule",  create_callback_capsule, METH_VARARGS,
+     "Create a CALLBACK structure inside a PyCapsule"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

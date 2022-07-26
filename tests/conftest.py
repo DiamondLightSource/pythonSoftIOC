@@ -117,7 +117,7 @@ def enable_code_coverage():
 def select_and_recv(conn, expected_char = None):
     """Wait for the given Connection to have data to receive, and return it.
     If a character is provided check its correct before returning it."""
-    # Must use cothread's select if cothread is prsent, otherwise we'd block
+    # Must use cothread's select if cothread is present, otherwise we'd block
     # processing on all cothread processing. But we don't want to use it
     # unless we have to, as importing cothread can cause issues with forking.
     if "cothread" in sys.modules:

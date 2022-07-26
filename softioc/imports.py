@@ -27,6 +27,17 @@ def install_pv_logging(acf_file):
     '''Install pv logging'''
     _extension.install_pv_logging(acf_file)
 
+def create_callback_capsule():
+    return _extension.create_callback_capsule()
+
+def signal_processing_complete(record, callback):
+    '''Signal that asynchronous record processing has completed'''
+    _extension.signal_processing_complete(
+        record.PRIO,
+        record.record.value,
+        callback
+    )
+
 def expect_success(status, function, args):
     assert status == 0, 'Expected success'
 
@@ -94,6 +105,8 @@ epicsExitCallAtExits.restype = None
 
 __all__ = [
     'get_field_offsets',
+    'create_callback_capsule',
+    'signal_processing_complete',
     'registryDeviceSupportAdd',
     'IOSCANPVT', 'scanIoRequest', 'scanIoInit',
     'dbLoadDatabase',

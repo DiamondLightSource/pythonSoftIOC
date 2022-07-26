@@ -3,10 +3,17 @@ import time
 import ctypes
 from ctypes import *
 import numpy
+from threading import Event
 
 from . import alarm
 from . import fields
-from .imports import dbLoadDatabase, recGblResetAlarms, db_put_field
+from .imports import (
+    create_callback_capsule,
+    dbLoadDatabase,
+    signal_processing_complete,
+    recGblResetAlarms,
+    db_put_field,
+)
 from .device_core import DeviceSupportCore, RecordLookup
 
 
@@ -19,6 +26,7 @@ dispatcher = None
 # Default False to maintain behaviour from previous versions.
 blocking = False
 
+# TODO: Docs and Tests for the Blocking feature
 def set_blocking(val):
     global blocking
     blocking = val
@@ -152,6 +160,10 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self._value = None
 
         self._blocking = kargs.pop('blocking', blocking)
+        if self._blocking:
+            self._completion_event = Event()
+            self._callback = create_callback_capsule()
+
 
         self.__super.__init__(name, **kargs)
 
@@ -174,15 +186,26 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return self._epics_rc_
 
     def __completion(self):
+        if self._blocking:
+            self._completion_event.set()
         pass
 
+    def __wait_for_completion(self, record):
+        self._completion_event.wait()
+        signal_processing_complete(record, self._callback)
+        self._completion_event.clear()
+
     def __wrap_completion(self, value):
-        self.__on_update(value)
+        dispatcher(self.__on_update, value)
         self.__completion()
 
     def _process(self, record):
         '''Processing suitable for output records.  Performs immediate value
         validation and asynchronous update notification.'''
+
+        if record.PACT:
+            return EPICS_OK
+
         value = self._read_value(record)
         if not self.__always_update and \
                 self._compare_values(value, self._value):
@@ -201,7 +224,12 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self._value = value
             record.UDF = 0
             if self.__on_update and self.__enable_write:
+                record.PACT = self._blocking
                 dispatcher(self.__wrap_completion, python_value)
+
+                if self._blocking:
+                    # Create a process to wait for on_update to finish
+                    dispatcher(self.__wait_for_completion, record)
             return EPICS_OK
 
 

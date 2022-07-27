@@ -9,15 +9,14 @@ from softioc import alarm, softioc, builder, asyncio_dispatcher, pvlog
 from conftest import ADDRESS, select_and_recv
 
 if __name__ == "__main__":
-    # Being run as an IOC, so parse args and set prefix
-    parser = ArgumentParser()
-    parser.add_argument('prefix', help="The PV prefix for the records")
-    parsed_args = parser.parse_args()
-    builder.SetDeviceName(parsed_args.prefix)
-
-    import sim_records
-
     with Client(ADDRESS) as conn:
+        # Being run as an IOC, so parse args and set prefix
+        parser = ArgumentParser()
+        parser.add_argument('prefix', help="The PV prefix for the records")
+        parsed_args = parser.parse_args()
+        builder.SetDeviceName(parsed_args.prefix)
+
+        import sim_records
 
         async def callback(value):
             # Set the ao value, which will trigger on_update for it

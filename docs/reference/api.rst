@@ -134,6 +134,8 @@ Test Facilities`_ documentation for more details of each function.
     If your application uses `asyncio` then this module gives an alternative
     dispatcher for caput requests.
 
+.. autoclass:: softioc.asyncio_dispatcher.AsyncioDispatcher
+
 .. automodule:: softioc.builder
 
     Creating Records: `softioc.builder`

@@ -8,10 +8,11 @@ class AsyncioDispatcher:
     def __init__(self, loop=None):
         """A dispatcher for `asyncio` based IOCs, suitable to be passed to
         `softioc.iocInit`. Means that `on_update` callback functions can be
-        async. If loop is None, will run an Event Loop in a thread when created.
+        async.
+
+        If a ``loop`` is provided it must already be running. Otherwise a new
+        Event Loop will be created and run in a dedicated thread.
         """
-        #: `asyncio` event loop that the callbacks will run under.
-        self.loop = loop
         if loop is None:
             # Make one and run it in a background thread
             self.loop = asyncio.new_event_loop()
@@ -26,6 +27,10 @@ class AsyncioDispatcher:
                 loop.call_soon_threadsafe(loop.stop)
                 worker.join()
             worker.start()
+        elif not loop.is_running():
+            raise ValueError("Provided asyncio event loop is not running")
+        else:
+            self.loop = loop
 
     def __call__(self, func, *args):
         async def async_wrapper():

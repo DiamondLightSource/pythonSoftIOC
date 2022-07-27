@@ -1,9 +1,12 @@
+import asyncio
 import pytest
 import sys
 
 from multiprocessing.connection import Listener
 
 from conftest import requires_cothread, ADDRESS, select_and_recv
+
+from softioc.asyncio_dispatcher import AsyncioDispatcher
 
 @pytest.mark.asyncio
 async def test_asyncio_ioc(asyncio_ioc):
@@ -112,3 +115,10 @@ async def test_asyncio_ioc_override(asyncio_ioc_override):
         print("Out:", out)
         print("Err:", err)
         raise
+
+def test_asyncio_dispatcher_event_loop():
+    """Test that passing a non-running event loop to the AsyncioDispatcher
+    raises an exception"""
+    event_loop = asyncio.get_event_loop()
+    with pytest.raises(ValueError):
+        AsyncioDispatcher(loop=event_loop)

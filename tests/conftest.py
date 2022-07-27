@@ -49,7 +49,7 @@ class SubprocessIOC:
         if self.proc.returncode is None:
             # still running, kill it and print the output
             self.proc.kill()
-            out, err = self.proc.communicate()
+            out, err = self.proc.communicate(timeout=TIMEOUT)
             print(out.decode())
             print(err.decode())
 

@@ -14,6 +14,7 @@ from conftest import (
 )
 
 from softioc import asyncio_dispatcher, builder, softioc
+from softioc.device import set_blocking
 
 # Test file for miscellaneous tests related to records
 
@@ -179,6 +180,35 @@ def test_pini_always_on():
     mbbi = builder.mbbIn("BBB", initial_value=5)
     assert mbbi.PINI.Value() == "YES"
 
+
+def check_record_blocking_attributes(record):
+    """Helper function to assert expected attributes exist for a blocking
+    record"""
+    assert record._blocking is True
+    assert record._callback != 0
+
+def test_blocking_creates_attributes():
+    """Test that setting the blocking flag on record creation creates the
+    expected attributes"""
+    ao1 = builder.aOut("OUTREC1", blocking=True)
+    check_record_blocking_attributes(ao1)
+
+    ao2 = builder.aOut("OUTREC2", blocking=False)
+    assert ao2._blocking is False
+
+def test_blocking_global_flag_creates_attributes():
+    """Test that the global blocking flag creates the expected attributes"""
+    set_blocking(True)
+    bo1 = builder.boolOut("OUTREC1")
+
+    check_record_blocking_attributes(bo1)
+
+    set_blocking(False)
+    bo2 = builder.boolOut("OUTREC2")
+    assert bo2._blocking is False
+
+    bo3 = builder.boolOut("OUTREC3", blocking=True)
+    check_record_blocking_attributes(bo3)
 
 
 def validate_fixture_names(params):

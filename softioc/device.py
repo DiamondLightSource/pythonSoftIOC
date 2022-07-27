@@ -1,3 +1,4 @@
+from inspect import isawaitable
 import os
 import time
 import ctypes
@@ -161,7 +162,6 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self._blocking = kargs.pop('blocking', blocking)
         if self._blocking:
-            self._completion_event = Event()
             self._callback = create_callback_capsule()
 
 
@@ -185,19 +185,21 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             recGblResetAlarms(record)
         return self._epics_rc_
 
-    def __completion(self):
+    def __completion(self, record):
         if self._blocking:
-            self._completion_event.set()
+            signal_processing_complete(record, self._callback)
         pass
 
-    def __wait_for_completion(self, record):
-        self._completion_event.wait()
-        signal_processing_complete(record, self._callback)
-        self._completion_event.clear()
+    def __wrap_completion(self, value, record):
+        update = self.__on_update(value)
+        if isawaitable(update):
+            dispatcher(self._complete_update, update, record)
+        else:
+            self.__completion(record)
 
-    def __wrap_completion(self, value):
-        dispatcher(self.__on_update, value)
-        self.__completion()
+    async def _complete_update(self, future, record):
+        await future
+        self.__completion(record)
 
     def _process(self, record):
         '''Processing suitable for output records.  Performs immediate value
@@ -225,11 +227,8 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             record.UDF = 0
             if self.__on_update and self.__enable_write:
                 record.PACT = self._blocking
-                dispatcher(self.__wrap_completion, python_value)
+                dispatcher(self.__wrap_completion, python_value, record)
 
-                if self._blocking:
-                    # Create a process to wait for on_update to finish
-                    dispatcher(self.__wait_for_completion, record)
             return EPICS_OK
 
 

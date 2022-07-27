@@ -215,17 +215,13 @@ static PyObject *install_pv_logging(PyObject *self, PyObject *args)
 
 static void capsule_destructor(PyObject *obj)
 {
-    void *callback = PyCapsule_GetPointer(obj, CAPSULE_NAME);
-    free(callback);
+    free(PyCapsule_GetPointer(obj, CAPSULE_NAME));
 }
 
 
 static PyObject *create_callback_capsule(PyObject *self, PyObject *args)
 {
     void *callback = malloc(sizeof(CALLBACK));
-
-    printf("Created CALLBACK struct %p\n", callback);
-
     return PyCapsule_New(callback, CAPSULE_NAME, &capsule_destructor);
 }
 
@@ -238,6 +234,14 @@ static PyObject *signal_processing_complete(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "inO", &priority, &record, &callback_capsule))
     {
         return NULL;
+    }
+
+    if (!PyCapsule_IsValid(callback_capsule, CAPSULE_NAME))
+    {
+        return PyErr_Format(
+            PyExc_TypeError,
+            "Given object was not a capsule with name \"%s\"",
+            CAPSULE_NAME);
     }
 
     CALLBACK *callback = PyCapsule_GetPointer(callback_capsule, CAPSULE_NAME);

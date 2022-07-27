@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.0.2+1.ge3d5590 documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.0.2+2.g52bebac documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -426,6 +426,16 @@ terminate immediately.</p>
 <p>If your application uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then this module gives an alternative
 dispatcher for caput requests.</p>
 </section>
+<dl class="py class">
+<dt class="sig sig-object py" id="softioc.asyncio_dispatcher.AsyncioDispatcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">softioc.asyncio_dispatcher.</span></span><span class="sig-name descname"><span class="pre">AsyncioDispatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/asyncio_dispatcher.html#AsyncioDispatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher" title="Permalink to this definition"></a></dt>
+<dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based IOCs, suitable to be passed to
+<a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref any py py-func docutils literal notranslate"><span class="pre">softioc.iocInit</span></code></a>. Means that <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> callback functions can be
+async.</p>
+<p>If a <code class="docutils literal notranslate"><span class="pre">loop</span></code> is provided it must already be running. Otherwise a new
+Event Loop will be created and run in a dedicated thread.</p>
+</dd></dl>
+
 <span class="target" id="module-softioc.builder"></span><section id="creating-records-softioc-builder">
 <h2>Creating Records: <a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a><a class="headerlink" href="#creating-records-softioc-builder" title="Permalink to this headline"></a></h2>
 <p>This module publishes functions for creating records.  All of the other methods

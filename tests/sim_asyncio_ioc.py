@@ -36,6 +36,17 @@ if __name__ == "__main__":
         # Create a record to set the alarm
         t_ao = builder.aOut('ALARM', on_update=callback)
 
+        async def on_update_name_callback(value, name):
+            print(name, "value", value)
+
+        builder.longOut(
+            "NAME-CALLBACK",
+            initial_value = 3,
+            always_update=True,
+            on_update_name=on_update_name_callback,
+            blocking=True
+        )
+
         # Run the IOC
         builder.LoadDatabase()
         softioc.iocInit(asyncio_dispatcher.AsyncioDispatcher())

@@ -7,6 +7,7 @@ from tempfile import NamedTemporaryFile
 from epicsdbbuilder.recordset import recordset
 
 from . import imports, device
+from . import cothread_dispatcher
 
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 
@@ -31,10 +32,7 @@ def iocInit(dispatcher=None):
     '''
     if dispatcher is None:
         # Fallback to cothread
-        import cothread
-        # Create our own cothread callback queue so that our callbacks
-        # processing doesn't interfere with other callback processing.
-        dispatcher = cothread.cothread._Callback()
+        dispatcher = cothread_dispatcher.CothreadDispatcher()
     # Set the dispatcher for record processing callbacks
     device.dispatcher = dispatcher
     imports.iocInit()

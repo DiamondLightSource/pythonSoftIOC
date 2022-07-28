@@ -39,6 +39,8 @@ async def test_asyncio_ioc(asyncio_ioc):
 
         await caput(pre + ":ALARM", 3, wait=True)
 
+        await caput(pre + ":NAME-CALLBACK", 12, wait=True)
+
         # Confirm the ALARM callback has completed
         select_and_recv(conn, "C")  # "Complete"
 
@@ -68,6 +70,7 @@ async def test_asyncio_ioc(asyncio_ioc):
         assert "%s:ALARM.VAL 0 -> 3" % pre in out
         assert 'on_update %s:AO : 3.0' % pre in out
         assert 'async update 3.0 (23.45)' in out
+        assert "%s:NAME-CALLBACK value 12" % pre in out
         assert 'Starting iocInit' in err
         assert 'iocRun: All initialization complete' in err
     except Exception:

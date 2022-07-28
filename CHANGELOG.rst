@@ -10,7 +10,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
-Nothing yet
+Fixed:
+
+- `Passing a custom asyncio event loop into the AsyncioDispatcher causes methods to never run <../../pull/96>`_
 
 4.0.2_ - 2022-06-06
 -------------------

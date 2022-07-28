@@ -228,6 +228,23 @@ Test Facilities`_ documentation for more details of each function.
     which don't change its value will be discarded.  In particular this means
     that such updates don't call `validate` or `on_update`.
 
+    .. _blocking:
+
+    `blocking`
+    ~~~~~~~~~~
+
+    Only available on OUT records. When set to `True` the record will set the
+    ``PACT`` field when processing is ongoing. This means that ``caput`` and
+    similar tools can correctly wait for processing to complete.
+
+    This flag defaults to `False`, to retain compatibility with previous
+    versions.
+
+    .. seealso::
+        `SetBlocking` for configuring a global default blocking value
+
+
+
 For all of these functions any EPICS database field can be assigned a value by
 passing it as a keyword argument for the corresponding field name (in upper
 case) or by assigning to the corresponding field of the returned record object.
@@ -357,6 +374,17 @@ record creation function.
     This can optionally be called after completing the creation of records to
     prevent the accidential creation of records with the currently set device
     name.
+
+.. function:: SetBlocking(blocking)
+
+    This can be used to globally set the default `blocking` flag, which will
+    apply to all records created after this point. This allows blocking to be
+    easily set/unset when creating groups of records.
+
+    This does not change the blocking value for any already created records.
+
+    .. seealso::
+        `blocking` for description of the flag
 
 
 The following helper functions are useful when constructing links between

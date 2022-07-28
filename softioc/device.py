@@ -27,8 +27,7 @@ dispatcher = None
 # Default False to maintain behaviour from previous versions.
 blocking = False
 
-# TODO: Docs and Tests for the Blocking feature
-def set_blocking(val):
+def SetBlocking(val):
     global blocking
     blocking = val
 

@@ -10,6 +10,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Added:
+
+- `Caput with callback <../../pull/98>`_
+
 Fixed:
 
 - `Passing a custom asyncio event loop into the AsyncioDispatcher causes methods to never run <../../pull/96>`_

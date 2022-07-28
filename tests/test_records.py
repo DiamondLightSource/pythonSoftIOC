@@ -16,7 +16,7 @@ from conftest import (
 )
 
 from softioc import asyncio_dispatcher, builder, softioc
-from softioc.device import set_blocking
+from softioc.device import SetBlocking
 
 # Test file for miscellaneous tests related to records
 
@@ -185,6 +185,7 @@ def test_pini_always_on():
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
     return params[0].__name__
+
 class TestValidate:
     """Tests related to the validate callback"""
 
@@ -524,11 +525,11 @@ class TestBlocking:
 
     def test_blocking_global_flag_creates_attributes(self):
         """Test that the global blocking flag creates the expected attributes"""
-        set_blocking(True)
+        SetBlocking(True)
         bo1 = builder.boolOut("OUTREC1")
         self.check_record_blocking_attributes(bo1)
 
-        set_blocking(False)
+        SetBlocking(False)
         bo2 = builder.boolOut("OUTREC2")
         assert bo2._blocking is False
 
@@ -576,6 +577,7 @@ class TestBlocking:
 
         log("CHILD: Received exit command, child exiting")
 
+    @requires_cothread
     def test_blocking_single_thread_multiple_calls(self):
         """Test that a blocking record correctly causes multiple caputs from
         a single thread to wait for the expected time"""

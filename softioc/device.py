@@ -150,6 +150,19 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         else:
             self.__on_update = None
 
+        # We cannot simply use `iscoroutinefunction` at the point of calling
+        # on_update as the lambda used for on_update_name is NOT a coroutine.
+        # There's no way to examine the lambda to see if it'd return a
+        # coroutine without calling it, so we must keep track of it ourselves.
+        # This is an unfortunate, unavoidable, leak of implementation detail
+        # that really should be contained in the dispatcher.
+        self.__on_update_is_coroutine = False
+        if (
+            iscoroutinefunction(on_update)
+            or iscoroutinefunction(on_update_name)
+        ):
+            self.__on_update_is_coroutine = True
+
         self.__validate = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
         self.__enable_write = True
@@ -225,7 +238,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             if self.__on_update and self.__enable_write:
                 record.PACT = self._blocking
 
-                if iscoroutinefunction(self.__on_update):
+                if self.__on_update_is_coroutine:
                     # This is an unfortunate, but unavoidable, leak of
                     # implementation detail that really should be kept within
                     # the dispatcher, but cannot be. This is due to asyncio not

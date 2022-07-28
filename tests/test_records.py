@@ -1,9 +1,11 @@
+import asyncio
 import multiprocessing
 import numpy
 import os
 import pytest
 
 from conftest import (
+    aioca_cleanup,
     log,
     create_random_prefix,
     requires_cothread,
@@ -179,37 +181,6 @@ def test_pini_always_on():
 
     mbbi = builder.mbbIn("BBB", initial_value=5)
     assert mbbi.PINI.Value() == "YES"
-
-
-def check_record_blocking_attributes(record):
-    """Helper function to assert expected attributes exist for a blocking
-    record"""
-    assert record._blocking is True
-    assert record._callback != 0
-
-def test_blocking_creates_attributes():
-    """Test that setting the blocking flag on record creation creates the
-    expected attributes"""
-    ao1 = builder.aOut("OUTREC1", blocking=True)
-    check_record_blocking_attributes(ao1)
-
-    ao2 = builder.aOut("OUTREC2", blocking=False)
-    assert ao2._blocking is False
-
-def test_blocking_global_flag_creates_attributes():
-    """Test that the global blocking flag creates the expected attributes"""
-    set_blocking(True)
-    bo1 = builder.boolOut("OUTREC1")
-
-    check_record_blocking_attributes(bo1)
-
-    set_blocking(False)
-    bo2 = builder.boolOut("OUTREC2")
-    assert bo2._blocking is False
-
-    bo3 = builder.boolOut("OUTREC3", blocking=True)
-    check_record_blocking_attributes(bo3)
-
 
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
@@ -530,3 +501,215 @@ class TestOnUpdate:
         """Test that on_update works correctly for all out records when
         always_update is True and the put'ed value is always different"""
         self.on_update_runner(out_records, True, False)
+
+
+
+class TestBlocking:
+    """Tests related to the Blocking functionality"""
+
+    def check_record_blocking_attributes(self, record):
+        """Helper function to assert expected attributes exist for a blocking
+        record"""
+        assert record._blocking is True
+        assert record._callback != 0
+
+    def test_blocking_creates_attributes(self):
+        """Test that setting the blocking flag on record creation creates the
+        expected attributes"""
+        ao1 = builder.aOut("OUTREC1", blocking=True)
+        self.check_record_blocking_attributes(ao1)
+
+        ao2 = builder.aOut("OUTREC2", blocking=False)
+        assert ao2._blocking is False
+
+    def test_blocking_global_flag_creates_attributes(self):
+        """Test that the global blocking flag creates the expected attributes"""
+        set_blocking(True)
+        bo1 = builder.boolOut("OUTREC1")
+        self.check_record_blocking_attributes(bo1)
+
+        set_blocking(False)
+        bo2 = builder.boolOut("OUTREC2")
+        assert bo2._blocking is False
+
+        bo3 = builder.boolOut("OUTREC3", blocking=True)
+        self.check_record_blocking_attributes(bo3)
+
+    def blocking_test_func(self, device_name, conn):
+
+        builder.SetDeviceName(device_name)
+
+        count_rec = builder.longIn("BLOCKING-COUNTER", initial_value=0)
+
+        async def blocking_update_func(new_val):
+            """A function that will block for some time"""
+            log("CHILD: blocking_update_func starting")
+            await asyncio.sleep(0.5)
+            log("CHILD: Finished sleep!")
+            completed_count = count_rec.get() + 1
+            count_rec.set(completed_count)
+            log(
+                "CHILD: blocking_update_func finished, completed ",
+                completed_count
+            )
+
+        builder.longOut(
+            "BLOCKING-REC",
+            on_update=blocking_update_func,
+            always_update=True,
+            blocking=True
+        )
+
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        conn.send("R")  # "Ready"
+
+        log("CHILD: Sent R over Connection to Parent")
+
+        # Keep process alive while main thread runs CAGET
+        if conn.poll(TIMEOUT):
+            val = conn.recv()
+            assert val == "D", "Did not receive expected Done character"
+
+        log("CHILD: Received exit command, child exiting")
+
+    def test_blocking_single_thread_multiple_calls(self):
+        """Test that a blocking record correctly causes multiple caputs from
+        a single thread to wait for the expected time"""
+        parent_conn, child_conn = multiprocessing.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = multiprocessing.Process(
+            target=self.blocking_test_func,
+            args=(device_name, child_conn),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from cothread.catools import caget, caput, _channel_cache
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            log("PARENT: received R command")
+
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            # Track number of puts sent
+            count = 1
+            MAX_COUNT = 4
+
+            log("PARENT: begining While loop")
+
+            while count <= MAX_COUNT:
+                put_ret = caput(
+                    device_name + ":BLOCKING-REC",
+                    5,  # Arbitrary value
+                    wait=True,
+                    timeout=TIMEOUT
+                )
+                assert put_ret.ok, f"caput did not succeed: {put_ret.errorcode}"
+
+                log(f"PARENT: completed caput with count {count}")
+
+                count += 1
+
+            log("PARENT: Getting value from counter")
+
+            ret_val = caget(
+                device_name + ":BLOCKING-COUNTER",
+                timeout=TIMEOUT,
+            )
+            assert ret_val.ok, \
+                f"caget did not succeed: {ret_val.errorcode}, {ret_val}"
+
+            log(f"PARENT: Received val from COUNTER: {ret_val}")
+
+            assert ret_val == MAX_COUNT
+
+        finally:
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            log("PARENT: Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")
+
+    @pytest.mark.asyncio
+    async def test_blocking_multiple_threads(self):
+        """Test that a blocking record correctly causes caputs from multiple
+        threads to wait for the expected time"""
+        parent_conn, child_conn = multiprocessing.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = multiprocessing.Process(
+            target=self.blocking_test_func,
+            args=(device_name, child_conn),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from aioca import caget, caput
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            log("PARENT: received R command")
+
+            MAX_COUNT = 4
+
+            async def query_record(index):
+                log("SPAWNED: beginning blocking caput ", index)
+                await caput(
+                        device_name + ":BLOCKING-REC",
+                        5,  # Arbitrary value
+                        wait=True,
+                        timeout=TIMEOUT
+                    )
+                log("SPAWNED: caput complete ", index)
+
+            queries = [query_record(i) for i in range(MAX_COUNT)] * MAX_COUNT
+
+            log("PARENT: Gathering list of queries")
+
+            await asyncio.gather(*queries)
+
+            log("PARENT: Getting value from counter")
+
+            ret_val = await caget(
+                device_name + ":BLOCKING-COUNTER",
+                timeout=TIMEOUT,
+            )
+            assert ret_val.ok, \
+                f"caget did not succeed: {ret_val.errorcode}, {ret_val}"
+
+            log(f"PARENT: Received val from COUNTER: {ret_val}")
+
+            assert ret_val == MAX_COUNT
+
+        finally:
+            # Clear the cache before stopping the IOC stops
+            # "channel disconnected" error messages
+            aioca_cleanup()
+
+            log("PARENT: Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")

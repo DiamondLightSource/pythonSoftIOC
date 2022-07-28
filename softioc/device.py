@@ -1,4 +1,4 @@
-from inspect import isawaitable
+from inspect import iscoroutinefunction
 import os
 import time
 import ctypes
@@ -186,18 +186,16 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return self._epics_rc_
 
     def __completion(self, record):
+        '''Signals that all on_update processing is finished'''
         if self._blocking:
             signal_processing_complete(record, self._callback)
         pass
 
     def __wrap_completion(self, value, record):
-        update = self.__on_update(value)
-        if isawaitable(update):
-            dispatcher(self._complete_update, update, record)
-        else:
-            self.__completion(record)
+        self.__on_update(value)
+        self.__completion(record)
 
-    async def _complete_update(self, future, record):
+    async def __async_wrap_completion(self, future, record):
         await future
         self.__completion(record)
 
@@ -227,7 +225,21 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             record.UDF = 0
             if self.__on_update and self.__enable_write:
                 record.PACT = self._blocking
-                dispatcher(self.__wrap_completion, python_value, record)
+
+                if iscoroutinefunction(self.__on_update):
+                    # This is an unfortunate, but unavoidable, leak of
+                    # implementation detail that really should be kept within
+                    # the dispatcher, but cannot be. This is due to asyncio not
+                    # allowing its event loop to be nested, thus either
+                    # requiring an additional call to the dispatcher once you
+                    # acquire the Future from the coroutine, or doing this.
+                    dispatcher(
+                        self.__async_wrap_completion,
+                        self.__on_update(python_value),
+                        record
+                    )
+                else:
+                    dispatcher(self.__wrap_completion, python_value, record)
 
             return EPICS_OK
 

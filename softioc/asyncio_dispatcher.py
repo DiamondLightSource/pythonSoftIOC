@@ -32,18 +32,19 @@ class AsyncioDispatcher:
         else:
             self.loop = loop
 
-    def __call__(self, func, completion, func_args=(), completion_args=()):
+    def __call__(
+            self,
+            func,
+            func_args=(),
+            completion = None,
+            completion_args=()):
         async def async_wrapper():
             try:
-                if inspect.iscoroutinefunction(func):
-                    await func(*func_args)
-                else:
-                    ret = func(*func_args)
-                    # Handle the case of a synchronous function that returns a
-                    # coroutine, like the lambda for on_update_name does
-                    if inspect.isawaitable(ret):
-                        await ret
-                completion(*completion_args)
+                ret = func(*func_args)
+                if inspect.isawaitable(ret):
+                    await ret
+                if completion:
+                    completion(*completion_args)
             except Exception:
                 logging.exception("Exception when awaiting callback")
         asyncio.run_coroutine_threadsafe(async_wrapper(), self.loop)

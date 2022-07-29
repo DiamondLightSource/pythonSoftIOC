@@ -377,9 +377,15 @@ record creation function.
 
 .. function:: SetBlocking(blocking)
 
-    This can be used to globally set the default `blocking` flag, which will
-    apply to all records created after this point. This allows blocking to be
+    This can be used to globally set the default of the `blocking` flag, which
+    will apply to all records created after this point. This allows blocking to be
     easily set/unset when creating groups of records.
+
+    Returns the previous value of the `blocking` flag, which enables code like this::
+
+        old_blocking = SetBlocking(new_blocking)
+        create_records()
+        SetBlocking(old_blocking)
 
     This does not change the blocking value for any already created records.
 

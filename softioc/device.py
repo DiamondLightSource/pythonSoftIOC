@@ -1,10 +1,8 @@
-from inspect import iscoroutinefunction
 import os
 import time
 import ctypes
 from ctypes import *
 import numpy
-from threading import Event
 
 from . import alarm
 from . import fields
@@ -19,7 +17,6 @@ from .device_core import DeviceSupportCore, RecordLookup
 
 
 # This is set from softioc.iocInit
-# dispatcher(func, *args) will queue a callback to happen
 dispatcher = None
 
 # Global blocking flag, used to mark asynchronous (False) or synchronous (True)
@@ -27,9 +24,12 @@ dispatcher = None
 # Default False to maintain behaviour from previous versions.
 blocking = False
 
-def SetBlocking(val):
+# Set the current global blocking flag, and return the previous value.
+def SetBlocking(new_val):
     global blocking
-    blocking = val
+    old_val = blocking
+    blocking = new_val
+    return old_val
 
 
 # EPICS processing return codes
@@ -163,7 +163,6 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if self._blocking:
             self._callback = create_callback_capsule()
 
-
         self.__super.__init__(name, **kargs)
 
     def init_record(self, record):
@@ -188,7 +187,6 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         '''Signals that all on_update processing is finished'''
         if self._blocking:
             signal_processing_complete(record, self._callback)
-        pass
 
     def _process(self, record):
         '''Processing suitable for output records.  Performs immediate value
@@ -218,10 +216,9 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
                 record.PACT = self._blocking
                 dispatcher(
                     self.__on_update,
-                    self.__completion,
                     func_args=(python_value,),
-                    completion_args=(record,)
-                )
+                    completion = self.__completion,
+                    completion_args=(record,))
 
             return EPICS_OK
 

@@ -10,8 +10,14 @@ class CothreadDispatcher:
         # processing doesn't interfere with other callback processing.
         self.__dispatcher = cothread.cothread._Callback()
 
-    def __call__(self, func, completion, func_args=(), completion_args=()):
+    def __call__(
+            self,
+            func,
+            func_args=(),
+            completion = None,
+            completion_args=()):
         def wrapper():
             func(*func_args)
-            completion(*completion_args)
+            if completion:
+                completion(*completion_args)
         self.__dispatcher(wrapper)

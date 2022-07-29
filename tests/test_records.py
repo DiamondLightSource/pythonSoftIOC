@@ -536,6 +536,20 @@ class TestBlocking:
         bo3 = builder.boolOut("OUTREC3", blocking=True)
         self.check_record_blocking_attributes(bo3)
 
+    def test_blocking_returns_old_state(self):
+        """Test that SetBlocking returns the previously set value"""
+        old_val = SetBlocking(True)
+        assert old_val is False  # Default is False
+
+        old_val = SetBlocking(False)
+        assert old_val is True
+
+        # Test it correctly maintains state when passed the current value
+        old_val = SetBlocking(False)
+        assert old_val is False
+        old_val = SetBlocking(False)
+        assert old_val is False
+
     def blocking_test_func(self, device_name, conn):
 
         builder.SetDeviceName(device_name)

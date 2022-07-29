@@ -35,8 +35,7 @@ def signal_processing_complete(record, callback):
     _extension.signal_processing_complete(
         record.PRIO,
         record.record.value,
-        callback
-    )
+        callback)
 
 def expect_success(status, function, args):
     assert status == 0, 'Expected success'

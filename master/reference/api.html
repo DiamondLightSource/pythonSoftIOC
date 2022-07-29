@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.0.2+3.g06d6b96 documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.0.2+12.g877a89c documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -72,6 +72,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#on-update-name"><code class="xref any docutils literal notranslate"><span class="pre">on_update_name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#validate"><code class="xref any docutils literal notranslate"><span class="pre">validate</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#always-update"><code class="xref any docutils literal notranslate"><span class="pre">always_update</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blocking"><code class="xref any docutils literal notranslate"><span class="pre">blocking</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#alarm-value-definitions-softioc-alarm">Alarm Value Definitions: <code class="xref any docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a></li>
@@ -503,6 +504,18 @@ writing to <code class="docutils literal notranslate"><span class="pre">.PROC</s
 which don’t change its value will be discarded.  In particular this means
 that such updates don’t call <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> or <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>.</p>
 </section>
+<section id="blocking">
+<span id="id7"></span><h3><a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a><a class="headerlink" href="#blocking" title="Permalink to this headline"></a></h3>
+<p>Only available on OUT records. When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a> the record will set the
+<code class="docutils literal notranslate"><span class="pre">PACT</span></code> field when processing is ongoing. This means that <code class="docutils literal notranslate"><span class="pre">caput</span></code> and
+similar tools can correctly wait for processing to complete.</p>
+<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, to retain compatibility with previous
+versions.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#softioc.builder.SetBlocking" title="softioc.builder.SetBlocking"><code class="xref any py py-func docutils literal notranslate"><span class="pre">SetBlocking</span></code></a> for configuring a global default blocking value</p>
+</div>
+</section>
 </section>
 <p>For all of these functions any EPICS database field can be assigned a value by
 passing it as a keyword argument for the corresponding field name (in upper
@@ -641,6 +654,25 @@ only this function need be used, function below is entirely optional.</p>
 <dd><p>This can optionally be called after completing the creation of records to
 prevent the accidential creation of records with the currently set device
 name.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="softioc.builder.SetBlocking">
+<span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">SetBlocking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blocking</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#SetBlocking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.builder.SetBlocking" title="Permalink to this definition"></a></dt>
+<dd><p>This can be used to globally set the default of the <a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a> flag, which
+will apply to all records created after this point. This allows blocking to be
+easily set/unset when creating groups of records.</p>
+<p>Returns the previous value of the <a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a> flag, which enables code like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">old_blocking</span> <span class="o">=</span> <span class="n">SetBlocking</span><span class="p">(</span><span class="n">new_blocking</span><span class="p">)</span>
+<span class="n">create_records</span><span class="p">()</span>
+<span class="n">SetBlocking</span><span class="p">(</span><span class="n">old_blocking</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This does not change the blocking value for any already created records.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a> for description of the flag</p>
+</div>
 </dd></dl>
 
 <p>The following helper functions are useful when constructing links between

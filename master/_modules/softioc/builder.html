@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.builder &mdash; pythonSoftIOC 4.0.2+3.g06d6b96 documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 4.0.2+12.g877a89c documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -100,6 +100,8 @@
 <span class="n">LoadDbdFile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;device.dbd&#39;</span><span class="p">))</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">device</span><span class="p">,</span> <span class="n">pythonSoftIoc</span>  <span class="c1"># noqa</span>
+<span class="c1"># Re-export this so users only have to import the builder</span>
+<span class="kn">from</span> <span class="nn">.device</span> <span class="kn">import</span> <span class="n">SetBlocking</span> <span class="c1"># noqa</span>
 
 <span class="n">PythonDevice</span> <span class="o">=</span> <span class="n">pythonSoftIoc</span><span class="o">.</span><span class="n">PythonDevice</span><span class="p">()</span>
 
@@ -393,7 +395,9 @@
     <span class="s1">&#39;Action&#39;</span><span class="p">,</span>
     <span class="c1"># Other builder support functions</span>
     <span class="s1">&#39;LoadDatabase&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SetDeviceName&#39;</span><span class="p">,</span> <span class="s1">&#39;UnsetDevice&#39;</span>
+    <span class="s1">&#39;SetDeviceName&#39;</span><span class="p">,</span> <span class="s1">&#39;UnsetDevice&#39;</span><span class="p">,</span>
+    <span class="c1"># Device support functions</span>
+    <span class="s1">&#39;SetBlocking&#39;</span>
 <span class="p">]</span>
 </pre></div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.asyncio_dispatcher &mdash; pythonSoftIOC 4.0.2+3.g06d6b96 documentation</title>
+  <title>softioc.asyncio_dispatcher &mdash; pythonSoftIOC 4.0.2+12.g877a89c documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -124,12 +124,19 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">func</span><span class="p">,</span>
+            <span class="n">func_args</span><span class="o">=</span><span class="p">(),</span>
+            <span class="n">completion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">completion_args</span><span class="o">=</span><span class="p">()):</span>
         <span class="k">async</span> <span class="k">def</span> <span class="nf">async_wrapper</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">func_args</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isawaitable</span><span class="p">(</span><span class="n">ret</span><span class="p">):</span>
                     <span class="k">await</span> <span class="n">ret</span>
+                <span class="k">if</span> <span class="n">completion</span><span class="p">:</span>
+                    <span class="n">completion</span><span class="p">(</span><span class="o">*</span><span class="n">completion_args</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Exception when awaiting callback&quot;</span><span class="p">)</span>
         <span class="n">asyncio</span><span class="o">.</span><span class="n">run_coroutine_threadsafe</span><span class="p">(</span><span class="n">async_wrapper</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">)</span></div>

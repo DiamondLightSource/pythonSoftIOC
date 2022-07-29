@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.softioc &mdash; pythonSoftIOC 4.0.2+3.g06d6b96 documentation</title>
+  <title>softioc.softioc &mdash; pythonSoftIOC 4.0.2+12.g877a89c documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -99,6 +99,7 @@
 <span class="kn">from</span> <span class="nn">epicsdbbuilder.recordset</span> <span class="kn">import</span> <span class="n">recordset</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">imports</span><span class="p">,</span> <span class="n">device</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">cothread_dispatcher</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dbLoadDatabase&#39;</span><span class="p">,</span> <span class="s1">&#39;iocInit&#39;</span><span class="p">,</span> <span class="s1">&#39;interactive_ioc&#39;</span><span class="p">]</span>
 
@@ -123,10 +124,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">dispatcher</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Fallback to cothread</span>
-        <span class="kn">import</span> <span class="nn">cothread</span>
-        <span class="c1"># Create our own cothread callback queue so that our callbacks</span>
-        <span class="c1"># processing doesn&#39;t interfere with other callback processing.</span>
-        <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">cothread</span><span class="o">.</span><span class="n">cothread</span><span class="o">.</span><span class="n">_Callback</span><span class="p">()</span>
+        <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">cothread_dispatcher</span><span class="o">.</span><span class="n">CothreadDispatcher</span><span class="p">()</span>
     <span class="c1"># Set the dispatcher for record processing callbacks</span>
     <span class="n">device</span><span class="o">.</span><span class="n">dispatcher</span> <span class="o">=</span> <span class="n">dispatcher</span>
     <span class="n">imports</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span></div>

@@ -15,6 +15,9 @@
 #include <asDbLib.h>
 
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Field access helper functions. */
+
 /* Reference stealing version of PyDict_SetItemString */
 static void set_dict_item_steal(
     PyObject *dict, const char *name, PyObject *py_value)
@@ -112,14 +115,14 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                            IOC PV put logging                             */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* IOC PV put logging */
 
 struct formatted
 {
     long length;
     epicsOldString values[];
 };
+
 
 static struct formatted * FormatValue(struct dbAddr *dbaddr)
 {
@@ -156,6 +159,7 @@ static struct formatted * FormatValue(struct dbAddr *dbaddr)
     return formatted;
 }
 
+
 static void PrintValue(struct formatted *formatted)
 {
     if (formatted->length == 1)
@@ -171,6 +175,7 @@ static void PrintValue(struct formatted *formatted)
         printf("]");
     }
 }
+
 
 void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
 {
@@ -211,6 +216,10 @@ static PyObject *install_pv_logging(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Process callback support. */
+
 #define CAPSULE_NAME "ProcessDeviceSupportOut.callback"
 
 static void capsule_destructor(PyObject *obj)
@@ -225,31 +234,30 @@ static PyObject *create_callback_capsule(PyObject *self, PyObject *args)
     return PyCapsule_New(callback, CAPSULE_NAME, &capsule_destructor);
 }
 
+
 static PyObject *signal_processing_complete(PyObject *self, PyObject *args)
 {
     int priority;
     dbCommon *record;
     PyObject *callback_capsule;
-
     if (!PyArg_ParseTuple(args, "inO", &priority, &record, &callback_capsule))
-    {
         return NULL;
-    }
 
     if (!PyCapsule_IsValid(callback_capsule, CAPSULE_NAME))
-    {
         return PyErr_Format(
             PyExc_TypeError,
             "Given object was not a capsule with name \"%s\"",
             CAPSULE_NAME);
-    }
 
     CALLBACK *callback = PyCapsule_GetPointer(callback_capsule, CAPSULE_NAME);
-
     callbackRequestProcessCallback(callback, priority, record);
 
     Py_RETURN_NONE;
 }
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Initialisation. */
 
 static struct PyMethodDef softioc_methods[] = {
     {"get_DBF_values",  get_DBF_values, METH_VARARGS,
@@ -262,7 +270,7 @@ static struct PyMethodDef softioc_methods[] = {
      "Install caput logging to stdout"},
     {"signal_processing_complete",  signal_processing_complete, METH_VARARGS,
      "Inform EPICS that asynchronous record processing has completed"},
-     {"create_callback_capsule",  create_callback_capsule, METH_VARARGS,
+    {"create_callback_capsule",  create_callback_capsule, METH_VARARGS,
      "Create a CALLBACK structure inside a PyCapsule"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
@@ -275,6 +283,7 @@ static struct PyModuleDef softioc_module = {
     -1,
     softioc_methods,
 };
+
 
 PyObject *PyInit__extension(void)
 {

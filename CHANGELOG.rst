@@ -16,6 +16,7 @@ Added:
 
 Fixed:
 
+- `Update asyncio example to use dispatcher for custom function <../../pull/94>`_
 - `Passing a custom asyncio event loop into the AsyncioDispatcher causes methods to never run <../../pull/96>`_
 
 4.0.2_ - 2022-06-06

@@ -46,5 +46,5 @@ class AsyncioDispatcher:
                 if completion:
                     completion(*completion_args)
             except Exception:
-                logging.exception("Exception when awaiting callback")
+                logging.exception("Exception when running dispatched callback")
         asyncio.run_coroutine_threadsafe(async_wrapper(), self.loop)

@@ -23,7 +23,7 @@ async def update():
         ai.set(ai.get() + 1)
         await asyncio.sleep(1)
 
-asyncio.run_coroutine_threadsafe(update(), dispatcher.loop)
+dispatcher(update)
 
 # Finally leave the IOC running with an interactive shell.
 softioc.interactive_ioc(globals())

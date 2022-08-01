@@ -21,8 +21,9 @@ this.
 
 The ``async update`` function will increment the value of ``ai`` once per second,
 sleeping that coroutine between updates.
-Note that we run this coroutine in the ``loop`` of the ``dispatcher``, and not in the
-main event loop.
+Note that we pass this coroutine to the ``dispatcher``, which will execute it in the
+dispatcher's own event loop and not in the main event loop. It also provides some logging
+if exceptions occur.
 
 This IOC will, like the one in `../tutorials/creating-an-ioc`, leave an interactive
 shell open. The values of the PVs can be queried using the methods defined in the

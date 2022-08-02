@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 4.0.2+13.gf9960ce documentation</title>
+  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 4.0.2+14.gd06e9f7 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -132,7 +132,7 @@ you would use one over the other</p>
         <span class="n">ai</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">asyncio</span><span class="o">.</span><span class="n">run_coroutine_threadsafe</span><span class="p">(</span><span class="n">update</span><span class="p">(),</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">loop</span><span class="p">)</span>
+<span class="n">dispatcher</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
 
 <span class="c1"># Finally leave the IOC running with an interactive shell.</span>
 <span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
@@ -143,8 +143,9 @@ allows the use of <a class="reference external" href="https://docs.python.org/3/
 this.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">update</span></code> function will increment the value of <code class="docutils literal notranslate"><span class="pre">ai</span></code> once per second,
 sleeping that coroutine between updates.
-Note that we run this coroutine in the <code class="docutils literal notranslate"><span class="pre">loop</span></code> of the <code class="docutils literal notranslate"><span class="pre">dispatcher</span></code>, and not in the
-main event loop.</p>
+Note that we pass this coroutine to the <code class="docutils literal notranslate"><span class="pre">dispatcher</span></code>, which will execute it in the
+dispatcher’s own event loop and not in the main event loop. It also provides some logging
+if exceptions occur.</p>
 <p>This IOC will, like the one in <a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a>, leave an interactive
 shell open. The values of the PVs can be queried using the methods defined in the
 <a class="reference internal" href="../reference/api.html#module-softioc.softioc" title="softioc.softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.softioc</span></code></a> module.</p>

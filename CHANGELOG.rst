@@ -10,6 +10,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+4.1.0_ - 2022-08-05
+-------------------
+
 Added:
 
 - `Caput with callback <../../pull/98>`_
@@ -150,7 +153,8 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 
-.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.0.2...HEAD
+.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.1.0...HEAD
+.. _4.1.0: https://github.com/dls-controls/pythonIoc/compare/4.0.2...4.1.0
 .. _4.0.2: https://github.com/dls-controls/pythonIoc/compare/4.0.1...4.0.2
 .. _4.0.1: https://github.com/dls-controls/pythonIoc/compare/3.2.1...4.0.1
 .. _3.2.1: https://github.com/dls-controls/pythonIoc/compare/3.2...3.2.1

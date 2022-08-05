@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contributing &mdash; pythonSoftIOC 4.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="API" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+            <a href="../index.html" class="icon icon-home"> pythonSoftIOC
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                4.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/asyncio-cothread-differences.html">What are the differences between <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code>?</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-tests">Running the tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-dependencies">Updating Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-styling">Code Styling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#release-process">Release Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: rgb(7, 43, 93)" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonSoftIOC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Contributing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reference/contributing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="contributing">
+<span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline"></a></h1>
+<p>Contributions and issues are most welcome! All issues and pull requests are
+handled through github on the <a class="reference external" href="https://github.com/dls-controls/pythonIoc/issues">dls_controls repository</a>. Also, please check for
+any existing issues before filing a new one. If you have a great idea but it
+involves big changes, please file a ticket before making a pull request! We
+want to make sure you don’t spend your time coding something that might not fit
+the scope of the project.</p>
+<section id="running-the-tests">
+<h2>Running the tests<a class="headerlink" href="#running-the-tests" title="Permalink to this headline"></a></h2>
+<p>To get the source source code and run the unit tests, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone git://github.com/dls-controls/pythonSoftIoc.git
+$ cd pythonSoftIoc
+$ git submodule init
+$ git submodule update
+$ pipenv install --dev
+$ pipenv run tests
+</pre></div>
+</div>
+<p>While 100% code coverage does not make a library bug-free, it significantly
+reduces the number of easily caught bugs! Please make sure coverage remains the
+same or is improved by a pull request!</p>
+</section>
+<section id="updating-dependencies">
+<h2>Updating Dependencies<a class="headerlink" href="#updating-dependencies" title="Permalink to this headline"></a></h2>
+<p>pythonSoftIoc has a variety of types of dependencies, from Python module to
+C files and built libraries. If it is necessary to update any of them, the
+safest way to do that is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ Ensure all changes are committed/saved/backed up
+$ pipenv run gitclean
+$ pipenv --rm
+$ rm Pipfile.lock
+$ Update dependencies in setup.cfg / pyproject.toml
+$ pipenv install --dev
+</pre></div>
+</div>
+</section>
+<section id="code-styling">
+<h2>Code Styling<a class="headerlink" href="#code-styling" title="Permalink to this headline"></a></h2>
+<p>The code in this repository conforms to standards set by the following tools:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://flake8.pycqa.org/en/latest/">flake8</a> for style checks</p></li>
+</ul>
+<p>These tests will be run on code when running <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">tests</span></code> and also
+automatically at check in. Please read the tool documentation for details
+on how to fix the errors it reports.</p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline"></a></h2>
+<p>Documentation is contained in the <code class="docutils literal notranslate"><span class="pre">docs</span></code> directory and extracted from
+docstrings of the API.</p>
+<p>Docs follow the underlining convention:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Headling</span> <span class="mi">1</span> <span class="p">(</span><span class="n">page</span> <span class="n">title</span><span class="p">)</span>
+<span class="o">=======================</span>
+
+<span class="n">Heading</span> <span class="mi">2</span>
+<span class="o">---------</span>
+
+<span class="n">Heading</span> <span class="mi">3</span>
+<span class="o">~~~~~~~~~</span>
+</pre></div>
+</div>
+<p>You can build the docs from the project directory by running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pipenv run docs
+$ firefox build/html/index.html
+</pre></div>
+</div>
+</section>
+<section id="release-process">
+<h2>Release Process<a class="headerlink" href="#release-process" title="Permalink to this headline"></a></h2>
+<p>To make a new release, please follow this checklist:</p>
+<ul class="simple">
+<li><p>Choose a new PEP440 compliant release number</p></li>
+<li><p>Add a release note in CHANGELOG.rst</p></li>
+<li><p>Git tag the version</p></li>
+<li><p>Push to github and the actions will make a release on pypi</p></li>
+<li><p>Push to internal gitlab but do not release from there</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">dls-py3</span> <span class="pre">download-one-dependency</span> <span class="pre">softioc</span> <span class="pre">&lt;release&gt;</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">cp</span> <span class="pre">Pipfile.lock</span> <span class="pre">/dls_sw/work/python3/RHEL7-x86_64/distributions/softioc-&lt;release&gt;.Pipfile.lock</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">dls-release.py</span> <span class="pre">-a</span> <span class="pre">python3ext</span> <span class="pre">softioc</span> <span class="pre">&lt;release&gt;</span></code></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2008, Diamond Light Source.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+   
+  <div id="other-versions-div" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" style="visibility: hidden">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Other Versions</span>
+      4.1.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl id="other-versions-dl"/>
+    </div>
+  </div>
+  <script>
+    function addVersion(name) {
+      var dd = document.createElement("dd");
+      var a = document.createElement("a");
+      a.href = "../../" + name;
+      a.innerText = name;
+      dd.appendChild(a);
+      document.getElementById('other-versions-dl').appendChild(dd);
+    }
+    // Get versions.txt and add a version for each line
+    fetch("../../versions.txt").then(response => {
+      if (response.ok) {
+        document.getElementById('other-versions-div').style.visibility = "visible";
+        return response.text().then(text => text.split(/\r?\n/).forEach(addVersion))
+      }
+    });
+  </script>
+
+
+</body>
+</html>

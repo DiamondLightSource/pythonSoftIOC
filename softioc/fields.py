@@ -146,5 +146,5 @@ class _Record(object):
         address[0].secs -= EPICS_epoch
 
 
-
+# TODO: DbfCodeToNumpy doesn't exist!
 __all__ = ['RecordFactory', 'DbfCodeToNumpy', 'ca_timestamp']

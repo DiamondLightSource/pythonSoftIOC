@@ -189,6 +189,24 @@ record_values_list = [
         numpy.ndarray,
     ),
     (
+        "wIn_byte_string_array",
+        builder.WaveformIn,
+        [b"AB", b"CD", b"EF"],
+        numpy.array(
+            [b"AB", b"CD", b"EF"], dtype=numpy.dtype("|S40")
+        ),
+        numpy.ndarray,
+    ),
+    (
+        "wOut_byte_string_array",
+        builder.WaveformOut,
+        [b"AB", b"CD", b"EF"],
+        numpy.array(
+            [b"AB", b"CD", b"EF"], dtype=numpy.dtype("|S40")
+        ),
+        numpy.ndarray,
+    ),
+    (
         "longStringIn_str",
         builder.longStringIn,
         "ABC",

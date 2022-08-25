@@ -391,6 +391,7 @@ class WaveformBase(ProcessDeviceSupportCore):
         return result
 
     def _write_value(self, record, value):
+        value = _require_waveform(value, self._dtype)
         nord = len(value)
         memmove(
             record.BPTR, value.ctypes.data_as(c_void_p),
@@ -409,6 +410,10 @@ class WaveformBase(ProcessDeviceSupportCore):
         # common class of bug, at the cost of duplicated code and data, here we
         # ensure a copy is taken of the value.
         assert len(value) <= self._nelm, 'Value too long for waveform'
+        # TODO: line below triggers "DeprecationWarning: Applying '+' to a
+        # non-numerical array is ill-defined. Returning a copy, but in the
+        # future this will error."
+        # Probably should change to numpy.copy?
         return +value
 
     def _epics_to_value(self, value):

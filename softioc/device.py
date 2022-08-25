@@ -391,6 +391,7 @@ class WaveformBase(ProcessDeviceSupportCore):
         return result
 
     def _write_value(self, record, value):
+        value = _require_waveform(value, self._dtype)
         nord = len(value)
         memmove(
             record.BPTR, value.ctypes.data_as(c_void_p),

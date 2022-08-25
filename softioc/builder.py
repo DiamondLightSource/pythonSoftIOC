@@ -148,6 +148,8 @@ NumpyDtypeToDbf = {
     'uint32':   'ULONG',
     'float32':  'FLOAT',
     'float64':  'DOUBLE',
+    'bytes32':  'STRING',
+    'bytes320': 'STRING',
 }
 
 # Coverts FTVL string to numpy type
@@ -160,6 +162,7 @@ DbfStringToNumpy = {
     'ULONG':    'uint32',
     'FLOAT':    'float32',
     'DOUBLE':   'float64',
+    'STRING':   'S40',
 }
 
 
@@ -211,11 +214,15 @@ def _waveform(value, fields):
 
         # Special case for [u]int64: if the initial value comes in as 64 bit
         # integers we cannot represent that, so recast it as [u]int32
+        # Special case for array of strings to correctly identify each element
+        # of the array as a string type.
         if datatype is None:
             if initial_value.dtype == numpy.int64:
                 initial_value = numpy.require(initial_value, numpy.int32)
             elif initial_value.dtype == numpy.uint64:
                 initial_value = numpy.require(initial_value, numpy.uint32)
+            elif initial_value.dtype.char == "S":
+                initial_value = numpy.require(initial_value, numpy.dtype("S40"))
     else:
         initial_value = numpy.array([], dtype = datatype)
         length = _get_length(fields)

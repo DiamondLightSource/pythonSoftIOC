@@ -1,11 +1,12 @@
 from datetime import datetime
 import atexit
+import multiprocessing
 import os
 import random
 import string
 import subprocess
 import sys
-
+from typing import Any
 import pytest
 
 # Must import softioc before epicsdbbuilder
@@ -120,6 +121,7 @@ def select_and_recv(conn, expected_char = None):
     # Must use cothread's select if cothread is present, otherwise we'd block
     # processing on all cothread processing. But we don't want to use it
     # unless we have to, as importing cothread can cause issues with forking.
+    rrdy: Any = None
     if "cothread" in sys.modules:
         from cothread import select
         rrdy, _, _ = select([conn], [], [], TIMEOUT)
@@ -139,3 +141,12 @@ def select_and_recv(conn, expected_char = None):
             "Expected character did not match"
 
     return val
+
+def get_multiprocessing_context():
+    """Tests must use "forkserver" method. If we use "fork" we inherit some
+    state from Channel Access from test-to-test, which causes test hangs.
+
+    We cannot use multiprocessing.set_start_method() as it doesn't work inside
+    of Pytest.
+    We don't use "spawn" as that is very, very slow given the number of tests"""
+    return multiprocessing.get_context('forkserver')

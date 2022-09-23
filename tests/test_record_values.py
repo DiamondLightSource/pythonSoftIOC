@@ -11,7 +11,8 @@ from conftest import (
     WAVEFORM_LENGTH,
     log,
     select_and_recv,
-    TIMEOUT
+    TIMEOUT,
+    get_multiprocessing_context
 )
 
 from softioc import asyncio_dispatcher, builder, softioc
@@ -375,9 +376,11 @@ def run_test_function(
     expected value. set_enum and get_enum determine when the record's value is
     set and how the value is retrieved, respectively."""
 
-    parent_conn, child_conn = multiprocessing.Pipe()
+    ctx = get_multiprocessing_context()
 
-    ioc_process = multiprocessing.Process(
+    parent_conn, child_conn = ctx.Pipe()
+
+    ioc_process = ctx.Process(
         target=run_ioc,
         args=(record_configurations, child_conn, set_enum, get_enum),
     )
@@ -778,9 +781,11 @@ class TestNoneValue:
     def test_value_none_rejected_set_after_init(self, record_func_reject_none):
         """Test that setting \"None\" using .set() after IOC init raises an
         exception"""
-        queue = multiprocessing.Queue()
+        ctx = get_multiprocessing_context()
 
-        process = multiprocessing.Process(
+        queue = ctx.Queue()
+
+        process = ctx.Process(
             target=self.none_value_test_func,
             args=(record_func_reject_none, queue),
         )

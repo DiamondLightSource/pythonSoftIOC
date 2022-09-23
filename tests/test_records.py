@@ -12,7 +12,8 @@ from conftest import (
     _clear_records,
     WAVEFORM_LENGTH,
     TIMEOUT,
-    select_and_recv
+    select_and_recv,
+    get_multiprocessing_context
 )
 
 from softioc import asyncio_dispatcher, builder, softioc
@@ -254,11 +255,13 @@ class TestValidate:
             expected_value,
             validate_pass: bool):
 
-        parent_conn, child_conn = multiprocessing.Pipe()
+        ctx = get_multiprocessing_context()
+
+        parent_conn, child_conn = ctx.Pipe()
 
         device_name = create_random_prefix()
 
-        process = multiprocessing.Process(
+        process = ctx.Process(
             target=self.validate_ioc_test_func,
             args=(device_name, creation_func, child_conn, validate_pass),
         )
@@ -389,11 +392,13 @@ class TestOnUpdate:
         log("CHILD: Received exit command, child exiting")
 
     def on_update_runner(self, creation_func, always_update, put_same_value):
-        parent_conn, child_conn = multiprocessing.Pipe()
+
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
 
         device_name = create_random_prefix()
 
-        process = multiprocessing.Process(
+        process = ctx.Process(
             target=self.on_update_test_func,
             args=(device_name, creation_func, child_conn, always_update),
         )
@@ -595,11 +600,13 @@ class TestBlocking:
     def test_blocking_single_thread_multiple_calls(self):
         """Test that a blocking record correctly causes multiple caputs from
         a single thread to wait for the expected time"""
-        parent_conn, child_conn = multiprocessing.Pipe()
+        ctx = get_multiprocessing_context()
+
+        parent_conn, child_conn = ctx.Pipe()
 
         device_name = create_random_prefix()
 
-        process = multiprocessing.Process(
+        process = ctx.Process(
             target=self.blocking_test_func,
             args=(device_name, child_conn),
         )
@@ -666,11 +673,12 @@ class TestBlocking:
     async def test_blocking_multiple_threads(self):
         """Test that a blocking record correctly causes caputs from multiple
         threads to wait for the expected time"""
-        parent_conn, child_conn = multiprocessing.Pipe()
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
 
         device_name = create_random_prefix()
 
-        process = multiprocessing.Process(
+        process = ctx.Process(
             target=self.blocking_test_func,
             args=(device_name, child_conn),
         )

@@ -147,6 +147,9 @@ def get_multiprocessing_context():
     state from Channel Access from test-to-test, which causes test hangs.
 
     We cannot use multiprocessing.set_start_method() as it doesn't work inside
-    of Pytest.
-    We don't use "spawn" as that is very, very slow given the number of tests"""
-    return multiprocessing.get_context('forkserver')
+    of Pytest."""
+    if sys.platform == "win32":
+        start_method = "spawn"
+    else:
+        start_method = "forkserver"
+    return multiprocessing.get_context(start_method)

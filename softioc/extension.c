@@ -69,8 +69,13 @@ static PyObject *get_field_offsets(PyObject *self, PyObject *args)
 
     int status = dbFindRecordType(&dbentry, record_type);
     if (status != 0)
-        printf("Unable to find record type \"%s\" (error %d)\n",
+    {
+        return PyErr_Format(
+            PyExc_RuntimeError,
+            "Unable to find record type \"%s\" (error %d)\n",
             record_type, status);
+        Py_RETURN_NONE;
+    }
     else
         status = dbFirstField(&dbentry, 0);
 

@@ -252,8 +252,18 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return self._epics_to_value(value)
 
 
-def _Device(Base, record_type, ctype, dbf_type, epics_rc, mlst = False):
-    '''Wrapper for generating simple records.'''
+def _Device(
+    Base,
+    record_type,
+    ctype,
+    dbf_type,
+    epics_rc,
+    record_min,
+    record_max,
+    mlst=False,
+):
+    """Wrapper for generating simple records."""
+
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type
@@ -263,6 +273,12 @@ def _Device(Base, record_type, ctype, dbf_type, epics_rc, mlst = False):
         _dbf_type_ = dbf_type
         if mlst:
             _fields_.append('MLST')
+
+        def _value_to_epics(self, value):
+            assert record_min <= value <= record_max, \
+                f"Value {value} out of valid range for record type " \
+                f"{self._record_type_}"
+            return super()._value_to_epics(value)
 
     GenericDevice.__name__ = record_type
     return GenericDevice
@@ -276,12 +292,30 @@ def _Device_In(*args, **kargs):
 def _Device_Out(*args, **kargs):
     return _Device(_Out, mlst = True, *args, **kargs)
 
-longin = _Device_In('longin', c_int32, fields.DBF_LONG, EPICS_OK)
-longout = _Device_Out('longout', c_int32, fields.DBF_LONG, EPICS_OK)
-bi = _Device_In('bi', c_uint16, fields.DBF_CHAR, NO_CONVERT)
-bo = _Device_Out('bo', c_uint16, fields.DBF_CHAR, NO_CONVERT)
-mbbi = _Device_In('mbbi', c_uint16, fields.DBF_SHORT, NO_CONVERT)
-mbbo = _Device_Out('mbbo', c_uint16, fields.DBF_SHORT, NO_CONVERT)
+_long_min = numpy.iinfo(numpy.int32).min
+_long_max = numpy.iinfo(numpy.int32).max
+
+longin = _Device_In(
+    "longin",
+    c_int32,
+    fields.DBF_LONG,
+    EPICS_OK,
+    _long_min,
+    _long_max,
+)
+longout = _Device_Out(
+    "longout",
+    c_int32,
+    fields.DBF_LONG,
+    EPICS_OK,
+    _long_min,
+    _long_max,
+)
+
+bi = _Device_In('bi', c_uint16, fields.DBF_CHAR, NO_CONVERT, 0, 1)
+bo = _Device_Out('bo', c_uint16, fields.DBF_CHAR, NO_CONVERT, 0, 1)
+mbbi = _Device_In('mbbi', c_uint16, fields.DBF_SHORT, NO_CONVERT, 0, 15)
+mbbo = _Device_Out('mbbo', c_uint16, fields.DBF_SHORT, NO_CONVERT, 0, 15)
 
 
 def _string_at(value, count):

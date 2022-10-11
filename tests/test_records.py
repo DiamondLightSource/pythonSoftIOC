@@ -473,9 +473,14 @@ class TestOnUpdate:
             log("PARENT: begining While loop")
 
             while count < 4:
+
+                new_val = count
+                if creation_func == builder.boolOut:
+                    new_val = count % 2
+
                 put_ret = caput(
                     device_name + ":ON-UPDATE-RECORD",
-                    9 if put_same_value else count,
+                    1 if put_same_value else new_val,
                     wait=True,
                 )
                 assert put_ret.ok, f"caput did not succeed: {put_ret.errorcode}"

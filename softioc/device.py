@@ -188,6 +188,20 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if self._blocking:
             signal_processing_complete(record, self._callback)
 
+    def _validate_value(self, new_value):
+        """Checks whether the new value is valid; if so, returns True"""
+        try:
+            self._value_to_epics(new_value)
+        except AssertionError:
+            return False
+        if (
+            self.__enable_write
+            and self.__validate
+            and not self.__validate(self, new_value)
+        ):
+            return False
+        return True
+
     def _process(self, record):
         '''Processing suitable for output records.  Performs immediate value
         validation and asynchronous update notification.'''
@@ -202,8 +216,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             return EPICS_OK
 
         python_value = self._epics_to_value(value)
-        if self.__enable_write and self.__validate and \
-                not self.__validate(self, python_value):
+        if not self._validate_value(python_value):
             # Asynchronous validation rejects value, so restore the last good
             # value.
             self._write_value(record, self._value)

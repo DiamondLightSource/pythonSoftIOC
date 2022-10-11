@@ -258,8 +258,7 @@ def _Device(
     ctype,
     dbf_type,
     epics_rc,
-    record_min,
-    record_max,
+    value_valid,
     mlst=False,
 ):
     """Wrapper for generating simple records."""
@@ -275,9 +274,10 @@ def _Device(
             _fields_.append('MLST')
 
         def _value_to_epics(self, value):
-            assert record_min <= value <= record_max, \
-                f"Value {value} out of valid range for record type " \
+            assert value_valid(value), (
+                f"Value {value} out of valid range for record type "
                 f"{self._record_type_}"
+            )
             return super()._value_to_epics(value)
 
     GenericDevice.__name__ = record_type
@@ -300,23 +300,28 @@ longin = _Device_In(
     c_int32,
     fields.DBF_LONG,
     EPICS_OK,
-    _long_min,
-    _long_max,
+    lambda x: _long_min <= x <= _long_max,
 )
 longout = _Device_Out(
     "longout",
     c_int32,
     fields.DBF_LONG,
     EPICS_OK,
-    _long_min,
-    _long_max,
+    lambda x: _long_min <= x <= _long_max,
 )
 
-bi = _Device_In('bi', c_uint16, fields.DBF_CHAR, NO_CONVERT, 0, 1)
-bo = _Device_Out('bo', c_uint16, fields.DBF_CHAR, NO_CONVERT, 0, 1)
-mbbi = _Device_In('mbbi', c_uint16, fields.DBF_SHORT, NO_CONVERT, 0, 15)
-mbbo = _Device_Out('mbbo', c_uint16, fields.DBF_SHORT, NO_CONVERT, 0, 15)
-
+bi = _Device_In(
+    "bi", c_uint16, fields.DBF_CHAR, NO_CONVERT, lambda x: 0 <= x <= 1
+)
+bo = _Device_Out(
+    "bo", c_uint16, fields.DBF_CHAR, NO_CONVERT, lambda x: 0 <= x <= 1
+)
+mbbi = _Device_In(
+    "mbbi", c_uint16, fields.DBF_SHORT, NO_CONVERT, lambda x: 0 <= x <= 15
+)
+mbbo = _Device_Out(
+    "mbbo", c_uint16, fields.DBF_SHORT, NO_CONVERT, lambda x: 0 <= x <= 15
+)
 
 def _string_at(value, count):
     # Need string_at() twice to ensure string is size limited *and* null

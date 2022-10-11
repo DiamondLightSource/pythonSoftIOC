@@ -885,3 +885,84 @@ class TestInvalidValues:
             w_in.set([1, 2, 3, 4])
         with pytest.raises(AssertionError):
             w_out.set([1, 2, 3, 4])
+
+    def test_long_rejects_invalid_values(self):
+        """Test that longIn/longOut reject invalid values"""
+        l_in = builder.longIn("L_IN_1")
+        l_out = builder.longOut("L_OUT_1")
+
+        long_min = numpy.iinfo(numpy.int32).min
+        long_max = numpy.iinfo(numpy.int32).max
+
+        with pytest.raises(AssertionError):
+            l_in.set(long_min - 1)
+        with pytest.raises(AssertionError):
+            l_out.set(long_min - 1)
+
+        with pytest.raises(AssertionError):
+            l_in.set(long_max + 1)
+        with pytest.raises(AssertionError):
+            l_out.set(long_max + 1)
+
+        # And confirm that creating with invalid values also raises
+        with pytest.raises(AssertionError):
+            builder.longIn("L_IN_2", initial_value = long_min - 1)
+        with pytest.raises(AssertionError):
+            builder.longOut("L_OUT_2", initial_value = long_min - 1)
+
+        with pytest.raises(AssertionError):
+            builder.longIn("L_IN_3", initial_value = long_max + 1)
+        with pytest.raises(AssertionError):
+            builder.longOut("L_OUT_3", initial_value = long_max + 1)
+
+    def test_bool_rejects_invalid_values(self):
+        """Test that boolIn/boolOut rejects invalid values"""
+        b_in = builder.boolIn("B_IN_1")
+        b_out = builder.boolOut("B_OUT_1")
+
+        with pytest.raises(AssertionError):
+            b_in.set(-1)
+        with pytest.raises(AssertionError):
+            b_out.set(-1)
+
+        with pytest.raises(AssertionError):
+            b_in.set(2)
+        with pytest.raises(AssertionError):
+            b_out.set(2)
+
+        # And confirm that creating with invalid values also raises
+        with pytest.raises(AssertionError):
+            builder.boolIn("B_IN_2", initial_value=-1)
+        with pytest.raises(AssertionError):
+            builder.boolOut("B_OUT_2", initial_value=-1)
+
+        with pytest.raises(AssertionError):
+            builder.boolIn("B_IN_3", initial_value=2)
+        with pytest.raises(AssertionError):
+            builder.boolOut("B_OUT_3", initial_value=2)
+
+    def test_mbb_rejects_invalid_values(self):
+        """Test that mbbIn/mbbOut rejects invalid values"""
+        mbb_in = builder.mbbIn("MBB_IN_1")
+        mbb_out = builder.mbbOut("MBB_OUT_1")
+
+        with pytest.raises(AssertionError):
+            mbb_in.set(-1)
+        with pytest.raises(AssertionError):
+            mbb_out.set(-1)
+
+        with pytest.raises(AssertionError):
+            mbb_in.set(16)
+        with pytest.raises(AssertionError):
+            mbb_out.set(16)
+
+        # And confirm that creating with invalid values also raises
+        with pytest.raises(AssertionError):
+            builder.mbbIn("MBB_IN_2", initial_value=-1)
+        with pytest.raises(AssertionError):
+            builder.mbbOut("MBB_OUT_2", initial_value=-1)
+
+        with pytest.raises(AssertionError):
+            builder.mbbIn("MBB_IN_3", initial_value=16)
+        with pytest.raises(AssertionError):
+            builder.mbbOut("MBB_OUT_3", initial_value=16)

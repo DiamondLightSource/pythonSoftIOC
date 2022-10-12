@@ -12,10 +12,12 @@ from conftest import (
     log,
     select_and_recv,
     TIMEOUT,
-    get_multiprocessing_context
+    get_multiprocessing_context,
+    create_random_prefix
 )
 
 from softioc import asyncio_dispatcher, builder, softioc
+from softioc.fields import DBR_STRING
 from softioc.pythonSoftIoc import RecordWrapper
 
 # Test file for anything related to valid record values getting/setting
@@ -966,3 +968,136 @@ class TestInvalidValues:
             builder.mbbIn("MBB_IN_3", initial_value=16)
         with pytest.raises(AssertionError):
             builder.mbbOut("MBB_OUT_3", initial_value=16)
+
+    def invalid_value_test_func(self, device_name, conn, creation_func):
+
+        builder.SetDeviceName(device_name)
+
+        creation_func("INVALID_VAL_REC")
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        conn.send("R")  # "Ready"
+
+        log("CHILD: Sent R over Connection to Parent")
+
+        # Keep process alive while main thread runs CAGET
+        if conn.poll(TIMEOUT):
+            val = conn.recv()
+            assert val == "D", "Did not receive expected Done character"
+
+        log("CHILD: Received exit command, child exiting")
+
+    @requires_cothread
+    @pytest.mark.parametrize(
+        "creation_func, invalid_min, invalid_max, expected_val",
+        [
+            (
+                builder.longOut,
+                numpy.iinfo(numpy.int32).min - 1,
+                numpy.iinfo(numpy.int32).max + 1,
+                0,
+            ),
+            (
+                builder.boolOut,
+                -1,
+                2,
+                0,
+            ),
+            (
+                builder.mbbOut,
+                -1,
+                16,
+                0,
+            ),
+        ],
+
+    )
+    def test_invalid_values_caput(
+        self, creation_func, invalid_min, invalid_max, expected_val
+    ):
+        """Test that attempting to set invalid values causes caput to return
+        an error, and the record's value remains unchanged."""
+        if creation_func == builder.mbbOut:
+            pytest.skip(
+                "Bug somewhere, possibly Cothread, means that errors are not "
+                "reported for mbbOut records")
+
+        ctx = get_multiprocessing_context()
+
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = ctx.Process(
+            target=self.invalid_value_test_func,
+            args=(device_name, child_conn, creation_func),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from cothread.catools import caget, caput, _channel_cache
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            log("PARENT: received R command")
+
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            record_name = device_name + ":INVALID_VAL_REC"
+
+            log(f"PARENT: Putting invalid min value {invalid_min} to record")
+            # Send as string data, otherwise catools will automatically convert
+            # it to a valid int32
+            put_ret = caput(
+                record_name,
+                invalid_min,
+                wait=True,
+                datatype=DBR_STRING,
+                throw=False,
+            )
+            assert not put_ret.ok, \
+                "caput for invalid minimum value unexpectedly succeeded"
+
+            log(f"PARENT: Putting invalid max value {invalid_max} to record")
+            put_ret = caput(
+                record_name,
+                invalid_max,
+                wait=True,
+                datatype=DBR_STRING,
+                throw=False,
+            )
+            assert not put_ret.ok, \
+                "caput for invalid maximum value unexpectedly succeeded"
+
+
+            log("PARENT: Getting value from record")
+
+            ret_val = caget(
+                record_name,
+                timeout=TIMEOUT,
+            )
+            assert ret_val.ok, \
+                f"caget did not succeed: {ret_val.errorcode}, {ret_val}"
+
+            log(f"PARENT: Received val from record: {ret_val}")
+
+            assert ret_val == expected_val
+
+        finally:
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            log("PARENT: Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")

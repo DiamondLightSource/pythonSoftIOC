@@ -165,6 +165,19 @@ Test Facilities`_ documentation for more details of each function.
 
     This is used to specify an initial value for each record.
 
+    .. _status and severity:
+
+    `status and severity`
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    Only available on IN records. These can be used with the alarm value enums
+    from `softioc.alarm` to set the initial alarm state of a record.
+
+    .. note::
+
+        By default the builder module sets ``PINI`` to ``YES``, which means the
+        record will process at initialization and the alarm status will be reset.
+
     .. _on_update:
 
     `on_update`
@@ -242,8 +255,6 @@ Test Facilities`_ documentation for more details of each function.
 
     .. seealso::
         `SetBlocking` for configuring a global default blocking value
-
-
 
 For all of these functions any EPICS database field can be assigned a value by
 passing it as a keyword argument for the corresponding field name (in upper

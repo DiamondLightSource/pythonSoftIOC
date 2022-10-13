@@ -1,5 +1,6 @@
 import os
 import numpy
+
 from .softioc import dbLoadDatabase
 
 from epicsdbbuilder import *
@@ -24,9 +25,16 @@ def _set_in_defaults(fields):
     fields.setdefault('SCAN', 'I/O Intr')
     fields.setdefault('PINI', 'YES')
     fields.setdefault('DISP', 1)
+    _set_alarm(fields)
 
 def _set_out_defaults(fields):
     fields.setdefault('OMSL', 'supervisory')
+
+def _set_alarm(fields):
+    if "status" in fields:
+        fields['STAT'] = _statStrings[fields.pop('status')]
+    if "severity" in fields:
+        fields['SEVR'] = _severityStrings[fields.pop('severity')]
 
 # For longout and ao we want DRV{L,H} to match {L,H}OPR by default
 def _set_scalar_out_defaults(fields, DRVL, DRVH):
@@ -75,6 +83,11 @@ _mbbPrefixes = [
 
 # All the severity strings supported by <prefix>SV
 _severityStrings = ['NO_ALARM', 'MINOR', 'MAJOR', 'INVALID']
+
+_statStrings = [
+    'NO_ALARM', 'READ', 'WRITE', 'HIHI', 'HIGH', 'LOLO', 'LOW', 'STATE', 'COS',
+    'COMM',  'TIMEOUT', 'HWLIMIT', 'CALC', 'SCAN', 'LINK', 'SOFT', 'BAD_SUB',
+    'UDF', 'DISABLE',  'SIMM', 'READ_ACCESS', 'WRITE_ACCESS']
 
 # Converts a list of (option [,severity]) values or tuples into field settings
 # suitable for mbbi and mbbo records.

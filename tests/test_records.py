@@ -17,12 +17,22 @@ from conftest import (
 )
 
 from softioc import asyncio_dispatcher, builder, softioc
+from softioc import alarm
 from softioc.device import SetBlocking
 
 # Test file for miscellaneous tests related to records
 
 # Test parameters
 DEVICE_NAME = "RECORD-TESTS"
+
+in_records = [
+    builder.aIn,
+    builder.boolIn,
+    builder.longIn,
+    builder.mbbIn,
+    builder.stringIn,
+    builder.WaveformIn,
+]
 
 def test_records(tmp_path):
     # Ensure we definitely unload all records that may be hanging over from
@@ -60,32 +70,18 @@ def test_enum_length_restriction():
             "seventeen",
         )
 
-
-def test_DISP_defaults_on():
+@pytest.mark.parametrize("creation_func", in_records)
+def test_DISP_defaults_on(creation_func):
     """Test that all IN record types have DISP=1 set by default"""
-    in_records = [
-        builder.aIn,
-        builder.boolIn,
-        builder.longIn,
-        builder.mbbIn,
-        builder.stringIn,
-        builder.WaveformIn,
-    ]
+    kwargs = {}
 
-    record_counter = 0
+    if creation_func == builder.WaveformIn:
+        kwargs = {"length": 1}
 
-    for creation_func in in_records:
-        kwargs = {}
-        record_counter += 1
-        record_name = "DISP" + str(record_counter)
+    record = creation_func("RECORD", **kwargs)
 
-        if creation_func == builder.WaveformIn:
-            kwargs = {"length": 1}
-
-        record = creation_func(record_name, **kwargs)
-
-        # Note: DISP attribute won't exist if field not specified
-        assert record.DISP.Value() == 1
+    # Note: DISP attribute won't exist if field not specified
+    assert record.DISP.Value() == 1
 
 
 def test_DISP_can_be_overridden():
@@ -182,6 +178,26 @@ def test_pini_always_on():
 
     mbbi = builder.mbbIn("BBB", initial_value=5)
     assert mbbi.PINI.Value() == "YES"
+
+@pytest.mark.parametrize("creation_func", in_records)
+def test_setting_alarm_in_records(creation_func):
+    """Test that In records can have a custom alarm value set using the "status"
+    and "severity" keywords"""
+    kwargs = {}
+    if creation_func == builder.WaveformIn:
+        kwargs["length"] = 1
+
+    record = creation_func(
+        "NEW_RECORD",
+        severity=alarm.MINOR_ALARM,
+        status=alarm.LOLO_ALARM,
+        **kwargs
+    )
+
+    assert record.STAT.Value() == "LOLO"
+    assert record.SEVR.Value() == "MINOR"
+
+
 
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""

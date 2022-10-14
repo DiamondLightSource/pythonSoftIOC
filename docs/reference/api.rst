@@ -165,18 +165,16 @@ Test Facilities`_ documentation for more details of each function.
 
     This is used to specify an initial value for each record.
 
-    .. _status and severity:
+    .. _status, severity:
 
-    `status and severity`
+    `status, severity`
     ~~~~~~~~~~~~~~~~~~~~~
 
     Only available on IN records. These can be used with the alarm value enums
-    from `softioc.alarm` to set the initial alarm state of a record.
+    from `softioc.alarm` to set the initial alarm state and severity of a record.
 
-    .. note::
-
-        By default the builder module sets ``PINI`` to ``YES``, which means the
-        record will process at initialization and the alarm status will be reset.
+    These are not useful unless ``PINI`` is set to ``NO``, as otherwise the record
+    will be processed on initialization and the alarm status will be reset.
 
     .. _on_update:
 

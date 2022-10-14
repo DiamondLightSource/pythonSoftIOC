@@ -208,6 +208,24 @@ record_values_list = [
         numpy.ndarray,
     ),
     (
+        "wIn_string_array",
+        builder.WaveformIn,
+        ["123", "456", "7890"],
+        numpy.array(
+            [b"123", b"456", b"7890"], dtype=numpy.dtype("|S40")
+        ),
+        numpy.ndarray,
+    ),
+    (
+        "wOut_string_array",
+        builder.WaveformOut,
+        ["123", "456", "7890"],
+        numpy.array(
+            [b"123", b"456", b"7890"], dtype=numpy.dtype("|S40")
+        ),
+        numpy.ndarray,
+    ),
+    (
         "longStringIn_str",
         builder.longStringIn,
         "ABC",

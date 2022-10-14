@@ -221,7 +221,7 @@ def _waveform(value, fields):
                 initial_value = numpy.require(initial_value, numpy.int32)
             elif initial_value.dtype == numpy.uint64:
                 initial_value = numpy.require(initial_value, numpy.uint32)
-            elif initial_value.dtype.char == "S":
+            elif initial_value.dtype.char in ("S", "U"):
                 initial_value = numpy.require(initial_value, numpy.dtype("S40"))
     else:
         initial_value = numpy.array([], dtype = datatype)

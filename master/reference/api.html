@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.1.0+1.g3f0ec72 documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.1.0+4.gdc4a63f documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -68,6 +68,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#asyncio-dispatcher-softioc-asyncio-dispatcher">Asyncio Dispatcher: <code class="xref any docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-records-softioc-builder">Creating Records: <code class="xref any docutils literal notranslate"><span class="pre">softioc.builder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#initial-value"><code class="xref any docutils literal notranslate"><span class="pre">initial_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-severity"><code class="xref any docutils literal notranslate"><span class="pre">status,</span> <span class="pre">severity</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#on-update"><code class="xref any docutils literal notranslate"><span class="pre">on_update</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#on-update-name"><code class="xref any docutils literal notranslate"><span class="pre">on_update_name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#validate"><code class="xref any docutils literal notranslate"><span class="pre">validate</span></code></a></li>
@@ -457,8 +458,15 @@ functions:</p>
 <span id="id2"></span><h3><a class="reference internal" href="#initial-value"><span class="std std-ref">initial_value</span></a><a class="headerlink" href="#initial-value" title="Permalink to this headline"></a></h3>
 <p>This is used to specify an initial value for each record.</p>
 </section>
+<section id="status-severity">
+<span id="id3"></span><h3><a class="reference internal" href="#status-severity"><span class="std std-ref">status, severity</span></a><a class="headerlink" href="#status-severity" title="Permalink to this headline"></a></h3>
+<p>Only available on IN records. These can be used with the alarm value enums
+from <a class="reference internal" href="#module-softioc.alarm" title="softioc.alarm"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a> to set the initial alarm state and severity of a record.</p>
+<p>These are not useful unless <code class="docutils literal notranslate"><span class="pre">PINI</span></code> is set to <code class="docutils literal notranslate"><span class="pre">NO</span></code>, as otherwise the record
+will be processed on initialization and the alarm status will be reset.</p>
+</section>
 <section id="on-update">
-<span id="id3"></span><h3><a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a><a class="headerlink" href="#on-update" title="Permalink to this headline"></a></h3>
+<span id="id4"></span><h3><a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a><a class="headerlink" href="#on-update" title="Permalink to this headline"></a></h3>
 <p>This is only available on OUT records (including those created by
 <a class="reference internal" href="#softioc.builder.WaveformOut" title="softioc.builder.WaveformOut"><code class="xref py py-func docutils literal notranslate"><span class="pre">WaveformOut()</span></code></a>).  This specifies a function that will be called after
 record processing has completed.</p>
@@ -475,14 +483,14 @@ one callback is dispatched at a time, so if a callback blocks it will delay
 <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> callbacks for other records.</p>
 </section>
 <section id="on-update-name">
-<span id="id4"></span><h3><a class="reference internal" href="#on-update-name"><span class="std std-ref">on_update_name</span></a><a class="headerlink" href="#on-update-name" title="Permalink to this headline"></a></h3>
+<span id="id5"></span><h3><a class="reference internal" href="#on-update-name"><span class="std std-ref">on_update_name</span></a><a class="headerlink" href="#on-update-name" title="Permalink to this headline"></a></h3>
 <p>This is an alternative form of <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> with the same behaviour: note
 that at most one of <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> and <a class="reference internal" href="#on-update-name"><span class="std std-ref">on_update_name</span></a> may be passed.  The
 difference is that <a class="reference internal" href="#on-update-name"><span class="std std-ref">on_update_name</span></a> is called with the record name as its
 second argument after the value as the first argument.</p>
 </section>
 <section id="validate">
-<span id="id5"></span><h3><a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a><a class="headerlink" href="#validate" title="Permalink to this headline"></a></h3>
+<span id="id6"></span><h3><a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a><a class="headerlink" href="#validate" title="Permalink to this headline"></a></h3>
 <p>Also only available on OUT records, specifies a function called during
 record processing. If used this should be set to a callable taking two
 arguments.  The first argument will be the record object, and the second
@@ -496,7 +504,7 @@ callback.</p>
 </div>
 </section>
 <section id="always-update">
-<span id="id6"></span><h3><a class="reference internal" href="#always-update"><span class="std std-ref">always_update</span></a><a class="headerlink" href="#always-update" title="Permalink to this headline"></a></h3>
+<span id="id7"></span><h3><a class="reference internal" href="#always-update"><span class="std std-ref">always_update</span></a><a class="headerlink" href="#always-update" title="Permalink to this headline"></a></h3>
 <p>Again only on OUT records, determines whether record writes which don’t
 change the existing value are passed through.  If this field is not set then
 writing to <code class="docutils literal notranslate"><span class="pre">.PROC</span></code> will have no visible effect.</p>
@@ -505,7 +513,7 @@ which don’t change its value will be discarded.  In particular this means
 that such updates don’t call <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> or <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>.</p>
 </section>
 <section id="blocking">
-<span id="id7"></span><h3><a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a><a class="headerlink" href="#blocking" title="Permalink to this headline"></a></h3>
+<span id="id8"></span><h3><a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a><a class="headerlink" href="#blocking" title="Permalink to this headline"></a></h3>
 <p>Only available on OUT records. When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a> the record will set the
 <code class="docutils literal notranslate"><span class="pre">PACT</span></code> field when processing is ongoing. This means that <code class="docutils literal notranslate"><span class="pre">caput</span></code> and
 similar tools can correctly wait for processing to complete.</p>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.builder &mdash; pythonSoftIOC 4.1.0+1.g3f0ec72 documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 4.1.0+4.gdc4a63f documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -92,6 +92,7 @@
   <h1>Source code for softioc.builder</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
+
 <span class="kn">from</span> <span class="nn">.softioc</span> <span class="kn">import</span> <span class="n">dbLoadDatabase</span>
 
 <span class="kn">from</span> <span class="nn">epicsdbbuilder</span> <span class="kn">import</span> <span class="o">*</span>
@@ -116,9 +117,18 @@
     <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SCAN&#39;</span><span class="p">,</span> <span class="s1">&#39;I/O Intr&#39;</span><span class="p">)</span>
     <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;PINI&#39;</span><span class="p">,</span> <span class="s1">&#39;YES&#39;</span><span class="p">)</span>
     <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;DISP&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_set_alarm</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_set_out_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span>
     <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;OMSL&#39;</span><span class="p">,</span> <span class="s1">&#39;supervisory&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_set_alarm</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;status&#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s1">&#39;STAT&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">,</span> <span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t specify both status and STAT&#39;</span>
+        <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;STAT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_statStrings</span><span class="p">[</span><span class="n">fields</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="s1">&#39;severity&#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s1">&#39;SEVR&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">,</span> <span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t specify both severity and SEVR&#39;</span>
+        <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;SEVR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_severityStrings</span><span class="p">[</span><span class="n">fields</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;severity&#39;</span><span class="p">)]</span>
 
 <span class="c1"># For longout and ao we want DRV{L,H} to match {L,H}OPR by default</span>
 <span class="k">def</span> <span class="nf">_set_scalar_out_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">DRVL</span><span class="p">,</span> <span class="n">DRVH</span><span class="p">):</span>
@@ -167,6 +177,11 @@
 
 <span class="c1"># All the severity strings supported by &lt;prefix&gt;SV</span>
 <span class="n">_severityStrings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NO_ALARM&#39;</span><span class="p">,</span> <span class="s1">&#39;MINOR&#39;</span><span class="p">,</span> <span class="s1">&#39;MAJOR&#39;</span><span class="p">,</span> <span class="s1">&#39;INVALID&#39;</span><span class="p">]</span>
+
+<span class="n">_statStrings</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;NO_ALARM&#39;</span><span class="p">,</span> <span class="s1">&#39;READ&#39;</span><span class="p">,</span> <span class="s1">&#39;WRITE&#39;</span><span class="p">,</span> <span class="s1">&#39;HIHI&#39;</span><span class="p">,</span> <span class="s1">&#39;HIGH&#39;</span><span class="p">,</span> <span class="s1">&#39;LOLO&#39;</span><span class="p">,</span> <span class="s1">&#39;LOW&#39;</span><span class="p">,</span> <span class="s1">&#39;STATE&#39;</span><span class="p">,</span> <span class="s1">&#39;COS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;COMM&#39;</span><span class="p">,</span>  <span class="s1">&#39;TIMEOUT&#39;</span><span class="p">,</span> <span class="s1">&#39;HWLIMIT&#39;</span><span class="p">,</span> <span class="s1">&#39;CALC&#39;</span><span class="p">,</span> <span class="s1">&#39;SCAN&#39;</span><span class="p">,</span> <span class="s1">&#39;LINK&#39;</span><span class="p">,</span> <span class="s1">&#39;SOFT&#39;</span><span class="p">,</span> <span class="s1">&#39;BAD_SUB&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;UDF&#39;</span><span class="p">,</span> <span class="s1">&#39;DISABLE&#39;</span><span class="p">,</span>  <span class="s1">&#39;SIMM&#39;</span><span class="p">,</span> <span class="s1">&#39;READ_ACCESS&#39;</span><span class="p">,</span> <span class="s1">&#39;WRITE_ACCESS&#39;</span><span class="p">]</span>
 
 <span class="c1"># Converts a list of (option [,severity]) values or tuples into field settings</span>
 <span class="c1"># suitable for mbbi and mbbo records.</span>

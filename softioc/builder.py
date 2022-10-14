@@ -31,9 +31,11 @@ def _set_out_defaults(fields):
     fields.setdefault('OMSL', 'supervisory')
 
 def _set_alarm(fields):
-    if "status" in fields:
+    if 'status' in fields:
+        assert 'STAT' not in fields, 'Can\'t specify both status and STAT'
         fields['STAT'] = _statStrings[fields.pop('status')]
-    if "severity" in fields:
+    if 'severity' in fields:
+        assert 'SEVR' not in fields, 'Can\'t specify both severity and SEVR'
         fields['SEVR'] = _severityStrings[fields.pop('severity')]
 
 # For longout and ao we want DRV{L,H} to match {L,H}OPR by default

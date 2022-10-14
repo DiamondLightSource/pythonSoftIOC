@@ -197,6 +197,36 @@ def test_setting_alarm_in_records(creation_func):
     assert record.STAT.Value() == "LOLO"
     assert record.SEVR.Value() == "MINOR"
 
+@pytest.mark.parametrize("creation_func", in_records)
+def test_setting_alarm_invalid_keywords(creation_func):
+    """Test that In records correctly block specifying both STAT and status,
+    and SEVR and severity"""
+
+    kwargs = {}
+    if creation_func == builder.WaveformIn:
+        kwargs["length"] = 1
+
+    with pytest.raises(AssertionError) as e:
+        creation_func(
+            "NEW_RECORD",
+            severity=alarm.MINOR_ALARM,
+            SEVR="MINOR",
+            status=alarm.LOLO_ALARM,
+            **kwargs
+        )
+
+    assert e.value.args[0] == 'Can\'t specify both severity and SEVR'
+
+    with pytest.raises(AssertionError) as e:
+        creation_func(
+            "NEW_RECORD",
+            severity=alarm.MINOR_ALARM,
+            status=alarm.LOLO_ALARM,
+            STAT="LOLO",
+            **kwargs
+        )
+
+    assert e.value.args[0] == 'Can\'t specify both status and STAT'
 
 
 def validate_fixture_names(params):

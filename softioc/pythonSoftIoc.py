@@ -17,7 +17,7 @@ class RecordWrapper(object):
     __builder_reset = False
 
     def __init__(self, builder, device, name, **fields):
-        assert not self.__builder_reset, \
+        assert not self.is_builder_reset(), \
             'It\'s too late to create records'
         # List of keyword arguments expected by the device constructor.  The
         # remaining arguments are passed to the builder.  It's a shame we
@@ -46,6 +46,12 @@ class RecordWrapper(object):
         cls.__builder_reset = True
         for instance in cls.__Instances:
             instance.__set('__builder', None)
+
+    @classmethod
+    def is_builder_reset(cls):
+        '''Returns True if it is too late to create records'''
+        return cls.__builder_reset
+
 
 
     # Most attributes delegate directly to the builder instance until the

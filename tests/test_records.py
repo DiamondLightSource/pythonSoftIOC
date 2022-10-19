@@ -255,6 +255,39 @@ def test_clear_records():
     for key, val in LookupRecordList():
         assert key == full_name
 
+def clear_records_runner(child_conn):
+    """Tests ClearRecords after loading the database"""
+    builder.aOut("Some-Record")
+    builder.LoadDatabase()
+
+    try:
+        builder.ClearRecords()
+    except AssertionError:
+        # Expected error
+        child_conn.send("D")  # "Done"
+    child_conn.send("F")  # "Fail"
+
+def test_clear_records_too_late():
+    """Test that calling ClearRecords after a database has been loaded raises
+    an exception"""
+    ctx = get_multiprocessing_context()
+
+    parent_conn, child_conn = ctx.Pipe()
+
+    process = ctx.Process(
+        target=clear_records_runner,
+        args=(child_conn,),
+    )
+
+    process.start()
+
+    try:
+        select_and_recv(parent_conn, "D")
+    finally:
+        process.join(timeout=TIMEOUT)
+        if process.exitcode is None:
+            pytest.fail("Process did not terminate")
+
 
 
 def validate_fixture_names(params):

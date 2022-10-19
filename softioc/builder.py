@@ -274,9 +274,6 @@ def longStringOut(name, **fields):
 # ----------------------------------------------------------------------------
 #  Support routines for builder
 
-
-_DatabaseWritten = False
-
 def LoadDatabase():
     '''This should be called after all the builder records have been created,
     but before calling iocInit().  The database is loaded into EPICS memory,
@@ -293,6 +290,8 @@ def LoadDatabase():
 
 def ClearRecords():
     """Delete all created record information, allowing new record creation"""
+    assert not pythonSoftIoc.RecordWrapper.is_builder_reset(), \
+        'Record database has already been loaded'
     RecordLookup._RecordDirectory.clear()
     ResetRecords()
 

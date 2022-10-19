@@ -9,7 +9,6 @@ from conftest import (
     log,
     create_random_prefix,
     requires_cothread,
-    _clear_records,
     WAVEFORM_LENGTH,
     TIMEOUT,
     select_and_recv,
@@ -19,6 +18,7 @@ from conftest import (
 from softioc import asyncio_dispatcher, builder, softioc
 from softioc import alarm
 from softioc.device import SetBlocking
+from softioc.device_core import LookupRecord, LookupRecordList
 
 # Test file for miscellaneous tests related to records
 
@@ -38,7 +38,6 @@ def test_records(tmp_path):
     # Ensure we definitely unload all records that may be hanging over from
     # previous tests, then create exactly one instance of expected records.
     from sim_records import create_records
-    _clear_records()
     create_records()
 
     path = str(tmp_path / "records.db")
@@ -227,6 +226,35 @@ def test_setting_alarm_invalid_keywords(creation_func):
         )
 
     assert e.value.args[0] == 'Can\'t specify both status and STAT'
+
+def test_clear_records():
+    """Test that clearing the known records allows creation of a record of the
+    same name afterwards"""
+
+    device_name = create_random_prefix()
+    builder.SetDeviceName(device_name)
+
+    record_name = "NEW-RECORD"
+
+    builder.aOut(record_name)
+
+    # First check that we cannot create two of the same name
+    with pytest.raises(AssertionError):
+        builder.aOut(record_name)
+
+    builder.ClearRecords()
+
+    # Then confirm we can create one of this name
+    builder.aOut(record_name)
+
+    # Finally prove that the underlying record holder contains only one record
+    # Records are stored as full device:record name
+    full_name = device_name + ":" + record_name
+    assert LookupRecord(full_name)
+    assert len(LookupRecordList()) == 1
+    for key, val in LookupRecordList():
+        assert key == full_name
+
 
 
 def validate_fixture_names(params):

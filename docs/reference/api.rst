@@ -426,6 +426,10 @@ The following attributes allow more direct access to record creation.
 
     See `../how-to/use-soft-records` for a full example of its usage.
 
+.. function:: ClearRecords()
+    This can be used to remove all created records. This means the same record
+    names can be re-used for different record types.
+
 Finally, the following function is used to load record definitions before
 starting the IOC.
 

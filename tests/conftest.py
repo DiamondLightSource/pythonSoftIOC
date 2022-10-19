@@ -10,8 +10,7 @@ from typing import Any
 import pytest
 
 # Must import softioc before epicsdbbuilder
-from softioc.device_core import RecordLookup
-from epicsdbbuilder import ResetRecords
+from softioc.builder import ClearRecords
 
 requires_cothread = pytest.mark.skipif(
     sys.platform.startswith("win"), reason="Cothread doesn't work on windows"
@@ -88,20 +87,12 @@ def asyncio_ioc_override():
     ioc.kill()
     aioca_cleanup()
 
-def _clear_records():
-    # Remove any records created at epicsdbbuilder layer
-    ResetRecords()
-    # And at pythonSoftIoc level
-    # TODO: Remove this hack and use use whatever comes out of
-    # https://github.com/dls-controls/pythonSoftIOC/issues/56
-    RecordLookup._RecordDirectory.clear()
-
 @pytest.fixture(autouse=True)
 def clear_records():
     """Deletes all records before and after every test"""
-    _clear_records()
+    ClearRecords()
     yield
-    _clear_records()
+    ClearRecords()
 
 @pytest.fixture(autouse=True)
 def enable_code_coverage():

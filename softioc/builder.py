@@ -1,6 +1,7 @@
 import os
 import numpy
 
+from .device_core import RecordLookup
 from .softioc import dbLoadDatabase
 
 from epicsdbbuilder import *
@@ -290,6 +291,12 @@ def LoadDatabase():
     pythonSoftIoc.RecordWrapper.reset_builder()
 
 
+def ClearRecords():
+    """Delete all created record information, allowing new record creation"""
+    RecordLookup._RecordDirectory.clear()
+    ResetRecords()
+
+
 # ----------------------------------------------------------------------------
 # Record name configuration.  A device name prefix must be specified.
 
@@ -317,7 +324,7 @@ __all__ = [
     'longStringIn', 'longStringOut',
     'Action',
     # Other builder support functions
-    'LoadDatabase',
+    'LoadDatabase', 'ClearRecords',
     'SetDeviceName', 'UnsetDevice',
     # Device support functions
     'SetBlocking'

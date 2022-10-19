@@ -11,6 +11,7 @@ Unreleased_
 -----------
 
 - `Allow "status" and "severity" on In record init <../../pull/111>`_
+- `Allow users to reset the list of created records <../../pull/114>`_
 
 4.1.0_ - 2022-08-05
 -------------------

@@ -4,8 +4,6 @@ import atexit
 from ctypes import *
 from tempfile import NamedTemporaryFile
 
-from epicsdbbuilder.recordset import recordset
-
 from . import imports, device
 from . import cothread_dispatcher
 

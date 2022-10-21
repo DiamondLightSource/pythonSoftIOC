@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.builder &mdash; pythonSoftIOC 4.1.0+4.gdc4a63f documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 4.1.0+7.gc422b34 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -93,6 +93,7 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 
+<span class="kn">from</span> <span class="nn">.device_core</span> <span class="kn">import</span> <span class="n">RecordLookup</span>
 <span class="kn">from</span> <span class="nn">.softioc</span> <span class="kn">import</span> <span class="n">dbLoadDatabase</span>
 
 <span class="kn">from</span> <span class="nn">epicsdbbuilder</span> <span class="kn">import</span> <span class="o">*</span>
@@ -365,9 +366,6 @@
 <span class="c1"># ----------------------------------------------------------------------------</span>
 <span class="c1">#  Support routines for builder</span>
 
-
-<span class="n">_DatabaseWritten</span> <span class="o">=</span> <span class="kc">False</span>
-
 <div class="viewcode-block" id="LoadDatabase"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.LoadDatabase">[docs]</a><span class="k">def</span> <span class="nf">LoadDatabase</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;This should be called after all the builder records have been created,</span>
 <span class="sd">    but before calling iocInit().  The database is loaded into EPICS memory,</span>
@@ -380,6 +378,14 @@
     <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
 
     <span class="n">pythonSoftIoc</span><span class="o">.</span><span class="n">RecordWrapper</span><span class="o">.</span><span class="n">reset_builder</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ClearRecords"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.ClearRecords">[docs]</a><span class="k">def</span> <span class="nf">ClearRecords</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Delete all created record information, allowing new record creation&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">pythonSoftIoc</span><span class="o">.</span><span class="n">RecordWrapper</span><span class="o">.</span><span class="n">is_builder_reset</span><span class="p">(),</span> \
+        <span class="s1">&#39;Record database has already been loaded&#39;</span>
+    <span class="n">RecordLookup</span><span class="o">.</span><span class="n">_RecordDirectory</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">ResetRecords</span><span class="p">()</span></div>
 
 
 <span class="c1"># ----------------------------------------------------------------------------</span>
@@ -409,7 +415,7 @@
     <span class="s1">&#39;longStringIn&#39;</span><span class="p">,</span> <span class="s1">&#39;longStringOut&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Action&#39;</span><span class="p">,</span>
     <span class="c1"># Other builder support functions</span>
-    <span class="s1">&#39;LoadDatabase&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LoadDatabase&#39;</span><span class="p">,</span> <span class="s1">&#39;ClearRecords&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SetDeviceName&#39;</span><span class="p">,</span> <span class="s1">&#39;UnsetDevice&#39;</span><span class="p">,</span>
     <span class="c1"># Device support functions</span>
     <span class="s1">&#39;SetBlocking&#39;</span>

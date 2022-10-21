@@ -428,7 +428,9 @@ The following attributes allow more direct access to record creation.
 
 .. function:: ClearRecords()
     This can be used to remove all created records. This means the same record
-    names can be re-used for different record types.
+    names can be re-used for different record types. This cannot be used once the
+    record database has been loaded, and is only designed to be used to help with
+    testing.
 
 Finally, the following function is used to load record definitions before
 starting the IOC.

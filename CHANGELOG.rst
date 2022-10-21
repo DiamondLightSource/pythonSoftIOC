@@ -9,7 +9,7 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
 Unreleased_
 -----------
-
+- `Protect against overflow/underflow for integer record types <../../pull/110>`_
 - `Allow "status" and "severity" on In record init <../../pull/111>`_
 - `Allow users to reset the list of created records <../../pull/114>`_
 

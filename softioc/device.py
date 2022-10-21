@@ -188,6 +188,20 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if self._blocking:
             signal_processing_complete(record, self._callback)
 
+    def _validate_value(self, new_value):
+        """Checks whether the new value is valid; if so, returns True"""
+        try:
+            self._value_to_epics(new_value)
+        except AssertionError:
+            return False
+        if (
+            self.__enable_write
+            and self.__validate
+            and not self.__validate(self, new_value)
+        ):
+            return False
+        return True
+
     def _process(self, record):
         '''Processing suitable for output records.  Performs immediate value
         validation and asynchronous update notification.'''
@@ -202,8 +216,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             return EPICS_OK
 
         python_value = self._epics_to_value(value)
-        if self.__enable_write and self.__validate and \
-                not self.__validate(self, python_value):
+        if not self._validate_value(python_value):
             # Asynchronous validation rejects value, so restore the last good
             # value.
             self._write_value(record, self._value)
@@ -252,8 +265,17 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return self._epics_to_value(value)
 
 
-def _Device(Base, record_type, ctype, dbf_type, epics_rc, mlst = False):
-    '''Wrapper for generating simple records.'''
+def _Device(
+    Base,
+    record_type,
+    ctype,
+    dbf_type,
+    epics_rc,
+    value_valid,
+    mlst=False,
+):
+    """Wrapper for generating simple records."""
+
     class GenericDevice(Base):
         _record_type_ = record_type
         _device_name_ = 'devPython_' + record_type
@@ -263,6 +285,13 @@ def _Device(Base, record_type, ctype, dbf_type, epics_rc, mlst = False):
         _dbf_type_ = dbf_type
         if mlst:
             _fields_.append('MLST')
+
+        def _value_to_epics(self, value):
+            assert value_valid(value), (
+                f"Value {value} out of valid range for record type "
+                f"{self._record_type_}"
+            )
+            return super()._value_to_epics(value)
 
     GenericDevice.__name__ = record_type
     return GenericDevice
@@ -276,13 +305,36 @@ def _Device_In(*args, **kargs):
 def _Device_Out(*args, **kargs):
     return _Device(_Out, mlst = True, *args, **kargs)
 
-longin = _Device_In('longin', c_int32, fields.DBF_LONG, EPICS_OK)
-longout = _Device_Out('longout', c_int32, fields.DBF_LONG, EPICS_OK)
-bi = _Device_In('bi', c_uint16, fields.DBF_CHAR, NO_CONVERT)
-bo = _Device_Out('bo', c_uint16, fields.DBF_CHAR, NO_CONVERT)
-mbbi = _Device_In('mbbi', c_uint16, fields.DBF_SHORT, NO_CONVERT)
-mbbo = _Device_Out('mbbo', c_uint16, fields.DBF_SHORT, NO_CONVERT)
+_long_min = numpy.iinfo(numpy.int32).min
+_long_max = numpy.iinfo(numpy.int32).max
 
+longin = _Device_In(
+    "longin",
+    c_int32,
+    fields.DBF_LONG,
+    EPICS_OK,
+    lambda x: _long_min <= x <= _long_max,
+)
+longout = _Device_Out(
+    "longout",
+    c_int32,
+    fields.DBF_LONG,
+    EPICS_OK,
+    lambda x: _long_min <= x <= _long_max,
+)
+
+bi = _Device_In(
+    "bi", c_uint16, fields.DBF_CHAR, NO_CONVERT, lambda x: 0 <= x <= 1
+)
+bo = _Device_Out(
+    "bo", c_uint16, fields.DBF_CHAR, NO_CONVERT, lambda x: 0 <= x <= 1
+)
+mbbi = _Device_In(
+    "mbbi", c_uint16, fields.DBF_SHORT, NO_CONVERT, lambda x: 0 <= x <= 15
+)
+mbbo = _Device_Out(
+    "mbbo", c_uint16, fields.DBF_SHORT, NO_CONVERT, lambda x: 0 <= x <= 15
+)
 
 def _string_at(value, count):
     # Need string_at() twice to ensure string is size limited *and* null

@@ -10,6 +10,15 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+4.2.0_ - 2022-11-08
+-------------------
+
+Changed:
+
+- Updated epicscorelibs to latest version, 7.0.7.99.0.0
+
+Added:
+
 - `Allow "status" and "severity" on In record init <../../pull/111>`_
 - `Allow users to reset the list of created records <../../pull/114>`_
 

@@ -221,6 +221,42 @@ scanpiol()
 
 Prints all records in the I/O event scan lists.''')
 
+
+ExportTest('casr', (c_int,), (0,), '''\
+casr(level=0)
+
+Channel Access Server Report - print information regarding all connected CA
+clients. Information printed determined by level:
+
+= ==================================================================
+0 Show a one line summary of each connected client
+1 Show additional information for each client
+2 Also show additional information about the server's free resources
+= ==================================================================
+''')
+
+ExportTest('dbel', (auto_encode,), (), '''\
+dbel(record_name)
+
+This routine prints the Channel Access event list for the specified record.''')
+
+ExportTest('dbcar', (auto_encode, c_int), ("*", 0,), '''\
+dbcar(record_name, level)
+
+Database to channel access report. This command generates a report showing
+database channel access links. If record_name is “*” then information
+about all records is shown otherwise only information about the specified
+record.
+
+level can have the following values:
+
+= ==================================================================
+0 Show summary information only.
+1 Show summary and each CA link that is not connected.
+2 Show summary and status of each CA link
+= ==================================================================
+''')
+
 ExportTest('generalTimeReport', (c_int,), (0,), '''\
 generalTimeReport(int level)
 

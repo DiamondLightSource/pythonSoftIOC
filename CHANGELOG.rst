@@ -10,6 +10,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Added:
+
+- `Add Channel Access Report functions <../../pull/115>`_
+
 4.2.0_ - 2022-11-08
 -------------------
 

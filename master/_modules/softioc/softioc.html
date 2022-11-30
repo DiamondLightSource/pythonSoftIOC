@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.softioc &mdash; pythonSoftIOC 4.2.0+1.gf1f3623 documentation</title>
+  <title>softioc.softioc &mdash; pythonSoftIOC 4.2.0+2.gae754b2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -312,6 +312,42 @@
 <span class="s1">scanpiol()</span>
 
 <span class="s1">Prints all records in the I/O event scan lists.&#39;&#39;&#39;</span><span class="p">)</span>
+
+
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;casr&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">casr(level=0)</span>
+
+<span class="s1">Channel Access Server Report - print information regarding all connected CA</span>
+<span class="s1">clients. Information printed determined by level:</span>
+
+<span class="s1">= ==================================================================</span>
+<span class="s1">0 Show a one line summary of each connected client</span>
+<span class="s1">1 Show additional information for each client</span>
+<span class="s1">2 Also show additional information about the server&#39;s free resources</span>
+<span class="s1">= ==================================================================</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbel&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">dbel(record_name)</span>
+
+<span class="s1">This routine prints the Channel Access event list for the specified record.&#39;&#39;&#39;</span><span class="p">)</span>
+
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbcar&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">dbcar(record_name, level)</span>
+
+<span class="s1">Database to channel access report. This command generates a report showing</span>
+<span class="s1">database channel access links. If record_name is “*” then information</span>
+<span class="s1">about all records is shown otherwise only information about the specified</span>
+<span class="s1">record.</span>
+
+<span class="s1">level can have the following values:</span>
+
+<span class="s1">= ==================================================================</span>
+<span class="s1">0 Show summary information only.</span>
+<span class="s1">1 Show summary and each CA link that is not connected.</span>
+<span class="s1">2 Show summary and status of each CA link</span>
+<span class="s1">= ==================================================================</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
 
 <span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;generalTimeReport&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
 <span class="s1">generalTimeReport(int level)</span>

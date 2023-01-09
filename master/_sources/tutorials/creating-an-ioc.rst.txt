@@ -119,7 +119,7 @@ by calling any of the following PV creation functions:
     :func:`~softioc.builder.longIn`, :func:`~softioc.builder.longOut`,
     :func:`~softioc.builder.stringIn`, :func:`~softioc.builder.stringOut`,
     :func:`~softioc.builder.mbbIn`, :func:`~softioc.builder.mbbOut`,
-    :func:`~softioc.builder.Waveform`, :func:`~softioc.builder.WaveformOut`.
+    :func:`~softioc.builder.WaveformIn`, :func:`~softioc.builder.WaveformOut`.
 
 These functions create, respectively, ``Python`` device bound records of the
 following types:

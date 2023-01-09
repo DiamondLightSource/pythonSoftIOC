@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.builder &mdash; pythonSoftIOC 4.2.0+2.gae754b2 documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 4.2.0+3.g5f02a84 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -323,12 +323,13 @@
     <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;FTVL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NumpyDtypeToDbf</span><span class="p">[</span><span class="n">datatype</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Waveform"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.Waveform">[docs]</a><span class="k">def</span> <span class="nf">Waveform</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+<div class="viewcode-block" id="WaveformIn"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.WaveformIn">[docs]</a><span class="k">def</span> <span class="nf">WaveformIn</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
     <span class="n">_waveform</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
     <span class="n">_set_in_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">waveform</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
 
-<span class="n">WaveformIn</span> <span class="o">=</span> <span class="n">Waveform</span>
+<span class="c1"># Legacy name</span>
+<span class="n">Waveform</span> <span class="o">=</span> <span class="n">WaveformIn</span>
 
 <div class="viewcode-block" id="WaveformOut"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.WaveformOut">[docs]</a><span class="k">def</span> <span class="nf">WaveformOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
     <span class="n">_waveform</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
@@ -411,7 +412,7 @@
     <span class="s1">&#39;longIn&#39;</span><span class="p">,</span>   <span class="s1">&#39;longOut&#39;</span><span class="p">,</span>
     <span class="s1">&#39;stringIn&#39;</span><span class="p">,</span> <span class="s1">&#39;stringOut&#39;</span><span class="p">,</span>
     <span class="s1">&#39;mbbIn&#39;</span><span class="p">,</span>    <span class="s1">&#39;mbbOut&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Waveform&#39;</span><span class="p">,</span> <span class="s1">&#39;WaveformOut&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Waveform&#39;</span><span class="p">,</span> <span class="s1">&#39;WaveformIn&#39;</span><span class="p">,</span> <span class="s1">&#39;WaveformOut&#39;</span><span class="p">,</span>
     <span class="s1">&#39;longStringIn&#39;</span><span class="p">,</span> <span class="s1">&#39;longStringOut&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Action&#39;</span><span class="p">,</span>
     <span class="c1"># Other builder support functions</span>

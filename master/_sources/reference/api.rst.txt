@@ -322,12 +322,14 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
 
 ..  function::
         Waveform(name, [value,] **fields)
+        WaveformIn(name, [value,] **fields)
         WaveformOut(name, [value,] **fields)
 
-    Create ``waveform`` records.  Depending on whether `Waveform` or
+    Create ``waveform`` records.  Depending on whether `WaveformIn` or
     `WaveformOut` is called the record is configured to behave as an IN or an
     OUT record, in particular `on_update` can only be specified when calling
-    `WaveformOut`.
+    `WaveformOut`.  The name `Waveform` is an alias for `WaveformIn` and exists
+    for largely historical reasons.
 
     If ``value`` is specified or if an `initial_value` is specified (only one of
     these can be used) the value is used to initialise the waveform and to
@@ -519,7 +521,7 @@ direction is confusing) using the following `softioc.builder` methods:
 
     :func:`~softioc.builder.aIn`, :func:`~softioc.builder.boolIn`,
     :func:`~softioc.builder.longIn`, :func:`~softioc.builder.stringIn`,
-    :func:`~softioc.builder.mbbIn`, :func:`~softioc.builder.Waveform`.
+    :func:`~softioc.builder.mbbIn`, :func:`~softioc.builder.WaveformIn`.
 
 Create OUT records for receiving control information into the IOC using the
 following methods:

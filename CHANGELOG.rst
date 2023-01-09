@@ -13,6 +13,7 @@ Unreleased_
 Added:
 
 - `Add Channel Access Report functions <../../pull/115>`_
+- Add ``WaveformIn`` to default exports from ``softioc.builder``
 
 4.2.0_ - 2022-11-08
 -------------------

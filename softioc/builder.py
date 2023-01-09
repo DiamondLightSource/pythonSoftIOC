@@ -231,12 +231,13 @@ def _waveform(value, fields):
     fields['FTVL'] = NumpyDtypeToDbf[datatype.name]
 
 
-def Waveform(name, *value, **fields):
+def WaveformIn(name, *value, **fields):
     _waveform(value, fields)
     _set_in_defaults(fields)
     return PythonDevice.waveform(name, **fields)
 
-WaveformIn = Waveform
+# Legacy name
+Waveform = WaveformIn
 
 def WaveformOut(name, *value, **fields):
     _waveform(value, fields)
@@ -319,7 +320,7 @@ __all__ = [
     'longIn',   'longOut',
     'stringIn', 'stringOut',
     'mbbIn',    'mbbOut',
-    'Waveform', 'WaveformOut',
+    'Waveform', 'WaveformIn', 'WaveformOut',
     'longStringIn', 'longStringOut',
     'Action',
     # Other builder support functions

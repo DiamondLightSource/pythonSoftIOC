@@ -753,6 +753,9 @@ class TestNoneValue:
 
     def none_value_test_func(self, record_func, queue):
         """Start the IOC and catch the expected exception"""
+
+        log("CHILD: Child started")
+
         kwarg = {}
         if record_func in [builder.WaveformIn, builder.WaveformOut]:
             kwarg = {"length": WAVEFORM_LENGTH}  # Must specify when no value

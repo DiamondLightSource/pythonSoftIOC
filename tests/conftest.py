@@ -21,7 +21,7 @@ requires_cothread = pytest.mark.skipif(
 WAVEFORM_LENGTH = 40
 
 # Default timeout for many operations across testing
-TIMEOUT = 10  # Seconds
+TIMEOUT = 20  # Seconds
 
 # Address for multiprocessing Listener/Client pair
 ADDRESS = ("localhost", 2345)

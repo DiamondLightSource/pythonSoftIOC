@@ -459,6 +459,8 @@ class TestOnUpdate:
         self, device_name, record_func, conn, always_update
     ):
 
+        log("CHILD: Child started")
+
         builder.SetDeviceName(device_name)
 
         li = builder.longIn("ON-UPDATE-COUNTER-RECORD", initial_value=0)

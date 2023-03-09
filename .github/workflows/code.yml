@@ -111,11 +111,11 @@ jobs:
           name: dist
           path: dist/softioc*
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          name: ${{ matrix.os }}/${{ matrix.python }}
-          directory: dist
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v2
+      #   with:
+      #     name: ${{ matrix.os }}/${{ matrix.python }}
+      #     directory: dist
 
       - name: Upload Unit Test Results
         if: always()
@@ -124,66 +124,66 @@ jobs:
           name: Unit Test Results (${{ matrix.os }}-${{ matrix.python }})
           path: dist/pytest-results.xml
 
-  publish-test-results:
-    name: Publish Unit Tests Results
-    needs: build
-    runs-on: ubuntu-latest
-    if: always()
+  # publish-test-results:
+  #   name: Publish Unit Tests Results
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: always()
 
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
+  #   steps:
+  #     - name: Download Artifacts
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         path: artifacts
 
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          files: artifacts/**/*.xml
+  #     - name: Publish Unit Test Results
+  #       uses: EnricoMi/publish-unit-test-result-action@v1
+  #       with:
+  #         files: artifacts/**/*.xml
 
-  test-sdist:
-    needs: [sdist]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python: [cp36, cp37, cp38, cp39, cp310]
+  # test-sdist:
+  #   needs: [sdist]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-latest, windows-latest, macos-latest]
+  #       python: [cp36, cp37, cp38, cp39, cp310]
 
-    runs-on: ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
 
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
+  #   steps:
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: dist
 
-      - name: Install sdist in a venv and check cli works
-        run: pipx run --spec dist/*.tar.gz pythonSoftIOC --version
-        shell: bash
+  #     - name: Install sdist in a venv and check cli works
+  #       run: pipx run --spec dist/*.tar.gz pythonSoftIOC --version
+  #       shell: bash
 
-  release:
-    needs: [build, sdist]
-    runs-on: ubuntu-latest
-    # upload to PyPI and make a release on every tag
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
+  # release:
+  #   needs: [build, sdist]
+  #   runs-on: ubuntu-latest
+  #   # upload to PyPI and make a release on every tag
+  #   if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+  #   steps:
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: dist
 
-      - name: Github Release
-        # We pin to the SHA, not the tag, for security reasons.
-        # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
-        uses: softprops/action-gh-release@2d72d869af3bf23602f9593a1e3fd739b80ac1eb  # v0.1.12
-        with:
-          files: dist/*
-          body: See [Changelog](CHANGELOG.rst) for more details
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Github Release
+  #       # We pin to the SHA, not the tag, for security reasons.
+  #       # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
+  #       uses: softprops/action-gh-release@2d72d869af3bf23602f9593a1e3fd739b80ac1eb  # v0.1.12
+  #       with:
+  #         files: dist/*
+  #         body: See [Changelog](CHANGELOG.rst) for more details
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.pypi_token }}
-        run: pipx run twine upload dist/*
+  #     - name: Publish to PyPI
+  #       env:
+  #         TWINE_USERNAME: __token__
+  #         TWINE_PASSWORD: ${{ secrets.pypi_token }}
+  #       run: pipx run twine upload dist/*

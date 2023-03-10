@@ -99,7 +99,7 @@ jobs:
       - name: Build Wheel
         run: cibuildwheel --output-dir dist
         env:
-          # CIBW_BUILD: cp39-manylinux_aarch64
+          CIBW_BUILD: ${{ matrix.python }}*64
           CIBW_TEST_EXTRAS: dev
           CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }}
           # Run with faulthandler and -s in the hope we get a stack trace on seg fault on windows...

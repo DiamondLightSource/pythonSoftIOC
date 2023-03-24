@@ -31,6 +31,9 @@ VERY_LONG_STRING = "This is a fairly long string, the kind that someone " \
     "might think to put into a record that can theoretically hold a huge " \
     "string and so lets test it and prove that shall we?"
 
+# The numpy dtype of all arrays of strings
+DTYPE_STRING = "S40"
+
 
 def record_func_names(fixture_value):
     """Provide a nice name for the record_func fixture"""
@@ -113,6 +116,8 @@ record_values_list = [
     ("strOut_39chars", builder.stringOut, MAX_LEN_STR, MAX_LEN_STR, str),
     ("strIn_empty", builder.stringIn, "", "", str),
     ("strOut_empty", builder.stringOut, "", "", str),
+    # TODO: Add Invalid-utf8 tests?
+    # TODO: Add tests for bytes-strings to stringIn/Out?
     ("strin_utf8", builder.stringIn, "%a€b", "%a€b", str),  # Valid UTF-8
     ("strOut_utf8", builder.stringOut, "%a€b", "%a€b", str),  # Valid UTF-8
     (
@@ -189,39 +194,42 @@ record_values_list = [
         ),
         numpy.ndarray,
     ),
+
+    # TODO: Unicode versions of below tests?
+
     (
         "wIn_byte_string_array",
         builder.WaveformIn,
-        [b"AB", b"CD", b"EF"],
+        [b"AB123", b"CD456", b"EF789"],
         numpy.array(
-            [b"AB", b"CD", b"EF"], dtype=numpy.dtype("|S40")
+            ["AB123", "CD456", "EF789"], dtype=DTYPE_STRING
         ),
         numpy.ndarray,
     ),
     (
         "wOut_byte_string_array",
         builder.WaveformOut,
-        [b"AB", b"CD", b"EF"],
+        [b"12AB", b"34CD", b"56EF"],
         numpy.array(
-            [b"AB", b"CD", b"EF"], dtype=numpy.dtype("|S40")
+            ["12AB", "34CD", "56EF"], dtype=DTYPE_STRING
         ),
         numpy.ndarray,
     ),
     (
         "wIn_string_array",
         builder.WaveformIn,
-        ["123", "456", "7890"],
+        ["123abc", "456def", "7890ghi"],
         numpy.array(
-            [b"123", b"456", b"7890"], dtype=numpy.dtype("|S40")
+            ["123abc", "456def", "7890ghi"], dtype=DTYPE_STRING
         ),
         numpy.ndarray,
     ),
     (
         "wOut_string_array",
         builder.WaveformOut,
-        ["123", "456", "7890"],
+        ["123abc", "456def", "7890ghi"],
         numpy.array(
-            [b"123", b"456", b"7890"], dtype=numpy.dtype("|S40")
+            ["123abc", "456def", "7890ghi"],  dtype=DTYPE_STRING
         ),
         numpy.ndarray,
     ),
@@ -275,6 +283,7 @@ def record_values(request):
     """A list of parameters for record value setting/getting tests.
 
     Fields are:
+    - Record name
     - Record builder function
     - Input value passed to .set()/initial_value/caput
     - Expected output value after doing .get()/caget
@@ -412,8 +421,31 @@ def run_test_function(
     expected value. set_enum and get_enum determine when the record's value is
     set and how the value is retrieved, respectively."""
 
-    ctx = get_multiprocessing_context()
+    def is_valid(configuration):
+        """Remove some cases that cannot succeed.
+        Waveforms of Strings must have the value specified as initial value."""
+        (
+            record_name,
+            creation_func,
+            initial_value,
+            expected_value,
+            expected_type,
+        ) = configuration
 
+        if creation_func in (builder.WaveformIn, builder.WaveformOut):
+            if isinstance(initial_value, list) and \
+                    all(isinstance(val, (str, bytes)) for val in initial_value):
+                if set_enum is not SetValueEnum.INITIAL_VALUE:
+                    print(f"Removing {configuration}")
+                    return False
+
+        return True
+
+    record_configurations = [
+        x for x in record_configurations if is_valid(x)
+    ]
+
+    ctx = get_multiprocessing_context()
     parent_conn, child_conn = ctx.Pipe()
 
     ioc_process = ctx.Process(
@@ -498,6 +530,7 @@ def run_test_function(
 
                 if (
                     creation_func in [builder.WaveformOut, builder.WaveformIn]
+                    and expected_value.dtype
                     and expected_value.dtype in [numpy.float64, numpy.int32]
                 ):
                     log(
@@ -506,6 +539,10 @@ def run_test_function(
                         "scalar. Therefore we skip this check.")
                     continue
 
+                if isinstance(rec_val, numpy.ndarray) and len(rec_val) > 1 \
+                        and rec_val.dtype.char in ["S", "U"]:
+                    # caget won't retrieve the full length 40 buffer
+                    rec_val = rec_val.astype(DTYPE_STRING)
 
             record_value_asserts(
                 creation_func, rec_val, expected_value, expected_type
@@ -520,13 +557,6 @@ def run_test_function(
         if ioc_process.exitcode is None:
             pytest.fail("Process did not terminate")
 
-
-def skip_long_strings(record_values):
-    if (
-        record_values[0] in [builder.stringIn, builder.stringOut]
-        and len(record_values[1]) > 40
-    ):
-        pytest.skip("CAPut blocks strings > 40 characters.")
 
 
 class TestGetValue:
@@ -544,6 +574,14 @@ class TestGetValue:
             expected_value,
             expected_type,
         ) = record_values
+
+        if (
+            creation_func in [builder.WaveformIn, builder.WaveformOut] and
+            isinstance(initial_value, list) and
+            all(isinstance(s, (str, bytes)) for s in initial_value)
+        ):
+            pytest.skip("Cannot .set() a list of strings to a waveform, must"
+                        "initially specify using initial_value or FTVL")
 
         kwarg = {}
         if creation_func in [builder.WaveformIn, builder.WaveformOut]:

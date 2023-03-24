@@ -148,8 +148,7 @@ NumpyDtypeToDbf = {
     'uint32':   'ULONG',
     'float32':  'FLOAT',
     'float64':  'DOUBLE',
-    'bytes32':  'STRING',
-    'bytes320': 'STRING',
+    'bytes320': 'STRING',  # Numpy's term for a 40-character string (40*8 bits)
 }
 
 # Coverts FTVL string to numpy type
@@ -214,8 +213,8 @@ def _waveform(value, fields):
 
         # Special case for [u]int64: if the initial value comes in as 64 bit
         # integers we cannot represent that, so recast it as [u]int32
-        # Special case for array of strings to correctly identify each element
-        # of the array as a string type.
+        # Special case for array of strings to mark each element as conforming
+        # to EPICS 40-character string limit
         if datatype is None:
             if initial_value.dtype == numpy.int64:
                 initial_value = numpy.require(initial_value, numpy.int32)

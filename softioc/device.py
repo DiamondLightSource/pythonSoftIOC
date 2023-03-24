@@ -356,6 +356,16 @@ def _require_waveform(value, dtype):
     if isinstance(value, bytes):
         # Special case hack for byte arrays.  Surprisingly tricky:
         value = numpy.frombuffer(value, dtype = numpy.uint8)
+
+    if dtype and dtype.char == 'S':
+        result = numpy.empty(len(value), 'S40')
+        for n, s in enumerate(value):
+            if isinstance(s, str):
+                result[n] = s.encode('UTF-8')
+            else:
+                result[n] = s
+        return result
+
     value = numpy.require(value, dtype = dtype)
     if value.shape == ():
         value.shape = (1,)
@@ -391,7 +401,6 @@ class WaveformBase(ProcessDeviceSupportCore):
         return result
 
     def _write_value(self, record, value):
-        value = _require_waveform(value, self._dtype)
         nord = len(value)
         memmove(
             record.BPTR, value.ctypes.data_as(c_void_p),

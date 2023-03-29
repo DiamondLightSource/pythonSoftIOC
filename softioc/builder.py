@@ -11,7 +11,7 @@ LoadDbdFile(os.path.join(os.path.dirname(__file__), 'device.dbd'))
 
 from . import device, pythonSoftIoc  # noqa
 # Re-export this so users only have to import the builder
-from .device import SetBlocking # noqa
+from .device import SetBlocking, to_epics_str_array # noqa
 
 PythonDevice = pythonSoftIoc.PythonDevice()
 
@@ -148,7 +148,7 @@ NumpyDtypeToDbf = {
     'uint32':   'ULONG',
     'float32':  'FLOAT',
     'float64':  'DOUBLE',
-    'bytes320': 'STRING',  # Numpy's term for a 40-character string (40*8 bits)
+    'bytes320': 'STRING',  # Numpy term for 40-character byte str (40*8 bits)
 }
 
 # Coverts FTVL string to numpy type
@@ -220,8 +220,8 @@ def _waveform(value, fields):
                 initial_value = numpy.require(initial_value, numpy.int32)
             elif initial_value.dtype == numpy.uint64:
                 initial_value = numpy.require(initial_value, numpy.uint32)
-            elif initial_value.dtype.char in ("S", "U"):
-                initial_value = numpy.require(initial_value, numpy.dtype("S40"))
+            elif initial_value.dtype.char in ('S', 'U'):
+                initial_value = to_epics_str_array(initial_value)
     else:
         initial_value = numpy.array([], dtype = datatype)
         length = _get_length(fields)

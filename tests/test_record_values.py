@@ -32,7 +32,7 @@ VERY_LONG_STRING = "This is a fairly long string, the kind that someone " \
     "string and so lets test it and prove that shall we?"
 
 # The numpy dtype of all arrays of strings
-DTYPE_STRING = "S40"
+NUMPY_DTYPE_STRING = "S40"
 
 
 def record_func_names(fixture_value):
@@ -116,8 +116,6 @@ record_values_list = [
     ("strOut_39chars", builder.stringOut, MAX_LEN_STR, MAX_LEN_STR, str),
     ("strIn_empty", builder.stringIn, "", "", str),
     ("strOut_empty", builder.stringOut, "", "", str),
-    # TODO: Add Invalid-utf8 tests?
-    # TODO: Add tests for bytes-strings to stringIn/Out?
     ("strin_utf8", builder.stringIn, "%a€b", "%a€b", str),  # Valid UTF-8
     ("strOut_utf8", builder.stringOut, "%a€b", "%a€b", str),  # Valid UTF-8
     (
@@ -194,15 +192,12 @@ record_values_list = [
         ),
         numpy.ndarray,
     ),
-
-    # TODO: Unicode versions of below tests?
-
     (
         "wIn_byte_string_array",
         builder.WaveformIn,
         [b"AB123", b"CD456", b"EF789"],
         numpy.array(
-            ["AB123", "CD456", "EF789"], dtype=DTYPE_STRING
+            ["AB123", "CD456", "EF789"], dtype=NUMPY_DTYPE_STRING
         ),
         numpy.ndarray,
     ),
@@ -211,7 +206,35 @@ record_values_list = [
         builder.WaveformOut,
         [b"12AB", b"34CD", b"56EF"],
         numpy.array(
-            ["12AB", "34CD", "56EF"], dtype=DTYPE_STRING
+            ["12AB", "34CD", "56EF"], dtype=NUMPY_DTYPE_STRING
+        ),
+        numpy.ndarray,
+    ),
+    (
+        "wIn_unicode_string_array",
+        builder.WaveformIn,
+        ["12€½", "34¾²", "56¹³"],
+        numpy.array(
+            [
+                b'12\xe2\x82\xac\xc2\xbd',
+                b'34\xc2\xbe\xc2\xb2',
+                b'56\xc2\xb9\xc2\xb3'
+            ],
+            dtype=NUMPY_DTYPE_STRING
+        ),
+        numpy.ndarray,
+    ),
+    (
+        "wOut_unicode_string_array",
+        builder.WaveformOut,
+        ["12€½", "34¾²", "56¹³"],
+        numpy.array(
+            [
+                b'12\xe2\x82\xac\xc2\xbd',
+                b'34\xc2\xbe\xc2\xb2',
+                b'56\xc2\xb9\xc2\xb3'
+            ],
+            dtype=NUMPY_DTYPE_STRING
         ),
         numpy.ndarray,
     ),
@@ -220,7 +243,7 @@ record_values_list = [
         builder.WaveformIn,
         ["123abc", "456def", "7890ghi"],
         numpy.array(
-            ["123abc", "456def", "7890ghi"], dtype=DTYPE_STRING
+            ["123abc", "456def", "7890ghi"], dtype=NUMPY_DTYPE_STRING
         ),
         numpy.ndarray,
     ),
@@ -229,7 +252,7 @@ record_values_list = [
         builder.WaveformOut,
         ["123abc", "456def", "7890ghi"],
         numpy.array(
-            ["123abc", "456def", "7890ghi"],  dtype=DTYPE_STRING
+            ["123abc", "456def", "7890ghi"],  dtype=NUMPY_DTYPE_STRING
         ),
         numpy.ndarray,
     ),
@@ -539,10 +562,19 @@ def run_test_function(
                         "scalar. Therefore we skip this check.")
                     continue
 
+                # caget on a waveform of strings will return unicode. Have to
+                # convert it manually to binary.
                 if isinstance(rec_val, numpy.ndarray) and len(rec_val) > 1 \
                         and rec_val.dtype.char in ["S", "U"]:
+                    result = numpy.empty(len(rec_val), NUMPY_DTYPE_STRING)
+                    for n, s in enumerate(rec_val):
+                        if isinstance(s, str):
+                            result[n] = s.encode('UTF-8', errors= 'ignore')
+                        else:
+                            result[n] = s
+                    rec_val = result
                     # caget won't retrieve the full length 40 buffer
-                    rec_val = rec_val.astype(DTYPE_STRING)
+                    rec_val = rec_val.astype(NUMPY_DTYPE_STRING)
 
             record_value_asserts(
                 creation_func, rec_val, expected_value, expected_type
@@ -958,7 +990,46 @@ class TestInvalidValues:
         w_in = builder.WaveformIn("W_IN", [1, 2, 3])
         w_out = builder.WaveformOut("W_OUT", [1, 2, 3])
 
+        w_in_str = builder.WaveformIn("W_IN_STR", ["ABC", "DEF"])
+        w_out_str = builder.WaveformOut("W_OUT_STR", ["ABC", "DEF"])
+
         with pytest.raises(AssertionError):
             w_in.set([1, 2, 3, 4])
         with pytest.raises(AssertionError):
             w_out.set([1, 2, 3, 4])
+        with pytest.raises(AssertionError):
+            w_in_str.set(["ABC", "DEF", "GHI"])
+        with pytest.raises(AssertionError):
+            w_out_str.set(["ABC", "DEF", "GHI"])
+
+    def test_waveform_rejects_late_strings(self):
+        """Test that a waveform won't allow a list of strings to be assigned
+        if no list was given in initial waveform construction"""
+        w_in = builder.WaveformIn("W_IN", length=10)
+        w_out = builder.WaveformOut("W_OUT", length=10)
+
+        with pytest.raises(ValueError):
+            w_in.set(["ABC", "DEF"])
+        with pytest.raises(ValueError):
+            w_out.set(["ABC", "DEF"])
+
+    def test_waveform_rejects_long_array_of_strings(self):
+        """Test that a waveform of strings won't accept too long strings"""
+        w_in = builder.WaveformIn(
+            "W_IN",
+            initial_value=["123abc", "456def", "7890ghi"]
+        )
+        w_out = builder.WaveformIn(
+            "W_OUT",
+            initial_value=["123abc", "456def", "7890ghi"]
+        )
+
+        with pytest.raises(AssertionError):
+            w_in.set(["1", "2", "3", "4"])
+        with pytest.raises(AssertionError):
+            w_out.set(["1", "2", "3", "4"])
+
+        with pytest.raises(ValueError):
+            w_in.set([VERY_LONG_STRING])
+        with pytest.raises(ValueError):
+            w_out.set([VERY_LONG_STRING])

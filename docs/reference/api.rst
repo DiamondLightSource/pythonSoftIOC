@@ -342,6 +342,11 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
     field type name.  Otherwise the field type is taken from the initial value
     if given, or defaults to ``'FLOAT'``.
 
+    .. note::
+        When storing arrays of strings, it is possible to store Unicode characters.
+        However, as EPICS has no Unicode support the resultant values will be stored
+        as byte strings. Care must be taken when encoding/decoding the values.
+
 
 The following functions generates specialised records.
 

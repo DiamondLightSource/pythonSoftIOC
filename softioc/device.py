@@ -351,6 +351,20 @@ class ao(ProcessDeviceSupportOut):
     _ctype_ = c_double
     _dbf_type_ = fields.DBF_DOUBLE
 
+def to_epics_str_array(value):
+    """Convert the given array of Python strings to an array of EPICS
+    nul-terminated strings"""
+    result = numpy.empty(len(value), 'S40')
+
+    for n, s in enumerate(value):
+        if isinstance(s, str):
+            val = EpicsString._ctype_()
+            val.value = s.encode() + b'\0'
+            result[n] = val.value
+        else:
+            result[n] = s
+    return result
+
 
 def _require_waveform(value, dtype):
     if isinstance(value, bytes):
@@ -358,13 +372,7 @@ def _require_waveform(value, dtype):
         value = numpy.frombuffer(value, dtype = numpy.uint8)
 
     if dtype and dtype.char == 'S':
-        result = numpy.empty(len(value), 'S40')
-        for n, s in enumerate(value):
-            if isinstance(s, str):
-                result[n] = s.encode('UTF-8')
-            else:
-                result[n] = s
-        return result
+        return to_epics_str_array(value)
 
     value = numpy.require(value, dtype = dtype)
     if value.shape == ():

@@ -30,6 +30,7 @@ Added:
 
 - `Allow "status" and "severity" on In record init <../../pull/111>`_
 - `Allow users to reset the list of created records <../../pull/114>`_
+- `Allow arrays of strings to be used with Waveforms <../../pull/102>`_
 
 4.1.0_ - 2022-08-05
 -------------------

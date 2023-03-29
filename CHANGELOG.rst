@@ -15,6 +15,10 @@ Added:
 - `Add Channel Access Report functions <../../pull/115>`_
 - Add ``WaveformIn`` to default exports from ``softioc.builder``
 
+Fixed:
+
+- `Fix DeprecationWarning from numpy when using "+" <../../pull/123>`_
+
 4.2.0_ - 2022-11-08
 -------------------
 

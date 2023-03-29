@@ -147,4 +147,4 @@ class _Record(object):
 
 
 
-__all__ = ['RecordFactory', 'DbfCodeToNumpy', 'ca_timestamp']
+__all__ = ['RecordFactory', 'ca_timestamp']

@@ -409,7 +409,7 @@ class WaveformBase(ProcessDeviceSupportCore):
         # common class of bug, at the cost of duplicated code and data, here we
         # ensure a copy is taken of the value.
         assert len(value) <= self._nelm, 'Value too long for waveform'
-        return +value
+        return numpy.copy(value)
 
     def _epics_to_value(self, value):
         return value

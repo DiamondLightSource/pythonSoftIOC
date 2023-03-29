@@ -430,7 +430,10 @@ class WaveformBase(ProcessDeviceSupportCore):
         return numpy.copy(value)
 
     def _epics_to_value(self, value):
-        return value
+        if self._dtype.char == 'S':
+            return [_string_at(s, 40) for s in value]
+        else:
+            return value
 
     def _value_to_dbr(self, value):
         return self._dbf_type_, len(value), value.ctypes.data, value

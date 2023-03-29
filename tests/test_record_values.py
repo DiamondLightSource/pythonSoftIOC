@@ -196,65 +196,43 @@ record_values_list = [
         "wIn_byte_string_array",
         builder.WaveformIn,
         [b"AB123", b"CD456", b"EF789"],
-        numpy.array(
-            ["AB123", "CD456", "EF789"], dtype=NUMPY_DTYPE_STRING
-        ),
-        numpy.ndarray,
+        ["AB123", "CD456", "EF789"],
+        list,
     ),
     (
         "wOut_byte_string_array",
         builder.WaveformOut,
         [b"12AB", b"34CD", b"56EF"],
-        numpy.array(
-            ["12AB", "34CD", "56EF"], dtype=NUMPY_DTYPE_STRING
-        ),
-        numpy.ndarray,
+        ["12AB", "34CD", "56EF"],
+        list,
     ),
     (
         "wIn_unicode_string_array",
         builder.WaveformIn,
         ["12€½", "34¾²", "56¹³"],
-        numpy.array(
-            [
-                b'12\xe2\x82\xac\xc2\xbd',
-                b'34\xc2\xbe\xc2\xb2',
-                b'56\xc2\xb9\xc2\xb3'
-            ],
-            dtype=NUMPY_DTYPE_STRING
-        ),
-        numpy.ndarray,
+        ["12€½", "34¾²", "56¹³"],
+        list,
     ),
     (
         "wOut_unicode_string_array",
         builder.WaveformOut,
         ["12€½", "34¾²", "56¹³"],
-        numpy.array(
-            [
-                b'12\xe2\x82\xac\xc2\xbd',
-                b'34\xc2\xbe\xc2\xb2',
-                b'56\xc2\xb9\xc2\xb3'
-            ],
-            dtype=NUMPY_DTYPE_STRING
-        ),
-        numpy.ndarray,
+        ["12€½", "34¾²", "56¹³"],
+        list,
     ),
     (
         "wIn_string_array",
         builder.WaveformIn,
         ["123abc", "456def", "7890ghi"],
-        numpy.array(
-            ["123abc", "456def", "7890ghi"], dtype=NUMPY_DTYPE_STRING
-        ),
-        numpy.ndarray,
+        ["123abc", "456def", "7890ghi"],
+        list,
     ),
     (
         "wOut_string_array",
         builder.WaveformOut,
         ["123abc", "456def", "7890ghi"],
-        numpy.array(
-            ["123abc", "456def", "7890ghi"],  dtype=NUMPY_DTYPE_STRING
-        ),
-        numpy.ndarray,
+        ["123abc", "456def", "7890ghi"],
+        list,
     ),
     (
         "longStringIn_str",
@@ -553,7 +531,7 @@ def run_test_function(
 
                 if (
                     creation_func in [builder.WaveformOut, builder.WaveformIn]
-                    and expected_value.dtype
+                    and hasattr(expected_value, 'dtype')
                     and expected_value.dtype in [numpy.float64, numpy.int32]
                 ):
                     log(
@@ -562,19 +540,11 @@ def run_test_function(
                         "scalar. Therefore we skip this check.")
                     continue
 
-                # caget on a waveform of strings will return unicode. Have to
-                # convert it manually to binary.
+                # caget on a waveform of strings will return a numpy array.
+                # Must extract it out to a list to match .get()
                 if isinstance(rec_val, numpy.ndarray) and len(rec_val) > 1 \
                         and rec_val.dtype.char in ["S", "U"]:
-                    result = numpy.empty(len(rec_val), NUMPY_DTYPE_STRING)
-                    for n, s in enumerate(rec_val):
-                        if isinstance(s, str):
-                            result[n] = s.encode('UTF-8', errors= 'ignore')
-                        else:
-                            result[n] = s
-                    rec_val = result
-                    # caget won't retrieve the full length 40 buffer
-                    rec_val = rec_val.astype(NUMPY_DTYPE_STRING)
+                    rec_val = [s for s in rec_val]
 
             record_value_asserts(
                 creation_func, rec_val, expected_value, expected_type

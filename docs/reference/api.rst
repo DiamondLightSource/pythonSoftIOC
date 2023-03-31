@@ -343,9 +343,9 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
     if given, or defaults to ``'FLOAT'``.
 
     .. note::
-        When storing arrays of strings, it is possible to store Unicode characters.
-        However, as EPICS has no Unicode support the resultant values will be stored
-        as byte strings. Care must be taken when encoding/decoding the values.
+        Storing arrays of strings differs from other values. String arrays will always
+        be assumed to be encoded as Unicode strings, and will be returned to the user
+        as a Python list rather than a Numpy array.
 
 
 The following functions generates specialised records.

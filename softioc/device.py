@@ -367,18 +367,18 @@ def to_epics_str_array(value):
 
 
 def _require_waveform(value, dtype):
-    if isinstance(value, bytes):
-        # Special case hack for byte arrays.  Surprisingly tricky:
-        value = numpy.frombuffer(value, dtype = numpy.uint8)
-
     if dtype and dtype.char == 'S':
         return to_epics_str_array(value)
+    else:
+        if isinstance(value, bytes):
+            # Special case hack for byte arrays.  Surprisingly tricky:
+            value = numpy.frombuffer(value, dtype = numpy.uint8)
 
-    value = numpy.require(value, dtype = dtype)
-    if value.shape == ():
-        value.shape = (1,)
-    assert value.ndim == 1, 'Can\'t write multidimensional arrays'
-    return value
+        value = numpy.require(value, dtype = dtype)
+        if value.shape == ():
+            value.shape = (1,)
+        assert value.ndim == 1, 'Can\'t write multidimensional arrays'
+        return value
 
 
 class WaveformBase(ProcessDeviceSupportCore):

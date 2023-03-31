@@ -31,9 +31,6 @@ VERY_LONG_STRING = "This is a fairly long string, the kind that someone " \
     "might think to put into a record that can theoretically hold a huge " \
     "string and so lets test it and prove that shall we?"
 
-# The numpy dtype of all arrays of strings
-NUMPY_DTYPE_STRING = "S40"
-
 
 def record_func_names(fixture_value):
     """Provide a nice name for the record_func fixture"""
@@ -232,6 +229,34 @@ record_values_list = [
         builder.WaveformOut,
         ["123abc", "456def", "7890ghi"],
         ["123abc", "456def", "7890ghi"],
+        list,
+    ),
+    (
+        "wIn_mixed_array_1",
+        builder.WaveformIn,
+        ["123abc", 456, "7890ghi"],
+        ["123abc", "456", "7890ghi"],
+        list,
+    ),
+    (
+        "wOut_mixed_array_1",
+        builder.WaveformOut,
+        ["123abc", 456, "7890ghi"],
+        ["123abc", "456", "7890ghi"],
+        list,
+    ),
+    (
+        "wIn_mixed_array_2",
+        builder.WaveformIn,
+        [123, 456, "7890ghi"],
+        ["123", "456", "7890ghi"],
+        list,
+    ),
+    (
+        "wOut_mixed_array_2",
+        builder.WaveformOut,
+        [123, 456, "7890ghi"],
+        ["123", "456", "7890ghi"],
         list,
     ),
     (
@@ -435,7 +460,7 @@ def run_test_function(
 
         if creation_func in (builder.WaveformIn, builder.WaveformOut):
             if isinstance(initial_value, list) and \
-                    all(isinstance(val, (str, bytes)) for val in initial_value):
+                    any(isinstance(val, (str, bytes)) for val in initial_value):
                 if set_enum is not SetValueEnum.INITIAL_VALUE:
                     print(f"Removing {configuration}")
                     return False
@@ -580,7 +605,7 @@ class TestGetValue:
         if (
             creation_func in [builder.WaveformIn, builder.WaveformOut] and
             isinstance(initial_value, list) and
-            all(isinstance(s, (str, bytes)) for s in initial_value)
+            any(isinstance(s, (str, bytes)) for s in initial_value)
         ):
             pytest.skip("Cannot .set() a list of strings to a waveform, must"
                         "initially specify using initial_value or FTVL")
@@ -974,7 +999,7 @@ class TestInvalidValues:
 
     def test_waveform_rejects_late_strings(self):
         """Test that a waveform won't allow a list of strings to be assigned
-        if no list was given in initial waveform construction"""
+        if no string list was given in initial waveform construction"""
         w_in = builder.WaveformIn("W_IN", length=10)
         w_out = builder.WaveformOut("W_OUT", length=10)
 
@@ -994,11 +1019,13 @@ class TestInvalidValues:
             initial_value=["123abc", "456def", "7890ghi"]
         )
 
+        # Test putting too many elements
         with pytest.raises(AssertionError):
             w_in.set(["1", "2", "3", "4"])
         with pytest.raises(AssertionError):
             w_out.set(["1", "2", "3", "4"])
 
+        # Test putting too long a string
         with pytest.raises(ValueError):
             w_in.set([VERY_LONG_STRING])
         with pytest.raises(ValueError):

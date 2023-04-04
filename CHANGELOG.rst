@@ -10,6 +10,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+4.3.0_ - 2023-04-04
+-------------------
+
 Added:
 
 - `Add Channel Access Report functions <../../pull/115>`_
@@ -175,8 +178,9 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 
-.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.2.0...HEAD
-.. _4.2.0: https://github.com/dls-controls/pythonIoc/compare/4.1....4.2.0
+.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.3.0...HEAD
+.. _4.3.0: https://github.com/dls-controls/pythonIoc/compare/4.2.0...4.3.0
+.. _4.2.0: https://github.com/dls-controls/pythonIoc/compare/4.1.0...4.2.0
 .. _4.1.0: https://github.com/dls-controls/pythonIoc/compare/4.0.2...4.1.0
 .. _4.0.2: https://github.com/dls-controls/pythonIoc/compare/4.0.1...4.0.2
 .. _4.0.1: https://github.com/dls-controls/pythonIoc/compare/3.2.1...4.0.1

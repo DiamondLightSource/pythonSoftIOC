@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.builder &mdash; pythonSoftIOC 4.2.0+6.g565bca1 documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 4.2.0+14.gb22b497 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -103,7 +103,7 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">device</span><span class="p">,</span> <span class="n">pythonSoftIoc</span>  <span class="c1"># noqa</span>
 <span class="c1"># Re-export this so users only have to import the builder</span>
-<span class="kn">from</span> <span class="nn">.device</span> <span class="kn">import</span> <span class="n">SetBlocking</span> <span class="c1"># noqa</span>
+<span class="kn">from</span> <span class="nn">.device</span> <span class="kn">import</span> <span class="n">SetBlocking</span><span class="p">,</span> <span class="n">to_epics_str_array</span> <span class="c1"># noqa</span>
 
 <span class="n">PythonDevice</span> <span class="o">=</span> <span class="n">pythonSoftIoc</span><span class="o">.</span><span class="n">PythonDevice</span><span class="p">()</span>
 
@@ -240,6 +240,7 @@
     <span class="s1">&#39;uint32&#39;</span><span class="p">:</span>   <span class="s1">&#39;ULONG&#39;</span><span class="p">,</span>
     <span class="s1">&#39;float32&#39;</span><span class="p">:</span>  <span class="s1">&#39;FLOAT&#39;</span><span class="p">,</span>
     <span class="s1">&#39;float64&#39;</span><span class="p">:</span>  <span class="s1">&#39;DOUBLE&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bytes320&#39;</span><span class="p">:</span> <span class="s1">&#39;STRING&#39;</span><span class="p">,</span>  <span class="c1"># Numpy term for 40-character byte str (40*8 bits)</span>
 <span class="p">}</span>
 
 <span class="c1"># Coverts FTVL string to numpy type</span>
@@ -252,6 +253,7 @@
     <span class="s1">&#39;ULONG&#39;</span><span class="p">:</span>    <span class="s1">&#39;uint32&#39;</span><span class="p">,</span>
     <span class="s1">&#39;FLOAT&#39;</span><span class="p">:</span>    <span class="s1">&#39;float32&#39;</span><span class="p">,</span>
     <span class="s1">&#39;DOUBLE&#39;</span><span class="p">:</span>   <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;STRING&#39;</span><span class="p">:</span>   <span class="s1">&#39;S40&#39;</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -303,11 +305,15 @@
 
         <span class="c1"># Special case for [u]int64: if the initial value comes in as 64 bit</span>
         <span class="c1"># integers we cannot represent that, so recast it as [u]int32</span>
+        <span class="c1"># Special case for array of strings to mark each element as conforming</span>
+        <span class="c1"># to EPICS 40-character string limit</span>
         <span class="k">if</span> <span class="n">datatype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">initial_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span>
                 <span class="n">initial_value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="n">initial_value</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">initial_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint64</span><span class="p">:</span>
                 <span class="n">initial_value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="n">initial_value</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">initial_value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">):</span>
+                <span class="n">initial_value</span> <span class="o">=</span> <span class="n">to_epics_str_array</span><span class="p">(</span><span class="n">initial_value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">initial_value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">datatype</span><span class="p">)</span>
         <span class="n">length</span> <span class="o">=</span> <span class="n">_get_length</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>

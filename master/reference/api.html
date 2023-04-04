@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.2.0+6.g565bca1 documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.2.0+14.gb22b497 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -619,6 +619,12 @@ waveform.</p>
 keyword to a Python type name, or by setting <code class="docutils literal notranslate"><span class="pre">FTVL</span></code> to the appropriate EPICS
 field type name.  Otherwise the field type is taken from the initial value
 if given, or defaults to <code class="docutils literal notranslate"><span class="pre">'FLOAT'</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Storing arrays of strings differs from other values. String arrays will always
+be assumed to be encoded as Unicode strings, and will be returned to the user
+as a Python list rather than a Numpy array.</p>
+</div>
 </dd></dl>
 
 <p>The following functions generates specialised records.</p>

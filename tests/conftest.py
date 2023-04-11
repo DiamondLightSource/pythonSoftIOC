@@ -67,7 +67,7 @@ def aioca_cleanup():
     # by cothread. If we don't do this we get a seg fault. This is not a problem
     # in production as we won't mix aioca and cothread, but we do mix them in
     # the tests so need to do this.
-    atexit.unregister(_catools._catools_atexit)
+    atexit.unregister(_catools._Context._destroy_context)
     # purge the channels before the event loop goes
     purge_channel_caches()
 

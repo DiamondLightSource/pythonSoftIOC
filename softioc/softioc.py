@@ -272,6 +272,41 @@ This determines if error messages are displayed on the IOC console. 0 means no
 and any other value means yes.''',
            lib=imports.Com)
 
+class IOCSh(object):
+    class Caller:
+        '''
+        Wrapper around iocshCmd() to translate eg.
+        iocsh.dbpr("MY-DEVICE-PREFIX:AI", 2)
+        into
+        iocshCmd("dbpr MY-DEVICE-PREFIX:AI 2")
+        '''
+        iocshCmd = imports.Com.iocshCmd
+        iocshCmd.argtypes = (auto_encode,)
+        iocshCmd.restype = c_int
+        def __init__(self, name):
+            self.name = name
+        def __call__(self, *args):
+            cmd = [self.name]
+            for arg in args:
+                # TODO escape quote chars once this would work.
+                # https://github.com/epics-base/epics-base/issues/362
+                if isinstance(arg, str) and arg.find(' ')!=-1:
+                    arg = f'"{arg}"'
+                else:
+                    arg = str(arg)
+                cmd.append(arg)
+            cmd = ' '.join(cmd)
+            ret = self.iocshCmd(cmd)
+            if ret!=0:
+                raise RuntimeError(ret)
+    def __getattr__(self, name):
+        if name.startswith('__'):
+            return super().__getattr__(name)
+        else:
+            return self.Caller(name)
+IOCSh.__doc__ = IOCSh.Caller.__doc__
+iocsh = IOCSh()
+command_names.append('iocsh')
 
 # Hacked up exit object so that when soft IOC framework sends us an exit command
 # we actually exit.

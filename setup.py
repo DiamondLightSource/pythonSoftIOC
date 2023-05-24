@@ -61,10 +61,6 @@ ext = Extension(
         devIocStats_src, devIocStats_os, devIocStats_default
     ],
     dsos = [
-        'epicscorelibs.lib.qsrv',
-        'epicscorelibs.lib.pvAccessIOC',
-        'epicscorelibs.lib.pvAccess',
-        'epicscorelibs.lib.pvData',
         'epicscorelibs.lib.dbRecStd',
         'epicscorelibs.lib.dbCore',
         'epicscorelibs.lib.ca',
@@ -95,6 +91,8 @@ setup(
     install_requires = [
         # Dependency version declared in pyproject.toml
         epicscorelibs.version.abi_requires(),
+        "pvxslibs>=1.2.1a1",
+        "setuptools_dso>=2.4",
         "numpy",
         "epicsdbbuilder>=1.4"
     ],

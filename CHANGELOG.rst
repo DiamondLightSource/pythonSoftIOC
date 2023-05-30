@@ -10,6 +10,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Changed:
+
+- `Improve string representation of RecordWrapper instances <../../pull/130>`
+
 4.3.0_ - 2023-04-04
 -------------------
 

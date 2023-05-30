@@ -289,6 +289,64 @@ def test_clear_records_too_late():
             pytest.fail("Process did not terminate")
 
 
+def str_ioc_test_func(device_name, conn):
+    builder.SetDeviceName(device_name)
+
+    record_name = "MyAI"
+
+    full_name = device_name + ":" + record_name
+
+    ai = builder.aIn(record_name)
+
+
+    log("CHILD: Created ai record: ", ai.__str__())
+
+    assert (
+        ai.__str__() == full_name
+    ), f"Record name {ai.__str__()} before LoadDatabase did not match " \
+       f"expected string {full_name}"
+
+    builder.LoadDatabase()
+
+    assert (
+        ai.__str__() == full_name
+    ), f"Record name {ai.__str__()} after LoadDatabase did not match " \
+       f"expected string {full_name}"
+
+    dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+    softioc.iocInit(dispatcher)
+
+    assert (
+        ai.__str__() == full_name
+    ), f"Record name {ai.__str__()} after iocInit did not match expected " \
+       f"string {full_name}"
+
+    conn.send("R")  # "Ready"
+    log("CHILD: Sent R over Connection to Parent")
+
+
+
+def test_record_wrapper_str():
+    """Test that the __str__ method on the RecordWrapper behaves as expected,
+    both before and after loading the record database"""
+
+    ctx = get_multiprocessing_context()
+    parent_conn, child_conn = ctx.Pipe()
+
+    device_name = create_random_prefix()
+
+    ioc_process = ctx.Process(
+        target=str_ioc_test_func,
+        args=(device_name, child_conn),
+    )
+
+    ioc_process.start()
+
+
+    # Wait for message that IOC has started
+    # If we never receive R it probably means an assert failed
+    select_and_recv(parent_conn, "R")
+
 
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""

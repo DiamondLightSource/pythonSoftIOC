@@ -80,8 +80,7 @@ class RecordWrapper(object):
         return self.__builder(*specifiers)
 
     def __str__(self):
-        return str(self.__builder)
-
+        return self.__device._name
 
 
 class PythonDevice(object):

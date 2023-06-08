@@ -41,6 +41,7 @@ devIocStats_OSD = [
 ]
 
 devIocStats_src = os.path.join("softioc", "iocStats", "devIocStats")
+devIocStats_posix = os.path.join(devIocStats_src, "os", "posix")
 devIocStats_os = os.path.join(devIocStats_src, "os", get_config_var('OS_CLASS'))
 devIocStats_default = os.path.join(devIocStats_src, "os", "default")
 
@@ -52,14 +53,26 @@ for f in devIocStats_OSD:
     else:
         sources.append(os.path.join(devIocStats_default, f))
 
+include_dirs = [
+    epicscorelibs.path.include_path,
+    devIocStats_src,
+    devIocStats_os,
+    devIocStats_default
+]
+
+if get_config_var("POSIX"):
+    # If we're on a POSIX system, insert the POSIX folder into the list after
+    # the os-specific one so that os-specific header files are used first.
+    include_dirs.insert(
+        include_dirs.index(devIocStats_os) + 1,
+        devIocStats_posix
+    )
+
 # Extension with all our C code
 ext = Extension(
     name='softioc._extension',
     sources = sources,
-    include_dirs=[
-        epicscorelibs.path.include_path,
-        devIocStats_src, devIocStats_os, devIocStats_default
-    ],
+    include_dirs = include_dirs,
     dsos = [
         'epicscorelibs.lib.qsrv',
         'epicscorelibs.lib.pvAccessIOC',

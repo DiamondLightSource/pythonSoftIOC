@@ -14,6 +14,10 @@ Changed:
 
 - `Improve string representation of RecordWrapper instances <../../pull/130>`
 
+Fixed:
+
+- `Fix devIocStats by including posix headers <../../pull/134>`
+
 4.3.0_ - 2023-04-04
 -------------------
 

@@ -94,6 +94,7 @@ jobs:
         run: cibuildwheel --output-dir dist
         env:
           CIBW_BUILD: ${{ matrix.python }}*64
+          CIBW_ENVIRONMENT: PIP_VERBOSE=3 PIP_ONLY_BINARY=epicscorelibs,pvxslibs,p4p
           CIBW_TEST_EXTRAS: dev
           CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }}
           # Run with faulthandler and -s in the hope we get a stack trace on seg fault on windows...

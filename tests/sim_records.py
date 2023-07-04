@@ -63,7 +63,11 @@ def create_records():
     WaveformOut('WAVEFORM_OUT', wf, on_update = on_update)
     Waveform('WAVEFORM2', length = 10)
 
-    longStringIn('LONGSTRING', length = 256)
+    longStringOut('LONGSTRING', length = 256)
+    longStringIn(
+        'AVERYLONGRECORDSUFFIXTOMAKELONGPV',
+        initial_value="A long string that is more than 40 characters long"
+    )
 
 create_records()
 

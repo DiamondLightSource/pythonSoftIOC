@@ -14,6 +14,18 @@ record(ao, "TS-DI-TEST-01:AO")
     field(OUT,  "@TS-DI-TEST-01:AO")
 }
 
+record(waveform, "TS-DI-TEST-01:AVERYLONGRECORDSUFFIXTOMAKELONGPV")
+{
+    field(DISP, "1")
+    field(DTYP, "PythonLongStringIn")
+    field(FTVL, "CHAR")
+    field(INP,  "@TS-DI-TEST-01:AVERYLONGRECORDSUFFIXTOMAKELONGPV")
+    field(NELM, "51")
+    field(PINI, "YES")
+    field(SCAN, "I/O Intr")
+    info(Q:form, "String")
+}
+
 record(bi, "TS-DI-TEST-01:BOOLIN")
 {
     field(DISP, "1")
@@ -53,13 +65,11 @@ record(longout, "TS-DI-TEST-01:LONGOUT")
 
 record(waveform, "TS-DI-TEST-01:LONGSTRING")
 {
-    field(DISP, "1")
-    field(DTYP, "PythonLongStringIn")
-    field(FTVL, "UCHAR")
+    field(DTYP, "PythonLongStringOut")
+    field(FTVL, "CHAR")
     field(INP,  "@TS-DI-TEST-01:LONGSTRING")
     field(NELM, "256")
-    field(PINI, "YES")
-    field(SCAN, "I/O Intr")
+    info(Q:form, "String")
 }
 
 record(mbbi, "TS-DI-TEST-01:MBBI")

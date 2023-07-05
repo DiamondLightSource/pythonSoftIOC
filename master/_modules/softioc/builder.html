@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.builder &mdash; pythonSoftIOC 4.3.0+3.gc826477 documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 4.3.0+6.gdc24736 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -353,20 +353,23 @@
 
     <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;initial_value&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;_wf_nelm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
-    <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;_wf_dtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span>
+    <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;_wf_dtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;int8&#39;</span><span class="p">)</span>
 
     <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;NELM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
-    <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;FTVL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;UCHAR&#39;</span>
+    <span class="n">fields</span><span class="p">[</span><span class="s1">&#39;FTVL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CHAR&#39;</span>
 
+<span class="k">def</span> <span class="nf">qform_string</span><span class="p">(</span><span class="n">rec</span><span class="p">):</span>
+    <span class="n">rec</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s2">&quot;Q:form&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rec</span>
 
 <div class="viewcode-block" id="longStringIn"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.longStringIn">[docs]</a><span class="k">def</span> <span class="nf">longStringIn</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
     <span class="n">_long_string</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
     <span class="n">_set_in_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">long_stringin</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">qform_string</span><span class="p">(</span><span class="n">PythonDevice</span><span class="o">.</span><span class="n">long_stringin</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="longStringOut"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.longStringOut">[docs]</a><span class="k">def</span> <span class="nf">longStringOut</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
     <span class="n">_long_string</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">long_stringout</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">qform_string</span><span class="p">(</span><span class="n">PythonDevice</span><span class="o">.</span><span class="n">long_stringout</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">))</span></div>
 
 
 

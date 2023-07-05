@@ -261,20 +261,23 @@ def _long_string(fields):
 
     fields.setdefault('initial_value', '')
     fields['_wf_nelm'] = length
-    fields['_wf_dtype'] = numpy.dtype('uint8')
+    fields['_wf_dtype'] = numpy.dtype('int8')
 
     fields['NELM'] = length
-    fields['FTVL'] = 'UCHAR'
+    fields['FTVL'] = 'CHAR'
 
+def qform_string(rec):
+    rec.add_info("Q:form", "String")
+    return rec
 
 def longStringIn(name, **fields):
     _long_string(fields)
     _set_in_defaults(fields)
-    return PythonDevice.long_stringin(name, **fields)
+    return qform_string(PythonDevice.long_stringin(name, **fields))
 
 def longStringOut(name, **fields):
     _long_string(fields)
-    return PythonDevice.long_stringout(name, **fields)
+    return qform_string(PythonDevice.long_stringout(name, **fields))
 
 
 

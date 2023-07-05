@@ -52,6 +52,12 @@ async def test_asyncio_ioc(asyncio_ioc):
         from p4p.client.asyncio import Context
         with Context("pva") as ctx:
             assert await ctx.get(pre + ":AI") == 23.45
+            long_pv = pre + ":AVERYLONGRECORDSUFFIXTOMAKELONGPV"
+            long_str = "A long string that is more than 40 characters long"
+            assert await ctx.get(long_pv) == long_str
+            assert await ctx.get(long_pv + ".NAME") == long_pv
+            await ctx.put(pre + ":LONGSTRING", long_str)
+            assert await ctx.get(pre + ":LONGSTRING") == long_str
 
         conn.send("D")  # "Done"
         select_and_recv(conn, "D")  # "Done"

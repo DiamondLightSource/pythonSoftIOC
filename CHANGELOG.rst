@@ -10,9 +10,15 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Nothing yet
+
+4.4.0_ - 2023-07-06
+-------------------
+
 Changed:
 
-- `Improve string representation of RecordWrapper instances <../../pull/130>`
+- `Improve string representation of RecordWrapper instances <../../pull/130>`_
+- `Use pvxslibs as PV Acess provider for IOC <../../pull/132>`_
 
 Fixed:
 
@@ -186,7 +192,8 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 
-.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.3.0...HEAD
+.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.4.0...HEAD
+.. _4.4.0: https://github.com/dls-controls/pythonIoc/compare/4.3.0...4.4.0
 .. _4.3.0: https://github.com/dls-controls/pythonIoc/compare/4.2.0...4.3.0
 .. _4.2.0: https://github.com/dls-controls/pythonIoc/compare/4.1.0...4.2.0
 .. _4.1.0: https://github.com/dls-controls/pythonIoc/compare/4.0.2...4.1.0

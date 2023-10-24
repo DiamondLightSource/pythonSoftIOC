@@ -9,7 +9,6 @@ import sys
 from typing import Any
 import pytest
 
-# Must import softioc before epicsdbbuilder
 from softioc.builder import ClearRecords
 
 requires_cothread = pytest.mark.skipif(

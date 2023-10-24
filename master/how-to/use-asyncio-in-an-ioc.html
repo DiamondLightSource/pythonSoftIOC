@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 4.3.0+7.g07b1168 documentation</title>
+  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 4.4.0+1.gdad702c documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -97,9 +97,9 @@
            <div itemprop="articleBody">
              
   <section id="use-asyncio-in-an-ioc">
-<h1>Use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> in an IOC<a class="headerlink" href="#use-asyncio-in-an-ioc" title="Permalink to this headline"></a></h1>
+<h1>Use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> in an IOC<a class="headerlink" href="#use-asyncio-in-an-ioc" title="Permalink to this headline"></a></h1>
 <p><a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a> shows how to create a pythonSoftIOC using the
-<a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> library. This page shows how to create one using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a></p>
+<a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> library. This page shows how to create one using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a></p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="../explanations/asyncio-cothread-differences.html"><span class="doc">What are the differences between asyncio and cothread?</span></a> for the differences and why
@@ -139,7 +139,7 @@ you would use one over the other</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">dispatcher</span></code> is created and passed to <a class="reference internal" href="../reference/api.html#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref py py-func docutils literal notranslate"><span class="pre">iocInit()</span></code></a>. This is what
-allows the use of <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> functions in this IOC. It contains a new event loop to handle
+allows the use of <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> functions in this IOC. It contains a new event loop to handle
 this.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">update</span></code> function will increment the value of <code class="docutils literal notranslate"><span class="pre">ai</span></code> once per second,
 sleeping that coroutine between updates.

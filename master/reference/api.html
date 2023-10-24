@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.3.0+7.g07b1168 documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.4.0+1.gdad702c documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -124,7 +124,7 @@ in the creation of IOCs:</p>
 interactive EPICS commands are wrapped and can be made available through the
 interpreter by invoking the interpreter through this module.</p>
 </dd>
-<dt><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a></dt><dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based applications instead of the default
+<dt><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a></dt><dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based applications instead of the default
 <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> one</p>
 </dd>
 <dt><a class="reference internal" href="#module-softioc.alarm" title="softioc.alarm"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a></dt><dd><p>This module simply contains definitions for severity and alarm values taken
@@ -154,7 +154,7 @@ record fields.</p>
 </section>
 <dl class="py data">
 <dt class="sig sig-object py" id="softioc.softioc.__version__">
-<span class="sig-prename descclassname"><span class="pre">softioc.</span></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#softioc.softioc.__version__" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">softioc.</span></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#softioc.softioc.__version__" title="Permalink to this definition"></a></dt>
 <dd><p>Version number as calculated by <a class="reference external" href="https://github.com/dls-controls/versiongit">https://github.com/dls-controls/versiongit</a></p>
 </dd></dl>
 
@@ -177,7 +177,7 @@ be called in response to caput on a record. If not supplied use
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a> is a dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> applications</p>
+<p><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a> is a dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> applications</p>
 </div>
 </dd></dl>
 
@@ -213,7 +213,7 @@ IOC name. This should be called before <a class="reference internal" href="#soft
 <li><p><strong>context</strong> – A dictionary of values that will be made available to the
 interactive Python shell together with a number of EPICS test
 functions</p></li>
-<li><p><strong>call_exit</strong> – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a>, the IOC will be terminated by calling epicsExit
+<li><p><strong>call_exit</strong> – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a>, the IOC will be terminated by calling epicsExit
 which means that <a class="reference internal" href="#softioc.softioc.interactive_ioc" title="softioc.softioc.interactive_ioc"><code class="xref any py py-func docutils literal notranslate"><span class="pre">interactive_ioc</span></code></a> will not return</p></li>
 </ul>
 </dd>
@@ -425,13 +425,13 @@ terminate immediately.</p>
 
 <span class="target" id="module-softioc.asyncio_dispatcher"></span><section id="asyncio-dispatcher-softioc-asyncio-dispatcher">
 <h2>Asyncio Dispatcher: <a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a><a class="headerlink" href="#asyncio-dispatcher-softioc-asyncio-dispatcher" title="Permalink to this headline"></a></h2>
-<p>If your application uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then this module gives an alternative
+<p>If your application uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then this module gives an alternative
 dispatcher for caput requests.</p>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="softioc.asyncio_dispatcher.AsyncioDispatcher">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">softioc.asyncio_dispatcher.</span></span><span class="sig-name descname"><span class="pre">AsyncioDispatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/asyncio_dispatcher.html#AsyncioDispatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher" title="Permalink to this definition"></a></dt>
-<dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based IOCs, suitable to be passed to
+<dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based IOCs, suitable to be passed to
 <a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref any py py-func docutils literal notranslate"><span class="pre">softioc.iocInit</span></code></a>. Means that <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> callback functions can be
 async.</p>
 <p>If a <code class="docutils literal notranslate"><span class="pre">loop</span></code> is provided it must already be running. Otherwise a new
@@ -495,7 +495,7 @@ second argument after the value as the first argument.</p>
 record processing. If used this should be set to a callable taking two
 arguments.  The first argument will be the record object, and the second
 will be the new value being written.  The <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> function can reject
-the update by returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a> or accept it by returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+the update by returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a> or accept it by returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This function is called asynchronously on a thread determined by
@@ -508,16 +508,16 @@ callback.</p>
 <p>Again only on OUT records, determines whether record writes which don’t
 change the existing value are passed through.  If this field is not set then
 writing to <code class="docutils literal notranslate"><span class="pre">.PROC</span></code> will have no visible effect.</p>
-<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, in which case updates to the record
+<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, in which case updates to the record
 which don’t change its value will be discarded.  In particular this means
 that such updates don’t call <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> or <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>.</p>
 </section>
 <section id="blocking">
 <span id="id8"></span><h3><a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a><a class="headerlink" href="#blocking" title="Permalink to this headline"></a></h3>
-<p>Only available on OUT records. When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a> the record will set the
+<p>Only available on OUT records. When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a> the record will set the
 <code class="docutils literal notranslate"><span class="pre">PACT</span></code> field when processing is ongoing. This means that <code class="docutils literal notranslate"><span class="pre">caput</span></code> and
 similar tools can correctly wait for processing to complete.</p>
-<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, to retain compatibility with previous
+<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, to retain compatibility with previous
 versions.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -859,7 +859,7 @@ class which provides the methods documented below.</p>
 <a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">builder</span></code></a> methods have been used) then the record will be
 processed by EPICS and the given value will be published to all users.</p>
 <p>Optionally an explicit timestamp can be set.  This is a value in seconds
-in the Unix epoch, as returned by <a class="reference external" href="https://docs.python.org/3/library/time.html#time.time" title="(in Python v3.11)"><code class="xref py py-func docutils literal notranslate"><span class="pre">time.time()</span></code></a>.  This argument only
+in the Unix epoch, as returned by <a class="reference external" href="https://docs.python.org/3/library/time.html#time.time" title="(in Python v3.12)"><code class="xref py py-func docutils literal notranslate"><span class="pre">time.time()</span></code></a>.  This argument only
 has any effect if <code class="docutils literal notranslate"><span class="pre">TSE</span> <span class="pre">=</span> <span class="pre">-2</span></code> was set when the record was created.</p>
 <p>Note that when calling <a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn.set" title="softioc.device.ProcessDeviceSupportIn.set"><code class="xref py py-func docutils literal notranslate"><span class="pre">set()</span></code></a> for a waveform record the value is
 always copied immediately – this avoids accidents with mutable values.</p>
@@ -899,7 +899,7 @@ records support the following methods.</p>
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.set" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the value associated with the record.  By default this will
 trigger record processing, and so will cause any associated <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>
-and <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> methods to be called.  If <code class="docutils literal notranslate"><span class="pre">process</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>
+and <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> methods to be called.  If <code class="docutils literal notranslate"><span class="pre">process</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>
 then neither of these methods will be called, but the value will still
 be updated.</p>
 </dd></dl>

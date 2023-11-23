@@ -578,6 +578,27 @@ class which provides the methods documented below.
         Note that channel access puts to a Python soft IOC input record are
         completely ineffective, and this includes waveform records.
 
+    ..  method:: get_field(field)
+
+        This returns the named field from the record. An exception will be raised
+        if the field cannot be found.
+
+        Note that this function can only be used after the IOC has been initialized.
+        If you need to retrieve a field's value before that, access it directly via
+        an attribute e.g. ``my_record.EGU``. (This will not work after the IOC is
+        initialized)
+
+    ..  method:: set_field(field, value)
+
+        This sets the given field to the given value. The value will
+        always be converted to a Python String, which is then interpreted by
+        EPICS as a DBF_STRING type. Note that values can be no longer than 39 bytes.
+
+        Note that this function can only be used after the IOC has been initialized.
+        If you need to set a field's value before that, set it directly as an attribute
+        on the record e.g. ``my_record.EGU``. (This will not work after the IOC is
+        initialized)
+
 Working with OUT records
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -598,5 +619,26 @@ Working with OUT records
     ..  method:: get()
 
         Returns the value associated with the record.
+
+    ..  method:: get_field(field)
+
+        This returns the named field from the record. An exception will be raised
+        if the field cannot be found.
+
+        Note that this function can only be used after the IOC has been initialized.
+        If you need to retrieve a field's value before that, access it directly via
+        an attribute e.g. ``my_record.EGU``. (This will not work after the IOC is
+        initialized)
+
+    ..  method:: set_field(field, value)
+
+        This sets the given field to the given value. The value will
+        always be converted to a Python String, which is then interpreted by
+        EPICS as a DBF_STRING type. Note that values can be no longer than 39 bytes.
+
+        Note that this function can only be used after the IOC has been initialized.
+        If you need to set a field's value before that, set it directly as an attribute
+        on the record e.g. ``my_record.EGU``. (This will not work after the IOC is
+        initialized)
 
 .. _epics_device: https://github.com/Araneidae/epics_device

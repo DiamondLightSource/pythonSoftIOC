@@ -12,6 +12,7 @@ from .imports import (
     signal_processing_complete,
     recGblResetAlarms,
     db_put_field,
+    db_get_field,
 )
 from .device_core import DeviceSupportCore, RecordLookup
 
@@ -83,6 +84,26 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     def _write_value(self, record, value):
         record.write_val(value)
 
+    def get_field(self, field):
+        ''' Returns the given field value as a string.'''
+        assert hasattr(self, "_record"), \
+            'get_field may only be called after iocInit'
+
+        data = (c_char * 40)()
+        name = self._name + '.' + field
+        db_get_field(name, fields.DBF_STRING, addressof(data), 1)
+        return _string_at(data, 40)
+
+    def set_field(self, field, value):
+        '''Sets the given field to the given value. Value will be transported as
+        a DBF_STRING.'''
+        assert hasattr(self, "_record"), \
+            'set_field may only be called after iocInit'
+
+        data = (c_char * 40)()
+        data.value = str(value).encode() + b'\0'
+        name = self._name + '.' + field
+        db_put_field(name, fields.DBF_STRING, addressof(data), 1)
 
 class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
     _link_ = 'INP'

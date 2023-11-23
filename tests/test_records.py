@@ -904,3 +904,203 @@ class TestBlocking:
             log(f"PARENT: Join completed with exitcode {process.exitcode}")
             if process.exitcode is None:
                 pytest.fail("Process did not terminate")
+
+class TestGetSetField:
+    """Tests related to get_field and set_field on records"""
+
+    test_result_rec = "TestResult"
+
+    def test_set_field_before_init_fails(self):
+        """Test that calling set_field before iocInit() raises an exception"""
+
+        ao = builder.aOut("testAOut")
+
+        with pytest.raises(AssertionError) as e:
+            ao.set_field("EGU", "Deg")
+
+        assert "set_field may only be called after iocInit" in str(e.value)
+
+    def test_get_field_before_init_fails(self):
+        """Test that calling get_field before iocInit() raises an exception"""
+
+        ao = builder.aOut("testAOut")
+
+        with pytest.raises(AssertionError) as e:
+            ao.get_field("EGU")
+
+        assert "get_field may only be called after iocInit" in str(e.value)
+
+    def get_set_test_func(self, device_name, conn):
+        """Run an IOC and do simple get_field/set_field calls"""
+
+        builder.SetDeviceName(device_name)
+
+        lo = builder.longOut("TestLongOut", EGU="unset", DRVH=12)
+
+        # Record to indicate success/failure
+        bi = builder.boolIn(self.test_result_rec, ZNAM="FAILED", ONAM="SUCCESS")
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        conn.send("R")  # "Ready"
+
+        log("CHILD: Sent R over Connection to Parent")
+
+        # Set and then get the EGU field
+        egu = "TEST"
+        lo.set_field("EGU", egu)
+        log("CHILD: set_field successful")
+        readback_egu = lo.get_field("EGU")
+        log(f"CHILD: get_field returned {readback_egu}")
+        assert readback_egu == egu, \
+            f"EGU field was not {egu}, was {readback_egu}"
+
+        log("CHILD: assert passed")
+
+        # Test completed, report to listening camonitor
+        bi.set(True)
+
+        # Keep process alive while main thread works.
+        while (True):
+            if conn.poll(TIMEOUT):
+                val = conn.recv()
+                if val == "D":  # "Done"
+                    break
+
+        log("CHILD: Received exit command, child exiting")
+
+
+    @pytest.mark.asyncio
+    async def test_get_set(self):
+        """Test a simple set_field/get_field is successful"""
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = ctx.Process(
+            target=self.get_set_test_func,
+            args=(device_name, child_conn),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from aioca import camonitor
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            log("PARENT: received R command")
+
+            queue = asyncio.Queue()
+            record = device_name + ":" + self.test_result_rec
+            monitor = camonitor(record, queue.put)
+
+            log(f"PARENT: monitoring {record}")
+            new_val = await asyncio.wait_for(queue.get(), TIMEOUT)
+            log(f"PARENT: new_val is {new_val}")
+            assert new_val == 1, \
+                f"Test failed, value was not 1(True), was {new_val}"
+
+
+        finally:
+            monitor.close()
+            # Clear the cache before stopping the IOC stops
+            # "channel disconnected" error messages
+            aioca_cleanup()
+
+            log("PARENT: Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")
+
+    def get_set_too_long_value(self, device_name, conn):
+        """Run an IOC and deliberately call set_field with a too-long value"""
+
+        builder.SetDeviceName(device_name)
+
+        lo = builder.longOut("TestLongOut", EGU="unset", DRVH=12)
+
+        # Record to indicate success/failure
+        bi = builder.boolIn(self.test_result_rec, ZNAM="FAILED", ONAM="SUCCESS")
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        conn.send("R")  # "Ready"
+
+        log("CHILD: Sent R over Connection to Parent")
+
+        # Set a too-long value and confirm it reports an error
+        try:
+            lo.set_field("EGU", "ThisStringIsFarTooLongToFitIntoTheEguField")
+        except ValueError as e:
+            # Expected error, report success to listening camonitor
+            assert "byte string too long" in e.args[0]
+            bi.set(True)
+
+        # Keep process alive while main thread works.
+        while (True):
+            if conn.poll(TIMEOUT):
+                val = conn.recv()
+                if val == "D":  # "Done"
+                    break
+
+        log("CHILD: Received exit command, child exiting")
+
+    @pytest.mark.asyncio
+    async def test_set_too_long_value(self):
+        """Test that set_field with a too-long value raises the expected
+        error"""
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = ctx.Process(
+            target=self.get_set_too_long_value,
+            args=(device_name, child_conn),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from aioca import camonitor
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            log("PARENT: received R command")
+
+            queue = asyncio.Queue()
+            record = device_name + ":" + self.test_result_rec
+            monitor = camonitor(record, queue.put)
+
+            log(f"PARENT: monitoring {record}")
+            new_val = await asyncio.wait_for(queue.get(), TIMEOUT)
+            log(f"PARENT: new_val is {new_val}")
+            assert new_val == 1, \
+                f"Test failed, value was not 1(True), was {new_val}"
+
+        finally:
+            monitor.close()
+            # Clear the cache before stopping the IOC stops
+            # "channel disconnected" error messages
+            aioca_cleanup()
+
+            log("PARENT: Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")

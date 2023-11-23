@@ -113,6 +113,25 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+static PyObject *db_get_field(PyObject *self, PyObject *args)
+{
+    const char *name;
+    short dbrType;
+    void *pbuffer;
+    long length;
+    if (!PyArg_ParseTuple(args, "shnl", &name, &dbrType, &pbuffer, &length))
+        return NULL;
+
+    long options = 0;
+    struct dbAddr dbAddr;
+    if (dbNameToAddr(name, &dbAddr))
+        return PyErr_Format(
+            PyExc_RuntimeError, "dbNameToAddr failed for %s", name);
+    if (dbGetField(&dbAddr, dbrType, pbuffer, &options, &length, NULL))
+        return PyErr_Format(
+            PyExc_RuntimeError, "dbGetField failed for %s", name);
+    Py_RETURN_NONE;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* IOC PV put logging */
@@ -266,6 +285,8 @@ static struct PyMethodDef softioc_methods[] = {
      "Get offset, size and type for each record field"},
     {"db_put_field",  db_put_field, METH_VARARGS,
      "Put a database field to a value"},
+    {"db_get_field",  db_get_field, METH_VARARGS,
+     "Get a database field's value"},
     {"install_pv_logging",  install_pv_logging, METH_VARARGS,
      "Install caput logging to stdout"},
     {"signal_processing_complete",  signal_processing_complete, METH_VARARGS,

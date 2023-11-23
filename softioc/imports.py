@@ -23,6 +23,10 @@ def db_put_field(name, dbr_type, pbuffer, length):
     '''Put field where pbuffer is void* pointer. Returns RC'''
     return _extension.db_put_field(name, dbr_type, pbuffer, length)
 
+def db_get_field(name, dbr_type, pbuffer, length):
+    '''Get field where pbuffer is void* pointer. Returns Py_RETURN_NONE'''
+    return _extension.db_get_field(name, dbr_type, pbuffer, length)
+
 def install_pv_logging(acf_file):
     '''Install pv logging'''
     _extension.install_pv_logging(acf_file)

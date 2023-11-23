@@ -10,7 +10,7 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
-Nothing yet
+- 'Add get_field and set_field methods to records <../../pull/140>'_
 
 4.4.0_ - 2023-07-06
 -------------------

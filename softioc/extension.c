@@ -122,11 +122,12 @@ static PyObject *db_get_field(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "shnl", &name, &dbrType, &pbuffer, &length))
         return NULL;
 
-    long options = 0;
     struct dbAddr dbAddr;
     if (dbNameToAddr(name, &dbAddr))
         return PyErr_Format(
             PyExc_RuntimeError, "dbNameToAddr failed for %s", name);
+
+    long options = 0;
     if (dbGetField(&dbAddr, dbrType, pbuffer, &options, &length, NULL))
         return PyErr_Format(
             PyExc_RuntimeError, "dbGetField failed for %s", name);

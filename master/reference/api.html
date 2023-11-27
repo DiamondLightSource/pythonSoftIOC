@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.4.0+1.gdad702c documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.4.0+4.g906e058 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -125,7 +125,7 @@ interactive EPICS commands are wrapped and can be made available through the
 interpreter by invoking the interpreter through this module.</p>
 </dd>
 <dt><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a></dt><dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based applications instead of the default
-<a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> one</p>
+<a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> one</p>
 </dd>
 <dt><a class="reference internal" href="#module-softioc.alarm" title="softioc.alarm"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a></dt><dd><p>This module simply contains definitions for severity and alarm values taken
 from the EPICS <code class="docutils literal notranslate"><span class="pre">alarm.h</span></code> header file.</p>
@@ -172,7 +172,7 @@ After this point the EPICS IOC is running and serving PVs.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dispatcher</strong> – A callable with signature <code class="docutils literal notranslate"><span class="pre">dispatcher(func,</span> <span class="pre">*args)</span></code>. Will
 be called in response to caput on a record. If not supplied use
-<a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> as a dispatcher.</p>
+<a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> as a dispatcher.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -883,6 +883,29 @@ always copied immediately – this avoids accidents with mutable values.</p>
 completely ineffective, and this includes waveform records.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportIn.get_field">
+<span class="sig-name descname"><span class="pre">get_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.get_field" title="Permalink to this definition"></a></dt>
+<dd><p>This returns the named field from the record. An exception will be raised
+if the field cannot be found.</p>
+<p>Note that this function can only be used after the IOC has been initialized.
+If you need to retrieve a field’s value before that, access it directly via
+an attribute e.g. <code class="docutils literal notranslate"><span class="pre">my_record.EGU</span></code>. (This will not work after the IOC is
+initialized)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportIn.set_field">
+<span class="sig-name descname"><span class="pre">set_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.set_field" title="Permalink to this definition"></a></dt>
+<dd><p>This sets the given field to the given value. The value will
+always be converted to a Python String, which is then interpreted by
+EPICS as a DBF_STRING type. Note that values can be no longer than 39 bytes.</p>
+<p>Note that this function can only be used after the IOC has been initialized.
+If you need to set a field’s value before that, set it directly as an attribute
+on the record e.g. <code class="docutils literal notranslate"><span class="pre">my_record.EGU</span></code>. (This will not work after the IOC is
+initialized)</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -908,6 +931,29 @@ be updated.</p>
 <dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportOut.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.get" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the value associated with the record.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportOut.get_field">
+<span class="sig-name descname"><span class="pre">get_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.get_field" title="Permalink to this definition"></a></dt>
+<dd><p>This returns the named field from the record. An exception will be raised
+if the field cannot be found.</p>
+<p>Note that this function can only be used after the IOC has been initialized.
+If you need to retrieve a field’s value before that, access it directly via
+an attribute e.g. <code class="docutils literal notranslate"><span class="pre">my_record.EGU</span></code>. (This will not work after the IOC is
+initialized)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportOut.set_field">
+<span class="sig-name descname"><span class="pre">set_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.set_field" title="Permalink to this definition"></a></dt>
+<dd><p>This sets the given field to the given value. The value will
+always be converted to a Python String, which is then interpreted by
+EPICS as a DBF_STRING type. Note that values can be no longer than 39 bytes.</p>
+<p>Note that this function can only be used after the IOC has been initialized.
+If you need to set a field’s value before that, set it directly as an attribute
+on the record e.g. <code class="docutils literal notranslate"><span class="pre">my_record.EGU</span></code>. (This will not work after the IOC is
+initialized)</p>
 </dd></dl>
 
 </dd></dl>

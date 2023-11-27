@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating an IOC &mdash; pythonSoftIOC 4.4.0+1.gdad702c documentation</title>
+  <title>Creating an IOC &mdash; pythonSoftIOC 4.4.0+4.g906e058 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -142,11 +142,11 @@ with two Process Variables (PVs):</p>
 <p>The <a class="reference internal" href="../reference/api.html#module-softioc" title="softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc</span></code></a> library is part of <code class="docutils literal notranslate"><span class="pre">pythonSoftIOC</span></code>. The two submodules
 <a class="reference internal" href="../reference/api.html#module-softioc.softioc" title="softioc.softioc"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.softioc</span></code></a> and <a class="reference internal" href="../reference/api.html#module-softioc.builder" title="softioc.builder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> provide the basic
 functionality for Python soft IOCs and are the ones that are normally used.</p>
-<p><a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> is one of the two possible libraries the IOC can use for
+<p><a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> is one of the two possible libraries the IOC can use for
 asynchronous operations.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> doesn’t work on Windows or on a Mac M1. You can use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a>
+<p><a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> doesn’t work on Windows or on a Mac M1. You can use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a>
 instead by following <a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html"><span class="doc">Use asyncio in an IOC</span></a></p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ai</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">aIn</span><span class="p">(</span><span class="s1">&#39;AI&#39;</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
@@ -180,7 +180,7 @@ which must be called in this order.  After calling
 </pre></div>
 </div>
 <p>We define a long-running operation that will increment the value of <code class="docutils literal notranslate"><span class="pre">ai</span></code> once per
-second. This is run in the background by <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a>.</p>
+second. This is run in the background by <a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -189,7 +189,7 @@ needed.  The <a class="reference internal" href="../reference/api.html#softioc.s
 interpreter shell with a number of useful EPICS functions in scope, and
 passing <code class="docutils literal notranslate"><span class="pre">globals()</span></code> through can allow interactive interaction with the
 internals of the IOC while it’s running.  The alternative is to call something
-like <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#cothread.WaitForQuit" title="(in Cothread)"><code class="xref py py-func docutils literal notranslate"><span class="pre">cothread.WaitForQuit()</span></code></a> or some other <a class="reference external" href="https://cothread.readthedocs.io/en/stable/cothread.html#module-cothread" title="(in Cothread)"><code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code></a> blocking
+like <a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread.WaitForQuit" title="(in cothread vmaster)"><code class="xref py py-func docutils literal notranslate"><span class="pre">cothread.WaitForQuit()</span></code></a> or some other <a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> blocking
 action.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

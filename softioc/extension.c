@@ -107,10 +107,26 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
     if (dbNameToAddr(name, &dbAddr))
         return PyErr_Format(
             PyExc_RuntimeError, "dbNameToAddr failed for %s", name);
-    if (dbPutField(&dbAddr, dbrType, pbuffer, length))
+
+    long put_result;
+    /* There are two important locks to consider at this point: The Global
+     * Interpreter Lock (GIL) and the EPICS record lock. A deadlock is possible if
+     * this thread holds the GIL and wants the record lock (which happens inside
+     * dbPutField), and there exists another EPICS thread that has the record lock
+     * and wants to call Python (which requires the GIL).
+     * This can occur if this code is called as part of an asynchronous on_update
+     * callback.
+     * Therefore, we must ensure we relinquish the GIL while we perform this
+     * EPICS call, to avoid potential deadlocks.
+     * See https://github.com/dls-controls/pythonSoftIOC/issues/119. */
+    Py_BEGIN_ALLOW_THREADS
+    put_result = dbPutField(&dbAddr, dbrType, pbuffer, length);
+    Py_END_ALLOW_THREADS
+    if (put_result)
         return PyErr_Format(
             PyExc_RuntimeError, "dbPutField failed for %s", name);
-    Py_RETURN_NONE;
+    else
+        Py_RETURN_NONE;
 }
 
 static PyObject *db_get_field(PyObject *self, PyObject *args)
@@ -127,11 +143,17 @@ static PyObject *db_get_field(PyObject *self, PyObject *args)
         return PyErr_Format(
             PyExc_RuntimeError, "dbNameToAddr failed for %s", name);
 
+    long get_result;
     long options = 0;
-    if (dbGetField(&dbAddr, dbrType, pbuffer, &options, &length, NULL))
+    /* See reasoning for Python macros in long comment in db_put_field. */
+    Py_BEGIN_ALLOW_THREADS
+    get_result = dbGetField(&dbAddr, dbrType, pbuffer, &options, &length, NULL);
+    Py_END_ALLOW_THREADS
+    if (get_result)
         return PyErr_Format(
             PyExc_RuntimeError, "dbGetField failed for %s", name);
-    Py_RETURN_NONE;
+    else
+        Py_RETURN_NONE;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

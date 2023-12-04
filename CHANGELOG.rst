@@ -23,7 +23,7 @@ Changed:
 
 Fixed:
 
-- `Fix devIocStats by including posix headers <../../pull/134>`
+- `Fix devIocStats by including posix headers <../../pull/134>`_
 
 4.3.0_ - 2023-04-04
 -------------------

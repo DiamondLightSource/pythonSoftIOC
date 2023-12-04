@@ -11,6 +11,7 @@ Unreleased_
 -----------
 
 - 'Add get_field and set_field methods to records <../../pull/140>'_
+- 'Fix recursive set bug <../../pull/141>'_
 
 4.4.0_ - 2023-07-06
 -------------------

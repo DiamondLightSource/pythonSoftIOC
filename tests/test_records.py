@@ -1,5 +1,6 @@
 import asyncio
-import multiprocessing
+import subprocess
+import sys
 import numpy
 import os
 import pytest
@@ -346,7 +347,6 @@ def test_record_wrapper_str():
     # Wait for message that IOC has started
     # If we never receive R it probably means an assert failed
     select_and_recv(parent_conn, "R")
-
 
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
@@ -1104,3 +1104,114 @@ class TestGetSetField:
             log(f"PARENT: Join completed with exitcode {process.exitcode}")
             if process.exitcode is None:
                 pytest.fail("Process did not terminate")
+
+
+class TestRecursiveSet:
+    """Tests related to recursive set() calls. See original issue here:
+    https://github.com/dls-controls/pythonSoftIOC/issues/119"""
+
+    recursive_record_name = "RecursiveLongOut"
+
+    def recursive_set_func(self, device_name, conn):
+        from cothread import Event
+
+        def useless_callback(value):
+            log("CHILD: In callback ", value)
+            useless_pv.set(0)
+            log("CHILD: Exiting callback")
+
+        def go_away(*args):
+            log("CHILD: received exit signal ", args)
+            event.Signal()
+
+        builder.SetDeviceName(device_name)
+
+
+        useless_pv = builder.aOut(
+            self.recursive_record_name,
+            initial_value=0,
+            on_update=useless_callback
+        )
+        event = Event()
+        builder.Action("GO_AWAY", on_update = go_away)
+
+        builder.LoadDatabase()
+        softioc.iocInit()
+
+        conn.send("R")  # "Ready"
+        log("CHILD: Sent R over Connection to Parent")
+
+        log("CHILD: About to wait")
+        event.Wait()
+        log("CHILD: Exiting")
+
+    @requires_cothread
+    @pytest.mark.asyncio
+    async def test_recursive_set(self):
+        """Test that recursive sets do not cause a deadlock"""
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = ctx.Process(
+            target=self.recursive_set_func,
+            args=(device_name, child_conn),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from aioca import caput, camonitor
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+            log("PARENT: received R command")
+
+            record = device_name + ":" + self.recursive_record_name
+
+            log(f"PARENT: monitoring {record}")
+            queue = asyncio.Queue()
+            monitor = camonitor(record, queue.put, all_updates=True)
+
+            log("PARENT: Beginning first wait")
+
+            # Expected initial state
+            new_val = await asyncio.wait_for(queue.get(), TIMEOUT)
+            log(f"PARENT: initial new_val: {new_val}")
+            assert new_val == 0
+
+            # Try a series of caput calls, to maximise chance to trigger
+            # the deadlock
+            i = 1
+            while i < 500:
+                log(f"PARENT: begin loop with i={i}")
+                await caput(record, i)
+                new_val = await asyncio.wait_for(queue.get(), 1)
+                assert new_val == i
+                new_val = await asyncio.wait_for(queue.get(), 1)
+                assert new_val == 0  # .set() should reset value
+                i += 1
+
+            # Signal the IOC to cleanly shut down
+            await caput(device_name + ":" + "GO_AWAY", 1)
+
+        except asyncio.TimeoutError as e:
+            raise asyncio.TimeoutError(
+                f"IOC did not send data back - loop froze on iteration {i} "
+                "- it has probably hung/deadlocked."
+            ) from e
+
+        finally:
+            monitor.close()
+            # Clear the cache before stopping the IOC stops
+            # "channel disconnected" error messages
+            aioca_cleanup()
+
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                process.terminate()
+                pytest.fail("Process did not finish cleanly, terminating")

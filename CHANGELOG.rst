@@ -10,7 +10,15 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+4.5.0_ - 2023-12-04
+-------------------
+
+Changed:
+
 - 'Add get_field and set_field methods to records <../../pull/140>'_
+
+Fixed:
+
 - 'Fix recursive set bug <../../pull/141>'_
 
 4.4.0_ - 2023-07-06
@@ -193,7 +201,8 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 
-.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.4.0...HEAD
+.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.5.0...HEAD
+.. _4.5.0: https://github.com/dls-controls/pythonIoc/compare/4.4.0...4.5.0
 .. _4.4.0: https://github.com/dls-controls/pythonIoc/compare/4.3.0...4.4.0
 .. _4.3.0: https://github.com/dls-controls/pythonIoc/compare/4.2.0...4.3.0
 .. _4.2.0: https://github.com/dls-controls/pythonIoc/compare/4.1.0...4.2.0

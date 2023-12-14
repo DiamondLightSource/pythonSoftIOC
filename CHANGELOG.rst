@@ -10,6 +10,11 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Fixed:
+
+- `Update to work with pvsxlibs 1.3.0 <../../pull/146>`_
+
+
 4.5.0_ - 2023-12-04
 -------------------
 

@@ -98,9 +98,12 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
 {
     const char *name;
     short dbrType;
-    void *pbuffer;
+    PyObject *buffer_ptr;
     long length;
-    if (!PyArg_ParseTuple(args, "shnl", &name, &dbrType, &pbuffer, &length))
+    if (!PyArg_ParseTuple(args, "shOl", &name, &dbrType, &buffer_ptr, &length))
+        return NULL;
+    void *pbuffer = PyLong_AsVoidPtr(buffer_ptr);
+    if (!pbuffer)
         return NULL;
 
     struct dbAddr dbAddr;
@@ -133,9 +136,12 @@ static PyObject *db_get_field(PyObject *self, PyObject *args)
 {
     const char *name;
     short dbrType;
-    void *pbuffer;
+    PyObject *buffer_ptr;
     long length;
-    if (!PyArg_ParseTuple(args, "shnl", &name, &dbrType, &pbuffer, &length))
+    if (!PyArg_ParseTuple(args, "shOl", &name, &dbrType, &buffer_ptr, &length))
+        return NULL;
+    void *pbuffer = PyLong_AsVoidPtr(buffer_ptr);
+    if (!pbuffer)
         return NULL;
 
     struct dbAddr dbAddr;

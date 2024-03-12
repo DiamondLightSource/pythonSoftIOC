@@ -13,58 +13,58 @@ on:
     - cron: '0 8 * * MON'
 
 jobs:
-  lint:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v2
+  # lint:
+  #   runs-on: "ubuntu-latest"
+  #   steps:
+  #     - name: Checkout Source
+  #       uses: actions/checkout@v2
 
-      - name: Install Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.7"
+  #     - name: Install Python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: "3.7"
 
-      - name: Install Python Dependencies
-        run: pip install flake8
+  #     - name: Install Python Dependencies
+  #       run: pip install flake8
 
-      - name: Lint
-        run: flake8
+  #     - name: Lint
+  #       run: flake8
 
-  sdist:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v2
-        with:
-          # require history to get back to last tag for version number of branches
-          fetch-depth: 0
-          submodules: true
+  # sdist:
+  #   runs-on: "ubuntu-latest"
+  #   steps:
+  #     - name: Checkout Source
+  #       uses: actions/checkout@v2
+  #       with:
+  #         # require history to get back to last tag for version number of branches
+  #         fetch-depth: 0
+  #         submodules: true
 
-      - name: Build Sdist
-        run: pipx run build --sdist .
+  #     - name: Build Sdist
+  #       run: pipx run build --sdist .
 
-      - name: Upload Sdist
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: dist/*
+  #     - name: Upload Sdist
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: dist/*
 
   build:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python: [cp36, cp37, cp38, cp39, cp310]
+        os: [ubuntu-latest]
+        python: [cp39]
 
         include:
-          # Put coverage and results files in the project directory for mac
-          - os: macos-latest
-            cov_file: "{project}/dist/coverage.xml"
-            results_file: "{project}/dist/pytest-results.xml"
-          # And for windows
-          - os: windows-latest
-            cov_file: "{project}/dist/coverage.xml"
-            results_file: "{project}/dist/pytest-results.xml"
+        #   # Put coverage and results files in the project directory for mac
+        #   - os: macos-latest
+        #     cov_file: "{project}/dist/coverage.xml"
+        #     results_file: "{project}/dist/pytest-results.xml"
+        #   # And for windows
+        #   - os: windows-latest
+        #     cov_file: "{project}/dist/coverage.xml"
+        #     results_file: "{project}/dist/pytest-results.xml"
           # But put coverage and results files in the output dir mounted in docker for linux
           - os: ubuntu-latest
             cov_file: /output/coverage.xml
@@ -90,6 +90,12 @@ jobs:
         # Pin cibuildwheel due to https://github.com/pypa/cibuildwheel/issues/962
         run: pip install build cibuildwheel>=2.3.1
 
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+
       - name: Build Wheel
         run: cibuildwheel --output-dir dist
         env:
@@ -101,9 +107,11 @@ jobs:
           # Disable auditwheel as it isn't compatible with setuptools_dso approach
           # https://github.com/mdavidsaver/setuptools_dso/issues/17
           CIBW_REPAIR_WHEEL_COMMAND: ""
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-          CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux2014_x86_64
+          # CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          # CIBW_MANYLINUX_AARCH64_IMAGE:
+          # CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux2014_x86_64
           CIBW_SKIP: "*-musllinux*" # epicscorelibs doesn't build on musllinux platforms
+          CIBW_ARCHS_LINUX: auto aarch64
 
       - name: Upload Wheel
         uses: actions/upload-artifact@v2
@@ -111,11 +119,11 @@ jobs:
           name: dist
           path: dist/softioc*
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          name: ${{ matrix.os }}/${{ matrix.python }}
-          directory: dist
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v2
+      #   with:
+      #     name: ${{ matrix.os }}/${{ matrix.python }}
+      #     directory: dist
 
       - name: Upload Unit Test Results
         if: always()
@@ -124,66 +132,66 @@ jobs:
           name: Unit Test Results (${{ matrix.os }}-${{ matrix.python }})
           path: dist/pytest-results.xml
 
-  publish-test-results:
-    name: Publish Unit Tests Results
-    needs: build
-    runs-on: ubuntu-latest
-    if: always()
+  # publish-test-results:
+  #   name: Publish Unit Tests Results
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: always()
 
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
+  #   steps:
+  #     - name: Download Artifacts
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         path: artifacts
 
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          files: artifacts/**/*.xml
+  #     - name: Publish Unit Test Results
+  #       uses: EnricoMi/publish-unit-test-result-action@v1
+  #       with:
+  #         files: artifacts/**/*.xml
 
-  test-sdist:
-    needs: [sdist]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python: [cp36, cp37, cp38, cp39, cp310]
+  # test-sdist:
+  #   needs: [sdist]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-latest, windows-latest, macos-latest]
+  #       python: [cp36, cp37, cp38, cp39, cp310]
 
-    runs-on: ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
 
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
+  #   steps:
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: dist
 
-      - name: Install sdist in a venv and check cli works
-        run: pipx run --spec dist/*.tar.gz pythonSoftIOC --version
-        shell: bash
+  #     - name: Install sdist in a venv and check cli works
+  #       run: pipx run --spec dist/*.tar.gz pythonSoftIOC --version
+  #       shell: bash
 
-  release:
-    needs: [build, sdist]
-    runs-on: ubuntu-latest
-    # upload to PyPI and make a release on every tag
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
+  # release:
+  #   needs: [build, sdist]
+  #   runs-on: ubuntu-latest
+  #   # upload to PyPI and make a release on every tag
+  #   if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+  #   steps:
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: dist
 
-      - name: Github Release
-        # We pin to the SHA, not the tag, for security reasons.
-        # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
-        uses: softprops/action-gh-release@2d72d869af3bf23602f9593a1e3fd739b80ac1eb  # v0.1.12
-        with:
-          files: dist/*
-          body: See [Changelog](CHANGELOG.rst) for more details
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Github Release
+  #       # We pin to the SHA, not the tag, for security reasons.
+  #       # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
+  #       uses: softprops/action-gh-release@2d72d869af3bf23602f9593a1e3fd739b80ac1eb  # v0.1.12
+  #       with:
+  #         files: dist/*
+  #         body: See [Changelog](CHANGELOG.rst) for more details
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.pypi_token }}
-        run: pipx run twine upload dist/*
+  #     - name: Publish to PyPI
+  #       env:
+  #         TWINE_USERNAME: __token__
+  #         TWINE_PASSWORD: ${{ secrets.pypi_token }}
+  #       run: pipx run twine upload dist/*

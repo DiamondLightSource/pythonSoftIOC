@@ -113,11 +113,11 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
 
     long put_result;
     /* There are two important locks to consider at this point: The Global
-     * Interpreter Lock (GIL) and the EPICS record lock. A deadlock is possible if
-     * this thread holds the GIL and wants the record lock (which happens inside
-     * dbPutField), and there exists another EPICS thread that has the record lock
-     * and wants to call Python (which requires the GIL).
-     * This can occur if this code is called as part of an asynchronous on_update
+     * Interpreter Lock (GIL) and the EPICS record lock. A deadlock is possible
+     * if this thread holds the GIL and wants the record lock (which happens
+     * inside dbPutField), and there exists another EPICS thread that has the
+     * record lock and wants to call Python (which requires the GIL).  This can
+     * occur if this code is called as part of an asynchronous on_update
      * callback.
      * Therefore, we must ensure we relinquish the GIL while we perform this
      * EPICS call, to avoid potential deadlocks.

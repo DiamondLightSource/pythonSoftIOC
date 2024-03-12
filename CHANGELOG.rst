@@ -10,6 +10,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Fixed:
+
+- `Fix conversion of ctypes pointers passed to C extension <../../pull/154>`_
+
 4.5.0_ - 2023-12-04
 -------------------
 

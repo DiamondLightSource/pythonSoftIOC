@@ -10,6 +10,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Changed:
+
+- `AsyncioDispatcher cleanup tasks atexit <../../pull/138>`_
+
 Fixed:
 
 - `Fix conversion of ctypes pointers passed to C extension <../../pull/154>`_

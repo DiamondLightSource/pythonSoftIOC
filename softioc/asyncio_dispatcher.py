@@ -20,9 +20,10 @@ class AsyncioDispatcher:
             # will wait until worker is executing the new loop
             started = threading.Event()
             # Make one and run it in a background thread
-            self.__worker = threading.Thread(target=asyncio.run,
-                                             args=(self.__inloop(started),),
-                                             kwargs={'debug': debug})
+            self.__worker = threading.Thread(
+                target=asyncio.run,
+                args=(self.__inloop(started),),
+                kwargs={'debug': debug})
             # Explicitly manage worker thread as part of interpreter shutdown.
             # Otherwise threading module will deadlock trying to join()
             # before our atexit hook runs, while the loop is still running.

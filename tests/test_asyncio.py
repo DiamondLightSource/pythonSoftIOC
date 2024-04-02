@@ -4,9 +4,14 @@ import sys
 
 from multiprocessing.connection import Listener
 
-from conftest import requires_cothread, ADDRESS, select_and_recv
+from conftest import (
+    ADDRESS, select_and_recv,
+    log, get_multiprocessing_context, TIMEOUT,
+    create_random_prefix
+    )
 
 from softioc.asyncio_dispatcher import AsyncioDispatcher
+from softioc import builder, softioc
 
 @pytest.mark.asyncio
 async def test_asyncio_ioc(asyncio_ioc):
@@ -131,3 +136,73 @@ def test_asyncio_dispatcher_event_loop():
     event_loop = asyncio.get_event_loop()
     with pytest.raises(ValueError):
         AsyncioDispatcher(loop=event_loop)
+
+def asyncio_dispatcher_test_func(device_name, child_conn):
+
+    log("CHILD: Child started")
+
+    builder.SetDeviceName(device_name)
+
+
+    with AsyncioDispatcher() as dispatcher:
+        # Create some records
+        ai = builder.aIn('AI', initial_value=5)
+        builder.aOut('AO', initial_value=12.45, always_update=True,
+                     on_update=lambda v: ai.set(v))
+
+        # Boilerplate get the IOC started
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        # Start processes required to be run after iocInit
+        async def update():
+            while True:
+                ai.set(ai.get() + 1)
+                await asyncio.sleep(0.01)
+
+        dispatcher(update)
+
+        log("CHILD: Sending Ready")
+        child_conn.send("R")
+
+        # Keep process alive while main thread runs CAGET
+        if child_conn.poll(TIMEOUT):
+            val = child_conn.recv()
+            assert val == "D", "Did not receive expected Done character"
+
+
+async def test_asyncio_dispatcher_as_context_manager():
+    """Test that the asyncio dispatcher can be used as a context manager"""
+    ctx = get_multiprocessing_context()
+    parent_conn, child_conn = ctx.Pipe()
+
+    device_name = create_random_prefix()
+
+    process = ctx.Process(
+        target=asyncio_dispatcher_test_func,
+        args=(device_name, child_conn),
+    )
+
+    process.start()
+
+    log("PARENT: Child started, waiting for R command")
+
+    from aioca import caget
+    try:
+        # Wait for message that IOC has started
+        select_and_recv(parent_conn, "R")
+
+        # ao_val = await caget(device_name + ":AO")
+        ao_val = await caget(device_name + ":AO")
+        assert ao_val == 12.45
+
+        # Confirm the value of the AI record is increasing
+        ai_val_1 = await caget(device_name + ":AI")
+        await asyncio.sleep(1)
+        ai_val_2 = await caget(device_name + ":AI")
+        assert ai_val_2 > ai_val_1
+
+    finally:
+        parent_conn.send("D")  # "Done"
+        process.join(timeout=TIMEOUT)
+        assert process.exitcode == 0  # clean exit

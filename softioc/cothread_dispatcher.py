@@ -19,6 +19,8 @@ class CothreadDispatcher:
         else:
             self.__dispatcher = dispatcher
 
+        self.wait_for_quit = cothread.WaitForQuit
+
     def __call__(
             self,
             func,

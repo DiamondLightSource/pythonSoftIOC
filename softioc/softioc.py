@@ -352,3 +352,17 @@ def interactive_ioc(context = {}, call_exit = True):
 
     if call_exit:
         safeEpicsExit(0)
+
+def non_interactive_ioc():
+    '''Launches IOC in non-interactive mode for background use
+
+    When used with a service manager, use python's -u option or the environment
+    variable PYTHONUNBUFFERED=TRUE.
+    This ensures that python output, i.e. stdoute and stderr streams, is sent
+    directly to the terminal.
+    '''
+    if device.dispatcher:
+        device.dispatcher.wait_for_quit()
+        safeEpicsExit(0)
+    else:
+        print("No dispatcher found")

@@ -3,6 +3,7 @@ import inspect
 import logging
 import threading
 import atexit
+import signal
 
 class AsyncioDispatcher:
     def __init__(self, loop=None, debug=False):
@@ -47,6 +48,23 @@ class AsyncioDispatcher:
             self.__atexit = None
 
         self.__shutdown()
+    
+    def wait_for_quit(self):
+
+        stop_event = threading.Event()
+
+        # Signal end of loop
+        async def stop_loop():
+            stop_event.set()
+
+        def signal_exit():
+            asyncio.run_coroutine_threadsafe(stop_loop(), self.loop)
+
+        # Configure signal handlers to call signal_exit
+        for sig in ('SIGINT', 'SIGTERM'):
+            self.loop.add_signal_handler(getattr(signal, sig), signal_exit)
+
+        stop_event.wait()
 
     async def __inloop(self, started):
         self.loop = asyncio.get_running_loop()

@@ -10,6 +10,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Removed:
+
+- `Remove python3.6 support <../../pull/138>`_
+
 Changed:
 
 - `AsyncioDispatcher cleanup tasks atexit <../../pull/138>`_

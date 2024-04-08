@@ -137,7 +137,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         return self._epics_rc_
 
     def set(self, value,
-            severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM, timestamp=None):
+            severity=alarm.NO_ALARM, alarm=alarm.NO_ALARM, timestamp=None):
         '''Updates the stored value and triggers an update.  The alarm
         severity and timestamp can also be specified if appropriate.'''
         value = self._value_to_epics(value)
@@ -177,14 +177,16 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         if 'initial_value' in kargs:
             value = self._value_to_epics(kargs.pop('initial_value'))
-            initial_alarm = alarm.NO_ALARM
+            initial_severity = alarm.NO_ALARM
+            initial_status = alarm.NO_ALARM
         else:
             value = None
             # To maintain backwards compatibility, if there is no initial value
             # we mark the record as invalid
-            initial_alarm = alarm.INVALID_ALARM
+            initial_severity = alarm.INVALID_ALARM
+            initial_status = alarm.UDF_ALARM
 
-        self._value = (value, initial_alarm, alarm.UDF_ALARM)
+        self._value = (value, initial_severity, initial_status)
 
         self._blocking = kargs.pop('blocking', blocking)
         if self._blocking:
@@ -274,7 +276,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
 
     def set(self, value, process=True,
-            severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM):
+            severity=alarm.NO_ALARM, alarm=alarm.NO_ALARM):
         '''Special routine to set the value directly.'''
         value = self._value_to_epics(value)
         try:

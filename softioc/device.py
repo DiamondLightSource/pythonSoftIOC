@@ -180,7 +180,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             initial_severity = alarm.NO_ALARM
             initial_status = alarm.NO_ALARM
         else:
-            value = None
+            value = self._default_value()
             # To maintain backwards compatibility, if there is no initial value
             # we mark the record as invalid
             initial_severity = alarm.INVALID_ALARM
@@ -198,11 +198,6 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         '''Special record initialisation for out records only: implements
         special record initialisation if an initial value has been specified,
         allowing out records to have a sensible initial value.'''
-        if self._value[0] is None:
-            # Cannot set in __init__ (like we do for In records), as we want
-            # the record alarm status to be set if no value was provided
-            value = self._default_value()
-            self._value = (value, self._value[1], self._value[2])
 
         self._write_value(record, self._value[0])
         if 'MLST' in self._fields_:

@@ -454,9 +454,10 @@ starting the IOC.
     Alarm Value Definitions: `softioc.alarm`
     ----------------------------------------
 
-
 The following values can be passed to IN record :meth:`~softioc.device.ProcessDeviceSupportIn.set` and
-:meth:`~softioc.device.ProcessDeviceSupportIn.set_alarm` methods.
+:meth:`~softioc.device.ProcessDeviceSupportIn.set_alarm` methods, and to OUT record
+:meth:`~softioc.device.ProcessDeviceSupportOut.set` and
+:meth:`~softioc.device.ProcessDeviceSupportOut.set_alarm`.
 
 ..  attribute::
         NO_ALARM = 0
@@ -608,13 +609,21 @@ Working with OUT records
     ``ao``, ``bo``, ``longout``, ``mbbo`` and OUT ``waveform`` records.  All OUT
     records support the following methods.
 
-    ..  method:: set(value, process=True)
+    ..  method:: set(value, process=True, severity=NO_ALARM, alarm=UDF_ALARM)
 
-        Updates the value associated with the record.  By default this will
+        Updates the stored value and severity status.  By default this will
         trigger record processing, and so will cause any associated `on_update`
         and `validate` methods to be called.  If ``process`` is `False`
         then neither of these methods will be called, but the value will still
         be updated.
+
+    ..  method:: set_alarm(severity, alarm)
+
+        This is exactly equivalent to calling::
+
+            rec.set(rec.get(), severity=severity, alarm=alarm)
+
+        and triggers an alarm status change without changing the value.
 
     ..  method:: get()
 

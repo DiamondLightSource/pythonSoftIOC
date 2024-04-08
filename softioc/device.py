@@ -176,9 +176,15 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         self.__enable_write = True
 
         if 'initial_value' in kargs:
-            self._value = self._value_to_epics(kargs.pop('initial_value'))
+            value = self._value_to_epics(kargs.pop('initial_value'))
+            initial_alarm = alarm.NO_ALARM
         else:
-            self._value = None
+            value = None
+            # To maintain backwards compatibility, if there is no initial value
+            # we mark the record as invalid
+            initial_alarm = alarm.INVALID_ALARM
+
+        self._value = (value, initial_alarm, alarm.UDF_ALARM)
 
         self._blocking = kargs.pop('blocking', blocking)
         if self._blocking:
@@ -190,18 +196,22 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         '''Special record initialisation for out records only: implements
         special record initialisation if an initial value has been specified,
         allowing out records to have a sensible initial value.'''
-        if self._value is None:
+        if self._value[0] is None:
             # Cannot set in __init__ (like we do for In records), as we want
             # the record alarm status to be set if no value was provided
-            # Probably related to PythonSoftIOC issue #53
-            self._value = self._default_value()
-        else:
-            self._write_value(record, self._value)
-            if 'MLST' in self._fields_:
-                record.MLST = self._value
-            record.TIME = time.time()
-            record.UDF = 0
-            recGblResetAlarms(record)
+            value = self._default_value()
+            self._value = (value, self._value[1], self._value[2])
+
+        self._write_value(record, self._value[0])
+        if 'MLST' in self._fields_:
+            record.MLST = self._value[0]
+
+        record.TIME = time.time()
+
+        record.UDF = 0
+        record.NSEV = self._value[1]
+        record.NSTA = self._value[2]
+        recGblResetAlarms(record)
         return self._epics_rc_
 
     def __completion(self, record):
@@ -216,9 +226,14 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if record.PACT:
             return EPICS_OK
 
+        # Ignore memoized value, retrieve it from the VAL field directly later
+        _, severity, alarm = self._value
+
+        self.process_severity(record, severity, alarm)
+
         value = self._read_value(record)
         if not self.__always_update and \
-                self._compare_values(value, self._value):
+                self._compare_values(value, self._value[0]):
             # If the value isn't making a change then don't do anything.
             return EPICS_OK
 
@@ -227,11 +242,11 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
                 not self.__validate(self, python_value):
             # Asynchronous validation rejects value, so restore the last good
             # value.
-            self._write_value(record, self._value)
+            self._write_value(record, self._value[0])
             return EPICS_ERROR
         else:
             # Value is good.  Hang onto it, let users know the value has changed
-            self._value = value
+            self._value = (value, severity, alarm)
             record.UDF = 0
             if self.__on_update and self.__enable_write:
                 record.PACT = self._blocking
@@ -248,15 +263,26 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         return self._dbf_type_, 1, addressof(value), value
 
 
-    def set(self, value, process=True):
+    def set_alarm(self, severity, alarm):
+        '''Updates the alarm status without changing the stored value.  An
+        update is triggered, and a timestamp can optionally be specified.'''
+        self._value = (self._value[0], severity, alarm)
+        self.set(
+            self.get(),
+            severity=severity,
+            alarm=alarm)
+
+
+    def set(self, value, process=True,
+            severity=alarm.NO_ALARM, alarm=alarm.UDF_ALARM):
         '''Special routine to set the value directly.'''
         value = self._value_to_epics(value)
         try:
             _record = self._record
         except AttributeError:
-            # Record not initialised yet.  Record the value for when
+            # Record not initialised yet. Record data for when
             # initialisation occurs
-            self._value = value
+            self._value = (value, severity, alarm)
         else:
             # The array parameter is used to keep the raw pointer alive
             dbf_code, length, data, array = self._value_to_dbr(value)
@@ -265,11 +291,11 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self.__enable_write = True
 
     def get(self):
-        if self._value is None:
+        if self._value[0] is None:
             # Before startup complete if no value set return default value
             value = self._default_value()
         else:
-            value = self._value
+            value = self._value[0]
         return self._epics_to_value(value)
 
 

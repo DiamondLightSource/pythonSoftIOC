@@ -10,6 +10,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Added:
+- `Enable setting alarm status of Out records <../../pull/157>`_
+
 Removed:
 
 - `Remove python3.6 support <../../pull/138>`_

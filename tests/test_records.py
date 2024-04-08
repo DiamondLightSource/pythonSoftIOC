@@ -1,9 +1,8 @@
 import asyncio
-import subprocess
-import sys
 import numpy
 import os
 import pytest
+from enum import Enum
 
 from conftest import (
     aioca_cleanup,
@@ -16,8 +15,8 @@ from conftest import (
     get_multiprocessing_context
 )
 
-from softioc import asyncio_dispatcher, builder, softioc
-from softioc import alarm
+from softioc import alarm, asyncio_dispatcher, builder, softioc
+from softioc.builder import ClearRecords
 from softioc.device import SetBlocking
 from softioc.device_core import LookupRecord, LookupRecordList
 
@@ -33,12 +32,14 @@ in_records = [
     builder.mbbIn,
     builder.stringIn,
     builder.WaveformIn,
+    builder.longStringIn,
 ]
 
 def test_records(tmp_path):
     # Ensure we definitely unload all records that may be hanging over from
     # previous tests, then create exactly one instance of expected records.
     from sim_records import create_records
+    ClearRecords()
     create_records()
 
     path = str(tmp_path / "records.db")
@@ -1215,3 +1216,112 @@ class TestRecursiveSet:
             if process.exitcode is None:
                 process.terminate()
                 pytest.fail("Process did not finish cleanly, terminating")
+
+class TestAlarms:
+    """Tests related to record alarm status"""
+
+    # Record creation function and associated PV name
+    records = [
+        (builder.aIn, "AI_AlarmPV"),
+        (builder.boolIn, "BI_AlarmPV"),
+        (builder.longIn, "LI_AlarmPV"),
+        (builder.mbbIn, "MBBI_AlarmPV"),
+        (builder.stringIn, "SI_AlarmPV"),
+        (builder.WaveformIn, "WI_AlarmPV"),
+        (builder.longStringIn, "LSI_AlarmPV"),
+        (builder.aOut, "AO_AlarmPV"),
+        (builder.boolOut, "BO_AlarmPV"),
+        (builder.longOut, "LO_AlarmPV"),
+        (builder.stringOut, "SO_AlarmPV"),
+        (builder.mbbOut, "MBBO_AlarmPV"),
+        (builder.WaveformOut, "WO_AlarmPV"),
+        (builder.longStringOut, "LSO_AlarmPV"),
+    ]
+
+    severity = alarm.INVALID_ALARM
+    status = alarm.DISABLE_ALARM
+
+    class SetEnum(Enum):
+        """Enum to specify when set_alarm should be called"""
+        PRE_INIT = 0
+        POST_INIT = 1
+
+    def alarm_test_func(self, device_name, conn, set_enum: SetEnum):
+        builder.SetDeviceName(device_name)
+
+        pvs = []
+        for record_func, name in self.records:
+            kwargs = {}
+            if record_func in [builder.WaveformOut, builder.WaveformIn]:
+                kwargs["length"] = WAVEFORM_LENGTH
+
+            pvs.append(record_func(name, **kwargs))
+
+        if set_enum == self.SetEnum.PRE_INIT:
+            log("CHILD: Setting alarm before init")
+            for pv in pvs:
+                pv.set_alarm(self.severity, self.status)
+
+        builder.LoadDatabase()
+        softioc.iocInit()
+
+        if set_enum == self.SetEnum.POST_INIT:
+            log("CHILD: Setting alarm after init")
+            for pv in pvs:
+                pv.set_alarm(self.severity, self.status)
+
+        conn.send("R")  # "Ready"
+        log("CHILD: Sent R over Connection to Parent")
+
+        # Keep process alive while main thread works.
+        while (True):
+            if conn.poll(TIMEOUT):
+                val = conn.recv()
+                if val == "D":  # "Done"
+                    break
+
+
+    @requires_cothread
+    @pytest.mark.parametrize("set_enum", [SetEnum.PRE_INIT, SetEnum.POST_INIT])
+    def test_set_alarm_severity_status(self, set_enum):
+        """Test that set_alarm function allows setting severity and status"""
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = ctx.Process(
+            target=self.alarm_test_func,
+            args=(device_name, child_conn, set_enum),
+        )
+
+        process.start()
+
+        from cothread.catools import caget, _channel_cache, FORMAT_CTRL
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            for _, name in self.records:
+
+                ret_val = caget(
+                    device_name + ":" + name,
+                    timeout=TIMEOUT,
+                    format=FORMAT_CTRL
+                )
+
+                assert ret_val.severity == self.severity, \
+                    f"Severity mismatch for record {name}"
+                assert ret_val.status == self.status, \
+                    f"Status mismatch for record {name}"
+
+
+        finally:
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)

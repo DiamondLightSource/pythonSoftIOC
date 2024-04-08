@@ -5,6 +5,7 @@ MAJOR_ALARM = 2
 INVALID_ALARM = 3
 
 # Some alarm code definitions taken from EPICS alarm.h
+# NO_ALARM = 0
 READ_ALARM = 1
 WRITE_ALARM = 2
 HIHI_ALARM = 3

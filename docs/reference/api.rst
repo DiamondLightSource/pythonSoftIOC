@@ -550,7 +550,7 @@ class which provides the methods documented below.
     This class is used to implement Python device support for the record types
     ``ai``, ``bi``, ``longin``, ``mbbi`` and IN ``waveform`` records.
 
-    ..  method:: set(value, severity=NO_ALARM, alarm=UDF_ALARM, timestamp=None)
+    ..  method:: set(value, severity=NO_ALARM, alarm=NO_ALARM, timestamp=None)
 
         Updates the stored value and severity status and triggers an update.  If
         ``SCAN`` has been set to ``'I/O Intr'`` (which is the default if the
@@ -609,7 +609,7 @@ Working with OUT records
     ``ao``, ``bo``, ``longout``, ``mbbo`` and OUT ``waveform`` records.  All OUT
     records support the following methods.
 
-    ..  method:: set(value, process=True, severity=NO_ALARM, alarm=UDF_ALARM)
+    ..  method:: set(value, process=True, severity=NO_ALARM, alarm=NO_ALARM)
 
         Updates the stored value and severity status.  By default this will
         trigger record processing, and so will cause any associated `on_update`

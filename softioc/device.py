@@ -223,12 +223,11 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if record.PACT:
             return EPICS_OK
 
-        # Ignore memoized value, retrieve it from the VAL field directly later
+        # Ignore memoized value, retrieve it from the VAL field instead
+        value = self._read_value(record)
         _, severity, alarm = self._value
-
         self.process_severity(record, severity, alarm)
 
-        value = self._read_value(record)
         if not self.__always_update and \
                 self._compare_values(value, self._value[0]):
             # If the value isn't making a change then don't do anything.
@@ -288,12 +287,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             self.__enable_write = True
 
     def get(self):
-        if self._value[0] is None:
-            # Before startup complete if no value set return default value
-            value = self._default_value()
-        else:
-            value = self._value[0]
-        return self._epics_to_value(value)
+        return self._epics_to_value(self._value[0])
 
 
 def _Device(Base, record_type, ctype, dbf_type, epics_rc, mlst = False):

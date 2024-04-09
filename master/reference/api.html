@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.5.0+10.g7babcde documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.5.0+15.g4388c69 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -748,7 +748,9 @@ function has been called none of the functions provided by
 <h2>Alarm Value Definitions: <a class="reference internal" href="#module-softioc.alarm" title="softioc.alarm"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a><a class="headerlink" href="#alarm-value-definitions-softioc-alarm" title="Permalink to this headline"></a></h2>
 </section>
 <p>The following values can be passed to IN record <a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn.set" title="softioc.device.ProcessDeviceSupportIn.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> and
-<a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn.set_alarm" title="softioc.device.ProcessDeviceSupportIn.set_alarm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_alarm()</span></code></a> methods.</p>
+<a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn.set_alarm" title="softioc.device.ProcessDeviceSupportIn.set_alarm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_alarm()</span></code></a> methods, and to OUT record
+<a class="reference internal" href="#softioc.device.ProcessDeviceSupportOut.set" title="softioc.device.ProcessDeviceSupportOut.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> and
+<a class="reference internal" href="#softioc.device.ProcessDeviceSupportOut.set_alarm" title="softioc.device.ProcessDeviceSupportOut.set_alarm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_alarm()</span></code></a>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">NO_ALARM</span> <span class="pre">=</span> <span class="pre">0</span></span></dt>
@@ -855,7 +857,7 @@ class which provides the methods documented below.</p>
 <code class="docutils literal notranslate"><span class="pre">ai</span></code>, <code class="docutils literal notranslate"><span class="pre">bi</span></code>, <code class="docutils literal notranslate"><span class="pre">longin</span></code>, <code class="docutils literal notranslate"><span class="pre">mbbi</span></code> and IN <code class="docutils literal notranslate"><span class="pre">waveform</span></code> records.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportIn.set">
-<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">UDF_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.set" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportIn.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportIn.set" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the stored value and severity status and triggers an update.  If
 <code class="docutils literal notranslate"><span class="pre">SCAN</span></code> has been set to <code class="docutils literal notranslate"><span class="pre">'I/O</span> <span class="pre">Intr'</span></code> (which is the default if the
 <a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">builder</span></code></a> methods have been used) then the record will be
@@ -921,12 +923,22 @@ initialized)</p>
 records support the following methods.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportOut.set">
-<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.set" title="Permalink to this definition"></a></dt>
-<dd><p>Updates the value associated with the record.  By default this will
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.set" title="Permalink to this definition"></a></dt>
+<dd><p>Updates the stored value and severity status.  By default this will
 trigger record processing, and so will cause any associated <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>
 and <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> methods to be called.  If <code class="docutils literal notranslate"><span class="pre">process</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>
 then neither of these methods will be called, but the value will still
 be updated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="softioc.device.ProcessDeviceSupportOut.set_alarm">
+<span class="sig-name descname"><span class="pre">set_alarm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">severity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.set_alarm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.set_alarm" title="Permalink to this definition"></a></dt>
+<dd><p>This is exactly equivalent to calling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rec</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">severity</span><span class="o">=</span><span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="o">=</span><span class="n">alarm</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and triggers an alarm status change without changing the value.</p>
 </dd></dl>
 
 <dl class="py method">

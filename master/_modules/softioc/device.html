@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.device &mdash; pythonSoftIOC 4.5.0+10.g7babcde documentation</title>
+  <title>softioc.device &mdash; pythonSoftIOC 4.5.0+15.g4388c69 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -229,7 +229,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epics_rc_</span>
 
 <div class="viewcode-block" id="ProcessDeviceSupportIn.set"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.ProcessDeviceSupportIn.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span>
-            <span class="n">severity</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">,</span> <span class="n">alarm</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">UDF_ALARM</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">severity</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">,</span> <span class="n">alarm</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Updates the stored value and triggers an update.  The alarm</span>
 <span class="sd">        severity and timestamp can also be specified if appropriate.&#39;&#39;&#39;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_to_epics</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -268,9 +268,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="s1">&#39;initial_value&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_to_epics</span><span class="p">(</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;initial_value&#39;</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_to_epics</span><span class="p">(</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;initial_value&#39;</span><span class="p">))</span>
+            <span class="n">initial_severity</span> <span class="o">=</span> <span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span>
+            <span class="n">initial_status</span> <span class="o">=</span> <span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_value</span><span class="p">()</span>
+            <span class="c1"># To maintain backwards compatibility, if there is no initial value</span>
+            <span class="c1"># we mark the record as invalid</span>
+            <span class="n">initial_severity</span> <span class="o">=</span> <span class="n">alarm</span><span class="o">.</span><span class="n">INVALID_ALARM</span>
+            <span class="n">initial_status</span> <span class="o">=</span> <span class="n">alarm</span><span class="o">.</span><span class="n">UDF_ALARM</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">initial_severity</span><span class="p">,</span> <span class="n">initial_status</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_blocking</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;blocking&#39;</span><span class="p">,</span> <span class="n">blocking</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blocking</span><span class="p">:</span>
@@ -282,18 +290,17 @@
         <span class="sd">&#39;&#39;&#39;Special record initialisation for out records only: implements</span>
 <span class="sd">        special record initialisation if an initial value has been specified,</span>
 <span class="sd">        allowing out records to have a sensible initial value.&#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Cannot set in __init__ (like we do for In records), as we want</span>
-            <span class="c1"># the record alarm status to be set if no value was provided</span>
-            <span class="c1"># Probably related to PythonSoftIOC issue #53</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_value</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_write_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s1">&#39;MLST&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields_</span><span class="p">:</span>
-                <span class="n">record</span><span class="o">.</span><span class="n">MLST</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
-            <span class="n">record</span><span class="o">.</span><span class="n">TIME</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="n">record</span><span class="o">.</span><span class="n">UDF</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">recGblResetAlarms</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;MLST&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields_</span><span class="p">:</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">MLST</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">record</span><span class="o">.</span><span class="n">TIME</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">record</span><span class="o">.</span><span class="n">UDF</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">NSEV</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">NSTA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">recGblResetAlarms</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epics_rc_</span>
 
     <span class="k">def</span> <span class="nf">__completion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
@@ -308,9 +315,13 @@
         <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">PACT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">EPICS_OK</span>
 
+        <span class="c1"># Ignore memoized value, retrieve it from the VAL field instead</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_value</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_severity</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__always_update</span> <span class="ow">and</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">_compare_values</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_compare_values</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="c1"># If the value isn&#39;t making a change then don&#39;t do anything.</span>
             <span class="k">return</span> <span class="n">EPICS_OK</span>
 
@@ -319,11 +330,11 @@
                 <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_value</span><span class="p">):</span>
             <span class="c1"># Asynchronous validation rejects value, so restore the last good</span>
             <span class="c1"># value.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_write_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">EPICS_ERROR</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Value is good.  Hang onto it, let users know the value has changed</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">)</span>
             <span class="n">record</span><span class="o">.</span><span class="n">UDF</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__on_update</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span><span class="p">:</span>
                 <span class="n">record</span><span class="o">.</span><span class="n">PACT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blocking</span>
@@ -340,15 +351,26 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dbf_type_</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">addressof</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">value</span>
 
 
-<div class="viewcode-block" id="ProcessDeviceSupportOut.set"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.ProcessDeviceSupportOut.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessDeviceSupportOut.set_alarm"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.ProcessDeviceSupportOut.set_alarm">[docs]</a>    <span class="k">def</span> <span class="nf">set_alarm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Updates the alarm status without changing the stored value.  An</span>
+<span class="sd">        update is triggered, and a timestamp can optionally be specified.&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span>
+            <span class="n">severity</span><span class="o">=</span><span class="n">severity</span><span class="p">,</span>
+            <span class="n">alarm</span><span class="o">=</span><span class="n">alarm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ProcessDeviceSupportOut.set"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.ProcessDeviceSupportOut.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">severity</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">,</span> <span class="n">alarm</span><span class="o">=</span><span class="n">alarm</span><span class="o">.</span><span class="n">NO_ALARM</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Special routine to set the value directly.&#39;&#39;&#39;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_to_epics</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">_record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="c1"># Record not initialised yet.  Record the value for when</span>
+            <span class="c1"># Record not initialised yet. Record data for when</span>
             <span class="c1"># initialisation occurs</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># The array parameter is used to keep the raw pointer alive</span>
             <span class="n">dbf_code</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_to_dbr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -357,12 +379,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__enable_write</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="ProcessDeviceSupportOut.get"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.ProcessDeviceSupportOut.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Before startup complete if no value set return default value</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_value</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epics_to_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epics_to_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div></div>
 
 
 <span class="k">def</span> <span class="nf">_Device</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">record_type</span><span class="p">,</span> <span class="n">ctype</span><span class="p">,</span> <span class="n">dbf_type</span><span class="p">,</span> <span class="n">epics_rc</span><span class="p">,</span> <span class="n">mlst</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>

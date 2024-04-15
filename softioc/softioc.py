@@ -358,7 +358,7 @@ def non_interactive_ioc():
 
     When used with a service manager, use python's -u option or the environment
     variable PYTHONUNBUFFERED=TRUE.
-    This ensures that python output, i.e. stdoute and stderr streams, is sent
+    This ensures that python output, i.e. stdout and stderr streams, is sent
     directly to the terminal.
     '''
     if device.dispatcher:

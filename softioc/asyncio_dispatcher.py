@@ -50,7 +50,6 @@ class AsyncioDispatcher:
         self.__shutdown()
     
     def wait_for_quit(self):
-
         async_stop_event = asyncio.Event()
         stop_event = threading.Event()
 
@@ -61,9 +60,9 @@ class AsyncioDispatcher:
             await async_stop_event.wait()
             stop_event.set()
 
-        for sig in ('SIGINT', 'SIGTERM'):
-            signal.signal(getattr(signal, sig), lambda signum, frame: signal_exit())
-
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            signal.signal(sig, lambda signum, frame: signal_exit())
+            
         asyncio.run_coroutine_threadsafe(async_signal_exit(), self.loop)
 
         stop_event.wait()

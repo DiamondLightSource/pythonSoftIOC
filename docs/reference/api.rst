@@ -120,6 +120,12 @@ Test Facilities`_ documentation for more details of each function.
 ..  autofunction:: generalTimeReport
 ..  autofunction:: eltc
 
+.. autofunction:: non_interactive_ioc
+
+When used with a service manager, use python's -u option or the environment
+variable PYTHONUNBUFFERED=TRUE. This ensures that python output, i.e. stdout
+and stderr streams, is sent directly to the terminal.
+
 ..  attribute:: exit
 
     Displaying this value will invoke ``epicsExit()`` causing the IOC to

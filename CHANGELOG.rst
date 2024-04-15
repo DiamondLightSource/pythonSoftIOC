@@ -11,7 +11,9 @@ Unreleased_
 -----------
 
 Added:
+
 - `Enable setting alarm status of Out records <../../pull/157>`_
+- `Adding the non_interactive_ioc function <../../pull/156>`_
 
 Removed:
 

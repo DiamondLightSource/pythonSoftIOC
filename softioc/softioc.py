@@ -354,15 +354,10 @@ def interactive_ioc(context = {}, call_exit = True):
         safeEpicsExit(0)
 
 def non_interactive_ioc():
-    '''Launches IOC in non-interactive mode for background use
-
-    When used with a service manager, use python's -u option or the environment
-    variable PYTHONUNBUFFERED=TRUE.
-    This ensures that python output, i.e. stdout and stderr streams, is sent
-    directly to the terminal.
+    '''Function to run the IOC in non-interactive mode. This mode is useful for
+    running the IOC as a background process without user interaction.
+    This function expects a stop signal. When it receives one, the IOC stops.
     '''
-    if device.dispatcher:
-        device.dispatcher.wait_for_quit()
-        safeEpicsExit(0)
-    else:
-        print("No dispatcher found")
+    device.dispatcher.wait_for_quit()
+    safeEpicsExit(0)
+

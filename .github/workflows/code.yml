@@ -53,8 +53,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python: [cp37, cp38, cp39, cp310]
+        os: [ubuntu-latest, windows-latest, macos-13]
+        python: [cp37, cp38, cp39, cp310, cp311, cp312]
 
         exclude:
           # MacOS 14.4.1 for arm64 doesn't support Python < 3.8
@@ -156,7 +156,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-13]
         python: [cp37, cp38, cp39, cp310]
 
     runs-on: ${{ matrix.os }}

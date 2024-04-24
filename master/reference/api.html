@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.5.0+15.g4388c69 documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.5.0+16.g3947494 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -416,6 +416,17 @@ level 1 it also shows the current time as obtained from each provider.</p>
 and any other value means yes.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="softioc.softioc.non_interactive_ioc">
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">non_interactive_ioc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#non_interactive_ioc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.non_interactive_ioc" title="Permalink to this definition"></a></dt>
+<dd><p>Function to run the IOC in non-interactive mode. This mode is useful for
+running the IOC as a background process without user interaction.
+This function expects a stop signal. When it receives one, the IOC stops.</p>
+</dd></dl>
+
+<p>When used with a service manager, use python’s -u option or the environment
+variable PYTHONUNBUFFERED=TRUE. This ensures that python output, i.e. stdout
+and stderr streams, is sent directly to the terminal.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="softioc.softioc.exit">
 <span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">exit</span></span><a class="headerlink" href="#softioc.softioc.exit" title="Permalink to this definition"></a></dt>

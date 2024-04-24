@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.softioc &mdash; pythonSoftIOC 4.5.0+15.g4388c69 documentation</title>
+  <title>softioc.softioc &mdash; pythonSoftIOC 4.5.0+16.g3947494 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -444,6 +444,15 @@
 
     <span class="k">if</span> <span class="n">call_exit</span><span class="p">:</span>
         <span class="n">safeEpicsExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="non_interactive_ioc"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.non_interactive_ioc">[docs]</a><span class="k">def</span> <span class="nf">non_interactive_ioc</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;Function to run the IOC in non-interactive mode. This mode is useful for</span>
+<span class="sd">    running the IOC as a background process without user interaction.</span>
+<span class="sd">    This function expects a stop signal. When it receives one, the IOC stops.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">device</span><span class="o">.</span><span class="n">dispatcher</span><span class="o">.</span><span class="n">wait_for_quit</span><span class="p">()</span>
+    <span class="n">safeEpicsExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

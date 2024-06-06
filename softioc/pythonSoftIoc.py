@@ -89,8 +89,9 @@ class PythonDevice(object):
     @classmethod
     def __init_class__(cls):
         for name in [
-                'ai', 'bi', 'longin',  'mbbi', 'stringin',
-                'ao', 'bo', 'longout', 'mbbo', 'stringout', 'waveform']:
+                'ai', 'bi', 'longin',  'mbbi', 'stringin', 'int64in',
+                'ao', 'bo', 'longout', 'mbbo', 'stringout', 'int64out',
+                'waveform']:
             builder = getattr(epicsdbbuilder.records, name)
             record = getattr(device, name)
             setattr(cls, name, cls.makeRecord(builder, record))

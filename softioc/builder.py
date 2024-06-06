@@ -78,6 +78,17 @@ def longOut(name, DRVL=None, DRVH=None, EGU=None, **fields):
     _set_scalar_out_defaults(fields, DRVL, DRVH)
     return PythonDevice.longout(name, EGU = EGU, **fields)
 
+def int64In(name, LOPR=None, HOPR=None, EGU=None, **fields):
+    _set_in_defaults(fields)
+    fields.setdefault('MDEL', -1)
+    return PythonDevice.int64in(
+        name, LOPR = LOPR, HOPR = HOPR, EGU = EGU, **fields)
+
+def int64Out(name, DRVL=None, DRVH=None, EGU=None, **fields):
+    _set_out_defaults(fields)
+    _set_scalar_out_defaults(fields, DRVL, DRVH)
+    return PythonDevice.int64out(name, EGU = EGU, **fields)
+
 
 # Field name prefixes for mbbi/mbbo records.
 _mbbPrefixes = [

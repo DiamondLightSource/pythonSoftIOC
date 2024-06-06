@@ -316,6 +316,8 @@ def _Device_Out(*args, **kargs):
 
 longin = _Device_In('longin', c_int32, fields.DBF_LONG, EPICS_OK)
 longout = _Device_Out('longout', c_int32, fields.DBF_LONG, EPICS_OK)
+int64in = _Device_In('int64in', c_int64, fields.DBF_INT64, EPICS_OK)
+int64out = _Device_Out('int64out', c_int64, fields.DBF_INT64, EPICS_OK)
 bi = _Device_In('bi', c_uint16, fields.DBF_CHAR, NO_CONVERT)
 bo = _Device_Out('bo', c_uint16, fields.DBF_CHAR, NO_CONVERT)
 mbbi = _Device_In('mbbi', c_uint16, fields.DBF_SHORT, NO_CONVERT)

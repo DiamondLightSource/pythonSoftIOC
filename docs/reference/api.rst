@@ -155,7 +155,7 @@ and stderr streams, is sent directly to the terminal.
     but note that only the following records types have direct support from this
     module:
 
-        ai, ao, bi, bo, longin, longout, mbbi, mbbo, stringin, stringout, waveform
+        ai, ao, bi, bo, int64in, int64out, longin, longout, mbbi, mbbo, stringin, stringout, waveform
 
     The following methods create records of the corresponding type.  For all records
     the `initial_value` parameter can be used to specify an initial value for the
@@ -284,6 +284,15 @@ All functions return a wrapped `ProcessDeviceSupportIn` or
 
     Create ``bi`` and ``bo`` records with the specified names for false (zero)
     and true (one).
+
+..  function::
+        int64In(name, LOPR=None, HOPR=None, EGU=None, **fields)
+        int64Out(name, DRVL=None, DRVH=None, EGU=None, **fields)
+
+    Create ``int64In`` and ``int64Out`` records with specified limits and units.
+    The lower and upper display limits for the record can be specified.  For
+    ``int64Out`` records the ``LOPR`` and ``HOPR`` fields will be set by default
+    to the values of the ``DRVL`` and ``DRVH`` fields respectively.
 
 ..  function::
         longIn(name, LOPR=None, HOPR=None, EGU=None, **fields)
@@ -532,15 +541,17 @@ Create IN records (used for publishing data *from* the IOC, the naming of the
 direction is confusing) using the following `softioc.builder` methods:
 
     :func:`~softioc.builder.aIn`, :func:`~softioc.builder.boolIn`,
-    :func:`~softioc.builder.longIn`, :func:`~softioc.builder.stringIn`,
-    :func:`~softioc.builder.mbbIn`, :func:`~softioc.builder.WaveformIn`.
+    :func:`~softioc.builder.int64In` :func:`~softioc.builder.longIn`,
+    :func:`~softioc.builder.stringIn`, :func:`~softioc.builder.mbbIn`,
+    :func:`~softioc.builder.WaveformIn`.
 
 Create OUT records for receiving control information into the IOC using the
 following methods:
 
     :func:`~softioc.builder.aOut`, :func:`~softioc.builder.boolOut`,
-    :func:`~softioc.builder.longOut`, :func:`~softioc.builder.stringOut`,
-    :func:`~softioc.builder.mbbOut`, :func:`~softioc.builder.WaveformOut`.
+    :func:`~softioc.builder.int64Out`, :func:`~softioc.builder.longOut`,
+    :func:`~softioc.builder.stringOut`, :func:`~softioc.builder.mbbOut`,
+    :func:`~softioc.builder.WaveformOut`.
 
 For all records the `initial_value` keyword argument can be used to specify the
 records value on startup.
@@ -554,7 +565,7 @@ class which provides the methods documented below.
 ..  class:: ProcessDeviceSupportIn
 
     This class is used to implement Python device support for the record types
-    ``ai``, ``bi``, ``longin``, ``mbbi`` and IN ``waveform`` records.
+    ``ai``, ``bi``, ``int64in``, ``longin``, ``mbbi`` and IN ``waveform`` records.
 
     ..  method:: set(value, severity=NO_ALARM, alarm=NO_ALARM, timestamp=None)
 

@@ -32,7 +32,7 @@ static void set_dict_item_steal(
 
 /* Alas, EPICS has changed the numerical assignments of the DBF_ enums between
  * versions, so to avoid unpleasant surprises, we compute thes values here in C
- * and pass them back to the Python layer. */
+ * and pass them back to the Python layer. Order matches dbFldTypes.h. */
 static PyObject *get_DBF_values(PyObject *self, PyObject *args)
 {
     PyObject *dict = PyDict_New();
@@ -43,6 +43,8 @@ static PyObject *get_DBF_values(PyObject *self, PyObject *args)
     ADD_ENUM(dict, DBF_USHORT);
     ADD_ENUM(dict, DBF_LONG);
     ADD_ENUM(dict, DBF_ULONG);
+    ADD_ENUM(dict, DBF_INT64);
+    ADD_ENUM(dict, DBF_UINT64);
     ADD_ENUM(dict, DBF_FLOAT);
     ADD_ENUM(dict, DBF_DOUBLE);
     ADD_ENUM(dict, DBF_ENUM);

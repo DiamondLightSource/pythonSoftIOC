@@ -1,5 +1,7 @@
 device(longin,    INST_IO, devPython_longin,    "Python")
 device(longout,   INST_IO, devPython_longout,   "Python")
+device(int64in,   INST_IO, devPython_int64in,   "Python")
+device(int64out,  INST_IO, devPython_int64out,  "Python")
 device(ai,        INST_IO, devPython_ai,        "Python")
 device(ao,        INST_IO, devPython_ao,        "Python")
 device(bi,        INST_IO, devPython_bi,        "Python")

@@ -1,4 +1,3 @@
-import multiprocessing
 from typing import List
 import numpy
 import pytest
@@ -12,7 +11,8 @@ from conftest import (
     log,
     select_and_recv,
     TIMEOUT,
-    get_multiprocessing_context
+    get_multiprocessing_context,
+    in_records,
 )
 
 from softioc import asyncio_dispatcher, builder, softioc
@@ -54,6 +54,8 @@ def record_func_names(fixture_value):
         builder.WaveformOut,
         builder.longStringIn,
         builder.longStringOut,
+        builder.int64In,
+        builder.int64Out,
     ],
     ids=record_func_names,
 )
@@ -61,16 +63,6 @@ def record_func(request):
     """The list of record creation functions"""
     return request.param
 
-# A list of all In records, used to filter out various tests
-in_records = [
-    builder.aIn,
-    builder.boolIn,
-    builder.longIn,
-    builder.mbbIn,
-    builder.stringIn,
-    builder.WaveformIn,
-    builder.longStringIn,
-]
 
 def record_values_names(fixture_value):
     """Provide a nice name for the tests in the record_values fixture"""
@@ -96,6 +88,8 @@ record_values_list = [
     ("aOut_nan", builder.aOut, nan, nan, float),
     ("longIn_int", builder.longIn, 5, 5, int),
     ("longOut_int", builder.longOut, 5, 5, int),
+    ("int64In_int", builder.int64In, 65, 65, int),
+    ("int64Out_int", builder.int64Out, 65, 65, int),
     ("boolIn_int", builder.boolIn, 1, 1, int),
     ("boolOut_int", builder.boolOut, 1, 1, int),
     ("boolIn_true", builder.boolIn, True, 1, int),
@@ -737,6 +731,8 @@ default_values_list = [
     ("default_aIn", builder.aIn, None, 0.0, float),
     ("default_longOut", builder.longOut, None, 0, int),
     ("default_longIn", builder.longIn, None, 0, int),
+    ("default_int64Out", builder.int64Out, None, 0, int),
+    ("default_int64In", builder.int64In, None, 0, int),
     ("default_boolOut", builder.boolOut, None, 0, int),
     ("default_boolIn", builder.boolIn, None, 0, int),
     ("default_Action", builder.Action, None, 0, int),
@@ -761,6 +757,8 @@ class TestDefaultValue:
             (builder.aIn, 0.0, float),
             (builder.longOut, 0, int),
             (builder.longIn, 0, int),
+            (builder.int64Out, 0, int),
+            (builder.int64In, 0, int),
             (builder.boolOut, 0, int),
             (builder.boolIn, 0, int),
             (builder.Action, 0, int),

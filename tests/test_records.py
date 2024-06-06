@@ -12,7 +12,8 @@ from conftest import (
     WAVEFORM_LENGTH,
     TIMEOUT,
     select_and_recv,
-    get_multiprocessing_context
+    get_multiprocessing_context,
+    in_records
 )
 
 from softioc import alarm, asyncio_dispatcher, builder, softioc
@@ -24,16 +25,6 @@ from softioc.device_core import LookupRecord, LookupRecordList
 
 # Test parameters
 DEVICE_NAME = "RECORD-TESTS"
-
-in_records = [
-    builder.aIn,
-    builder.boolIn,
-    builder.longIn,
-    builder.mbbIn,
-    builder.stringIn,
-    builder.WaveformIn,
-    builder.longStringIn,
-]
 
 def test_records(tmp_path):
     # Ensure we definitely unload all records that may be hanging over from
@@ -362,6 +353,7 @@ class TestValidate:
             (builder.boolOut, 1, 0),
             (builder.Action, 1, 0),
             (builder.longOut, 7, 0),
+            (builder.int64Out, 54, 0),
             (builder.stringOut, "HI", ""),
             (builder.mbbOut, 2, 0),
             (builder.WaveformOut, [10, 11, 12], []),
@@ -504,6 +496,7 @@ class TestOnUpdate:
             builder.boolOut,
             # builder.Action, This is just boolOut + always_update
             builder.longOut,
+            builder.int64Out,
             builder.stringOut,
             builder.mbbOut,
             builder.WaveformOut,
@@ -1224,6 +1217,7 @@ class TestAlarms:
     records = [
         (builder.aIn, "AI_AlarmPV"),
         (builder.boolIn, "BI_AlarmPV"),
+        (builder.int64Out, "I64I_AlarmPV"),
         (builder.longIn, "LI_AlarmPV"),
         (builder.mbbIn, "MBBI_AlarmPV"),
         (builder.stringIn, "SI_AlarmPV"),
@@ -1231,6 +1225,7 @@ class TestAlarms:
         (builder.longStringIn, "LSI_AlarmPV"),
         (builder.aOut, "AO_AlarmPV"),
         (builder.boolOut, "BO_AlarmPV"),
+        (builder.int64Out, "I64O_AlarmPV"),
         (builder.longOut, "LO_AlarmPV"),
         (builder.stringOut, "SO_AlarmPV"),
         (builder.mbbOut, "MBBO_AlarmPV"),

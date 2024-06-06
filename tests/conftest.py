@@ -9,7 +9,19 @@ import sys
 from typing import Any
 import pytest
 
+from softioc import builder
 from softioc.builder import ClearRecords
+
+in_records = [
+    builder.aIn,
+    builder.boolIn,
+    builder.longIn,
+    builder.int64In,
+    builder.mbbIn,
+    builder.stringIn,
+    builder.WaveformIn,
+    builder.longStringIn,
+]
 
 requires_cothread = pytest.mark.skipif(
     sys.platform.startswith("win"), reason="Cothread doesn't work on windows"

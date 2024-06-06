@@ -2,10 +2,9 @@
 
 from __future__ import print_function
 
-import sys
 from ctypes import *
 from .imports import get_field_offsets, get_DBF_values
-import numpy
+
 
 from epicscorelibs.ca.dbr import *
 from epicscorelibs.ca.dbr import ca_timestamp, EPICS_epoch
@@ -32,6 +31,8 @@ DbfCodeToCtypes = {
     DBF_SHORT: c_int16,
     DBF_USHORT: c_uint16,
     DBF_LONG: c_int32,
+    DBF_INT64: c_int64,
+    DBF_UINT64: c_uint64,  # TODO: Check whether this has same issue as below note
     DBF_ULONG: c_int32,    # Should be uint32, but causes trouble later.
     DBF_FLOAT: c_float,
     DBF_DOUBLE: c_double,
@@ -50,6 +51,8 @@ DbrToDbfCode = {
     DBR_ENUM: DBF_ENUM,
     DBR_CHAR: DBF_CHAR,
     DBR_LONG: DBF_LONG,
+    # DBR_INT64: DBF_INT64,  # TODO: the DBR_ definitions come from epicscorelibs.ca.dbr, but they don't define the 64 versions
+    # DBR_UINT64: DBF_UINT64,
     DBR_DOUBLE: DBF_DOUBLE
 }
 

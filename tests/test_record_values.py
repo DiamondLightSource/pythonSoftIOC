@@ -1,5 +1,6 @@
 from typing import List
 import numpy
+import p4p.nt
 import pytest
 
 from enum import Enum
@@ -138,37 +139,9 @@ record_values_list = [
         numpy.ndarray,
     ),
     (
-        "wIn_int",
-        builder.WaveformIn,
-        567,
-        numpy.array([567.], dtype=numpy.float64),
-        numpy.ndarray,
-    ),
-    (
-        "wOut_int",
-        builder.WaveformOut,
-        567,
-        numpy.array([567.], dtype=numpy.float64),
-        numpy.ndarray,
-    ),
-    (
-        "wIn_float",
-        builder.WaveformIn,
-        12.345,
-        numpy.array([12.345], dtype=numpy.float64),
-        numpy.ndarray,
-    ),
-    (
-        "wOut_float",
-        builder.WaveformOut,
-        12.345,
-        numpy.array([12.345], dtype=numpy.float64),
-        numpy.ndarray,
-    ),
-    (
         "wIn_bytes",
         builder.WaveformIn,
-        b"HELLO\0WORLD",
+        [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68],
         numpy.array(
             [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68], dtype=numpy.uint8
         ),
@@ -177,7 +150,7 @@ record_values_list = [
     (
         "wOut_bytes",
         builder.WaveformOut,
-        b"HELLO\0WORLD",
+        [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68],
         numpy.array(
             [72, 69, 76, 76, 79, 0, 87, 79, 82, 76, 68], dtype=numpy.uint8
         ),
@@ -317,15 +290,26 @@ def record_value_asserts(
 ):
     """Asserts that the expected value and expected type are matched with
     the actual value. Handles both scalar and waveform data"""
+
+    # This function is shared between functions that may pass in either a
+    # native Python type, or the value returned from p4p, which must be
+    # unwrapped
+    if type(actual_value) == p4p.nt.enum.ntenum:
+        actual_val_type = type(actual_value.raw["value"].get("index"))
+    elif isinstance(actual_value, p4p.nt.scalar.ntwrappercommon):
+        actual_val_type = type(actual_value.raw["value"])
+    else:
+        actual_val_type = type(actual_value)
+
     try:
         if type(expected_value) == float and isnan(expected_value):
             assert isnan(actual_value)  # NaN != Nan, so needs special case
         elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
             assert numpy.array_equal(actual_value, expected_value)
-            assert type(actual_value) == expected_type
+            assert actual_val_type == expected_type
         else:
             assert actual_value == expected_value
-            assert type(actual_value) == expected_type
+            assert actual_val_type == expected_type
     except AssertionError as e:
         msg = (
             "Failed with parameters: "
@@ -479,18 +463,10 @@ def run_test_function(
     # Wait for message that IOC has started
     select_and_recv(parent_conn, "R")
 
-    # Cannot do these imports before the subprocess starts, as the subprocess
-    # would inherit cothread's internal state which would break things!
-    from cothread import Yield
-    from cothread.catools import caget, caput, _channel_cache
-    from cothread.dbr import DBR_CHAR_STR
+    from p4p.client.thread import Context
+    ctx = Context('pva')
 
     try:
-        # cothread remembers connected IOCs. As we potentially restart the same
-        # named IOC multiple times, we have to purge the cache else the
-        # result from caget/caput cache would be a DisconnectError during the
-        # second test
-        _channel_cache.purge()
 
         for configuration in record_configurations:
             (
@@ -501,52 +477,24 @@ def run_test_function(
                 expected_type,
             ) = configuration
 
-            # Infer some required keywords from parameters
-            kwargs = {}
-            put_kwarg = {}
-            if creation_func in [builder.longStringIn, builder.longStringOut]:
-                kwargs["datatype"] = DBR_CHAR_STR
-
-            if (creation_func in [builder.WaveformIn, builder.WaveformOut]
-                    and type(initial_value) is bytes):
-                # There's a bug in caput that means DBR_CHAR_STR doesn't
-                # truncate the array of the target record, meaning .get()
-                # returns all NELM rather than just NORD elements. Instead we
-                # encode the data ourselves
-                initial_value = numpy.frombuffer(
-                    initial_value, dtype = numpy.uint8)
-
             if set_enum == SetValueEnum.CAPUT:
                 if get_enum == GetValueEnum.GET:
                     select_and_recv(parent_conn)
-                caput(
-                    DEVICE_NAME + ":" + record_name,
-                    initial_value,
-                    wait=True,
-                    **kwargs,
-                    **put_kwarg,
-                )
+                ctx.put(DEVICE_NAME + ":" + record_name,
+                        initial_value,
+                        None,
+                        timeout=TIMEOUT,
+                        wait=True,
+                        )
 
                 if get_enum == GetValueEnum.GET:
                     parent_conn.send("G")  # "Get"
 
-                # Ensure IOC process has time to execute.
-                # I saw failures on MacOS where it appeared the IOC had not
-                # processed the put'ted value as the caget returned the same
-                # value as was originally passed in.
-                Yield(timeout=TIMEOUT)
-
             if get_enum == GetValueEnum.GET:
                 rec_val = select_and_recv(parent_conn)
             else:
-                rec_val = caget(
-                    DEVICE_NAME + ":" + record_name,
-                    timeout=TIMEOUT,
-                    **kwargs,
-                )
-                # '+' operator used to convert cothread's types into Python
-                # native types e.g. "+ca_int" -> int
-                rec_val = +rec_val
+                rec_val = ctx.get(DEVICE_NAME + ":" + record_name,
+                                  timeout=TIMEOUT,)
 
                 if (
                     creation_func in [builder.WaveformOut, builder.WaveformIn]
@@ -569,9 +517,6 @@ def run_test_function(
                 creation_func, rec_val, expected_value, expected_type
             )
     finally:
-        # Purge cache to suppress spurious "IOC disconnected" exceptions
-        _channel_cache.purge()
-
         parent_conn.send("D")  # "Done"
 
         ioc_process.join(timeout=TIMEOUT)

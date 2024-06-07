@@ -623,7 +623,7 @@ Working with OUT records
 ..  class:: ProcessDeviceSupportOut
 
     This class is used to implement Python device support for the record types
-    ``ao``, ``bo``, ``longout``, ``mbbo`` and OUT ``waveform`` records.  All OUT
+    ``ao``, ``bo``, ``int64out``, ``longout``, ``mbbo`` and OUT ``waveform`` records.  All OUT
     records support the following methods.
 
     ..  method:: set(value, process=True, severity=NO_ALARM, alarm=NO_ALARM)

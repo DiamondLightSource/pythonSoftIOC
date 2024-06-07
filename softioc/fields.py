@@ -32,7 +32,7 @@ DbfCodeToCtypes = {
     DBF_USHORT: c_uint16,
     DBF_LONG: c_int32,
     DBF_INT64: c_int64,
-    DBF_UINT64: c_uint64,  # TODO: Check whether this has same issue as below note
+    DBF_UINT64: c_uint64,
     DBF_ULONG: c_int32,    # Should be uint32, but causes trouble later.
     DBF_FLOAT: c_float,
     DBF_DOUBLE: c_double,

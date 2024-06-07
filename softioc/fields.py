@@ -43,19 +43,6 @@ DbfCodeToCtypes = {
     DBF_NOACCESS: c_void_p,
 }
 
-# Mapping from basic DBR_ codes to DBF_ values
-DbrToDbfCode = {
-    DBR_STRING: DBF_STRING,
-    DBR_SHORT: DBF_SHORT,
-    DBR_FLOAT: DBF_FLOAT,
-    DBR_ENUM: DBF_ENUM,
-    DBR_CHAR: DBF_CHAR,
-    DBR_LONG: DBF_LONG,
-    # DBR_INT64: DBF_INT64,  # TODO: the DBR_ definitions come from epicscorelibs.ca.dbr, but they don't define the 64 versions
-    # DBR_UINT64: DBF_UINT64,
-    DBR_DOUBLE: DBF_DOUBLE
-}
-
 
 class RecordFactory(object):
     def __init__(self, record_type, fields):

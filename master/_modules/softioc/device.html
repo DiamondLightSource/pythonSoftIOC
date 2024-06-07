@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.device &mdash; pythonSoftIOC 4.5.0+16.g4bbc933 documentation</title>
+  <title>softioc.device &mdash; pythonSoftIOC 4.5.0+21.gd38df9b documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -408,6 +408,8 @@
 
 <span class="n">longin</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;longin&#39;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">,</span> <span class="n">fields</span><span class="o">.</span><span class="n">DBF_LONG</span><span class="p">,</span> <span class="n">EPICS_OK</span><span class="p">)</span>
 <span class="n">longout</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;longout&#39;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">,</span> <span class="n">fields</span><span class="o">.</span><span class="n">DBF_LONG</span><span class="p">,</span> <span class="n">EPICS_OK</span><span class="p">)</span>
+<span class="n">int64in</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;int64in&#39;</span><span class="p">,</span> <span class="n">c_int64</span><span class="p">,</span> <span class="n">fields</span><span class="o">.</span><span class="n">DBF_INT64</span><span class="p">,</span> <span class="n">EPICS_OK</span><span class="p">)</span>
+<span class="n">int64out</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;int64out&#39;</span><span class="p">,</span> <span class="n">c_int64</span><span class="p">,</span> <span class="n">fields</span><span class="o">.</span><span class="n">DBF_INT64</span><span class="p">,</span> <span class="n">EPICS_OK</span><span class="p">)</span>
 <span class="n">bi</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;bi&#39;</span><span class="p">,</span> <span class="n">c_uint16</span><span class="p">,</span> <span class="n">fields</span><span class="o">.</span><span class="n">DBF_CHAR</span><span class="p">,</span> <span class="n">NO_CONVERT</span><span class="p">)</span>
 <span class="n">bo</span> <span class="o">=</span> <span class="n">_Device_Out</span><span class="p">(</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">c_uint16</span><span class="p">,</span> <span class="n">fields</span><span class="o">.</span><span class="n">DBF_CHAR</span><span class="p">,</span> <span class="n">NO_CONVERT</span><span class="p">)</span>
 <span class="n">mbbi</span> <span class="o">=</span> <span class="n">_Device_In</span><span class="p">(</span><span class="s1">&#39;mbbi&#39;</span><span class="p">,</span> <span class="n">c_uint16</span><span class="p">,</span> <span class="n">fields</span><span class="o">.</span><span class="n">DBF_SHORT</span><span class="p">,</span> <span class="n">NO_CONVERT</span><span class="p">)</span>

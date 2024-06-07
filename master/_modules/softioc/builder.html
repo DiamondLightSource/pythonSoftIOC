@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.builder &mdash; pythonSoftIOC 4.5.0+16.g4bbc933 documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 4.5.0+21.gd38df9b documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -169,6 +169,17 @@
     <span class="n">_set_out_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
     <span class="n">_set_scalar_out_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">DRVL</span><span class="p">,</span> <span class="n">DRVH</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">longout</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">EGU</span> <span class="o">=</span> <span class="n">EGU</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="int64In"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.int64In">[docs]</a><span class="k">def</span> <span class="nf">int64In</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">LOPR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">HOPR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">EGU</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="n">_set_in_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+    <span class="n">fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;MDEL&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">int64in</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">LOPR</span> <span class="o">=</span> <span class="n">LOPR</span><span class="p">,</span> <span class="n">HOPR</span> <span class="o">=</span> <span class="n">HOPR</span><span class="p">,</span> <span class="n">EGU</span> <span class="o">=</span> <span class="n">EGU</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="int64Out"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.int64Out">[docs]</a><span class="k">def</span> <span class="nf">int64Out</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">DRVL</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">DRVH</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">EGU</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">):</span>
+    <span class="n">_set_out_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+    <span class="n">_set_scalar_out_defaults</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">DRVL</span><span class="p">,</span> <span class="n">DRVH</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PythonDevice</span><span class="o">.</span><span class="n">int64out</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">EGU</span> <span class="o">=</span> <span class="n">EGU</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
 
 
 <span class="c1"># Field name prefixes for mbbi/mbbo records.</span>

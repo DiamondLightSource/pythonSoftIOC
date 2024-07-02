@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from softioc.pythonSoftIoc import RecordWrapper
 from datetime import datetime
 import shutil
+from softioc import builder
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
@@ -12,14 +13,13 @@ SAVB_SUFFIX = "softsavB"
 class Autosave:
     def __init__(
         self,
-        device_name: str,
         directory: str,
         pvs: List[RecordWrapper],
         save_period: float = 30.0,
         enabled: bool = True,
         backup_on_restart: bool = True
     ):
-        self._device: str = device_name
+        self._device_name: str = builder.GetRecordNames().prefix[0]
         self._directory: Path = Path(directory)  # cast string to Path
         self._last_saved_time = datetime.now()
         if not self._directory.is_dir():
@@ -61,10 +61,10 @@ class Autosave:
         )
 
     def _get_backup_save_path(self) -> Path:
-        return self._directory / f"{self._device}.{SAVB_SUFFIX}"
+        return self._directory / f"{self._device_name}.{SAVB_SUFFIX}"
 
     def _get_current_sav_path(self) -> Path:
-        return self._directory / f"{self._device}.{SAV_SUFFIX}"
+        return self._directory / f"{self._device_name}.{SAV_SUFFIX}"
 
     def _update_last_saved(self):
         self._last_saved_state = self._state.copy()
@@ -96,6 +96,9 @@ class Autosave:
             print("Not loading from file as autosave adapter disabled")
             return
         sav_path = path or self._get_current_sav_path()
+        if not sav_path or not sav_path.is_file():
+            print(f"Could not load autosave values from file {sav_path}")
+            return
         with open(sav_path, "r") as f:
             state = json.load(f)
         for name, value in state.items():

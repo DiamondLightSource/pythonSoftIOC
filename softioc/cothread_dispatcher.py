@@ -1,5 +1,9 @@
+import atexit
 import threading
+
 from . import autosave
+
+
 class CothreadDispatcher:
     def __init__(self, dispatcher = None):
         """A dispatcher for `cothread` based IOCs, suitable to be passed to
@@ -14,6 +18,7 @@ class CothreadDispatcher:
             # Import here to ensure we don't instantiate any of cothread's
             # global state unless we have to
             import cothread
+
             # Create our own cothread callback queue so that our callbacks
             # processing doesn't interfere with other callback processing.
             self.__dispatcher = cothread.cothread._Callback()
@@ -21,10 +26,12 @@ class CothreadDispatcher:
             self.__dispatcher = dispatcher
 
         self.wait_for_quit = cothread.WaitForQuit
+        self.__atexit = atexit.register(self.__shutdown)
+
         # set up autosave thread
-        autosaver = autosave.Autosave()
+        self.__autosave = autosave.Autosave()
         self.__autosave_worker = threading.Thread(
-            target=autosaver.loop,
+            target=self.__autosave.loop,
         )
         self.__autosave_worker.daemon = True
         self.__autosave_worker.start()
@@ -40,3 +47,7 @@ class CothreadDispatcher:
             if completion:
                 completion(*completion_args)
         self.__dispatcher(wrapper)
+
+    def __shutdown(self):
+        self.__autosave.stop()
+        self.__autosave_worker.join()

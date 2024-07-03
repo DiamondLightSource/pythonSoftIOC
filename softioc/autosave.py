@@ -1,28 +1,33 @@
 import json
-from pathlib import Path
-from typing import Dict, List, Optional
-from datetime import datetime
 import shutil
-from softioc.device_core import LookupRecordList
-import time
 import threading
+from datetime import datetime
+from pathlib import Path
+
+from softioc.device_core import LookupRecordList
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
+
 
 def configure(directory=None, save_period=None, device=None):
     Autosave.save_period = save_period or Autosave.save_period
     if device is None:
         if Autosave.device_name is None:
             from .builder import GetRecordNames
+
             Autosave.device_name = GetRecordNames().prefix[0]
     else:
         Autosave.device_name = device
     if directory is None and Autosave.directory is None:
-        raise RuntimeError("Autosave directory is not known, "
-                           "call autosave.configure() with directory keyword argument")
+        raise RuntimeError(
+            "Autosave directory is not known, call "
+            "autosave.configure() with keyword argument "
+            "directory."
+        )
     else:
         Autosave.directory = Path(directory)
+
 
 class Autosave:
     _instance = None
@@ -36,20 +41,27 @@ class Autosave:
         self,
     ):
         if not self.directory:
-            raise RuntimeError("Autosave directory is not known, "
-                           "call autosave.configure() with directory keyword argument")
+            raise RuntimeError(
+                "Autosave directory is not known, call "
+                "autosave.configure() with keyword argument "
+                "directory."
+            )
         if not self.device_name:
-            raise RuntimeError("Device name is not known to autosave thread, "
-                "call autosave.configure() with device keyword argument")
+            raise RuntimeError(
+                "Device name is not known to autosave thread, "
+                "call autosave.configure() with device keyword argument"
+            )
         self._last_saved_time = datetime.now()
         if not self.directory.is_dir():
-            raise RuntimeError(f"{self.directory} is not a valid autosave directory")
+            raise RuntimeError(
+                f"{self.directory} is not a valid autosave directory"
+            )
         if self.backup_on_restart:
             self.backup_sav_file()
         self.get_autosave_pvs()
         self._state = {}
         self._last_saved_state = {}
-        self._started = False
+        self._stop_event = threading.Event()
         if self.enabled:
             self.load()  # load at startup if enabled
 
@@ -90,7 +102,10 @@ class Autosave:
 
     def _save(self, state):
         try:
-            for path in [self._get_current_sav_path(), self._get_backup_save_path()]:
+            for path in [
+                self._get_current_sav_path(),
+                self._get_backup_save_path()
+            ]:
                 with open(path, "w") as f:
                     json.dump(state, f, indent=4)
             self._last_saved_state = state.copy()  # do we need to copy?
@@ -106,7 +121,7 @@ class Autosave:
         if state != self._last_saved_state:
             self._save(state)
 
-    def load(self, path = None):
+    def load(self, path=None):
         if not self.enabled:
             print("Not loading from file as autosave adapter disabled")
             return
@@ -123,9 +138,18 @@ class Autosave:
                 continue
             pv.set(value)
 
+    def stop(self):
+        self._stop_event.set()
+
     def loop(self):
         if not self._pvs:
             return  # end thread if no PVs to save
         while True:
-            time.sleep(self.save_period)
-            self.save()
+            try:
+                self._stop_event.wait(timeout=self.save_period)
+            except TimeoutError:
+                # No stop requested, we should save and continue
+                self.save()
+            else:
+                # Stop requested
+                return

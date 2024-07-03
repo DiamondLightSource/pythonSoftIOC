@@ -1,10 +1,12 @@
 import asyncio
+import atexit
 import inspect
 import logging
-import threading
-import atexit
 import signal
+import threading
+
 from . import autosave
+
 
 class AsyncioDispatcher:
     def __init__(self, loop=None, debug=False):
@@ -43,9 +45,9 @@ class AsyncioDispatcher:
         else:
             self.loop = loop
         # set up autosave thread
-        autosaver = autosave.Autosave()
+        self.__autosave = autosave.Autosave()
         self.__autosave_worker = threading.Thread(
-            target=autosaver.loop,
+            target=self.__autosave.loop,
         )
         self.__autosave_worker.daemon = True
         self.__autosave_worker.start()
@@ -80,6 +82,8 @@ class AsyncioDispatcher:
             self.loop.call_soon_threadsafe(self.__interrupt.set)
             self.__worker.join()
             self.__worker = None
+        self.__autosave.stop()
+        self.__autosave_worker.join()
 
     def __call__(
             self,

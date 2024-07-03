@@ -4,6 +4,7 @@ import logging
 import threading
 import atexit
 import signal
+from . import autosave
 
 class AsyncioDispatcher:
     def __init__(self, loop=None, debug=False):
@@ -41,6 +42,13 @@ class AsyncioDispatcher:
             raise ValueError("Provided asyncio event loop is not running")
         else:
             self.loop = loop
+        # set up autosave thread
+        autosaver = autosave.Autosave()
+        self.__autosave_worker = threading.Thread(
+            target=autosaver.loop,
+        )
+        self.__autosave_worker.daemon = True
+        self.__autosave_worker.start()
 
     def close(self):
         if self.__atexit is not None:

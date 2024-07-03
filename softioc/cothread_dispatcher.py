@@ -1,4 +1,5 @@
-
+import threading
+from . import autosave
 class CothreadDispatcher:
     def __init__(self, dispatcher = None):
         """A dispatcher for `cothread` based IOCs, suitable to be passed to
@@ -20,6 +21,13 @@ class CothreadDispatcher:
             self.__dispatcher = dispatcher
 
         self.wait_for_quit = cothread.WaitForQuit
+        # set up autosave thread
+        autosaver = autosave.Autosave()
+        self.__autosave_worker = threading.Thread(
+            target=autosaver.loop,
+        )
+        self.__autosave_worker.daemon = True
+        self.__autosave_worker.start()
 
     def __call__(
             self,

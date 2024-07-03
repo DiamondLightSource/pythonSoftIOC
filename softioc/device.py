@@ -109,6 +109,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
     _link_ = 'INP'
 
     def __init__(self, name, **kargs):
+        self.autosave = kargs.pop("autosave", False)
         if 'initial_value' in kargs:
             value = self._value_to_epics(kargs.pop('initial_value'))
         else:
@@ -159,6 +160,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
     _link_ = 'OUT'
 
     def __init__(self, name, **kargs):
+        self.autosave = kargs.pop('autosave', False)
         on_update = kargs.pop('on_update', None)
         on_update_name = kargs.pop('on_update_name', None)
         # At most one of on_update and on_update_name can be specified
@@ -432,6 +434,7 @@ class WaveformBase(ProcessDeviceSupportCore):
 
 
     def __init__(self, name, _wf_nelm, _wf_dtype, **kargs):
+        self.autosave = kargs.pop("autosave", False)
         self._dtype = _wf_dtype
         self._nelm = _wf_nelm
         self.__super.__init__(name, **kargs)

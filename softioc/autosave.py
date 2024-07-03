@@ -44,7 +44,7 @@ class Autosave:
                 "call autosave.configure() with device keyword argument")
         self._last_saved_time = datetime.now()
         if not self.directory.is_dir():
-            raise RuntimeError(f"{directory} is not a valid autosave directory")
+            raise RuntimeError(f"{self.directory} is not a valid autosave directory")
         if self.backup_on_restart:
             self.backup_sav_file()
         self.get_autosave_pvs()
@@ -77,10 +77,6 @@ class Autosave:
         pv.autosave = False
         self._pvs.pop(pv.name, None)
 
-    def _get_state_from_device(self):
-        for name, pv in self._pvs.items():
-            self._state[name] = pv.get()
-
     def _get_timestamped_backup_sav_path(self):
         sav_path = self._get_current_sav_path()
         return sav_path.parent / (
@@ -93,16 +89,13 @@ class Autosave:
     def _get_current_sav_path(self):
         return self.directory / f"{self.device_name}.{SAV_SUFFIX}"
 
-    def _update_last_saved(self):
-        self._last_saved_state = self._state.copy()
-        self._last_saved_time = datetime.now()
-
-    def _save(self):
+    def _save(self, state):
         try:
             for path in [self._get_current_sav_path(), self._get_backup_save_path()]:
                 with open(path, "w") as f:
-                    json.dump(self._state, f, indent=4)
-            self._update_last_saved()
+                    json.dump(state, f, indent=4)
+            self._last_saved_state = state.copy()  # do we need to copy?
+            self._last_saved_time = datetime.now()
         except Exception as e:
             print(f"Could not save state to file: {e}")
 
@@ -111,12 +104,13 @@ class Autosave:
             print("Not saving to file as autosave adapter disabled")
             return
         timenow = datetime.now()
-        self._get_state_from_device()
+        state = {name: pv.get() for name, pv in self._pvs.items()}
+
         if (
             (timenow - self._last_saved_time).total_seconds() > self.save_period
-            and self._state != self._last_saved_state  # only save if changed
+            and state != self._last_saved_state  # only save if changed
         ):
-            self._save()
+            self._save(state)
 
     def load(self, path = None):
         if not self.enabled:
@@ -134,7 +128,6 @@ class Autosave:
                 print(f"{name} is not a valid autosaved PV")
                 continue
             pv.set(value)
-        self._get_state_from_device()
 
     def loop(self):
         if not self._pvs:

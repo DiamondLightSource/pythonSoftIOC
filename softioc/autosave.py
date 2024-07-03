@@ -10,12 +10,12 @@ import threading
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
 
-def configure(device=None, directory=None, save_period=None, poll_period=None):
-    Autosave.poll_period = poll_period or Autosave.poll_period
+def configure(directory=None, save_period=None, device=None):
     Autosave.save_period = save_period or Autosave.save_period
-    if device is None and Autosave.device_name is None:
-        from .builder import GetRecordNames
-        Autosave.device_name = GetRecordNames().prefix[0]
+    if device is None:
+        if Autosave.device_name is None:
+            from .builder import GetRecordNames
+            Autosave.device_name = GetRecordNames().prefix[0]
     else:
         Autosave.device_name = device
     if directory is None and Autosave.directory is None:
@@ -26,7 +26,6 @@ def configure(device=None, directory=None, save_period=None, poll_period=None):
 
 class Autosave:
     _instance = None
-    poll_period = 1.0
     save_period = 30.0
     device_name = None
     directory = None
@@ -103,13 +102,8 @@ class Autosave:
         if not self.enabled:
             print("Not saving to file as autosave adapter disabled")
             return
-        timenow = datetime.now()
         state = {name: pv.get() for name, pv in self._pvs.items()}
-
-        if (
-            (timenow - self._last_saved_time).total_seconds() > self.save_period
-            and state != self._last_saved_state  # only save if changed
-        ):
+        if state != self._last_saved_state:
             self._save(state)
 
     def load(self, path = None):
@@ -133,5 +127,5 @@ class Autosave:
         if not self._pvs:
             return  # end thread if no PVs to save
         while True:
-            time.sleep(self.poll_period)
+            time.sleep(self.save_period)
             self.save()

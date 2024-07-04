@@ -172,7 +172,7 @@ class Autosave:
             return  # end thread if no PVs to save
         while True:
             self._stop_event.wait(timeout=self.save_period)
-            if self._stop_event.is_set(): # Stop requested
+            if self._stop_event.is_set():  # Stop requested
                 return
             else:  # No stop requested, we should save and continue
                 self.save()

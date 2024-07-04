@@ -4,7 +4,7 @@ import threading
 from datetime import datetime
 from pathlib import Path
 
-from softioc.device_core import LookupRecordList
+from softioc.device_core import LookupRecord, LookupRecordList
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
@@ -33,6 +33,17 @@ def set_autosave(pv, value=True):
         Autosave.add_pv(pv)
     else:
         Autosave.remove_pv(pv)
+
+def load_req_file(file, override=False):
+    with open(file, "r") as f:
+        pv_names = [name.strip() for name in f.readlines()]
+        if not override:
+            for pv_name in pv_names:
+                pv = LookupRecord(pv_name)
+                set_autosave(pv, True)
+        else:  # explicitly set autosave for False if pv not in file
+            for pv_name, pv in LookupRecordList():
+                set_autosave(pv, pv_name in pv_names)
 
 
 class Autosave:
@@ -88,12 +99,12 @@ class Autosave:
     @classmethod
     def add_pv(cls, pv):
         pv.set_autosave(True)
-        cls._pvs[pv.name] = pv
+        cls._pvs[pv._name] = pv
 
     @classmethod
     def remove_pv(cls, pv):
         pv.set_autosave(False)
-        cls._pvs.pop(pv.name, None)
+        cls._pvs.pop(pv._name, None)
 
     def _get_timestamped_backup_sav_path(self):
         sav_path = self._get_current_sav_path()

@@ -1,14 +1,19 @@
-import json
+import yaml
 import shutil
 import threading
 from datetime import datetime
 from pathlib import Path
+from numpy import ndarray
 
 from softioc.device_core import LookupRecord, LookupRecordList
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
 
+def _ndarray_representer(dumper, array):
+    return dumper.represent_sequence(
+        "tag:yaml.org,2002:seq", array.tolist(), flow_style=True
+    )
 
 def configure(directory=None, save_period=None, device=None):
     Autosave.save_period = save_period or Autosave.save_period
@@ -56,6 +61,9 @@ class Autosave:
     backup_on_restart = True
 
     def __init__(self):
+        yaml.add_representer(
+            ndarray, _ndarray_representer, Dumper=yaml.Dumper
+        )
         if not self.directory:
             raise RuntimeError(
                 "Autosave directory is not known, call "
@@ -125,7 +133,7 @@ class Autosave:
                 self._get_backup_save_path()
             ]:
                 with open(path, "w") as f:
-                    json.dump(state, f, indent=4)
+                    yaml.dump(state, f, indent=4)
             self._last_saved_state = state.copy()  # do we need to copy?
             self._last_saved_time = datetime.now()
         except Exception as e:
@@ -148,7 +156,7 @@ class Autosave:
             print(f"Could not load autosave values from file {sav_path}")
             return
         with open(sav_path, "r") as f:
-            state = json.load(f)
+            state = yaml.full_load(f)
         for name, value in state.items():
             pv = self._pvs.get(name, None)
             if not pv:

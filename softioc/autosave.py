@@ -28,18 +28,23 @@ def configure(directory=None, save_period=None, device=None):
     else:
         Autosave.directory = Path(directory)
 
+def set_autosave(pv, value=True):
+    if value:
+        Autosave.add_pv(pv)
+    else:
+        Autosave.remove_pv(pv)
+
 
 class Autosave:
     _instance = None
+    _pvs = {}
     save_period = 30.0
     device_name = None
     directory = None
     enabled = True
     backup_on_restart = True
 
-    def __init__(
-        self,
-    ):
+    def __init__(self):
         if not self.directory:
             raise RuntimeError(
                 "Autosave directory is not known, call "
@@ -80,13 +85,15 @@ class Autosave:
         if sav_path.is_file():
             shutil.copy2(sav_path, self._get_timestamped_backup_sav_path())
 
-    def add_pv(self, pv):
-        pv.autosave = True
-        self._pvs[pv.name] = pv
+    @classmethod
+    def add_pv(cls, pv):
+        pv.set_autosave(True)
+        cls._pvs[pv.name] = pv
 
-    def remove_pv(self, pv):
-        pv.autosave = False
-        self._pvs.pop(pv.name, None)
+    @classmethod
+    def remove_pv(cls, pv):
+        pv.set_autosave(False)
+        cls._pvs.pop(pv.name, None)
 
     def _get_timestamped_backup_sav_path(self):
         sav_path = self._get_current_sav_path()
@@ -145,11 +152,8 @@ class Autosave:
         if not self._pvs:
             return  # end thread if no PVs to save
         while True:
-            try:
-                self._stop_event.wait(timeout=self.save_period)
-            except TimeoutError:
-                # No stop requested, we should save and continue
-                self.save()
-            else:
-                # Stop requested
+            self._stop_event.wait(timeout=self.save_period)
+            if self._stop_event.is_set(): # Stop requested
                 return
+            else:  # No stop requested, we should save and continue
+                self.save()

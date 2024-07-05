@@ -15,8 +15,10 @@ def _ndarray_representer(dumper, array):
         "tag:yaml.org,2002:seq", array.tolist(), flow_style=True
     )
 
-def configure(directory=None, save_period=None, device=None):
+def configure(directory=None, save_period=None, device=None, enable=None):
     Autosave.save_period = save_period or Autosave.save_period
+    if enable is not None:
+        Autosave.enabled = enable
     if device is None:
         if Autosave.device_name is None:
             from .builder import GetRecordNames
@@ -33,8 +35,8 @@ def configure(directory=None, save_period=None, device=None):
     else:
         Autosave.directory = Path(directory)
 
-def set_autosave(pv, value=True):
-    if value:
+def set_autosave(pv, enable=True):
+    if enable:
         Autosave.add_pv(pv)
     else:
         Autosave.remove_pv(pv)
@@ -46,7 +48,7 @@ def load_req_file(file, override=False):
             for pv_name in pv_names:
                 pv = LookupRecord(pv_name)
                 set_autosave(pv, True)
-        else:  # explicitly set autosave for False if pv not in file
+        else:  # explicitly set autosave to False if pv not in file
             for pv_name, pv in LookupRecordList():
                 set_autosave(pv, pv_name in pv_names)
 
@@ -170,9 +172,12 @@ class Autosave:
     def loop(self):
         if not self._pvs:
             return  # end thread if no PVs to save
-        while True:
-            self._stop_event.wait(timeout=self.save_period)
-            if self._stop_event.is_set():  # Stop requested
-                return
-            else:  # No stop requested, we should save and continue
-                self.save()
+        try:
+            while True:
+                self._stop_event.wait(timeout=self.save_period)
+                if self._stop_event.is_set():  # Stop requested
+                    return
+                else:  # No stop requested, we should save and continue
+                    self.save()
+        except Exception as e:
+            print(f"Exception in autosave loop: {e}")

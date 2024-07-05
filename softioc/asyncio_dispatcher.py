@@ -5,9 +5,6 @@ import logging
 import signal
 import threading
 
-from . import autosave
-
-
 class AsyncioDispatcher:
     def __init__(self, loop=None, debug=False):
         """A dispatcher for `asyncio` based IOCs, suitable to be passed to
@@ -44,13 +41,6 @@ class AsyncioDispatcher:
             raise ValueError("Provided asyncio event loop is not running")
         else:
             self.loop = loop
-        # set up autosave thread
-        self.__autosave = autosave.Autosave()
-        self.__autosave_worker = threading.Thread(
-            target=self.__autosave.loop,
-        )
-        self.__autosave_worker.daemon = True
-        self.__autosave_worker.start()
 
     def close(self):
         if self.__atexit is not None:
@@ -82,8 +72,6 @@ class AsyncioDispatcher:
             self.loop.call_soon_threadsafe(self.__interrupt.set)
             self.__worker.join()
             self.__worker = None
-        self.__autosave.stop()
-        self.__autosave_worker.join()
 
     def __call__(
             self,

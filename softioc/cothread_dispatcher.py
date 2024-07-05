@@ -1,8 +1,6 @@
 import atexit
 import threading
 
-from . import autosave
-
 
 class CothreadDispatcher:
     def __init__(self, dispatcher = None):
@@ -26,15 +24,6 @@ class CothreadDispatcher:
             self.__dispatcher = dispatcher
 
         self.wait_for_quit = cothread.WaitForQuit
-        self.__atexit = atexit.register(self.__shutdown)
-
-        # set up autosave thread
-        self.__autosave = autosave.Autosave()
-        self.__autosave_worker = threading.Thread(
-            target=self.__autosave.loop,
-        )
-        self.__autosave_worker.daemon = True
-        self.__autosave_worker.start()
 
     def __call__(
             self,
@@ -47,7 +36,3 @@ class CothreadDispatcher:
             if completion:
                 completion(*completion_args)
         self.__dispatcher(wrapper)
-
-    def __shutdown(self):
-        self.__autosave.stop()
-        self.__autosave_worker.join()

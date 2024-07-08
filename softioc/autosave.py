@@ -5,15 +5,17 @@ from datetime import datetime
 from pathlib import Path
 from numpy import ndarray
 
-from softioc.device_core import LookupRecord, LookupRecordList
+from softioc.device_core import LookupRecordList
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
+
 
 def _ndarray_representer(dumper, array):
     return dumper.represent_sequence(
         "tag:yaml.org,2002:seq", array.tolist(), flow_style=True
     )
+
 
 def configure(directory=None, save_period=None, device=None, enable=None):
     Autosave.save_period = save_period or Autosave.save_period
@@ -22,7 +24,6 @@ def configure(directory=None, save_period=None, device=None, enable=None):
     if device is None:
         if Autosave.device_name is None:
             from .builder import GetRecordNames
-
             Autosave.device_name = GetRecordNames().prefix[0]
     else:
         Autosave.device_name = device
@@ -35,26 +36,8 @@ def configure(directory=None, save_period=None, device=None, enable=None):
     else:
         Autosave.directory = Path(directory)
 
-def set_autosave(pv, enable=True):
-    if enable:
-        Autosave.add_pv(pv)
-    else:
-        Autosave.remove_pv(pv)
-
-def load_req_file(file, override=False):
-    with open(file, "r") as f:
-        pv_names = [name.strip() for name in f.readlines()]
-        if not override:
-            for pv_name in pv_names:
-                pv = LookupRecord(pv_name)
-                set_autosave(pv, True)
-        else:  # explicitly set autosave to False if pv not in file
-            for pv_name, pv in LookupRecordList():
-                set_autosave(pv, pv_name in pv_names)
-
 
 class Autosave:
-    _instance = None
     _pvs = {}
     save_period = 30.0
     device_name = None
@@ -84,15 +67,11 @@ class Autosave:
             )
         if self.backup_on_restart:
             self.backup_sav_file()
-        self.get_autosave_pvs()
-        self._state = {}
+        self._pvs = {name: pv for name, pv in LookupRecordList() if pv.autosave}
         self._last_saved_state = {}
         self._stop_event = threading.Event()
         if self.enabled:
             self.load()  # load at startup if enabled
-
-    def get_autosave_pvs(self):
-        self._pvs = {name: pv for name, pv in LookupRecordList() if pv.autosave}
 
     def _change_directory(self, directory: str):
         dir_path = Path(directory)
@@ -105,16 +84,6 @@ class Autosave:
         sav_path = self._get_current_sav_path()
         if sav_path.is_file():
             shutil.copy2(sav_path, self._get_timestamped_backup_sav_path())
-
-    @classmethod
-    def add_pv(cls, pv):
-        pv.set_autosave(True)
-        cls._pvs[pv._name] = pv
-
-    @classmethod
-    def remove_pv(cls, pv):
-        pv.set_autosave(False)
-        cls._pvs.pop(pv._name, None)
 
     def _get_timestamped_backup_sav_path(self):
         sav_path = self._get_current_sav_path()
@@ -136,14 +105,13 @@ class Autosave:
             ]:
                 with open(path, "w") as f:
                     yaml.dump(state, f, indent=4)
-            self._last_saved_state = state.copy()  # do we need to copy?
+            self._last_saved_state = state.copy()
             self._last_saved_time = datetime.now()
         except Exception as e:
             print(f"Could not save state to file: {e}")
 
     def save(self):
-        if not self.enabled:
-            print("Not saving to file as autosave adapter disabled")
+        if not self.enabled or not self._pvs:
             return
         state = {name: pv.get() for name, pv in self._pvs.items()}
         if state != self._last_saved_state:
@@ -170,8 +138,6 @@ class Autosave:
         self._stop_event.set()
 
     def loop(self):
-        if not self._pvs:
-            return  # end thread if no PVs to save
         try:
             while True:
                 self._stop_event.wait(timeout=self.save_period)

@@ -58,9 +58,6 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
         self.autosave = kargs.pop("autosave", False)
         self.__super.__init__(name, **kargs)
 
-    def set_autosave(self, value):
-        self.autosave = value
-
     # Most subclasses (all except waveforms) define a ctypes constructor for the
     # underlying EPICS compatible value.
     def _value_to_epics(self, value):

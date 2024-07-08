@@ -1,9 +1,9 @@
 import asyncio
-import atexit
 import inspect
 import logging
-import signal
 import threading
+import atexit
+import signal
 
 class AsyncioDispatcher:
     def __init__(self, loop=None, debug=False):

@@ -24,7 +24,7 @@ def _start_autosave_thread():
     )
     worker.daemon = True
     worker.start()
-    return autosaver, worker
+    atexit.register(_shutdown_autosave_thread, autosaver, worker)
 
 
 def _shutdown_autosave_thread(autosaver, worker):
@@ -49,9 +49,7 @@ def iocInit(dispatcher=None):
         dispatcher = cothread_dispatcher.CothreadDispatcher()
     # Set the dispatcher for record processing callbacks
     device.dispatcher = dispatcher
-
-    autosaver, worker = _start_autosave_thread()
-    atexit.register(_shutdown_autosave_thread, autosaver, worker)
+    _start_autosave_thread()
     imports.iocInit()
 
 

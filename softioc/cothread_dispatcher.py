@@ -1,6 +1,3 @@
-import atexit
-import threading
-
 
 class CothreadDispatcher:
     def __init__(self, dispatcher = None):
@@ -16,7 +13,6 @@ class CothreadDispatcher:
             # Import here to ensure we don't instantiate any of cothread's
             # global state unless we have to
             import cothread
-
             # Create our own cothread callback queue so that our callbacks
             # processing doesn't interfere with other callback processing.
             self.__dispatcher = cothread.cothread._Callback()

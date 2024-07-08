@@ -17,10 +17,9 @@ def _ndarray_representer(dumper, array):
     )
 
 
-def configure(directory=None, save_period=None, device=None, enable=None):
+def configure(directory=None, save_period=None, device=None, enabled=True):
     Autosave.save_period = save_period or Autosave.save_period
-    if enable is not None:
-        Autosave.enabled = enable
+    Autosave.enabled = enabled
     if device is None:
         if Autosave.device_name is None:
             from .builder import GetRecordNames
@@ -39,13 +38,17 @@ def configure(directory=None, save_period=None, device=None, enable=None):
 
 class Autosave:
     _pvs = {}
+    _last_saved_state = {}
+    _stop_event = threading.Event()
     save_period = 30.0
     device_name = None
     directory = None
-    enabled = True
+    enabled = False
     backup_on_restart = True
 
     def __init__(self):
+        if not self.enabled:
+            return
         yaml.add_representer(
             ndarray, _ndarray_representer, Dumper=yaml.Dumper
         )
@@ -66,12 +69,9 @@ class Autosave:
                 f"{self.directory} is not a valid autosave directory"
             )
         if self.backup_on_restart:
-            self.backup_sav_file()
+            self._backup_sav_file()
         self._pvs = {name: pv for name, pv in LookupRecordList() if pv.autosave}
-        self._last_saved_state = {}
-        self._stop_event = threading.Event()
-        if self.enabled:
-            self.load()  # load at startup if enabled
+        self._load()  # load at startup if enabled
 
     def _change_directory(self, directory: str):
         dir_path = Path(directory)
@@ -80,10 +80,12 @@ class Autosave:
         else:
             raise ValueError(f"{directory} is not a valid autosave directory")
 
-    def backup_sav_file(self):
+    def _backup_sav_file(self):
         sav_path = self._get_current_sav_path()
         if sav_path.is_file():
             shutil.copy2(sav_path, self._get_timestamped_backup_sav_path())
+        else:
+            print(f"Could not back up autosave {sav_path} is not a file")
 
     def _get_timestamped_backup_sav_path(self):
         sav_path = self._get_current_sav_path()
@@ -97,27 +99,22 @@ class Autosave:
     def _get_current_sav_path(self):
         return self.directory / f"{self.device_name}.{SAV_SUFFIX}"
 
-    def _save(self, state):
+    def _save(self):
         try:
-            for path in [
-                self._get_current_sav_path(),
-                self._get_backup_save_path()
-            ]:
-                with open(path, "w") as f:
-                    yaml.dump(state, f, indent=4)
-            self._last_saved_state = state.copy()
-            self._last_saved_time = datetime.now()
+            state = {name: pv.get() for name, pv in self._pvs.items()}
+            if state != self._last_saved_state:
+                for path in [
+                    self._get_current_sav_path(),
+                    self._get_backup_save_path()
+                ]:
+                    with open(path, "w") as f:
+                        yaml.dump(state, f, indent=4)
+                self._last_saved_state = state.copy()
+                self._last_saved_time = datetime.now()
         except Exception as e:
             print(f"Could not save state to file: {e}")
 
-    def save(self):
-        if not self.enabled or not self._pvs:
-            return
-        state = {name: pv.get() for name, pv in self._pvs.items()}
-        if state != self._last_saved_state:
-            self._save(state)
-
-    def load(self, path=None):
+    def _load(self, path=None):
         if not self.enabled:
             print("Not loading from file as autosave adapter disabled")
             return
@@ -126,8 +123,8 @@ class Autosave:
             print(f"Could not load autosave values from file {sav_path}")
             return
         with open(sav_path, "r") as f:
-            state = yaml.full_load(f)
-        for name, value in state.items():
+            self._last_saved_state = yaml.full_load(f)
+        for name, value in self._last_saved_state.items():
             pv = self._pvs.get(name, None)
             if not pv:
                 print(f"{name} is not a valid autosaved PV")
@@ -138,12 +135,14 @@ class Autosave:
         self._stop_event.set()
 
     def loop(self):
+        if not self.enabled:
+            return
         try:
             while True:
                 self._stop_event.wait(timeout=self.save_period)
                 if self._stop_event.is_set():  # Stop requested
                     return
                 else:  # No stop requested, we should save and continue
-                    self.save()
+                    self._save()
         except Exception as e:
             print(f"Exception in autosave loop: {e}")

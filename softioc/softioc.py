@@ -1,6 +1,5 @@
 import os
 import sys
-import threading
 import atexit
 from ctypes import *
 from tempfile import NamedTemporaryFile
@@ -15,21 +14,6 @@ __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
 @atexit.register
 def epicsAtPyExit():
     imports.epicsExitCallAtExits()
-
-
-def _start_autosave_thread():
-    autosaver = autosave.Autosave()
-    worker = threading.Thread(
-        target=autosaver.loop,
-    )
-    worker.daemon = True
-    worker.start()
-    atexit.register(_shutdown_autosave_thread, autosaver, worker)
-
-
-def _shutdown_autosave_thread(autosaver, worker):
-    autosaver.stop()
-    worker.join()
 
 
 def iocInit(dispatcher=None):
@@ -49,7 +33,7 @@ def iocInit(dispatcher=None):
         dispatcher = cothread_dispatcher.CothreadDispatcher()
     # Set the dispatcher for record processing callbacks
     device.dispatcher = dispatcher
-    _start_autosave_thread()
+    autosave.start_autosave_thread()
     imports.iocInit()
 
 

@@ -96,7 +96,6 @@ class Autosave:
         if self.backup_on_restart:
             self._backup_sav_file()
         self._pvs = {name: pv for name, pv in LookupRecordList() if pv.autosave}
-        self._load()  # load at startup if enabled
 
     def _backup_sav_file(self):
         sav_path = self._get_current_sav_path()
@@ -159,8 +158,14 @@ class Autosave:
         self._stop_event.set()
 
     def loop(self):
-        if not self.enabled:
+        if not self.enabled or not self._pvs:
             return
+        # wait until iocInit has been called
+        # TODO: put in a timeout here otherwise this may get silently stuck...
+        while True:
+            if all(hasattr(pv, "_record") for pv in self._pvs.values()):
+                break
+        self._load()  # load at startup if enabled
         while True:
             try:
                 self._stop_event.wait(timeout=self.save_period)

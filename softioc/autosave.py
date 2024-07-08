@@ -17,7 +17,21 @@ def _ndarray_representer(dumper, array):
     )
 
 
-def configure(directory=None, save_period=None, device=None, enabled=True):
+def configure(directory=None, save_period=None, enabled=True, device=None):
+    '''This should be called before initialising the IOC. Configures the
+    autosave thread for periodic backing up of PV values.
+
+    Args:
+        directory: string or Path giving directory path where autosave files
+            should be saved and loaded, must be supplied before iocInit if
+            autosave is required.
+        save_period: time in seconds between backups. Backups are only performed
+            if PV values have changed.
+        enabled: boolean which enables or disables autosave, set to True by
+            default, or False if configure not called.
+        device: string name of the device prefix used for naming autosave files,
+            automatically supplied by builder if not explicitly provided.
+    '''
     Autosave.save_period = save_period or Autosave.save_period
     Autosave.enabled = enabled
     if device is None:
@@ -85,7 +99,7 @@ class Autosave:
         if sav_path.is_file():
             shutil.copy2(sav_path, self._get_timestamped_backup_sav_path())
         else:
-            print(f"Could not back up autosave {sav_path} is not a file")
+            print(f"Could not back up autosave, {sav_path} is not a file")
 
     def _get_timestamped_backup_sav_path(self):
         sav_path = self._get_current_sav_path()

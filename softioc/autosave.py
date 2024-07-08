@@ -87,13 +87,6 @@ class Autosave:
         self._pvs = {name: pv for name, pv in LookupRecordList() if pv.autosave}
         self._load()  # load at startup if enabled
 
-    def _change_directory(self, directory: str):
-        dir_path = Path(directory)
-        if dir_path.is_dir():
-            self.directory = dir_path
-        else:
-            raise ValueError(f"{directory} is not a valid autosave directory")
-
     def _backup_sav_file(self):
         sav_path = self._get_current_sav_path()
         if sav_path.is_file():

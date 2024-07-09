@@ -1,12 +1,13 @@
-import yaml
+import atexit
 import shutil
+import sys
 import threading
+import traceback
 from datetime import datetime
 from pathlib import Path
+
+import yaml
 from numpy import ndarray
-from softioc.device_core import LookupRecordList
-import sys
-import atexit
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
@@ -61,6 +62,20 @@ def _shutdown_autosave_thread(autosaver, worker):
     worker.join()
 
 
+def add_pv_to_autosave(pv, name, field=None):
+    Autosave._pvs[name] = AutosavePV(pv, field)
+
+
+class AutosavePV:
+    def __init__(self, pv, field = None):
+        if not field or field == "VAL":
+            self.get = pv.get
+            self.set = lambda val: pv.set(val)
+        else:
+            self.get = lambda: pv.get_field(field)
+            self.set = lambda val: pv.set_field(field, val)
+
+
 class Autosave:
     _pvs = {}
     _last_saved_state = {}
@@ -95,7 +110,6 @@ class Autosave:
         self._last_saved_time = datetime.now()
         if self.backup_on_restart:
             self._backup_sav_file()
-        self._pvs = {name: pv for name, pv in LookupRecordList() if pv.autosave}
 
     def _backup_sav_file(self):
         sav_path = self._get_current_sav_path()
@@ -103,8 +117,9 @@ class Autosave:
             shutil.copy2(sav_path, self._get_timestamped_backup_sav_path())
         else:
             sys.stderr.write(
-                f"Could not back up autosave, {sav_path} is not a file"
+                f"Could not back up autosave, {sav_path} is not a file\n"
             )
+            sys.stderr.flush()
 
     def _get_timestamped_backup_sav_path(self):
         sav_path = self._get_current_sav_path()
@@ -118,9 +133,31 @@ class Autosave:
     def _get_current_sav_path(self):
         return self.directory / f"{self.device_name}.{SAV_SUFFIX}"
 
+    def _get_state(self):
+        # state = {pv_field: pv.get() for pv_field, pv in self._pvs.items()}
+        state = {}
+        for pv_field, pv in self._pvs.items():
+            try:
+                state[pv_field] = pv.get()
+            except Exception as e:
+                sys.stderr.write("Exception getting {pv_field}: {e}\n")
+        sys.stderr.flush()
+        return state
+
+    def _set_pvs_from_saved_state(self):
+        for pv_field, value in self._last_saved_state.items():
+            try:
+                pv = self._pvs[pv_field]
+                pv.set(value)
+            except Exception as e:
+                sys.stderr.write(
+                    f"Exception setting {pv_field} to {value}: {e}\n"
+                )
+        sys.stderr.flush()
+
     def _save(self):
         try:
-            state = {name: pv.get() for name, pv in self._pvs.items()}
+            state = self._get_state()
             if state != self._last_saved_state:
                 for path in [
                     self._get_current_sav_path(),
@@ -131,28 +168,20 @@ class Autosave:
                 self._last_saved_state = state
                 self._last_saved_time = datetime.now()
         except Exception as e:
-            sys.stderr.write(f"Could not save state to file: {e}")
+            sys.stderr.write(f"Could not save state to file: {e}\n")
+            sys.stderr.flush()
 
     def _load(self, path=None):
-        if not self.enabled:
-            sys.stdout.write(
-                "Not loading from file as autosave adapter disabled"
-            )
-            return
         sav_path = path or self._get_current_sav_path()
         if not sav_path or not sav_path.is_file():
             sys.stderr.write(
-                f"Could not load autosave values from file {sav_path}"
+                f"Could not load autosave values from file {sav_path}\n"
             )
+            sys.stderr.flush()
             return
         with open(sav_path, "r") as f:
             self._last_saved_state = yaml.full_load(f)
-        for name, value in self._last_saved_state.items():
-            try:
-                pv = self._pvs.get(name)
-                pv.set(value)
-            except Exception as e:
-                sys.stderr.write(f"Exception setting {name} to {value}: {e}")
+        self._set_pvs_from_saved_state()
 
     def stop(self):
         self._stop_event.set()
@@ -160,11 +189,6 @@ class Autosave:
     def loop(self):
         if not self.enabled or not self._pvs:
             return
-        # wait until iocInit has been called
-        # TODO: put in a timeout here otherwise this may get silently stuck...
-        while True:
-            if all(hasattr(pv, "_record") for pv in self._pvs.values()):
-                break
         self._load()  # load at startup if enabled
         while True:
             try:
@@ -173,5 +197,5 @@ class Autosave:
                     return
                 else:  # No stop requested, we should save and continue
                     self._save()
-            except Exception as e:
-                sys.stderr.write(f"Exception in autosave loop: {e}")
+            except Exception:
+                traceback.print_exc()

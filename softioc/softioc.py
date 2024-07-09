@@ -33,8 +33,8 @@ def iocInit(dispatcher=None):
         dispatcher = cothread_dispatcher.CothreadDispatcher()
     # Set the dispatcher for record processing callbacks
     device.dispatcher = dispatcher
-    autosave.start_autosave_thread()
     imports.iocInit()
+    autosave.start_autosave_thread()
 
 
 def safeEpicsExit(code=0):

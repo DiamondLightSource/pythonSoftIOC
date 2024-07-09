@@ -3,7 +3,7 @@ import time
 import ctypes
 from ctypes import *
 import numpy
-
+from .autosave import add_pv_to_autosave
 from . import alarm
 from . import fields
 from .imports import (
@@ -55,7 +55,12 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
 
     # all record types can support autosave
     def __init__(self, name, **kargs):
-        self.autosave = kargs.pop("autosave", False)
+        autosave = kargs.pop("autosave", False)
+        if autosave:
+            add_pv_to_autosave(self, name)
+        autosave_fields = kargs.pop("autosave_fields", [])
+        for field in autosave_fields:
+            add_pv_to_autosave(self, f"{name}.{field}", field)
         self.__super.__init__(name, **kargs)
 
     # Most subclasses (all except waveforms) define a ctypes constructor for the

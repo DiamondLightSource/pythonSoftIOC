@@ -63,10 +63,10 @@ def _shutdown_autosave_thread(autosaver, worker):
 
 
 def add_pv_to_autosave(pv, name, field=None):
-    Autosave._pvs[name] = AutosavePV(pv, field)
+    Autosave._pvs[name] = _AutosavePV(pv, field)
 
 
-class AutosavePV:
+class _AutosavePV:
     def __init__(self, pv, field = None):
         if not field or field == "VAL":
             self.get = pv.get
@@ -127,20 +127,20 @@ class Autosave:
             sav_path.name + self._last_saved_time.strftime("_%y%m%d-%H%M%S")
         )
 
-    def _get_backup_save_path(self):
+    def _get_backup_sav_path(self):
         return self.directory / f"{self.device_name}.{SAVB_SUFFIX}"
 
     def _get_current_sav_path(self):
         return self.directory / f"{self.device_name}.{SAV_SUFFIX}"
 
     def _get_state(self):
-        # state = {pv_field: pv.get() for pv_field, pv in self._pvs.items()}
         state = {}
         for pv_field, pv in self._pvs.items():
             try:
                 state[pv_field] = pv.get()
             except Exception as e:
                 sys.stderr.write("Exception getting {pv_field}: {e}\n")
+                sys.stderr.write(f"Exception getting {pv_field}: {e}\n")
         sys.stderr.flush()
         return state
 
@@ -161,7 +161,7 @@ class Autosave:
             if state != self._last_saved_state:
                 for path in [
                     self._get_current_sav_path(),
-                    self._get_backup_save_path()
+                    self._get_backup_sav_path()
                 ]:
                     with open(path, "w") as f:
                         yaml.dump(state, f, indent=4)

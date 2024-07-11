@@ -65,6 +65,8 @@ def _shutdown_autosave_thread(autosaver, worker):
 def add_pv_to_autosave(pv, name, field=None):
     Autosave._pvs[name] = _AutosavePV(pv, field)
 
+def load():
+    Autosave._load()
 
 class _AutosavePV:
     def __init__(self, pv, field = None):
@@ -73,7 +75,7 @@ class _AutosavePV:
             self.set = lambda val: pv.set(val)
         else:
             self.get = lambda: pv.get_field(field)
-            self.set = lambda val: pv.set_field(field, val)
+            self.set = lambda val: setattr(pv, field, val)
 
 
 class Autosave:
@@ -127,11 +129,13 @@ class Autosave:
             sav_path.name + self._last_saved_time.strftime("_%y%m%d-%H%M%S")
         )
 
-    def _get_backup_sav_path(self):
-        return self.directory / f"{self.device_name}.{SAVB_SUFFIX}"
+    @classmethod
+    def _get_backup_sav_path(cls):
+        return cls.directory / f"{cls.device_name}.{SAVB_SUFFIX}"
 
-    def _get_current_sav_path(self):
-        return self.directory / f"{self.device_name}.{SAV_SUFFIX}"
+    @classmethod
+    def _get_current_sav_path(cls):
+        return cls.directory / f"{cls.device_name}.{SAV_SUFFIX}"
 
     def _get_state(self):
         state = {}
@@ -139,15 +143,15 @@ class Autosave:
             try:
                 state[pv_field] = pv.get()
             except Exception as e:
-                sys.stderr.write("Exception getting {pv_field}: {e}\n")
                 sys.stderr.write(f"Exception getting {pv_field}: {e}\n")
         sys.stderr.flush()
         return state
 
-    def _set_pvs_from_saved_state(self):
-        for pv_field, value in self._last_saved_state.items():
+    @classmethod
+    def _set_pvs_from_saved_state(cls):
+        for pv_field, value in cls._last_saved_state.items():
             try:
-                pv = self._pvs[pv_field]
+                pv = cls._pvs[pv_field]
                 pv.set(value)
             except Exception as e:
                 sys.stderr.write(
@@ -171,8 +175,16 @@ class Autosave:
             sys.stderr.write(f"Could not save state to file: {e}\n")
             sys.stderr.flush()
 
-    def _load(self, path=None):
-        sav_path = path or self._get_current_sav_path()
+    @classmethod
+    def _load(cls, path=None):
+        if not cls.enabled or not cls._pvs:
+            return
+        from .pythonSoftIoc import RecordWrapper
+        if RecordWrapper.is_builder_reset():
+            sys.stderr.write("Could not load from autosave file as builder has been written\n")
+            sys.stderr.flush()
+            return
+        sav_path = path or cls._get_current_sav_path()
         if not sav_path or not sav_path.is_file():
             sys.stderr.write(
                 f"Could not load autosave values from file {sav_path}\n"
@@ -180,8 +192,8 @@ class Autosave:
             sys.stderr.flush()
             return
         with open(sav_path, "r") as f:
-            self._last_saved_state = yaml.full_load(f)
-        self._set_pvs_from_saved_state()
+            cls._last_saved_state = yaml.full_load(f)
+        cls._set_pvs_from_saved_state()
 
     def stop(self):
         self._stop_event.set()
@@ -189,7 +201,6 @@ class Autosave:
     def loop(self):
         if not self.enabled or not self._pvs:
             return
-        self._load()  # load at startup if enabled
         while True:
             try:
                 self._stop_event.wait(timeout=self.save_period)

@@ -467,7 +467,12 @@ class WaveformBase(ProcessDeviceSupportCore):
         # common class of bug, at the cost of duplicated code and data, here we
         # ensure a copy is taken of the value.
         assert len(value) <= self._nelm, 'Value too long for waveform'
-        return numpy.copy(value)
+
+        value = numpy.copy(value)
+        # As we return a reference to the numpy array, ensure it cannot be
+        # modified under our noses
+        value.flags.writeable = False
+        return value
 
     def _epics_to_value(self, value):
         if self._dtype.char == 'S':

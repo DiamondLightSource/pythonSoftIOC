@@ -340,6 +340,19 @@ def test_record_wrapper_str():
     # If we never receive R it probably means an assert failed
     select_and_recv(parent_conn, "R")
 
+def test_waveform_values_not_modifiable():
+    """Test that arrays returned from waveform records are not modifiable"""
+
+    wi = builder.WaveformIn("WI", [1, 2, 3])
+    wo = builder.WaveformOut("WO", [1, 2, 3])
+
+    with pytest.raises(ValueError):
+        wi.get()[0] = 5
+
+    with pytest.raises(ValueError):
+        wo.get()[0] = 5
+
+
 def validate_fixture_names(params):
     """Provide nice names for the out_records fixture in TestValidate class"""
     return params[0].__name__

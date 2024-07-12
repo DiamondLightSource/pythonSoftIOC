@@ -23,6 +23,7 @@ Removed:
 Changed:
 
 - `AsyncioDispatcher cleanup tasks atexit <../../pull/138>`_
+- `Ensure returned numpy arrays are not writeable <../../pull/164>`_
 
 Fixed:
 

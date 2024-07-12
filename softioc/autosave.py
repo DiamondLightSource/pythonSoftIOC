@@ -6,6 +6,7 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
+import numpy
 import yaml
 from numpy import ndarray
 
@@ -20,7 +21,7 @@ def _ndarray_representer(dumper, array):
 
 
 def configure(directory, name, save_period=None, enabled=True):
-    '''This should be called before initialising the IOC. Configures the
+    """This should be called before initialising the IOC. Configures the
     autosave thread for periodic backing up of PV values.
 
     Args:
@@ -32,7 +33,7 @@ def configure(directory, name, save_period=None, enabled=True):
             if PV values have changed.
         enabled: boolean which enables or disables autosave, set to True by
             default, or False if configure not called.
-    '''
+    """
     Autosave.directory = Path(directory)
     Autosave.save_period = save_period or Autosave.save_period
     Autosave.enabled = enabled
@@ -66,7 +67,7 @@ def load():
 
 
 class _AutosavePV:
-    def __init__(self, pv, field = None):
+    def __init__(self, pv, field=None):
         if not field or field == "VAL":
             self.get = pv.get
             self.set = pv.set
@@ -88,9 +89,7 @@ class Autosave:
     def __init__(self):
         if not self.enabled:
             return
-        yaml.add_representer(
-            ndarray, _ndarray_representer, Dumper=yaml.Dumper
-        )
+        yaml.add_representer(ndarray, _ndarray_representer, Dumper=yaml.Dumper)
         if not self.device_name:
             raise RuntimeError(
                 "Device name is not known to autosave thread, "
@@ -156,12 +155,19 @@ class Autosave:
                 )
         sys.stderr.flush()
 
+    def _state_changed(self, state):
+        return self._last_saved_state.keys() != state.keys() or any(
+            # checks equality for builtins and numpy arrays
+            not numpy.array_equal(state[key], self._last_saved_state[key])
+            for key in state
+        )
+
     def _save(self):
         state = self._get_state()
-        if state != self._last_saved_state:
+        if self._state_changed(state):
             for path in [
                 self._get_current_sav_path(),
-                self._get_backup_sav_path()
+                self._get_backup_sav_path(),
             ]:
                 with open(path, "w") as f:
                     yaml.dump(state, f, indent=4)

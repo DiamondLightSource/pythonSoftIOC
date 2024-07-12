@@ -220,18 +220,18 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 
-.. _Unreleased: https://github.com/dls-controls/pythonIoc/compare/4.5.0...HEAD
-.. _4.5.0: https://github.com/dls-controls/pythonIoc/compare/4.4.0...4.5.0
-.. _4.4.0: https://github.com/dls-controls/pythonIoc/compare/4.3.0...4.4.0
-.. _4.3.0: https://github.com/dls-controls/pythonIoc/compare/4.2.0...4.3.0
-.. _4.2.0: https://github.com/dls-controls/pythonIoc/compare/4.1.0...4.2.0
-.. _4.1.0: https://github.com/dls-controls/pythonIoc/compare/4.0.2...4.1.0
-.. _4.0.2: https://github.com/dls-controls/pythonIoc/compare/4.0.1...4.0.2
-.. _4.0.1: https://github.com/dls-controls/pythonIoc/compare/3.2.1...4.0.1
-.. _3.2.1: https://github.com/dls-controls/pythonIoc/compare/3.2...3.2.1
-.. _3.2: https://github.com/dls-controls/pythonIoc/compare/3.1...3.2
-.. _3.1: https://github.com/dls-controls/pythonIoc/compare/3.0...3.1
-.. _3.0: https://github.com/dls-controls/pythonIoc/compare/3.0b2...3.0
-.. _3.0b2: https://github.com/dls-controls/pythonIoc/compare/3.0b1...3.0b2
-.. _3.0b1: https://github.com/dls-controls/pythonIoc/compare/2-16...3.0b1
-.. _2-16: https://github.com/dls-controls/pythonIoc/releases/tag/2-16
+.. _Unreleased: https://github.com/epics-python/pythonIoc/compare/4.5.0...HEAD
+.. _4.5.0: https://github.com/epics-python/pythonIoc/compare/4.4.0...4.5.0
+.. _4.4.0: https://github.com/epics-python/pythonIoc/compare/4.3.0...4.4.0
+.. _4.3.0: https://github.com/epics-python/pythonIoc/compare/4.2.0...4.3.0
+.. _4.2.0: https://github.com/epics-python/pythonIoc/compare/4.1.0...4.2.0
+.. _4.1.0: https://github.com/epics-python/pythonIoc/compare/4.0.2...4.1.0
+.. _4.0.2: https://github.com/epics-python/pythonIoc/compare/4.0.1...4.0.2
+.. _4.0.1: https://github.com/epics-python/pythonIoc/compare/3.2.1...4.0.1
+.. _3.2.1: https://github.com/epics-python/pythonIoc/compare/3.2...3.2.1
+.. _3.2: https://github.com/epics-python/pythonIoc/compare/3.1...3.2
+.. _3.1: https://github.com/epics-python/pythonIoc/compare/3.0...3.1
+.. _3.0: https://github.com/epics-python/pythonIoc/compare/3.0b2...3.0
+.. _3.0b2: https://github.com/epics-python/pythonIoc/compare/3.0b1...3.0b2
+.. _3.0b1: https://github.com/epics-python/pythonIoc/compare/2-16...3.0b1
+.. _2-16: https://github.com/epics-python/pythonIoc/releases/tag/2-16

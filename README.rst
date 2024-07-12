@@ -11,9 +11,9 @@ asyncio for concurrency. PVs are served over Channel Access and PVAccess.
 
 ============== ==============================================================
 PyPI           ``pip install softioc``
-Source code    https://github.com/dls-controls/pythonSoftIOC
-Documentation  https://dls-controls.github.io/pythonSoftIOC
-Changelog      https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst
+Source code    https://github.com/epics-python/pythonSoftIOC
+Documentation  https://epics-python.github.io/pythonSoftIOC
+Changelog      https://github.com/epics-python/pythonSoftIOC/blob/master/CHANGELOG.rst
 ============== ==============================================================
 
 A simple example of the use of this library:
@@ -47,16 +47,16 @@ A simple example of the use of this library:
     # Finally leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
 
-.. |code_ci| image:: https://github.com/dls-controls/pythonSoftIOC/workflows/Code%20CI/badge.svg?branch=master
-    :target: https://github.com/dls-controls/pythonSoftIOC/actions?query=workflow%3A%22Code+CI%22
+.. |code_ci| image:: https://github.com/epics-python/pythonSoftIOC/workflows/Code%20CI/badge.svg?branch=master
+    :target: https://github.com/epics-python/pythonSoftIOC/actions?query=workflow%3A%22Code+CI%22
     :alt: Code CI
 
-.. |docs_ci| image:: https://github.com/dls-controls/pythonSoftIOC/workflows/Docs%20CI/badge.svg?branch=master
-    :target: https://github.com/dls-controls/pythonSoftIOC/actions?query=workflow%3A%22Docs+CI%22
+.. |docs_ci| image:: https://github.com/epics-python/pythonSoftIOC/workflows/Docs%20CI/badge.svg?branch=master
+    :target: https://github.com/epics-python/pythonSoftIOC/actions?query=workflow%3A%22Docs+CI%22
     :alt: Docs CI
 
-.. |coverage| image:: https://codecov.io/gh/dls-controls/pythonSoftIOC/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/dls-controls/pythonSoftIOC
+.. |coverage| image:: https://codecov.io/gh/epics-python/pythonSoftIOC/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/epics-python/pythonSoftIOC
     :alt: Test Coverage
 
 .. |pypi_version| image:: https://img.shields.io/pypi/v/softioc.svg
@@ -71,4 +71,4 @@ A simple example of the use of this library:
     Anything below this line is used when viewing README.rst and will be replaced
     when included in index.rst
 
-See https://dls-controls.github.io/pythonSoftIOC for more detailed documentation.
+See https://epics-python.github.io/pythonSoftIOC for more detailed documentation.

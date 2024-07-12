@@ -89,9 +89,9 @@ intersphinx_mapping = dict(
     cothread=(
         "https://diamondlightsource.github.io/cothread/master/", None
     ),
-    aioca=("https://dls-controls.github.io/aioca/master/", None),
+    aioca=("https://epics-python.github.io/aioca/master/", None),
     epicsdbbuilder=(
-        "https://dls-controls.github.io/epicsdbbuilder/master/", None)
+        "https://epics-python.github.io/epicsdbbuilder/master/", None)
 )
 
 # -- Options for HTML output ---------------------------------------------------

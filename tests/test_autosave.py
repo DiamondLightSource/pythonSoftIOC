@@ -43,7 +43,7 @@ def autosave_dir():
 def existing_autosave_dir():
     dir = Path("/tmp/dummy-autosave")
     dir.mkdir(parents=True, exist_ok=True)
-    state = {f"{DEVICE_NAME}:ALREADYSAVED": 20.0}
+    state = {"ALREADYSAVED": 20.0}
     with open(dir / f"{DEVICE_NAME}.softsav", "w") as f:
         yaml.dump(state, f, indent=4)
     yield dir
@@ -52,7 +52,7 @@ def existing_autosave_dir():
 
 def test_configure(autosave_dir):
     assert autosave.Autosave.enabled is False  # this is problematic, gets reset
-    autosave.configure(autosave_dir, device=DEVICE_NAME)
+    autosave.configure(autosave_dir, DEVICE_NAME)
     assert autosave.Autosave.device_name == DEVICE_NAME
     assert autosave.Autosave.directory == autosave_dir
     assert autosave.Autosave.enabled is True
@@ -74,7 +74,7 @@ def test_configure_dir_doesnt_exist():
     autosave_dir = Path("/tmp/autosave-doesnt-exist")
     shutil.rmtree(autosave_dir, ignore_errors=True)
     DEVICE_NAME = "MY_DEVICE"
-    autosave.configure(autosave_dir, device=DEVICE_NAME)
+    autosave.configure(autosave_dir, DEVICE_NAME)
     with pytest.raises(FileNotFoundError):
         autosaver = autosave.Autosave()
 
@@ -84,21 +84,9 @@ def test_returns_if_init_called_before_configure():
     assert autosave.Autosave.enabled is False
 
 
-def test_runtime_error_if_dir_not_configured():
-    autosave.configure(device="MY-DEVICE")
-    with pytest.raises(RuntimeError):
-        autosave.Autosave()
-
-
-def test_device_name_from_builder(autosave_dir):
-    builder.SetDeviceName(DEVICE_NAME)
-    autosave.configure(autosave_dir)
-    autosaver = autosave.Autosave()
-    assert autosaver.device_name == DEVICE_NAME
-
 def test_all_record_types_saveable(autosave_dir):
     builder.SetDeviceName(DEVICE_NAME)
-    autosave.configure(autosave_dir)
+    autosave.configure(autosave_dir, DEVICE_NAME)
 
     number_types = ["aIn", "aOut", "boolIn", "boolOut", "longIn", "longOut",
                 "int64In", "int64Out", "mbbIn", "mbbOut", "Action"]
@@ -117,7 +105,8 @@ def test_all_record_types_saveable(autosave_dir):
     with open(autosave_dir / f"{DEVICE_NAME}.softsav", "r") as f:
         saved = yaml.full_load(f)
     for pv_type in number_types + string_types + waveform_types:
-        assert f"{DEVICE_NAME}:{pv_type}" in saved
+        assert pv_type in saved
+
 
 def test_can_save_fields(mocker, autosave_dir):
     builder.SetDeviceName(DEVICE_NAME)
@@ -128,22 +117,23 @@ def test_can_save_fields(mocker, autosave_dir):
     )
     # we need to patch get_field as we can't call builder.LoadDatabase()
     # and softioc.iocInit() in unit tests
-    autosave.configure(autosave_dir)
+    autosave.configure(autosave_dir, DEVICE_NAME)
     autosaver = autosave.Autosave()
-    assert f"{DEVICE_NAME}:SAVEVAL" in autosaver._pvs
-    assert f"{DEVICE_NAME}:SAVEVAL.DISA" in autosaver._pvs
-    assert f"{DEVICE_NAME}:DONTSAVEVAL" not in autosaver._pvs
-    assert f"{DEVICE_NAME}:DONTSAVEVAL.SCAN" in autosaver._pvs
+    assert "SAVEVAL" in autosaver._pvs
+    assert "SAVEVAL.DISA" in autosaver._pvs
+    assert "DONTSAVEVAL" not in autosaver._pvs
+    assert "DONTSAVEVAL.SCAN" in autosaver._pvs
     autosaver._save()
     with open(autosave_dir / f"{DEVICE_NAME}.softsav", "r") as f:
         saved = yaml.full_load(f)
-    assert f"{DEVICE_NAME}:SAVEVAL" in saved
-    assert f"{DEVICE_NAME}:SAVEVAL.DISA" in saved
-    assert f"{DEVICE_NAME}:DONTSAVEVAL" not in saved
-    assert f"{DEVICE_NAME}:DONTSAVEVAL.SCAN" in saved
+    assert "SAVEVAL" in saved
+    assert "SAVEVAL.DISA" in saved
+    assert "DONTSAVEVAL" not in saved
+    assert "DONTSAVEVAL.SCAN" in saved
+
 
 def test_stop_event(autosave_dir):
-    autosave.configure(autosave_dir, device=DEVICE_NAME)
+    autosave.configure(autosave_dir, DEVICE_NAME)
     builder.aOut("DUMMYRECORD", autosave=True)
     autosaver = autosave.Autosave()
     worker = threading.Thread(
@@ -157,11 +147,11 @@ def test_stop_event(autosave_dir):
     assert autosaver._stop_event.is_set()
     worker.join(timeout=1)
 
+
 def test_load_autosave(existing_autosave_dir):
     builder.SetDeviceName(DEVICE_NAME)
-    autosave.configure(existing_autosave_dir)
+    autosave.configure(existing_autosave_dir, DEVICE_NAME)
     pv = builder.aOut("ALREADYSAVED", autosave=True)
     assert pv.get() == 0.0
-    autosaver = autosave.Autosave()
-    autosaver._load()
+    autosave.load()
     assert pv.get() == 20.0

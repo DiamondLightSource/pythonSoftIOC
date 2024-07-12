@@ -19,32 +19,24 @@ def _ndarray_representer(dumper, array):
     )
 
 
-def configure(directory=None, save_period=None, enabled=True, device=None):
+def configure(directory, name, save_period=None, enabled=True):
     '''This should be called before initialising the IOC. Configures the
     autosave thread for periodic backing up of PV values.
 
     Args:
-        directory: string or Path giving directory path where autosave files
-            should be saved and loaded, must be supplied before iocInit if
-            autosave is required.
+        directory: string or Path giving directory path where autosave backup
+            files are saved and loaded.
+        nane: string name of the root used for naming backup files, this
+            could be the same as the device prefix.
         save_period: time in seconds between backups. Backups are only performed
             if PV values have changed.
         enabled: boolean which enables or disables autosave, set to True by
             default, or False if configure not called.
-        device: string name of the device prefix used for naming autosave files,
-            automatically supplied by builder if not explicitly provided.
     '''
-    # if already set, do not overwrite save_period or directory
+    Autosave.directory = Path(directory)
     Autosave.save_period = save_period or Autosave.save_period
     Autosave.enabled = enabled
-    if directory is not None:
-        Autosave.directory = Path(directory)
-    if device is None:
-        if Autosave.device_name is None:
-            from .builder import GetRecordNames
-            Autosave.device_name = GetRecordNames().prefix[0]
-    else:
-        Autosave.device_name = device
+    Autosave.device_name = name
 
 
 def start_autosave_thread():
@@ -62,17 +54,22 @@ def _shutdown_autosave_thread(autosaver, worker):
     worker.join()
 
 
-def add_pv_to_autosave(pv, name, field=None):
-    Autosave._pvs[name] = _AutosavePV(pv, field)
+def add_pv_to_autosave(pv, name, val, fields):
+    if val:
+        Autosave._pvs[name] = _AutosavePV(pv)
+    for field in fields:
+        Autosave._pvs[f"{name}.{field}"] = _AutosavePV(pv, field)
+
 
 def load():
     Autosave._load()
+
 
 class _AutosavePV:
     def __init__(self, pv, field = None):
         if not field or field == "VAL":
             self.get = pv.get
-            self.set = lambda val: pv.set(val)
+            self.set = pv.set
         else:
             self.get = lambda: pv.get_field(field)
             self.set = lambda val: setattr(pv, field, val)
@@ -160,29 +157,20 @@ class Autosave:
         sys.stderr.flush()
 
     def _save(self):
-        try:
-            state = self._get_state()
-            if state != self._last_saved_state:
-                for path in [
-                    self._get_current_sav_path(),
-                    self._get_backup_sav_path()
-                ]:
-                    with open(path, "w") as f:
-                        yaml.dump(state, f, indent=4)
-                self._last_saved_state = state
-                self._last_saved_time = datetime.now()
-        except Exception as e:
-            sys.stderr.write(f"Could not save state to file: {e}\n")
-            sys.stderr.flush()
+        state = self._get_state()
+        if state != self._last_saved_state:
+            for path in [
+                self._get_current_sav_path(),
+                self._get_backup_sav_path()
+            ]:
+                with open(path, "w") as f:
+                    yaml.dump(state, f, indent=4)
+            self._last_saved_state = state
+            self._last_saved_time = datetime.now()
 
     @classmethod
     def _load(cls, path=None):
         if not cls.enabled or not cls._pvs:
-            return
-        from .pythonSoftIoc import RecordWrapper
-        if RecordWrapper.is_builder_reset():
-            sys.stderr.write("Could not load from autosave file as builder has been written\n")
-            sys.stderr.flush()
             return
         sav_path = path or cls._get_current_sav_path()
         if not sav_path or not sav_path.is_file():
@@ -204,9 +192,8 @@ class Autosave:
         while True:
             try:
                 self._stop_event.wait(timeout=self.save_period)
+                self._save()
                 if self._stop_event.is_set():  # Stop requested
                     return
-                else:  # No stop requested, we should save and continue
-                    self._save()
             except Exception:
                 traceback.print_exc()

@@ -25,12 +25,13 @@ class RecordWrapper(object):
         DeviceKeywords = [
             'on_update', 'on_update_name', 'validate', 'always_update',
             'initial_value', '_wf_nelm', '_wf_dtype', 'blocking',
-            'autosave', 'autosave_fields'
+            'autosave', 'autosave_fields', 'autosave_name'
         ]
         device_kargs = {}
         for keyword in DeviceKeywords:
             if keyword in fields:
                 device_kargs[keyword] = fields.pop(keyword)
+        device_kargs.setdefault('autosave_name', name)
 
         record = builder(name, **fields)
         record.address = '@' + record.name

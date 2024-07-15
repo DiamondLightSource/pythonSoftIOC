@@ -371,7 +371,7 @@ def run_ioc(record_configurations: list, conn, set_enum, get_enum):
         elif creation_func in [builder.WaveformIn, builder.WaveformOut]:
             kwarg["length"] = WAVEFORM_LENGTH  # Must specify when no value
             # Related to this issue:
-            # https://github.com/epics-python/pythonSoftIOC/issues/37
+            # https://github.com/dls-controls/pythonSoftIOC/issues/37
 
         out_rec = creation_func(record_name, **kwarg)
 

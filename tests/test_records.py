@@ -1115,7 +1115,7 @@ class TestGetSetField:
 
 class TestRecursiveSet:
     """Tests related to recursive set() calls. See original issue here:
-    https://github.com/epics-python/pythonSoftIOC/issues/119"""
+    https://github.com/dls-controls/pythonSoftIOC/issues/119"""
 
     recursive_record_name = "RecursiveLongOut"
 

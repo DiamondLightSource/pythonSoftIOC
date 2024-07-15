@@ -53,7 +53,7 @@ API
 .. data:: softioc.__version__
     :type: str
 
-    Version number as calculated by https://github.com/DiamondLightSource/versiongit
+    Version number as calculated by https://github.com/dls-controls/versiongit
 
 .. automodule:: softioc.softioc
 

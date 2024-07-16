@@ -1,5 +1,4 @@
 import atexit
-import shutil
 import sys
 import threading
 import traceback
@@ -9,6 +8,8 @@ from pathlib import Path
 import numpy
 import yaml
 from numpy import ndarray
+from os import rename
+from shutil import copy2
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
@@ -20,7 +21,7 @@ def _ndarray_representer(dumper, array):
     )
 
 
-def configure(directory, name, save_period=None, enabled=True):
+def configure(directory, name, save_period=None, backup=True, enabled=True):
     """This should be called before initialising the IOC. Configures the
     autosave thread for periodic backing up of PV values.
 
@@ -31,10 +32,13 @@ def configure(directory, name, save_period=None, enabled=True):
             could be the same as the device prefix.
         save_period: time in seconds between backups. Backups are only performed
             if PV values have changed.
+        backup: creates a backup of the loaded autosave file on load,
+            timestamped with the time of backup.
         enabled: boolean which enables or disables autosave, set to True by
             default, or False if configure not called.
     """
     Autosave.directory = Path(directory)
+    Autosave.backup_on_load = backup
     Autosave.save_period = save_period or Autosave.save_period
     Autosave.enabled = enabled
     Autosave.device_name = name
@@ -79,12 +83,13 @@ class _AutosavePV:
 class Autosave:
     _pvs = {}
     _last_saved_state = {}
+    _last_saved_time = datetime.now()
     _stop_event = threading.Event()
     save_period = 30.0
     device_name = None
     directory = None
     enabled = False
-    backup_on_restart = True
+    backup_on_load = True
 
     def __init__(self):
         if not self.enabled:
@@ -106,23 +111,23 @@ class Autosave:
                 f"{self.directory} is not a valid autosave directory"
             )
         self._last_saved_time = datetime.now()
-        if self.backup_on_restart:
-            self._backup_sav_file()
 
-    def _backup_sav_file(self):
-        sav_path = self._get_current_sav_path()
+    @classmethod
+    def _backup_sav_file(cls):
+        sav_path = cls._get_current_sav_path()
         if sav_path.is_file():
-            shutil.copy2(sav_path, self._get_timestamped_backup_sav_path())
+            copy2(sav_path, cls._get_timestamped_backup_sav_path())
         else:
             sys.stderr.write(
                 f"Could not back up autosave, {sav_path} is not a file\n"
             )
             sys.stderr.flush()
 
-    def _get_timestamped_backup_sav_path(self):
-        sav_path = self._get_current_sav_path()
+    @classmethod
+    def _get_timestamped_backup_sav_path(cls):
+        sav_path = cls._get_current_sav_path()
         return sav_path.parent / (
-            sav_path.name + self._last_saved_time.strftime("_%y%m%d-%H%M%S")
+            sav_path.name + cls._last_saved_time.strftime("_%y%m%d-%H%M%S")
         )
 
     @classmethod
@@ -165,17 +170,20 @@ class Autosave:
     def _save(self):
         state = self._get_state()
         if self._state_changed(state):
-            for path in [
-                self._get_current_sav_path(),
-                self._get_backup_sav_path(),
-            ]:
-                with open(path, "w") as f:
-                    yaml.dump(state, f, indent=4)
+            sav_path = self._get_current_sav_path()
+            backup_path = self._get_backup_sav_path()
+            # write to backup file first then use atomic os.rename
+            # to safely update stored state
+            with open(backup_path, "w") as backup:
+                yaml.dump(state, backup, indent=4)
+            rename(backup_path, sav_path)
             self._last_saved_state = state
             self._last_saved_time = datetime.now()
 
     @classmethod
     def _load(cls, path=None):
+        if cls.backup_on_load:
+            cls._backup_sav_file()
         if not cls.enabled or not cls._pvs:
             return
         sav_path = path or cls._get_current_sav_path()

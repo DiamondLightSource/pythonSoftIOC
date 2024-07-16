@@ -4,6 +4,7 @@ import pytest
 import threading
 import shutil
 import numpy
+import re
 import yaml
 
 DEVICE_NAME = "MY-DEVICE"
@@ -17,7 +18,7 @@ def reset_autosave_setup_teardown():
     default_device_name = autosave.Autosave.device_name
     default_directory = autosave.Autosave.directory
     default_enabled = autosave.Autosave.enabled
-    default_bor = autosave.Autosave.backup_on_restart
+    default_bol = autosave.Autosave.backup_on_load
     yield
     autosave.Autosave._pvs = default_pvs
     autosave.Autosave._last_saved_state = default_state
@@ -26,7 +27,7 @@ def reset_autosave_setup_teardown():
     autosave.Autosave.device_name = default_device_name
     autosave.Autosave.directory = default_directory
     autosave.Autosave.enabled = default_enabled
-    autosave.Autosave.backup_on_restart = default_bor
+    autosave.Autosave.backup_on_load = default_bol
     if builder.GetRecordNames().prefix:  # reset device name to empty if set
         builder.SetDeviceName("")
 
@@ -67,7 +68,7 @@ def test_autosave_defaults():
     assert autosave.Autosave.device_name is None
     assert autosave.Autosave.directory is None
     assert autosave.Autosave.enabled is False
-    assert autosave.Autosave.backup_on_restart is True
+    assert autosave.Autosave.backup_on_load is True
 
 
 def test_configure_dir_doesnt_exist():
@@ -76,7 +77,7 @@ def test_configure_dir_doesnt_exist():
     DEVICE_NAME = "MY_DEVICE"
     autosave.configure(autosave_dir, DEVICE_NAME)
     with pytest.raises(FileNotFoundError):
-        autosaver = autosave.Autosave()
+        autosave.Autosave()
 
 
 def test_returns_if_init_called_before_configure():
@@ -89,7 +90,7 @@ def test_all_record_types_saveable(autosave_dir):
     autosave.configure(autosave_dir, DEVICE_NAME)
 
     number_types = ["aIn", "aOut", "boolIn", "boolOut", "longIn", "longOut",
-                "int64In", "int64Out", "mbbIn", "mbbOut", "Action"]
+                    "int64In", "int64Out", "mbbIn", "mbbOut", "Action"]
     string_types = ["stringIn", "stringOut", "longStringIn", "longStringOut"]
     waveform_types = ["WaveformIn", "WaveformOut"]
     for pv_type in number_types:
@@ -150,8 +151,32 @@ def test_stop_event(autosave_dir):
 
 def test_load_autosave(existing_autosave_dir):
     builder.SetDeviceName(DEVICE_NAME)
-    autosave.configure(existing_autosave_dir, DEVICE_NAME)
+    autosave.configure(existing_autosave_dir, DEVICE_NAME, backup=False)
     pv = builder.aOut("ALREADYSAVED", autosave=True)
     assert pv.get() == 0.0
     autosave.load()
     assert pv.get() == 20.0
+
+def test_backup_on_load(existing_autosave_dir):
+    autosave.configure(existing_autosave_dir, DEVICE_NAME, backup=True)
+    autosave.load()
+    backup_files = list(existing_autosave_dir.glob("*.softsav_*"))
+    assert len(backup_files) == 1
+    # assert backup file is named <name>.softsave_yymmdd-HHMMSS
+    for file in backup_files:
+        assert re.match(r"^" + DEVICE_NAME + r"\.softsav_[0-9]{6}-[0-9]{6}$",
+                        file.name)
+
+def test_autosave_key_names(autosave_dir):
+    builder.aOut("DEFAULTNAME", autosave=True)
+    builder.SetDeviceName(DEVICE_NAME)
+    builder.aOut("DEFAULTNAMEAFTERPREFIXSET", autosave=True)
+    builder.aOut("RENAMEME", autosave=True, autosave_name="CUSTOMNAME")
+    autosave.configure(autosave_dir, DEVICE_NAME)
+    autosaver = autosave.Autosave()
+    autosaver._save()
+    with open(autosave_dir / f"{DEVICE_NAME}.softsav", "r") as f:
+        saved = yaml.full_load(f)
+    assert "DEFAULTNAME" in saved
+    assert "DEFAULTNAMEAFTERPREFIXSET" in saved
+    assert "CUSTOMNAME" in saved

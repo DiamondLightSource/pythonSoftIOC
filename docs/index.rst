@@ -78,5 +78,5 @@ Table Of Contents
 
     reference/api
     reference/contributing
-    Changelog <https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst>
+    Changelog <https://github.com/DiamondLightSource/pythonSoftIOC/blob/master/CHANGELOG.rst>
     Index <genindex.html#http://>

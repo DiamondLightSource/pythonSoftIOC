@@ -8,14 +8,14 @@ involves big changes, please file a ticket before making a pull request! We
 want to make sure you don't spend your time coding something that might not fit
 the scope of the project.
 
-.. _dls_controls repository: https://github.com/dls-controls/pythonIoc/issues
+.. _dls_controls repository: https://github.com/DiamondLightSource/pythonIoc/issues
 
 Running the tests
 -----------------
 
 To get the source source code and run the unit tests, run::
 
-    $ git clone git://github.com/dls-controls/pythonSoftIoc.git
+    $ git clone git://github.com/DiamondLightSource/pythonSoftIoc.git
     $ cd pythonSoftIoc
     $ git submodule init
     $ git submodule update

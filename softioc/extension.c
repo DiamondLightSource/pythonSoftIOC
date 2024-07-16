@@ -123,7 +123,7 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
      * callback.
      * Therefore, we must ensure we relinquish the GIL while we perform this
      * EPICS call, to avoid potential deadlocks.
-     * See https://github.com/dls-controls/pythonSoftIOC/issues/119. */
+     * See https://github.com/DiamondLightSource/pythonSoftIOC/issues/119. */
     Py_BEGIN_ALLOW_THREADS
     put_result = dbPutField(&dbAddr, dbrType, pbuffer, length);
     Py_END_ALLOW_THREADS

@@ -3,9 +3,9 @@ import numpy
 
 from .device_core import RecordLookup
 from .softioc import dbLoadDatabase
+from .autosave import load_autosave
 
 from epicsdbbuilder import *
-from . import autosave
 
 InitialiseDbd()
 LoadDbdFile(os.path.join(os.path.dirname(__file__), 'device.dbd'))
@@ -300,7 +300,7 @@ def LoadDatabase():
     '''This should be called after all the builder records have been created,
     but before calling iocInit().  The database is loaded into EPICS memory,
     ready for operation.'''
-    autosave.load()
+    load_autosave()
     from tempfile import mkstemp
     fd, database = mkstemp('.db')
     os.close(fd)

@@ -3,13 +3,12 @@ import sys
 import threading
 import traceback
 from datetime import datetime
+from os import rename
 from pathlib import Path
+from shutil import copy2
 
 import numpy
 import yaml
-from numpy import ndarray
-from os import rename
-from shutil import copy2
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
@@ -28,8 +27,8 @@ def configure(directory, name, save_period=None, backup=True, enabled=True):
     Args:
         directory: string or Path giving directory path where autosave backup
             files are saved and loaded.
-        nane: string name of the root used for naming backup files, this
-            could be the same as the device prefix.
+        name: string name of the root used for naming backup files, this
+            is usually the same as the device prefix.
         save_period: time in seconds between backups. Backups are only performed
             if PV values have changed.
         backup: creates a backup of the loaded autosave file on load,
@@ -59,14 +58,26 @@ def _shutdown_autosave_thread(autosaver, worker):
     worker.join()
 
 
-def add_pv_to_autosave(pv, name, val, fields):
-    if val:
+def add_pv_to_autosave(pv, name, save_val, save_fields):
+    """Configures a PV for autosave
+
+    Args:
+        pv: a PV object inheriting ProcessDeviceSupportCore
+        name: the name of the PV which is used to generate the key
+            by which the PV value is saved to and loaded from a backup,
+            this is typically the signal name without the device prefix
+        save_val: a boolean that tracks whether to save the VAL field
+            in an autosave backup
+        save_fields: a list of string names of fields associated with the pv
+            to be saved to and loaded from a backup
+    """
+    if save_val:
         Autosave._pvs[name] = _AutosavePV(pv)
-    for field in fields:
+    for field in save_fields:
         Autosave._pvs[f"{name}.{field}"] = _AutosavePV(pv, field)
 
 
-def load():
+def load_autosave():
     Autosave._load()
 
 
@@ -89,16 +100,18 @@ class Autosave:
     device_name = None
     directory = None
     enabled = False
-    backup_on_load = True
+    backup_on_load = False
 
     def __init__(self):
         if not self.enabled:
             return
-        yaml.add_representer(ndarray, _ndarray_representer, Dumper=yaml.Dumper)
+        yaml.add_representer(
+            numpy.ndarray, _ndarray_representer, Dumper=yaml.Dumper
+        )
         if not self.device_name:
             raise RuntimeError(
                 "Device name is not known to autosave thread, "
-                "call autosave.configure() with keyword argument device"
+                "call autosave.configure() with keyword argument name"
             )
         if not self.directory:
             raise RuntimeError(
@@ -114,14 +127,21 @@ class Autosave:
 
     @classmethod
     def _backup_sav_file(cls):
+        if not cls.directory and cls.directory.is_dir():
+            print(
+                f"Could not back up autosave as {cls.directory} is"
+                " not a valid directory",
+                file=sys.stderr,
+            )
+            return
         sav_path = cls._get_current_sav_path()
         if sav_path.is_file():
             copy2(sav_path, cls._get_timestamped_backup_sav_path())
         else:
-            sys.stderr.write(
-                f"Could not back up autosave, {sav_path} is not a file\n"
+            print(
+                f"Could not back up autosave, {sav_path} is not a file",
+                file=sys.stderr,
             )
-            sys.stderr.flush()
 
     @classmethod
     def _get_timestamped_backup_sav_path(cls):
@@ -143,9 +163,9 @@ class Autosave:
         for pv_field, pv in self._pvs.items():
             try:
                 state[pv_field] = pv.get()
-            except Exception as e:
-                sys.stderr.write(f"Exception getting {pv_field}: {e}\n")
-        sys.stderr.flush()
+            except Exception:
+                print(f"Exception getting {pv_field}", file=sys.stderr)
+                traceback.print_exc()
         return state
 
     @classmethod
@@ -154,11 +174,13 @@ class Autosave:
             try:
                 pv = cls._pvs[pv_field]
                 pv.set(value)
-            except Exception as e:
-                sys.stderr.write(
-                    f"Exception setting {pv_field} to {value}: {e}\n"
+            except Exception:
+                print(
+                    f"Exception setting {pv_field} to {value}",
+                    file=sys.stderr,
                 )
-        sys.stderr.flush()
+                traceback.print_exc()
+
 
     def _state_changed(self, state):
         return self._last_saved_state.keys() != state.keys() or any(
@@ -182,16 +204,16 @@ class Autosave:
 
     @classmethod
     def _load(cls, path=None):
-        if cls.backup_on_load:
-            cls._backup_sav_file()
         if not cls.enabled or not cls._pvs:
             return
+        if cls.backup_on_load:
+            cls._backup_sav_file()
         sav_path = path or cls._get_current_sav_path()
         if not sav_path or not sav_path.is_file():
-            sys.stderr.write(
-                f"Could not load autosave values from file {sav_path}\n"
+            print(
+                f"Could not load autosave values from file {sav_path}",
+                file=sys.stderr,
             )
-            sys.stderr.flush()
             return
         with open(sav_path, "r") as f:
             cls._last_saved_state = yaml.full_load(f)

@@ -1,9 +1,7 @@
 from softioc import autosave, builder
-from pathlib import Path
 from unittest.mock import patch
 import pytest
 import threading
-import shutil
 import numpy
 import re
 import yaml
@@ -35,7 +33,25 @@ def reset_autosave_setup_teardown():
 
 @pytest.fixture
 def existing_autosave_dir(tmp_path):
-    state = {"ALREADYSAVED": 20.0}
+    state = {
+        "SAVED-AO": 20.0,
+        "SAVED-AI": 20.0,
+        "SAVED-BO": 1,
+        "SAVED-BI": 1,
+        "SAVED-LONGIN": 20,
+        "SAVED-LONGOUT": 20,
+        "SAVED-INT64IN": 100,
+        "SAVED-INT64OUT": 100,
+        "SAVED-MBBI": 15,
+        "SAVED-MBBO": 15,
+        "SAVED-STRINGIN": "test string in",
+        "SAVED-STRINGOUT": "test string out",
+        "SAVED-LONGSTRINGIN": "test long string in",
+        "SAVED-LONGSTRINGOUT": "test long string out",
+        "SAVED-ACTION": 1,
+        "SAVED-WAVEFORMIN": [1, 2, 3, 4],
+        "SAVED-WAVEFORMOUT": [1, 2, 3, 4],
+    }
     with open(tmp_path / f"{DEVICE_NAME}.softsav", "w") as f:
         yaml.dump(state, f, indent=4)
     return tmp_path
@@ -77,8 +93,19 @@ def test_all_record_types_saveable(tmp_path):
     builder.SetDeviceName(DEVICE_NAME)
     autosave.configure(tmp_path, DEVICE_NAME)
 
-    number_types = ["aIn", "aOut", "boolIn", "boolOut", "longIn", "longOut",
-                    "int64In", "int64Out", "mbbIn", "mbbOut", "Action"]
+    number_types = [
+        "aIn",
+        "aOut",
+        "boolIn",
+        "boolOut",
+        "longIn",
+        "longOut",
+        "int64In",
+        "int64Out",
+        "mbbIn",
+        "mbbOut",
+        "Action",
+    ]
     string_types = ["stringIn", "stringOut", "longStringIn", "longStringOut"]
     waveform_types = ["WaveformIn", "WaveformOut"]
     for pv_type in number_types:
@@ -142,16 +169,70 @@ def test_stop_event(tmp_path):
 def test_load_autosave(existing_autosave_dir):
     builder.SetDeviceName(DEVICE_NAME)
     autosave.configure(existing_autosave_dir, DEVICE_NAME, backup=False)
-    pv = builder.aOut("ALREADYSAVED", autosave=True)
-    assert pv.get() == 0.0
+    pv_aOut = builder.aOut("SAVED-AO", autosave=True)
+    pv_aIn = builder.aIn("SAVED-AI", autosave=True)
+    pv_boolOut = builder.boolOut("SAVED-BO", autosave=True)
+    pv_boolIn = builder.boolIn("SAVED-BI", autosave=True)
+    pv_longIn = builder.longIn("SAVED-LONGIN", autosave=True)
+    pv_longOut = builder.longOut("SAVED-LONGOUT", autosave=True)
+    pv_int64In = builder.int64In("SAVED-INT64IN", autosave=True)
+    pv_int64Out = builder.int64Out("SAVED-INT64OUT", autosave=True)
+    pv_mbbIn = builder.mbbIn("SAVED-MBBI", autosave=True)
+    pv_mbbOut = builder.mbbOut("SAVED-MBBO", autosave=True)
+    pv_stringIn = builder.stringIn("SAVED-STRINGIN", autosave=True)
+    pv_stringOut = builder.stringOut("SAVED-STRINGOUT", autosave=True)
+    pv_longStringIn = builder.longStringIn("SAVED-LONGSTRINGIN", autosave=True)
+    pv_longStringOut = builder.longStringOut(
+        "SAVED-LONGSTRINGOUT", autosave=True
+    )
+    pv_Action = builder.Action("SAVED-ACTION", autosave=True)
+    pv_WaveformIn = builder.WaveformIn(
+        "SAVED-WAVEFORMIN", numpy.zeros((4)), autosave=True
+    )
+    pv_WaveformOut = builder.WaveformOut(
+        "SAVED-WAVEFORMOUT", numpy.zeros((4)), autosave=True
+    )
+    assert pv_aOut.get() == 0.0
+    assert pv_aIn.get() == 0.0
+    assert pv_boolOut.get() == 0
+    assert pv_boolIn.get() == 0
+    assert pv_longIn.get() == 0
+    assert pv_longOut.get() == 0
+    assert pv_int64In.get() == 0
+    assert pv_int64Out.get() == 0
+    assert pv_mbbIn.get() == 0
+    assert pv_mbbOut.get() == 0
+    assert pv_stringIn.get() == ""
+    assert pv_stringOut.get() == ""
+    assert pv_longStringIn.get() == ""
+    assert pv_longStringOut.get() == ""
+    assert pv_Action.get() == 0
+    assert (pv_WaveformIn.get() == numpy.array([0, 0, 0, 0])).all()
+    assert (pv_WaveformOut.get() == numpy.array([0, 0, 0, 0])).all()
     autosave.load_autosave()
-    assert pv.get() == 20.0
+    assert pv_aOut.get() == 20.0
+    assert pv_aIn.get() == 20.0
+    assert pv_boolOut.get() == 1
+    assert pv_boolIn.get() == 1
+    assert pv_longIn.get() == 20
+    assert pv_longOut.get() == 20
+    assert pv_int64In.get() == 100
+    assert pv_int64Out.get() == 100
+    assert pv_mbbIn.get() == 15
+    assert pv_mbbOut.get() == 15
+    assert pv_stringIn.get() == "test string in"
+    assert pv_stringOut.get() == "test string out"
+    assert pv_longStringIn.get() == "test long string in"
+    assert pv_longStringOut.get() == "test long string out"
+    assert pv_Action.get() == 1
+    assert (pv_WaveformIn.get() == numpy.array([1, 2, 3, 4])).all()
+    assert (pv_WaveformOut.get() == numpy.array([1, 2, 3, 4])).all()
 
 
 def test_backup_on_load(existing_autosave_dir):
     autosave.configure(existing_autosave_dir, DEVICE_NAME, backup=True)
     # backup only performed if there are any pvs to save
-    builder.aOut("ALREADYSAVED", autosave=True)
+    builder.aOut("SAVED-AO", autosave=True)
     autosave.load_autosave()
     backup_files = list(existing_autosave_dir.glob("*.softsav_*"))
     assert len(backup_files) == 1

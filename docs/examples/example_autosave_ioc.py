@@ -7,7 +7,6 @@ builder.SetDeviceName("MY-DEVICE-PREFIX")
 # Create records, set some of them to autosave, also save some of their fields
 
 builder.aOut("AO", autosave=True)
-builder.aOut("AO2", autosave=True, autosave_name="EXTRA-AOUT")
 builder.aIn("AI", autosave_fields=["PREC", "SCAN"])
 builder.boolIn("BO")
 builder.WaveformIn("WAVEFORMOUT", [0, 0, 0, 0], autosave=True)

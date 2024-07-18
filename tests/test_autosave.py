@@ -195,7 +195,6 @@ def test_autosave_key_names(tmp_path):
     builder.aOut("DEFAULTNAME", autosave=True)
     builder.SetDeviceName(DEVICE_NAME)
     builder.aOut("DEFAULTNAMEAFTERPREFIXSET", autosave=True)
-    builder.aOut("RENAMEME", autosave=True, autosave_name="CUSTOMNAME")
     autosave.configure(tmp_path, DEVICE_NAME)
     autosaver = autosave.Autosave()
     autosaver._save()
@@ -203,7 +202,6 @@ def test_autosave_key_names(tmp_path):
         saved = yaml.full_load(f)
     assert "DEFAULTNAME" in saved
     assert "DEFAULTNAMEAFTERPREFIXSET" in saved
-    assert "CUSTOMNAME" in saved
 
 
 def check_all_record_types_load_properly(device_name, autosave_dir, conn):

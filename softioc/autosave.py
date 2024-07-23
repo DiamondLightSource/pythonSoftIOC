@@ -12,6 +12,7 @@ import yaml
 
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
+DEFAULT_SAVE_PERIOD = 30.0
 
 
 def _ndarray_representer(dumper, array):
@@ -20,7 +21,9 @@ def _ndarray_representer(dumper, array):
     )
 
 
-def configure(directory, name, save_period=None, backup=True, enabled=True):
+def configure(
+    directory, name, save_period=DEFAULT_SAVE_PERIOD, backup=True, enabled=True
+):
     """This should be called before initialising the IOC. Configures the
     autosave thread for periodic backing up of PV values.
 
@@ -38,7 +41,7 @@ def configure(directory, name, save_period=None, backup=True, enabled=True):
     """
     Autosave.directory = Path(directory)
     Autosave.backup_on_load = backup
-    Autosave.save_period = save_period or Autosave.save_period
+    Autosave.save_period = save_period
     Autosave.enabled = enabled
     Autosave.device_name = name
 
@@ -96,7 +99,7 @@ class Autosave:
     _last_saved_state = {}
     _last_saved_time = datetime.now()
     _stop_event = threading.Event()
-    save_period = 30.0
+    save_period = DEFAULT_SAVE_PERIOD
     device_name = None
     directory = None
     enabled = False
@@ -181,7 +184,6 @@ class Autosave:
                 )
                 traceback.print_exc()
 
-
     def _state_changed(self, state):
         return self._last_saved_state.keys() != state.keys() or any(
             # checks equality for builtins and numpy arrays
@@ -233,3 +235,6 @@ class Autosave:
                     return
             except Exception:
                 traceback.print_exc()
+
+
+__all__ = ["configure"]

@@ -142,6 +142,64 @@ and stderr streams, is sent directly to the terminal.
 
 .. autoclass:: softioc.asyncio_dispatcher.AsyncioDispatcher
 
+.. automodule:: softioc.autosave
+
+    Configuring saving and loading of record fields with `softioc.autosave.configure`
+    ---------------------------------------------------------------------------------
+
+    ..  function:: configure(directory, name, save_period=30, backup=True, enabled=True)
+    Used to set the location of backup files.
+    Backups are disabled by default unless this method is called. It must be
+    called prior to :func:`~softioc.builder.LoadDatabase`.
+
+    It has the following arguments:
+
+    .. _directory:
+
+    `directory`
+    ~~~~~~~~~~~
+    The directory where backup files should be saved to and loaded
+    from. This argument is required.
+
+    .. _name:
+
+
+    `name`
+    ~~~~~~
+    The file prefix used for naming the backup files. This is typically set to
+    be the same as the device prefix. The resulting file name will be
+    `name`.softsav. This argument is required
+
+    .. _save_period:
+
+    `save_period`
+    ~~~~~~~~~~~~~
+    The period in seconds between each backup attempt, 30.0 by default.
+    Backup files are only overwritten if any of the field values have changed
+    since the last backup.
+
+    .. _backup:
+
+    `backup`
+    ~~~~~~~~
+    A boolean that is `True` by default, creates a backup of the latest existing
+    autosave file that is timestamped at the time that the autosave thread is
+    started.
+    In normal operation, the current autosave file is overwritten every save.
+
+    .. _enabled:
+
+    `enabled`
+    ~~~~~~~~~
+    A boolean that is `True` by default, if `False` then no loading will occur
+    at IOC startup, and the save thread will return without performing any
+    backups.
+
+    .. seealso::
+        `softioc.builder` for how to designate a field for autosave.
+
+
+
 .. automodule:: softioc.builder
 
     Creating Records: `softioc.builder`
@@ -259,6 +317,32 @@ and stderr streams, is sent directly to the terminal.
 
     .. seealso::
         `SetBlocking` for configuring a global default blocking value
+
+    .. _autosave:
+
+    `autosave`
+    ~~~~~~~~~~
+
+    Available on all record types, when set to `True` it marks the record
+    value for automatic periodic backing up to a file. Set to `False` by
+    default. When the IOC is restarted and a backup file exists, the value is
+    loaded from this file when :func:`~softioc.builder.LoadDatabase` is called.
+    The saved value takes priority over any value
+    given in `initial_value`. No backing up will occur unless autosave is
+    enabled and configured with :func:`~softioc.autosave.configure`.
+
+    .. seealso::
+        :func:`~softioc.autosave.configure` for discussion on how to configure saving.
+
+    .. _autosave_fields:
+
+    `autosave_fields`
+    ~~~~~~~~~~~~~~~~~
+
+    A list of strings of record fields, (e.g. ["SCAN", "PREC"]) to be saved to
+    and loaded from a backup file, empty by default.
+    Works in an identical way to `autosave`.
+
 
 For all of these functions any EPICS database field can be assigned a value by
 passing it as a keyword argument for the corresponding field name (in upper

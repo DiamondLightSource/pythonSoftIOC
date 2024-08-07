@@ -683,6 +683,117 @@ class TestOnUpdate:
         self.on_update_runner(out_records, True, False)
 
 
+    def on_update_exception_test_func(self, device_name, conn):
+
+        log("CHILD: Child started")
+
+        builder.SetDeviceName(device_name)
+
+        def success_func(val):
+            log(f"CHILD: SUCCEEDS new value:{val}")
+
+        def fail_func(val):
+            log("CHILD: FAILS on_update started")
+            raise Exception("On update fails")
+
+        builder.longOut("SUCCEEDS", on_update=success_func, blocking=True)
+        builder.longOut("FAILS", on_update=fail_func, blocking=True)
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        conn.send("R")  # "Ready"
+
+        log("CHILD: Sent R over Connection to Parent")
+
+        # Keep process alive while main thread runs
+        if conn.poll(TIMEOUT):
+            val = conn.recv()
+            assert val == "D", "Did not receive expected Done character"
+
+    @requires_cothread
+    def test_on_update_exception(self):
+
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = ctx.Process(
+            target=self.on_update_exception_test_func,
+            args=(device_name, child_conn),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from cothread.catools import caget, caput, _channel_cache, ca_nothing
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+            log("PARENT: received R command")
+
+            fail_record_name = device_name + ":FAILS"
+            success_record_name = device_name + ":SUCCEEDS"
+
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            # Expect a failure as an exception interrupts on_update processing
+            with pytest.raises(ca_nothing):
+                caput(
+                    fail_record_name,
+                    123,
+                    wait=True,
+                    timeout=5,
+                )
+
+            # The value should still have been set despite above exception
+            ret_val = caget(
+                fail_record_name,
+                timeout=TIMEOUT,
+            )
+            assert ret_val.ok, \
+                f"caget did not succeed: {ret_val.errorcode}, {ret_val}"
+
+            assert ret_val == 123, "FAILS record did not update"
+
+            # Check that other on_update processing still occurs
+            ret_val = caput(
+                success_record_name,
+                456,
+                wait=True,
+                timeout=5,
+            )
+            assert ret_val.ok, \
+                f"caput did not succeed: {ret_val.errorcode}, {ret_val}"
+            ret_val = caget(
+                success_record_name,
+                timeout=TIMEOUT,
+            )
+            assert ret_val.ok, \
+                f"caget did not succeed: {ret_val.errorcode}, {ret_val}"
+
+            assert ret_val == 456, "SUCCEEDS record did not update"
+
+
+            TODO: Work out correct behaviour for "locked" record and test for it here
+
+        finally:
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            log("PARENT: Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")
+
+
 
 class TestBlocking:
     """Tests related to the Blocking functionality"""

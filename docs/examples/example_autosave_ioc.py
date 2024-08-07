@@ -7,13 +7,13 @@ builder.SetDeviceName("MY-DEVICE-PREFIX")
 # Create records, set some of them to autosave, also save some of their fields
 
 builder.aOut("AO", autosave=True)
-builder.aIn("AI", autosave_fields=["PREC", "SCAN"])
+builder.aIn("AI", autosave_fields=["PREC", "EGU"])
 builder.boolIn("BO")
 builder.WaveformIn("WAVEFORMOUT", [0, 0, 0, 0], autosave=True)
 minutes = builder.longOut("MINUTESRUN", autosave=True)
 
 autosave.configure(
-    directory="/tmp/autosave-data/MY-DEVICE-PREFIX",
+    directory="/tmp/autosave-data",
     name="MY-DEVICE-PREFIX",
     save_period=20.0
 )

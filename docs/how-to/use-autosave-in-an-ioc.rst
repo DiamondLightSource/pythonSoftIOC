@@ -26,7 +26,7 @@ Autosave is disabled by default until `autosave.configure()` is called. The firs
 set to 30.0 by default. The directory must exist, and should be configured with the appropriate
 read/write permissions for the user running the IOC.
 
-IOC developers should only need to interface with autosave via the `autosave.configre()`
+IOC developers should only need to interface with autosave via the `autosave.configure()`
 method and the ``autosave`` and ``autosave_fields`` keyword arguments,
 all other module members are intended for internal use only.
 
@@ -38,18 +38,19 @@ Users are discouraged from manually editing the backup files while the
 IOC is running so that the internal state of the autosave thread is consistent with
 the backup file.
 
-If autosave is enabled and active, a timestamped backup file of the latest existing backup file is created
-when the IOC is restarted, e.g. ``<name>.softsave-240717-095004`` (timestamps are in the format yymmdd-HHMMSS).
-This can be disabled by passing ``backup_on_load=False`` to `autosave.configure()`.
-To disable any autosaving, comment out the `autosave.configre()` call or pass it the keyword argument
+If autosave is enabled and active, a timestamped copy of the latest existing autosave backup file is created
+when the IOC is restarted, e.g. ``<name>.softsav_240717-095004`` (timestamps are in the format yymmdd-HHMMSS).
+If you only wish to store one backup of the autosave file at a time, ``timestamped_backups=False`` can be passed to `autosave.configure()`,
+this will create a backup file named ``<name>.softsav.bu``.
+To disable any autosaving, comment out the `autosave.configure()` call or pass it the keyword argument
 ``enabled=False``.
 
 The resulting backup file after running the IOC for a minute is the following:
 
 .. code-block::
 
+    AI.EGU: ''
     AI.PREC: '0'
-    AI.SCAN: I/O Intr
     AO: 0.0
     MINUTESRUN: 1
     WAVEFORMOUT: [0, 0, 0, 0]

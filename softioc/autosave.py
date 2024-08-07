@@ -22,7 +22,11 @@ def _ndarray_representer(dumper, array):
 
 
 def configure(
-    directory, name, save_period=DEFAULT_SAVE_PERIOD, backup=True, enabled=True
+    directory,
+    name,
+    save_period=DEFAULT_SAVE_PERIOD,
+    timestamped_backups=True,
+    enabled=True
 ):
     """This should be called before initialising the IOC. Configures the
     autosave thread for periodic backing up of PV values.
@@ -34,13 +38,14 @@ def configure(
             is usually the same as the device prefix.
         save_period: time in seconds between backups. Backups are only performed
             if PV values have changed.
-        backup: creates a backup of the loaded autosave file on load,
-            timestamped with the time of backup.
+        timestamped_backups: boolean which determines if backups of existing
+            autosave files are timestamped on IOC restart. True by default, if
+            False then backups get overwritten on each IOC restart.
         enabled: boolean which enables or disables autosave, set to True by
             default, or False if configure not called.
     """
     Autosave.directory = Path(directory)
-    Autosave.backup_on_load = backup
+    Autosave.timestamped_backups = timestamped_backups
     Autosave.save_period = save_period
     Autosave.enabled = enabled
     Autosave.device_name = name
@@ -103,7 +108,7 @@ class Autosave:
     device_name = None
     directory = None
     enabled = False
-    backup_on_load = False
+    timestamped_backups = True
 
     def __init__(self):
         if not self.enabled:
@@ -129,7 +134,7 @@ class Autosave:
         self._last_saved_time = datetime.now()
 
     @classmethod
-    def _backup_sav_file(cls):
+    def __backup_sav_file(cls):
         if not cls.directory and cls.directory.is_dir():
             print(
                 f"Could not back up autosave as {cls.directory} is"
@@ -137,9 +142,13 @@ class Autosave:
                 file=sys.stderr,
             )
             return
-        sav_path = cls._get_current_sav_path()
+        sav_path = cls.__get_current_sav_path()
+        if cls.timestamped_backups:
+            backup_path = cls.__get_timestamped_backup_sav_path()
+        else:
+            backup_path = cls.__get_backup_sav_path()
         if sav_path.is_file():
-            copy2(sav_path, cls._get_timestamped_backup_sav_path())
+            copy2(sav_path, backup_path)
         else:
             print(
                 f"Could not back up autosave, {sav_path} is not a file",
@@ -147,21 +156,26 @@ class Autosave:
             )
 
     @classmethod
-    def _get_timestamped_backup_sav_path(cls):
-        sav_path = cls._get_current_sav_path()
+    def __get_timestamped_backup_sav_path(cls):
+        sav_path = cls.__get_current_sav_path()
         return sav_path.parent / (
             sav_path.name + cls._last_saved_time.strftime("_%y%m%d-%H%M%S")
         )
 
     @classmethod
-    def _get_backup_sav_path(cls):
+    def __get_backup_sav_path(cls):
+        sav_path = cls.__get_current_sav_path()
+        return sav_path.parent / (sav_path.name + ".bu")
+
+    @classmethod
+    def __get_tmp_sav_path(cls):
         return cls.directory / f"{cls.device_name}.{SAVB_SUFFIX}"
 
     @classmethod
-    def _get_current_sav_path(cls):
+    def __get_current_sav_path(cls):
         return cls.directory / f"{cls.device_name}.{SAV_SUFFIX}"
 
-    def _get_state(self):
+    def __get_state(self):
         state = {}
         for pv_field, pv in self._pvs.items():
             try:
@@ -172,7 +186,7 @@ class Autosave:
         return state
 
     @classmethod
-    def _set_pvs_from_saved_state(cls):
+    def __set_pvs_from_saved_state(cls):
         for pv_field, value in cls._last_saved_state.items():
             try:
                 pv = cls._pvs[pv_field]
@@ -184,7 +198,7 @@ class Autosave:
                 )
                 traceback.print_exc()
 
-    def _state_changed(self, state):
+    def __state_changed(self, state):
         return self._last_saved_state.keys() != state.keys() or any(
             # checks equality for builtins and numpy arrays
             not numpy.array_equal(state[key], self._last_saved_state[key])
@@ -192,15 +206,15 @@ class Autosave:
         )
 
     def _save(self):
-        state = self._get_state()
-        if self._state_changed(state):
-            sav_path = self._get_current_sav_path()
-            backup_path = self._get_backup_sav_path()
-            # write to backup file first then use atomic os.rename
+        state = self.__get_state()
+        if self.__state_changed(state):
+            sav_path = self.__get_current_sav_path()
+            tmp_path = self.__get_tmp_sav_path()
+            # write to temporary file first then use atomic os.rename
             # to safely update stored state
-            with open(backup_path, "w") as backup:
+            with open(tmp_path, "w") as backup:
                 yaml.dump(state, backup, indent=4)
-            rename(backup_path, sav_path)
+            rename(tmp_path, sav_path)
             self._last_saved_state = state
             self._last_saved_time = datetime.now()
 
@@ -208,9 +222,8 @@ class Autosave:
     def _load(cls, path=None):
         if not cls.enabled or not cls._pvs:
             return
-        if cls.backup_on_load:
-            cls._backup_sav_file()
-        sav_path = path or cls._get_current_sav_path()
+        cls.__backup_sav_file()
+        sav_path = path or cls.__get_current_sav_path()
         if not sav_path or not sav_path.is_file():
             print(
                 f"Could not load autosave values from file {sav_path}",
@@ -219,7 +232,7 @@ class Autosave:
             return
         with open(sav_path, "r") as f:
             cls._last_saved_state = yaml.full_load(f)
-        cls._set_pvs_from_saved_state()
+        cls.__set_pvs_from_saved_state()
 
     def stop(self):
         self._stop_event.set()

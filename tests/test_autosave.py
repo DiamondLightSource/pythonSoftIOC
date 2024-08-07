@@ -19,7 +19,7 @@ def reset_autosave_setup_teardown():
     default_device_name = autosave.Autosave.device_name
     default_directory = autosave.Autosave.directory
     default_enabled = autosave.Autosave.enabled
-    default_bol = autosave.Autosave.backup_on_load
+    default_tb = autosave.Autosave.timestamped_backups
     yield
     autosave.Autosave._pvs = default_pvs
     autosave.Autosave._last_saved_state = default_state
@@ -28,7 +28,7 @@ def reset_autosave_setup_teardown():
     autosave.Autosave.device_name = default_device_name
     autosave.Autosave.directory = default_directory
     autosave.Autosave.enabled = default_enabled
-    autosave.Autosave.backup_on_load = default_bol
+    autosave.Autosave.timestamped_backups = default_tb
     if builder.GetRecordNames().prefix:  # reset device name to empty if set
         builder.SetDeviceName("")
 
@@ -58,6 +58,8 @@ def existing_autosave_dir(tmp_path):
     }
     with open(tmp_path / f"{DEVICE_NAME}.softsav", "w") as f:
         yaml.dump(state, f, indent=4)
+    with open(tmp_path / f"{DEVICE_NAME}.softsav.bu", "w") as f:
+        yaml.dump({"OUT-OF-DATE-KEY": "out of date value"}, f, indent=4)
     return tmp_path
 
 
@@ -78,7 +80,7 @@ def test_autosave_defaults():
     assert autosave.Autosave.device_name is None
     assert autosave.Autosave.directory is None
     assert autosave.Autosave.enabled is False
-    assert autosave.Autosave.backup_on_load is False
+    assert autosave.Autosave.timestamped_backups is True
 
 
 def test_configure_dir_doesnt_exist(tmp_path):
@@ -177,19 +179,29 @@ def test_stop_event(tmp_path):
         worker.join(timeout=1)
 
 
-def test_backup_on_load(existing_autosave_dir):
-    autosave.configure(existing_autosave_dir, DEVICE_NAME, backup=True)
+@pytest.mark.parametrize(
+        "timestamped,regex",
+        [(False, r"^" + DEVICE_NAME + r"\.softsav_[0-9]{6}-[0-9]{6}$"),
+         (True, r"^" + DEVICE_NAME + r"\.softsav\.bu$")]
+    )
+def test_backup_on_load(existing_autosave_dir, timestamped, regex):
+    autosave.configure(
+        existing_autosave_dir,
+        DEVICE_NAME,
+        timestamped_backups=timestamped
+    )
     # backup only performed if there are any pvs to save
     builder.aOut("SAVED-AO", autosave=True)
     autosave.load_autosave()
     backup_files = list(existing_autosave_dir.glob("*.softsav_*"))
-    assert len(backup_files) == 1
-    # assert backup file is named <name>.softsave_yymmdd-HHMMSS
-    for file in backup_files:
-        assert re.match(
-            r"^" + DEVICE_NAME + r"\.softsav_[0-9]{6}-[0-9]{6}$", file.name
-        )
-
+    # assert backup is <name>.softsav_yymmdd-HHMMSS or <name>.softsav.bu
+    any(re.match(regex, file.name) for file in backup_files)
+    if not timestamped:
+        # test that existing .bu file gets overwritten
+        with open(existing_autosave_dir / f"{DEVICE_NAME}.softsav.bu") as f:
+            state = yaml.full_load(f)
+            assert "OUT-OF-DATE-KEY" not in state
+            assert "SAVED-AO" in state
 
 def test_autosave_key_names(tmp_path):
     builder.aOut("DEFAULTNAME", autosave=True)
@@ -206,7 +218,7 @@ def test_autosave_key_names(tmp_path):
 
 def check_all_record_types_load_properly(device_name, autosave_dir, conn):
     builder.SetDeviceName(device_name)
-    autosave.configure(autosave_dir, device_name, backup=False)
+    autosave.configure(autosave_dir, device_name)
     pv_aOut = builder.aOut("SAVED-AO", autosave=True)
     pv_aIn = builder.aIn("SAVED-AI", autosave=True)
     pv_boolOut = builder.boolOut("SAVED-BO", autosave=True)

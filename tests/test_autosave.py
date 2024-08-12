@@ -29,8 +29,6 @@ def reset_autosave_setup_teardown():
     autosave.Autosave.directory = default_directory
     autosave.Autosave.enabled = default_enabled
     autosave.Autosave.timestamped_backups = default_tb
-    if builder.GetRecordNames().prefix:  # reset device name to empty if set
-        builder.SetDeviceName("")
 
 
 @pytest.fixture
@@ -96,7 +94,6 @@ def test_returns_if_init_called_before_configure():
 
 
 def test_all_record_types_saveable(tmp_path):
-    builder.SetDeviceName(DEVICE_NAME)
     autosave.configure(tmp_path, DEVICE_NAME)
 
     number_types = [
@@ -138,7 +135,6 @@ def test_all_record_types_saveable(tmp_path):
 
 
 def test_can_save_fields(tmp_path):
-    builder.SetDeviceName(DEVICE_NAME)
     builder.aOut("SAVEVAL", autosave=True, autosave_fields=["DISA"])
     builder.aOut("DONTSAVEVAL", autosave_fields=["SCAN"])
     # we need to patch get_field as we can't call builder.LoadDatabase()
@@ -205,7 +201,6 @@ def test_backup_on_load(existing_autosave_dir, timestamped, regex):
 
 def test_autosave_key_names(tmp_path):
     builder.aOut("DEFAULTNAME", autosave=True)
-    builder.SetDeviceName(DEVICE_NAME)
     builder.aOut("DEFAULTNAMEAFTERPREFIXSET", autosave=True)
     autosave.configure(tmp_path, DEVICE_NAME)
     autosaver = autosave.Autosave()
@@ -217,7 +212,6 @@ def test_autosave_key_names(tmp_path):
 
 
 def check_all_record_types_load_properly(device_name, autosave_dir, conn):
-    builder.SetDeviceName(device_name)
     autosave.configure(autosave_dir, device_name)
     pv_aOut = builder.aOut("SAVED-AO", autosave=True)
     pv_aIn = builder.aIn("SAVED-AI", autosave=True)
@@ -308,7 +302,6 @@ def test_actual_ioc_load(existing_autosave_dir):
 
 
 def check_all_record_types_save_properly(device_name, autosave_dir, conn):
-    builder.SetDeviceName(device_name)
     autosave.configure(autosave_dir, device_name, save_period=1)
     builder.aOut("aOut", autosave=True, initial_value=20.0)
     builder.aIn("aIn", autosave=True, initial_value=20.0)
@@ -364,6 +357,35 @@ def test_actual_ioc_save(tmp_path):
     parent_conn, child_conn = ctx.Pipe()
     ioc_process = ctx.Process(
         target=check_all_record_types_save_properly,
+        args=(DEVICE_NAME, tmp_path, child_conn),
+    )
+    ioc_process.start()
+    # If we never receive D it probably means an assert failed
+    select_and_recv(parent_conn, "D")
+
+
+def check_autosave_field_names_exclude_builder_prefix(
+        device_name, tmp_path, conn):
+    autosave.configure(tmp_path, device_name, save_period=1)
+    builder.aOut("BEFORE", autosave=True, autosave_fields=["EGU"])
+    builder.SetDeviceName(device_name)
+    builder.aOut("AFTER", autosave=True, autosave_fields=["EGU"])
+    builder.LoadDatabase()
+    softioc.iocInit()
+    time.sleep(2)
+    with open(tmp_path / f"{device_name}.softsav", "r") as f:
+        saved = yaml.full_load(f)
+    assert "BEFORE" in saved.keys()
+    assert "AFTER" in saved.keys()
+    for key in saved:
+        assert device_name not in key
+    conn.send("D")
+
+def test_autosave_field_names_exclude_builder_prefix(tmp_path):
+    ctx = get_multiprocessing_context()
+    parent_conn, child_conn = ctx.Pipe()
+    ioc_process = ctx.Process(
+        target=check_autosave_field_names_exclude_builder_prefix,
         args=(DEVICE_NAME, tmp_path, child_conn),
     )
     ioc_process.start()

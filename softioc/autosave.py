@@ -10,6 +10,8 @@ from shutil import copy2
 import numpy
 import yaml
 
+from .device_core import LookupRecordList
+
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
 DEFAULT_SAVE_PERIOD = 30.0
@@ -20,6 +22,7 @@ def _ndarray_representer(dumper, array):
         "tag:yaml.org,2002:seq", array.tolist(), flow_style=True
     )
 
+yaml.add_representer(numpy.ndarray, _ndarray_representer, Dumper=yaml.Dumper)
 
 def configure(
     directory,
@@ -35,7 +38,7 @@ def configure(
         directory: string or Path giving directory path where autosave backup
             files are saved and loaded.
         name: string name of the root used for naming backup files, this
-            is usually the same as the device prefix.
+            is usually the same as the device name.
         save_period: time in seconds between backups. Backups are only performed
             if PV values have changed.
         timestamped_backups: boolean which determines if backups of existing
@@ -109,29 +112,32 @@ class Autosave:
     directory = None
     enabled = False
     timestamped_backups = True
+    _loop_started = False
 
-    def __init__(self):
-        if not self.enabled:
-            return
-        yaml.add_representer(
-            numpy.ndarray, _ndarray_representer, Dumper=yaml.Dumper
-        )
-        if not self.device_name:
-            raise RuntimeError(
-                "Device name is not known to autosave thread, "
-                "call autosave.configure() with keyword argument name"
-            )
-        if not self.directory:
-            raise RuntimeError(
-                "Autosave directory is not known, call "
-                "autosave.configure() with keyword argument "
-                "directory"
-            )
-        if not self.directory.is_dir():
-            raise FileNotFoundError(
-                f"{self.directory} is not a valid autosave directory"
-            )
-        self._last_saved_time = datetime.now()
+    def __init__(self, autosave=True, autosave_fields=None):
+        # for use as a context manager
+        self._save_val = autosave
+        self._save_fields = autosave_fields or []
+
+    def __enter__(self):
+        if self._save_val or self._save_fields:
+            self._records_before_cm = dict(LookupRecordList())
+        else:
+            self._records_before_cm = {}
+
+    def __exit__(self, A, B, C):
+        if self._save_val or self._save_fields:
+            for key, pv in LookupRecordList():
+                try:
+                    if key not in self._records_before_cm:
+                        add_pv_to_autosave(
+                            pv, key, self._save_val, self._save_fields)
+                except Exception:
+                    traceback.print_exc()
+        self._save_val = False
+        self._save_fields = []
+        self._records_before_cm = None
+
 
     @classmethod
     def __backup_sav_file(cls):
@@ -219,11 +225,25 @@ class Autosave:
             self._last_saved_time = datetime.now()
 
     @classmethod
-    def _load(cls, path=None):
+    def _load(cls):
         if not cls.enabled or not cls._pvs:
             return
+        if not cls.device_name:
+            raise RuntimeError(
+                "Device name is not known to autosave thread, "
+                "call autosave.configure() with keyword argument name"
+            )
+        if not cls.directory:
+            raise RuntimeError(
+                "Autosave directory is not known, call "
+                "autosave.configure() with keyword argument directory"
+            )
+        if not cls.directory.is_dir():
+            raise FileNotFoundError(
+                f"{cls.directory} is not a valid autosave directory"
+            )
         cls.__backup_sav_file()
-        sav_path = path or cls.__get_current_sav_path()
+        sav_path = cls.__get_current_sav_path()
         if not sav_path or not sav_path.is_file():
             print(
                 f"Could not load autosave values from file {sav_path}",
@@ -238,8 +258,9 @@ class Autosave:
         self._stop_event.set()
 
     def loop(self):
-        if not self.enabled or not self._pvs:
+        if not self.enabled or not self._pvs or self._loop_started:
             return
+        self._loop_started = True
         while True:
             try:
                 self._stop_event.wait(timeout=self.save_period)
@@ -248,6 +269,3 @@ class Autosave:
                     return
             except Exception:
                 traceback.print_exc()
-
-
-__all__ = ["configure"]

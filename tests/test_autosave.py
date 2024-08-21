@@ -83,9 +83,10 @@ def test_autosave_defaults():
 
 def test_configure_dir_doesnt_exist(tmp_path):
     DEVICE_NAME = "MY_DEVICE"
+    builder.aOut("MY-RECORD", autosave=True)
     autosave.configure(tmp_path / "subdir-doesnt-exist", DEVICE_NAME)
     with pytest.raises(FileNotFoundError):
-        autosave.Autosave()
+        autosave.load_autosave()
 
 
 def test_returns_if_init_called_before_configure():
@@ -176,15 +177,15 @@ def test_stop_event(tmp_path):
 
 
 @pytest.mark.parametrize(
-        "timestamped,regex",
-        [(False, r"^" + DEVICE_NAME + r"\.softsav_[0-9]{6}-[0-9]{6}$"),
-         (True, r"^" + DEVICE_NAME + r"\.softsav\.bu$")]
-    )
+    "timestamped,regex",
+    [
+        (False, r"^" + DEVICE_NAME + r"\.softsav_[0-9]{6}-[0-9]{6}$"),
+        (True, r"^" + DEVICE_NAME + r"\.softsav\.bu$"),
+    ],
+)
 def test_backup_on_load(existing_autosave_dir, timestamped, regex):
     autosave.configure(
-        existing_autosave_dir,
-        DEVICE_NAME,
-        timestamped_backups=timestamped
+        existing_autosave_dir, DEVICE_NAME, timestamped_backups=timestamped
     )
     # backup only performed if there are any pvs to save
     builder.aOut("SAVED-AO", autosave=True)
@@ -199,6 +200,7 @@ def test_backup_on_load(existing_autosave_dir, timestamped, regex):
             assert "OUT-OF-DATE-KEY" not in state
             assert "SAVED-AO" in state
 
+
 def test_autosave_key_names(tmp_path):
     builder.aOut("DEFAULTNAME", autosave=True)
     builder.aOut("DEFAULTNAMEAFTERPREFIXSET", autosave=True)
@@ -209,6 +211,30 @@ def test_autosave_key_names(tmp_path):
         saved = yaml.full_load(f)
     assert "DEFAULTNAME" in saved
     assert "DEFAULTNAMEAFTERPREFIXSET" in saved
+
+
+def test_context_manager(tmp_path):
+    builder.aOut("MANUAL", autosave=True, autosave_fields=["EGU"])
+    with autosave.Autosave(True, ["PINI"]):
+        builder.aOut("AUTOMATIC")
+        builder.aOut(
+            "AUTOMATIC-OVERRIDDEN", autosave=False, autosave_fields=["SCAN"]
+        )
+    autosave.configure(tmp_path, DEVICE_NAME)
+    with patch(
+        "softioc.device.ProcessDeviceSupportCore.get_field", return_value="0"
+    ):
+        autosaver = autosave.Autosave()
+        autosaver._save()
+        with open(tmp_path / f"{DEVICE_NAME}.softsav", "r") as f:
+            saved = yaml.full_load(f)
+        assert "MANUAL" in saved
+        assert "MANUAL.EGU" in saved
+        assert "AUTOMATIC" in saved
+        assert "AUTOMATIC.PINI" in saved
+        assert "AUTOMATIC-OVERRIDDEN" in saved
+        assert "AUTOMATIC-OVERRIDDEN.SCAN" in saved
+        assert "AUTOMATIC-OVERRIDDEN.PINI" in saved
 
 
 def check_all_record_types_load_properly(device_name, autosave_dir, conn):
@@ -365,7 +391,8 @@ def test_actual_ioc_save(tmp_path):
 
 
 def check_autosave_field_names_contain_device_prefix(
-        device_name, tmp_path, conn):
+    device_name, tmp_path, conn
+):
     autosave.configure(tmp_path, device_name, save_period=1)
     builder.aOut("BEFORE", autosave=True, autosave_fields=["EGU"])
     builder.SetDeviceName(device_name)
@@ -378,6 +405,7 @@ def check_autosave_field_names_contain_device_prefix(
     assert "BEFORE" in saved.keys()
     assert f"{device_name}:AFTER" in saved.keys()
     conn.send("D")
+
 
 def test_autosave_field_names_contain_device_prefix(tmp_path):
     ctx = get_multiprocessing_context()

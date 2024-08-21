@@ -3,7 +3,7 @@ import time
 import ctypes
 from ctypes import *
 import numpy
-from .autosave import add_pv_to_autosave
+from . import autosave
 from . import alarm
 from . import fields
 from .imports import (
@@ -58,7 +58,7 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
         autosave_enabled = kargs.pop("autosave", False)
         autosave_fields = kargs.pop("autosave_fields", [])
         if autosave_enabled or autosave_fields:
-            add_pv_to_autosave(
+            autosave.add_pv_to_autosave(
                 self, name, autosave_enabled, autosave_fields)
         self.__super.__init__(name, **kargs)
 

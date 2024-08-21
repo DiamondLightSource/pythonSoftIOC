@@ -73,7 +73,7 @@ def add_pv_to_autosave(pv, name, save_val, save_fields):
         pv: a PV object inheriting ProcessDeviceSupportCore
         name: the name of the PV which is used to generate the key
             by which the PV value is saved to and loaded from a backup,
-            this is typically the signal name without the device prefix
+            this is typically the same as the PV name.
         save_val: a boolean that tracks whether to save the VAL field
             in an autosave backup
         save_fields: a list of string names of fields associated with the pv

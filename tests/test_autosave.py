@@ -364,7 +364,7 @@ def test_actual_ioc_save(tmp_path):
     select_and_recv(parent_conn, "D")
 
 
-def check_autosave_field_names_exclude_builder_prefix(
+def check_autosave_field_names_contain_device_prefix(
         device_name, tmp_path, conn):
     autosave.configure(tmp_path, device_name, save_period=1)
     builder.aOut("BEFORE", autosave=True, autosave_fields=["EGU"])
@@ -376,16 +376,14 @@ def check_autosave_field_names_exclude_builder_prefix(
     with open(tmp_path / f"{device_name}.softsav", "r") as f:
         saved = yaml.full_load(f)
     assert "BEFORE" in saved.keys()
-    assert "AFTER" in saved.keys()
-    for key in saved:
-        assert device_name not in key
+    assert f"{device_name}:AFTER" in saved.keys()
     conn.send("D")
 
-def test_autosave_field_names_exclude_builder_prefix(tmp_path):
+def test_autosave_field_names_contain_device_prefix(tmp_path):
     ctx = get_multiprocessing_context()
     parent_conn, child_conn = ctx.Pipe()
     ioc_process = ctx.Process(
-        target=check_autosave_field_names_exclude_builder_prefix,
+        target=check_autosave_field_names_contain_device_prefix,
         args=(DEVICE_NAME, tmp_path, child_conn),
     )
     ioc_process.start()

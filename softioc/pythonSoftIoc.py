@@ -31,7 +31,6 @@ class RecordWrapper(object):
         for keyword in DeviceKeywords:
             if keyword in fields:
                 device_kargs[keyword] = fields.pop(keyword)
-        device_kargs['autosave_name'] = name
 
         record = builder(name, **fields)
         record.address = '@' + record.name

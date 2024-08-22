@@ -161,17 +161,16 @@ def test_can_save_fields(tmp_path):
 def test_stop_event(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     builder.aOut("DUMMYRECORD", autosave=True)
-    autosaver = autosave.Autosave()
     worker = threading.Thread(
-        target=autosaver.loop,
+        target=autosave.Autosave._loop,
     )
     try:
         worker.daemon = True
         worker.start()
-        assert not autosaver._stop_event.is_set()
+        assert not autosave.Autosave._stop_event.is_set()
         assert worker.is_alive()
-        autosaver.stop()
-        assert autosaver._stop_event.is_set()
+        autosave.Autosave._stop()
+        assert autosave.Autosave._stop_event.is_set()
     finally:
         worker.join(timeout=1)
 

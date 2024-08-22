@@ -55,17 +55,16 @@ def configure(
 
 
 def start_autosave_thread():
-    autosaver = Autosave()
     worker = threading.Thread(
-        target=autosaver.loop,
+        target=Autosave._loop,
     )
     worker.daemon = True
     worker.start()
-    atexit.register(_shutdown_autosave_thread, autosaver, worker)
+    atexit.register(_shutdown_autosave_thread, worker)
 
 
-def _shutdown_autosave_thread(autosaver, worker):
-    autosaver.stop()
+def _shutdown_autosave_thread(worker):
+    Autosave._stop()
     worker.join()
 
 
@@ -74,9 +73,8 @@ def add_pv_to_autosave(pv, name, save_val, save_fields):
 
     Args:
         pv: a PV object inheriting ProcessDeviceSupportCore
-        name: the name of the PV which is used to generate the key
-            by which the PV value is saved to and loaded from a backup,
-            this is typically the same as the PV name.
+        name: the key by which the PV value is saved to and loaded from a
+            backup, this is typically the same as the PV name.
         save_val: a boolean that tracks whether to save the VAL field
             in an autosave backup
         save_fields: a list of string names of fields associated with the pv
@@ -181,9 +179,10 @@ class Autosave:
     def __get_current_sav_path(cls):
         return cls.directory / f"{cls.device_name}.{SAV_SUFFIX}"
 
-    def __get_state(self):
+    @classmethod
+    def __get_state(cls):
         state = {}
-        for pv_field, pv in self._pvs.items():
+        for pv_field, pv in cls._pvs.items():
             try:
                 state[pv_field] = pv.get()
             except Exception:
@@ -204,25 +203,27 @@ class Autosave:
                 )
                 traceback.print_exc()
 
-    def __state_changed(self, state):
-        return self._last_saved_state.keys() != state.keys() or any(
+    @classmethod
+    def __state_changed(cls, state):
+        return cls._last_saved_state.keys() != state.keys() or any(
             # checks equality for builtins and numpy arrays
-            not numpy.array_equal(state[key], self._last_saved_state[key])
+            not numpy.array_equal(state[key], cls._last_saved_state[key])
             for key in state
         )
 
-    def _save(self):
-        state = self.__get_state()
-        if self.__state_changed(state):
-            sav_path = self.__get_current_sav_path()
-            tmp_path = self.__get_tmp_sav_path()
+    @classmethod
+    def _save(cls):
+        state = cls.__get_state()
+        if cls.__state_changed(state):
+            sav_path = cls.__get_current_sav_path()
+            tmp_path = cls.__get_tmp_sav_path()
             # write to temporary file first then use atomic os.rename
             # to safely update stored state
             with open(tmp_path, "w") as backup:
                 yaml.dump(state, backup, indent=4)
             rename(tmp_path, sav_path)
-            self._last_saved_state = state
-            self._last_saved_time = datetime.now()
+            cls._last_saved_state = state
+            cls._last_saved_time = datetime.now()
 
     @classmethod
     def _load(cls):
@@ -254,18 +255,20 @@ class Autosave:
             cls._last_saved_state = yaml.full_load(f)
         cls.__set_pvs_from_saved_state()
 
-    def stop(self):
-        self._stop_event.set()
+    @classmethod
+    def _stop(cls):
+        cls._stop_event.set()
 
-    def loop(self):
-        if not self.enabled or not self._pvs or self._loop_started:
+    @classmethod
+    def _loop(cls):
+        if not cls.enabled or not cls._pvs or cls._loop_started:
             return
-        self._loop_started = True
+        cls._loop_started = True
         while True:
             try:
-                self._stop_event.wait(timeout=self.save_period)
-                self._save()
-                if self._stop_event.is_set():  # Stop requested
+                cls._stop_event.wait(timeout=cls.save_period)
+                cls._save()
+                if cls._stop_event.is_set():  # Stop requested
                     return
             except Exception:
                 traceback.print_exc()

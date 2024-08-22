@@ -10,6 +10,8 @@ builder.aOut("AO", autosave=True)
 builder.aIn("AI", autosave_fields=["PREC", "EGU"])
 builder.boolIn("BO")
 builder.WaveformIn("WAVEFORMOUT", [0, 0, 0, 0], autosave=True)
+with autosave.Autosave(True, ["LOPR", "HOPR"]):
+    builder.aOut("AUTOMATIC-AO", autosave_fields=["EGU"])
 minutes = builder.longOut("MINUTESRUN", autosave=True)
 
 autosave.configure(

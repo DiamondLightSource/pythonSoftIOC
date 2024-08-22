@@ -10,7 +10,7 @@ from typing import Any
 import pytest
 
 from softioc import builder
-from softioc.builder import ClearRecords
+from softioc.builder import ClearRecords, SetDeviceName, GetRecordNames
 
 in_records = [
     builder.aIn,
@@ -98,12 +98,18 @@ def asyncio_ioc_override():
     ioc.kill()
     aioca_cleanup()
 
+def reset_device_name():
+    if GetRecordNames().prefix:
+        SetDeviceName("")
+
 @pytest.fixture(autouse=True)
 def clear_records():
     """Deletes all records before and after every test"""
     ClearRecords()
+    reset_device_name()
     yield
     ClearRecords()
+    reset_device_name()
 
 @pytest.fixture(autouse=True)
 def enable_code_coverage():

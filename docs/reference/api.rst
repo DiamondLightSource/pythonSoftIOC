@@ -147,10 +147,11 @@ and stderr streams, is sent directly to the terminal.
     Configuring saving and loading of record fields with `softioc.autosave.configure`
     ---------------------------------------------------------------------------------
 
-    ..  function:: configure(directory, name, save_period=30, backup=True, enabled=True)
-    Used to set the location of backup files.
-    Backups are disabled by default unless this method is called. It must be
-    called prior to :func:`~softioc.builder.LoadDatabase`.
+    ..  function:: configure(directory, name, save_period=30, timestamped_backups=True, enabled=True)
+
+        Used to set the location of backup files.
+        Backups are disabled by default unless this method is called. It must be
+        called prior to :func:`~softioc.builder.LoadDatabase`.
 
     It has the following arguments:
 
@@ -168,7 +169,7 @@ and stderr streams, is sent directly to the terminal.
     ~~~~~~
     The file prefix used for naming the backup files. This is typically set to
     be the same as the device prefix. The resulting file name will be
-    `name`.softsav. This argument is required
+    `name`.softsav. This argument is required.
 
     .. _save_period:
 
@@ -178,14 +179,14 @@ and stderr streams, is sent directly to the terminal.
     Backup files are only overwritten if any of the field values have changed
     since the last backup.
 
-    .. _backup:
+    .. _timestamped_backups:
 
-    `backup`
-    ~~~~~~~~
+    `timestamped_backups`
+    ~~~~~~~~~~~~~~~~~~~~~
     A boolean that is `True` by default, creates a backup of the latest existing
     autosave file that is timestamped at the time that the autosave thread is
-    started.
-    In normal operation, the current autosave file is overwritten every save.
+    started. If set to `False`, the backup is not timestamped and gets overwritten
+    every time the IOC restarts.
 
     .. _enabled:
 
@@ -197,6 +198,16 @@ and stderr streams, is sent directly to the terminal.
 
     .. seealso::
         `softioc.builder` for how to designate a field for autosave.
+
+    ..  class:: Autosave
+
+        ..  method:: __init__(autosave=True, autosave_fields=None)
+
+            To be called as a context manager. Any PVs that are created inside
+            the context manager have the arguments ``autosave`` and ``autosave_fields``
+            passed to them automatically, where ``autosave_fields`` is an optional list of
+            field names. If the PV already has autosave_fields set, the lists of fields get
+            combined.
 
 
 
@@ -318,7 +329,7 @@ and stderr streams, is sent directly to the terminal.
     .. seealso::
         `SetBlocking` for configuring a global default blocking value
 
-    .. _autosave:
+    .. _autosave_arg:
 
     `autosave`
     ~~~~~~~~~~
@@ -339,9 +350,8 @@ and stderr streams, is sent directly to the terminal.
     `autosave_fields`
     ~~~~~~~~~~~~~~~~~
 
-    A list of strings of record fields, (e.g. ["SCAN", "PREC"]) to be saved to
-    and loaded from a backup file, empty by default.
-    Works in an identical way to `autosave`.
+    A list of strings of record fields belonging to the PV (e.g. ["EGU", "PREC"])
+    to be saved to and loaded from a backup file, empty by default.
 
 
 For all of these functions any EPICS database field can be assigned a value by

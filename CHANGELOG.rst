@@ -11,7 +11,7 @@ Unreleased_
 -----------
 
 Added:
-- `Add autosave support to all records and record fields <../../pull/163>`
+- `Add autosave support to all records and record fields <../../pull/163>`_
 - `Add int64In/Out record support <../../pull/161>`_
 - `Enable setting alarm status of Out records <../../pull/157>`_
 - `Adding the non_interactive_ioc function <../../pull/156>`_

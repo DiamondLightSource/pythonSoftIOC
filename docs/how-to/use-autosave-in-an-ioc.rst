@@ -1,4 +1,4 @@
-Use `softioc.autosave` in an IOC
+Use `autosave` in an IOC
 ================================
 
 `../tutorials/creating-an-ioc` shows how to create a pythonSoftIOC.
@@ -13,13 +13,13 @@ Records are instantiated as normal and configured for automatic loading and
 periodic saving to a backup file with the keyword arguments ``autosave`` and ``autosave_fields``.
 Records with ``autosave=True`` (``False`` by default) have their
 VAL fields backed up. Additional record fields in a list passed to ``autosave_fields`` will be backed
-up, note that this applies even when ``autosave`` is ``False``.
+up - note that this applies even when ``autosave`` is ``False``.
 
-The field values get written into a yaml-formatted file containing key-value pairs,
-by default the keys are the same as the full PV name, including any device name specified 
+The field values get written into a yaml-formatted file containing key-value pairs.
+By default the keys are the same as the full PV name, including any device name specified
 in :func:`~softioc.builder.SetDeviceName()`.
 
-Autosave is disabled by default until :func:`~softioc.autosave.configure()` is called. The first two arguments,
+Autosave is disabled until :func:`~softioc.autosave.configure()` is called. The first two arguments,
 ``directory`` and ``name`` are required. Backup files are periodically written into
 ``directory`` with the name ``<name>.softsav`` every ``save_period`` seconds,
 set to 30.0 by default. The directory must exist, and should be configured with the appropriate
@@ -33,7 +33,7 @@ inside the context manager. If the PV already has ``autosave_fields`` set, the l
 of fields get combined. All other module members are intended for internal use only.
 
 In normal operation, loading from a backup is performed once during the
-:func:`~softioc.builder.LoadDatabase()` call, periodic saving to the backup file begins when
+:func:`~softioc.builder.LoadDatabase()` call and periodic saving to the backup file begins when
 :func:`~softioc.softioc.iocInit()` is called, provided that any PVs are configured to be saved.
 Currently, manual loading from a backup at runtime after ioc initialisation is not supported.
 Saving only occurs when any of the saved field values have changed since the last save.
@@ -49,7 +49,7 @@ named ``<name>.softsav.bu``. To disable any autosaving, comment out the
 :func:`~softioc.autosave.configure()` call or pass it the keyword argument
 ``enabled=False``.
 
-The resulting backup file after running the IOC for a minute is the following:
+The resulting backup file after running the example IOC for about 30 seconds is the following:
 
 .. code-block::
 
@@ -60,12 +60,12 @@ The resulting backup file after running the IOC for a minute is the following:
     MY-DEVICE-PREFIX:AUTOMATIC-AO.EGU: ''
     MY-DEVICE-PREFIX:AUTOMATIC-AO.HOPR: '0'
     MY-DEVICE-PREFIX:AUTOMATIC-AO.LOPR: '0'
-    MY-DEVICE-PREFIX:MINUTESRUN: 1
-    MY-DEVICE-PREFIX:WAVEFORMOUT: [0, 0, 0, 0]    AI.EGU: ''
+    MY-DEVICE-PREFIX:SECONDSRUN: 29
+    MY-DEVICE-PREFIX:WAVEFORMIN: [0, 0, 0, 0]
 
 
-If the IOC is stopped and restarted, the MINUTESRUN record will load its saved
-value of 1 from the backup.
+If the IOC is stopped and restarted, the SECONDSRUN record will load its saved
+value of 29 from the backup.
 All non-VAL fields are stored as strings. Waveform type records holding arrays
 are cast into lists before saving.
 

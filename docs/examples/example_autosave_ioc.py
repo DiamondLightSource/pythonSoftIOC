@@ -9,15 +9,15 @@ builder.SetDeviceName("MY-DEVICE-PREFIX")
 builder.aOut("AO", autosave=True)
 builder.aIn("AI", autosave_fields=["PREC", "EGU"])
 builder.boolIn("BO")
-builder.WaveformIn("WAVEFORMOUT", [0, 0, 0, 0], autosave=True)
+builder.WaveformIn("WAVEFORMIN", [0, 0, 0, 0], autosave=True)
 with autosave.Autosave(True, ["LOPR", "HOPR"]):
     builder.aOut("AUTOMATIC-AO", autosave_fields=["EGU"])
-minutes = builder.longOut("MINUTESRUN", autosave=True)
+seconds = builder.longOut("SECONDSRUN", autosave=True)
 
 autosave.configure(
     directory="/tmp/autosave-data",
     name="MY-DEVICE-PREFIX",
-    save_period=20.0
+    save_period=5.0
 )
 
 builder.LoadDatabase()
@@ -26,8 +26,8 @@ softioc.iocInit()
 # Start processes required to be run after iocInit
 def update():
     while True:
-        cothread.Sleep(60)
-        minutes.set(minutes.get() + 1)
+        cothread.Sleep(1)
+        seconds.set(seconds.get() + 1)
 
 cothread.Spawn(update)
 

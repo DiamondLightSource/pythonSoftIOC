@@ -37,7 +37,7 @@ def configure(
     Args:
         directory: string or Path giving directory path where autosave backup
             files are saved and loaded.
-        name: string name of the root used for naming backup files, this
+        name: string name of the root used for naming backup files. This
             is usually the same as the device name.
         save_period: time in seconds between backups. Backups are only performed
             if PV values have changed.
@@ -58,7 +58,6 @@ def start_autosave_thread():
     worker = threading.Thread(
         target=Autosave._loop,
     )
-    worker.daemon = True
     worker.start()
     atexit.register(_shutdown_autosave_thread, worker)
 
@@ -74,7 +73,7 @@ def add_pv_to_autosave(pv, name, save_val, save_fields):
     Args:
         pv: a PV object inheriting ProcessDeviceSupportCore
         name: the key by which the PV value is saved to and loaded from a
-            backup, this is typically the same as the PV name.
+            backup. This is typically the same as the PV name.
         save_val: a boolean that tracks whether to save the VAL field
             in an autosave backup
         save_fields: a list of string names of fields associated with the pv
@@ -82,8 +81,9 @@ def add_pv_to_autosave(pv, name, save_val, save_fields):
     """
     if save_val:
         Autosave._pvs[name] = _AutosavePV(pv)
-    for field in save_fields:
-        Autosave._pvs[f"{name}.{field}"] = _AutosavePV(pv, field)
+    if save_fields:
+        for field in save_fields:
+            Autosave._pvs[f"{name}.{field}"] = _AutosavePV(pv, field)
 
 
 def load_autosave():
@@ -126,12 +126,9 @@ class Autosave:
     def __exit__(self, A, B, C):
         if self._save_val or self._save_fields:
             for key, pv in LookupRecordList():
-                try:
-                    if key not in self._records_before_cm:
-                        add_pv_to_autosave(
-                            pv, key, self._save_val, self._save_fields)
-                except Exception:
-                    traceback.print_exc()
+                if key not in self._records_before_cm:
+                    add_pv_to_autosave(
+                        pv, key, self._save_val, self._save_fields)
         self._save_val = False
         self._save_fields = []
         self._records_before_cm = None

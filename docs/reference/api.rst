@@ -149,7 +149,7 @@ and stderr streams, is sent directly to the terminal.
 
     ..  function:: configure(directory, name, save_period=30, timestamped_backups=True, enabled=True)
 
-        Used to set the location of backup files.
+        Used to configure settings for Autosave.
         Backups are disabled by default unless this method is called. It must be
         called prior to :func:`~softioc.builder.LoadDatabase`.
 
@@ -169,7 +169,7 @@ and stderr streams, is sent directly to the terminal.
     ~~~~~~
     The file prefix used for naming the backup files. This is typically set to
     be the same as the device prefix. The resulting file name will be
-    `name`.softsav. This argument is required.
+    ``name``.softsav. This argument is required.
 
     .. _save_period:
 
@@ -193,8 +193,7 @@ and stderr streams, is sent directly to the terminal.
     `enabled`
     ~~~~~~~~~
     A boolean that is `True` by default, if `False` then no loading will occur
-    at IOC startup, and the save thread will return without performing any
-    backups.
+    at IOC startup, and no values with be saved to any backup files.
 
     .. seealso::
         `softioc.builder` for how to designate a field for autosave.
@@ -334,7 +333,7 @@ and stderr streams, is sent directly to the terminal.
     `autosave`
     ~~~~~~~~~~
 
-    Available on all record types, when set to `True` it marks the record
+    Available on all record types. When set to `True` it marks the record
     value for automatic periodic backing up to a file. Set to `False` by
     default. When the IOC is restarted and a backup file exists, the value is
     loaded from this file when :func:`~softioc.builder.LoadDatabase` is called.
@@ -351,7 +350,7 @@ and stderr streams, is sent directly to the terminal.
     ~~~~~~~~~~~~~~~~~
 
     A list of strings of record fields belonging to the PV (e.g. ["EGU", "PREC"])
-    to be saved to and loaded from a backup file, empty by default.
+    to be saved to and loaded from a backup file. Empty by default.
 
 
 For all of these functions any EPICS database field can be assigned a value by

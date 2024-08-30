@@ -56,7 +56,7 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     # all record types can support autosave
     def __init__(self, name, **kargs):
         autosave_enabled = kargs.pop("autosave", False)
-        autosave_fields = kargs.pop("autosave_fields", [])
+        autosave_fields = kargs.pop("autosave_fields", None)
         if autosave_enabled or autosave_fields:
             autosave.add_pv_to_autosave(
                 self, name, autosave_enabled, autosave_fields)

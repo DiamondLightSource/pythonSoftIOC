@@ -20,6 +20,8 @@ def reset_autosave_setup_teardown():
     default_directory = autosave.Autosave.directory
     default_enabled = autosave.Autosave.enabled
     default_tb = autosave.Autosave.timestamped_backups
+    default_cm_save_val = autosave.Autosave._cm_save_val
+    default_cm_save_fields = autosave.Autosave._cm_save_fields
     yield
     autosave.Autosave._pvs = default_pvs
     autosave.Autosave._last_saved_state = default_state
@@ -29,6 +31,8 @@ def reset_autosave_setup_teardown():
     autosave.Autosave.directory = default_directory
     autosave.Autosave.enabled = default_enabled
     autosave.Autosave.timestamped_backups = default_tb
+    autosave.Autosave._cm_save_val = default_cm_save_val
+    autosave.Autosave._cm_save_fields = default_cm_save_fields
 
 
 @pytest.fixture

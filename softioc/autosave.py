@@ -10,8 +10,6 @@ from shutil import copy2
 import numpy
 import yaml
 
-from .device_core import LookupRecordList
-
 SAV_SUFFIX = "softsav"
 SAVB_SUFFIX = "softsavB"
 DEFAULT_SAVE_PERIOD = 30.0
@@ -72,18 +70,19 @@ def _shutdown_autosave_thread(worker):
     worker.join()
 
 
-def add_pv_to_autosave(pv, name, save_val, save_fields):
+def add_pv_to_autosave(pv, name, kargs):
     """Configures a PV for autosave
 
     Args:
         pv: a PV object inheriting ProcessDeviceSupportCore
         name: the key by which the PV value is saved to and loaded from a
             backup. This is typically the same as the PV name.
-        save_val: a boolean that tracks whether to save the VAL field
-            in an autosave backup
-        save_fields: a list of string names of fields associated with the pv
-            to be saved to and loaded from a backup
+        kargs: a dictionary containing the optional keys "autosave", a boolean
+            used to add the VAL field to autosave backups, and "autosave_fields",
+            a list of string field names to save to the backup file.
     """
+    save_val = kargs.pop("autosave", False) or Autosave._cm_save_val
+    save_fields = kargs.pop("autosave_fields", []) + Autosave._cm_save_fields
     if save_val:
         Autosave._pvs[name] = _AutosavePV(pv)
     if save_fields:
@@ -116,27 +115,22 @@ class Autosave:
     enabled = False
     timestamped_backups = True
     _loop_started = False
+    _cm_save_val = False
+    _cm_save_fields = []
+    _in_cm = False
 
     def __init__(self, autosave=True, autosave_fields=None):
         # for use as a context manager
-        self._save_val = autosave
-        self._save_fields = autosave_fields or []
+        Autosave._cm_save_val = autosave
+        Autosave._cm_save_fields = autosave_fields or []
 
     def __enter__(self):
-        if self._save_val or self._save_fields:
-            self._records_before_cm = dict(LookupRecordList())
-        else:
-            self._records_before_cm = {}
+        Autosave._in_cm = True
 
     def __exit__(self, A, B, C):
-        if self._save_val or self._save_fields:
-            for key, pv in LookupRecordList():
-                if key not in self._records_before_cm:
-                    add_pv_to_autosave(
-                        pv, key, self._save_val, self._save_fields)
-        self._save_val = False
-        self._save_fields = []
-        self._records_before_cm = None
+        Autosave._in_cm = False
+        Autosave._cm_save_val = False
+        Autosave._cm_save_fields = []
 
 
     @classmethod

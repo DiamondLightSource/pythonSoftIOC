@@ -47,7 +47,12 @@ def configure(
         enabled: boolean which enables or disables autosave, set to True by
             default, or False if configure not called.
     """
-    Autosave.directory = Path(directory)
+    directory_path = Path(directory)
+    if not directory_path.is_dir():
+        raise FileNotFoundError(
+            f"{directory} is not a valid autosave directory"
+        )
+    Autosave.directory = directory_path
     Autosave.timestamped_backups = timestamped_backups
     Autosave.save_period = save_period
     Autosave.enabled = enabled
@@ -136,7 +141,7 @@ class Autosave:
 
     @classmethod
     def __backup_sav_file(cls):
-        if not cls.directory and cls.directory.is_dir():
+        if not cls.directory or not cls.directory.is_dir():
             print(
                 f"Could not back up autosave as {cls.directory} is"
                 " not a valid directory",

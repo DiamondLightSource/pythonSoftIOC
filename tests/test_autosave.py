@@ -84,9 +84,8 @@ def test_autosave_defaults():
 def test_configure_dir_doesnt_exist(tmp_path):
     DEVICE_NAME = "MY_DEVICE"
     builder.aOut("MY-RECORD", autosave=True)
-    autosave.configure(tmp_path / "subdir-doesnt-exist", DEVICE_NAME)
     with pytest.raises(FileNotFoundError):
-        autosave.load_autosave()
+        autosave.configure(tmp_path / "subdir-doesnt-exist", DEVICE_NAME)
 
 
 def test_returns_if_init_called_before_configure():
@@ -374,6 +373,8 @@ def check_all_record_types_save_properly(device_name, autosave_dir, conn):
     assert saved["Action"] == 1
     assert (saved["WaveformIn"] == numpy.array([1, 2, 3, 4])).all()
     assert (saved["WaveformOut"] == numpy.array([1, 2, 3, 4])).all()
+    autosave.Autosave._stop()
+    # force autosave thread to stop to ensure pytest exits
     conn.send("D")
 
 
@@ -403,6 +404,7 @@ def check_autosave_field_names_contain_device_prefix(
         saved = yaml.full_load(f)
     assert "BEFORE" in saved.keys()
     assert f"{device_name}:AFTER" in saved.keys()
+    autosave.Autosave._stop()
     conn.send("D")
 
 

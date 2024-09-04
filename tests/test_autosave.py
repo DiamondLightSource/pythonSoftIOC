@@ -13,24 +13,24 @@ DEVICE_NAME = "MY-DEVICE"
 
 @pytest.fixture(autouse=True)
 def reset_autosave_setup_teardown():
+    default_save_period = autosave.AutosaveConfig.save_period
+    default_device_name = autosave.AutosaveConfig.device_name
+    default_directory = autosave.AutosaveConfig.directory
+    default_enabled = autosave.AutosaveConfig.enabled
+    default_tb = autosave.AutosaveConfig.timestamped_backups
     default_pvs = autosave.Autosave._pvs.copy()
     default_state = autosave.Autosave._last_saved_state.copy()
-    default_save_period = autosave.Autosave.save_period
-    default_device_name = autosave.Autosave.device_name
-    default_directory = autosave.Autosave.directory
-    default_enabled = autosave.Autosave.enabled
-    default_tb = autosave.Autosave.timestamped_backups
     default_cm_save_val = autosave.Autosave._cm_save_val
     default_cm_save_fields = autosave.Autosave._cm_save_fields
     yield
+    autosave.AutosaveConfig.save_period = default_save_period
+    autosave.AutosaveConfig.device_name = default_device_name
+    autosave.AutosaveConfig.directory = default_directory
+    autosave.AutosaveConfig.enabled = default_enabled
+    autosave.AutosaveConfig.timestamped_backups = default_tb
     autosave.Autosave._pvs = default_pvs
     autosave.Autosave._last_saved_state = default_state
     autosave.Autosave._stop_event = threading.Event()
-    autosave.Autosave.save_period = default_save_period
-    autosave.Autosave.device_name = default_device_name
-    autosave.Autosave.directory = default_directory
-    autosave.Autosave.enabled = default_enabled
-    autosave.Autosave.timestamped_backups = default_tb
     autosave.Autosave._cm_save_val = default_cm_save_val
     autosave.Autosave._cm_save_fields = default_cm_save_fields
 
@@ -66,11 +66,12 @@ def existing_autosave_dir(tmp_path):
 
 
 def test_configure(tmp_path):
-    assert autosave.Autosave.enabled is False
+    assert autosave.AutosaveConfig.enabled is False
     autosave.configure(tmp_path, DEVICE_NAME)
-    assert autosave.Autosave.device_name == DEVICE_NAME
-    assert autosave.Autosave.directory == tmp_path
-    assert autosave.Autosave.enabled is True
+    assert autosave.AutosaveConfig.device_name == DEVICE_NAME
+    assert autosave.AutosaveConfig.directory == tmp_path
+    assert autosave.AutosaveConfig.enabled is True
+    assert autosave.AutosaveConfig.timestamped_backups is True
 
 
 def test_autosave_defaults():
@@ -78,11 +79,11 @@ def test_autosave_defaults():
     assert autosave.Autosave._last_saved_state == {}
     assert isinstance(autosave.Autosave._stop_event, threading.Event)
     assert not autosave.Autosave._stop_event.is_set()
-    assert autosave.Autosave.save_period == 30.0
-    assert autosave.Autosave.device_name is None
-    assert autosave.Autosave.directory is None
-    assert autosave.Autosave.enabled is False
-    assert autosave.Autosave.timestamped_backups is True
+    assert autosave.AutosaveConfig.save_period == 30.0
+    assert autosave.AutosaveConfig.device_name is None
+    assert autosave.AutosaveConfig.directory is None
+    assert autosave.AutosaveConfig.enabled is False
+    assert autosave.AutosaveConfig.timestamped_backups is True
 
 
 def test_configure_dir_doesnt_exist(tmp_path):
@@ -94,7 +95,7 @@ def test_configure_dir_doesnt_exist(tmp_path):
 
 def test_returns_if_init_called_before_configure():
     autosave.Autosave()
-    assert autosave.Autosave.enabled is False
+    assert autosave.AutosaveConfig.enabled is False
 
 
 def test_all_record_types_saveable(tmp_path):

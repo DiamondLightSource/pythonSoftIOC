@@ -20,14 +20,16 @@ def _ndarray_representer(dumper, array):
         "tag:yaml.org,2002:seq", array.tolist(), flow_style=True
     )
 
+
 yaml.add_representer(numpy.ndarray, _ndarray_representer, Dumper=yaml.Dumper)
+
 
 def configure(
     directory,
     name,
     save_period=DEFAULT_SAVE_PERIOD,
     timestamped_backups=True,
-    enabled=True
+    enabled=True,
 ):
     """This should be called before initialising the IOC. Configures the
     autosave thread for periodic backing up of PV values.
@@ -50,11 +52,19 @@ def configure(
         raise FileNotFoundError(
             f"{directory} is not a valid autosave directory"
         )
-    Autosave.directory = directory_path
-    Autosave.timestamped_backups = timestamped_backups
-    Autosave.save_period = save_period
-    Autosave.enabled = enabled
-    Autosave.device_name = name
+    AutosaveConfig.directory = directory_path
+    AutosaveConfig.timestamped_backups = timestamped_backups
+    AutosaveConfig.save_period = save_period
+    AutosaveConfig.enabled = enabled
+    AutosaveConfig.device_name = name
+
+
+class AutosaveConfig:
+    directory = None
+    device_name = None
+    timestamped_backups = True
+    save_period = DEFAULT_SAVE_PERIOD
+    enabled = False
 
 
 def start_autosave_thread():
@@ -104,16 +114,35 @@ class _AutosavePV:
             self.set = lambda val: setattr(pv, field, val)
 
 
+def _get_current_sav_path():
+    return (
+        AutosaveConfig.directory / f"{AutosaveConfig.device_name}.{SAV_SUFFIX}"
+    )
+
+
+def _get_tmp_sav_path():
+    return (
+        AutosaveConfig.directory / f"{AutosaveConfig.device_name}.{SAVB_SUFFIX}"
+    )
+
+
+def _get_timestamped_backup_sav_path(timestamp):
+    sav_path = _get_current_sav_path()
+    return sav_path.parent / (
+        sav_path.name + timestamp.strftime("_%y%m%d-%H%M%S")
+    )
+
+
+def _get_backup_sav_path():
+    sav_path = _get_current_sav_path()
+    return sav_path.parent / (sav_path.name + ".bu")
+
+
 class Autosave:
     _pvs = {}
     _last_saved_state = {}
     _last_saved_time = datetime.now()
     _stop_event = threading.Event()
-    save_period = DEFAULT_SAVE_PERIOD
-    device_name = None
-    directory = None
-    enabled = False
-    timestamped_backups = True
     _loop_started = False
     _cm_save_val = False
     _cm_save_fields = []
@@ -132,21 +161,23 @@ class Autosave:
         Autosave._cm_save_val = False
         Autosave._cm_save_fields = []
 
-
     @classmethod
     def __backup_sav_file(cls):
-        if not cls.directory or not cls.directory.is_dir():
+        if (
+            not AutosaveConfig.directory
+            or not AutosaveConfig.directory.is_dir()
+        ):
             print(
-                f"Could not back up autosave as {cls.directory} is"
+                f"Could not back up autosave as {AutosaveConfig.directory} is"
                 " not a valid directory",
                 file=sys.stderr,
             )
             return
-        sav_path = cls.__get_current_sav_path()
-        if cls.timestamped_backups:
-            backup_path = cls.__get_timestamped_backup_sav_path()
+        sav_path = _get_current_sav_path()
+        if AutosaveConfig.timestamped_backups:
+            backup_path = _get_timestamped_backup_sav_path(cls._last_saved_time)
         else:
-            backup_path = cls.__get_backup_sav_path()
+            backup_path = _get_backup_sav_path()
         if sav_path.is_file():
             copy2(sav_path, backup_path)
         else:
@@ -154,26 +185,6 @@ class Autosave:
                 f"Could not back up autosave, {sav_path} is not a file",
                 file=sys.stderr,
             )
-
-    @classmethod
-    def __get_timestamped_backup_sav_path(cls):
-        sav_path = cls.__get_current_sav_path()
-        return sav_path.parent / (
-            sav_path.name + cls._last_saved_time.strftime("_%y%m%d-%H%M%S")
-        )
-
-    @classmethod
-    def __get_backup_sav_path(cls):
-        sav_path = cls.__get_current_sav_path()
-        return sav_path.parent / (sav_path.name + ".bu")
-
-    @classmethod
-    def __get_tmp_sav_path(cls):
-        return cls.directory / f"{cls.device_name}.{SAVB_SUFFIX}"
-
-    @classmethod
-    def __get_current_sav_path(cls):
-        return cls.directory / f"{cls.device_name}.{SAV_SUFFIX}"
 
     @classmethod
     def __get_state(cls):
@@ -211,8 +222,8 @@ class Autosave:
     def _save(cls):
         state = cls.__get_state()
         if cls.__state_changed(state):
-            sav_path = cls.__get_current_sav_path()
-            tmp_path = cls.__get_tmp_sav_path()
+            sav_path = _get_current_sav_path()
+            tmp_path = _get_tmp_sav_path()
             # write to temporary file first then use atomic os.rename
             # to safely update stored state
             with open(tmp_path, "w") as backup:
@@ -223,24 +234,24 @@ class Autosave:
 
     @classmethod
     def _load(cls):
-        if not cls.enabled or not cls._pvs:
+        if not AutosaveConfig.enabled or not cls._pvs:
             return
-        if not cls.device_name:
+        if not AutosaveConfig.device_name:
             raise RuntimeError(
                 "Device name is not known to autosave thread, "
                 "call autosave.configure() with keyword argument name"
             )
-        if not cls.directory:
+        if not AutosaveConfig.directory:
             raise RuntimeError(
                 "Autosave directory is not known, call "
                 "autosave.configure() with keyword argument directory"
             )
-        if not cls.directory.is_dir():
+        if not AutosaveConfig.directory.is_dir():
             raise FileNotFoundError(
-                f"{cls.directory} is not a valid autosave directory"
+                f"{AutosaveConfig.directory} is not a valid autosave directory"
             )
         cls.__backup_sav_file()
-        sav_path = cls.__get_current_sav_path()
+        sav_path = _get_current_sav_path()
         if not sav_path or not sav_path.is_file():
             print(
                 f"Could not load autosave values from file {sav_path}",
@@ -257,12 +268,12 @@ class Autosave:
 
     @classmethod
     def _loop(cls):
-        if not cls.enabled or not cls._pvs or cls._loop_started:
+        if not AutosaveConfig.enabled or not cls._pvs or cls._loop_started:
             return
         cls._loop_started = True
         while True:
             try:
-                cls._stop_event.wait(timeout=cls.save_period)
+                cls._stop_event.wait(timeout=AutosaveConfig.save_period)
                 cls._save()
                 if cls._stop_event.is_set():  # Stop requested
                     return

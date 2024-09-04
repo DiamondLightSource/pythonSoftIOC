@@ -88,11 +88,27 @@ def add_pv_to_autosave(pv, name, kargs):
         name: the key by which the PV value is saved to and loaded from a
             backup. This is typically the same as the PV name.
         kargs: a dictionary containing the optional keys "autosave", a boolean
-            used to add the VAL field to autosave backups, and "autosave_fields",
-            a list of string field names to save to the backup file.
+            used to add the VAL field to autosave backups, and
+            "autosave_fields", a list of string field names to save to the
+            backup file.
     """
-    save_val = kargs.pop("autosave", False) or Autosave._cm_save_val
-    save_fields = kargs.pop("autosave_fields", []) + Autosave._cm_save_fields
+
+    autosaver = Autosave()
+    # instantiate to get thread local class variables via instance
+    if autosaver._in_cm:
+        # non-None autosave argument to PV takes priority over context manager
+        autosave_karg = kargs.pop("autosave", None)
+        save_val = (
+            autosave_karg
+            if autosave_karg is not None
+            else autosaver._cm_save_val
+        )
+        save_fields = (
+            kargs.pop("autosave_fields", []) + autosaver._cm_save_fields
+        )
+    else:
+        save_val = kargs.pop("autosave", False)
+        save_fields = kargs.pop("autosave_fields", [])
     if save_val:
         Autosave._pvs[name] = _AutosavePV(pv)
     if save_fields:
@@ -138,7 +154,9 @@ def _get_backup_sav_path():
     return sav_path.parent / (sav_path.name + ".bu")
 
 
-class Autosave:
+class Autosave(threading.local):
+    _instance = None
+    _singleton_lock = threading.Lock()
     _pvs = {}
     _last_saved_state = {}
     _last_saved_time = datetime.now()
@@ -148,18 +166,30 @@ class Autosave:
     _cm_save_fields = []
     _in_cm = False
 
-    def __init__(self, autosave=True, autosave_fields=None):
-        # for use as a context manager
-        Autosave._cm_save_val = autosave
-        Autosave._cm_save_fields = autosave_fields or []
+    def __new__(cls, autosave=None, autosave_fields=None):
+        # Make Autosave a Singleton class so that we have thread local
+        # class variables when accessed via instance
+        if cls._instance is None:
+            with cls._singleton_lock:
+                # Another thread could have created the instance
+                # before we acquired the lock. So check that the
+                # instance is still nonexistent.
+                if not cls._instance:
+                    cls._instance = super().__new__(cls)
+        if autosave is not None:
+            cls._instance._cm_save_val = autosave
+        if autosave_fields is not None:
+            cls._instance._cm_save_fields = autosave_fields or []
+        return cls._instance
 
     def __enter__(self):
-        Autosave._in_cm = True
+        self._in_cm = True
 
     def __exit__(self, A, B, C):
-        Autosave._in_cm = False
-        Autosave._cm_save_val = False
-        Autosave._cm_save_fields = []
+        self._in_cm = False
+        self._cm_save_val = False
+        self._cm_save_fields = []
+        self._instance = None
 
     @classmethod
     def __backup_sav_file(cls):

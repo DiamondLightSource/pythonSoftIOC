@@ -93,18 +93,18 @@ def add_pv_to_autosave(pv, name, kargs):
             backup file.
     """
 
-    autosaver = Autosave()
+    context = _AutosaveContext()
     # instantiate to get thread local class variables via instance
-    if autosaver._in_cm:
+    if context._in_cm:
         # non-None autosave argument to PV takes priority over context manager
         autosave_karg = kargs.pop("autosave", None)
         save_val = (
             autosave_karg
             if autosave_karg is not None
-            else autosaver._cm_save_val
+            else context._val
         )
         save_fields = (
-            kargs.pop("autosave_fields", []) + autosaver._cm_save_fields
+            kargs.pop("autosave_fields", []) + context._fields
         )
     else:
         save_val = kargs.pop("autosave", False)
@@ -153,43 +153,53 @@ def _get_backup_sav_path():
     sav_path = _get_current_sav_path()
     return sav_path.parent / (sav_path.name + ".bu")
 
-
-class Autosave(threading.local):
+class _AutosaveContext(threading.local):
     _instance = None
-    _singleton_lock = threading.Lock()
+    _lock = threading.Lock()
+    _val = None
+    _fields = None
+    _in_cm = False
+    def __new__(cls, val=None, fields=None):
+        if cls._instance is None:
+            with cls._lock:
+                if not cls._instance:
+                    cls._instance = super().__new__(cls)
+        if cls._instance._in_cm:
+            if val is not None:
+                cls._instance._val = val
+            if fields is not None:
+                cls._instance._fields = fields or []
+        return cls._instance
+
+    def reset(self):
+        self._fields = None
+        self._val = None
+        self._in_cm = False
+
+class Autosave:
     _pvs = {}
     _last_saved_state = {}
     _last_saved_time = datetime.now()
     _stop_event = threading.Event()
     _loop_started = False
-    _cm_save_val = False
-    _cm_save_fields = []
-    _in_cm = False
 
-    def __new__(cls, autosave=None, autosave_fields=None):
-        # Make Autosave a Singleton class so that we have thread local
-        # class variables when accessed via instance
-        if cls._instance is None:
-            with cls._singleton_lock:
-                # Another thread could have created the instance
-                # before we acquired the lock. So check that the
-                # instance is still nonexistent.
-                if not cls._instance:
-                    cls._instance = super().__new__(cls)
+    def __init__(self, autosave=None, autosave_fields=None):
+        context = _AutosaveContext()
+        if context._in_cm:
+            raise RuntimeError(
+                "Can not instantiate Autosave when already in context manager")
         if autosave is not None:
-            cls._instance._cm_save_val = autosave
+            context._val = autosave
         if autosave_fields is not None:
-            cls._instance._cm_save_fields = autosave_fields or []
-        return cls._instance
+            context._fields = autosave_fields
 
     def __enter__(self):
-        self._in_cm = True
+        context = _AutosaveContext()
+        context._in_cm = True
 
     def __exit__(self, A, B, C):
-        self._in_cm = False
-        self._cm_save_val = False
-        self._cm_save_fields = []
-        self._instance = None
+        context = _AutosaveContext()
+        context.reset()
 
     @classmethod
     def __backup_sav_file(cls):

@@ -1,5 +1,5 @@
 from conftest import get_multiprocessing_context, select_and_recv
-from softioc import autosave, builder, softioc
+from softioc import autosave, builder, softioc, device_core
 from unittest.mock import patch
 import pytest
 import threading
@@ -20,9 +20,9 @@ def reset_autosave_setup_teardown():
     default_tb = autosave.AutosaveConfig.timestamped_backups
     default_pvs = autosave.Autosave._pvs.copy()
     default_state = autosave.Autosave._last_saved_state.copy()
-    default_cm_save_val = autosave.Autosave._cm_save_val
-    default_cm_save_fields = autosave.Autosave._cm_save_fields
-    default_instance = autosave.Autosave._instance
+    default_cm_save_val = autosave._AutosaveContext._val
+    default_cm_save_fields = autosave._AutosaveContext._fields
+    default_instance = autosave._AutosaveContext._instance
     yield
     autosave.AutosaveConfig.save_period = default_save_period
     autosave.AutosaveConfig.device_name = default_device_name
@@ -32,9 +32,9 @@ def reset_autosave_setup_teardown():
     autosave.Autosave._pvs = default_pvs
     autosave.Autosave._last_saved_state = default_state
     autosave.Autosave._stop_event = threading.Event()
-    autosave.Autosave._cm_save_val = default_cm_save_val
-    autosave.Autosave._cm_save_fields = default_cm_save_fields
-    autosave.Autosave._instance = default_instance
+    autosave._AutosaveContext._val = default_cm_save_val
+    autosave._AutosaveContext._fields = default_cm_save_fields
+    autosave._AutosaveContext._instance = default_instance
 
 
 @pytest.fixture
@@ -432,7 +432,7 @@ def test_context_manager_thread_safety(tmp_path):
     def create_pv_in_thread(name, wait):
         time.sleep(wait)
         builder.aOut(name, autosave=False)
-    
+
     pv_thread_before_cm = threading.Thread(
         target=create_pv_in_thread, args=["PV-FROM-THREAD-BEFORE", 1])
     pv_thread_in_cm = threading.Thread(
@@ -446,3 +446,14 @@ def test_context_manager_thread_safety(tmp_path):
 
     assert "PV-FROM-THREAD-BEFORE" not in autosave.Autosave._pvs
     assert "PV-FROM-THREAD-DURING" not in autosave.Autosave._pvs
+    assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
+    assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
+
+def test_nested_context_managers_raises(tmp_path):
+    autosave.configure(tmp_path, DEVICE_NAME)
+    with autosave.Autosave(False, ["SCAN"]):
+        with pytest.raises(RuntimeError):
+            with autosave.Autosave(True, []):
+                builder.aOut("MY-PV")
+        with pytest.raises(RuntimeError):
+            autosave.Autosave()

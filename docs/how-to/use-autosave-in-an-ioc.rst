@@ -1,4 +1,4 @@
-Use `autosave` in an IOC
+Use `softioc.autosave` in an IOC
 ================================
 
 `../tutorials/creating-an-ioc` shows how to create a pythonSoftIOC.

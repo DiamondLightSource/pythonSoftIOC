@@ -198,6 +198,10 @@ and stderr streams, is sent directly to the terminal.
     .. seealso::
         `softioc.builder` for how to designate a field for autosave.
 
+        :ref:`autosave`, the keyword argument used to initialise PVs with the VAL field tracked by autosave.
+
+        `autosave_fields`, the keyword argument used to initialise PVs with designated fields tracked by autosave.
+
     ..  class:: Autosave
 
         ..  method:: __init__(autosave=True, autosave_fields=None)
@@ -328,10 +332,10 @@ and stderr streams, is sent directly to the terminal.
     .. seealso::
         `SetBlocking` for configuring a global default blocking value
 
-    .. _autosave_arg:
+    .. _autosave:
 
-    `autosave`
-    ~~~~~~~~~~
+    :ref:`autosave`
+    ~~~~~~~~~~~~~~~
 
     Available on all record types. When set to `True` it marks the record
     value for automatic periodic backing up to a file. Set to `False` by

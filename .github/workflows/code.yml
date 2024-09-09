@@ -17,10 +17,10 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Checkout Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.7"
 
@@ -34,7 +34,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Checkout Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           # require history to get back to last tag for version number of branches
           fetch-depth: 0
@@ -44,9 +44,9 @@ jobs:
         run: pipx run build --sdist .
 
       - name: Upload Sdist
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: dist-${{ matrix.os }}-${{ matrix.python }}
           path: dist/*
 
   build:
@@ -75,14 +75,14 @@ jobs:
 
     steps:
       - name: Checkout Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           # require history to get back to last tag for version number of branches
           fetch-depth: 0
           submodules: true
 
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.7"
 
@@ -106,20 +106,20 @@ jobs:
           CIBW_SKIP: "*-musllinux*" # epicscorelibs doesn't build on musllinux platforms
 
       - name: Upload Wheel
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: dist-${{ matrix.os }}-${{ matrix.python }}
           path: dist/softioc*
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         with:
           name: ${{ matrix.os }}/${{ matrix.python }}
           directory: dist
 
       - name: Upload Unit Test Results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Unit Test Results (${{ matrix.os }}-${{ matrix.python }})
           path: dist/pytest-results.xml
@@ -132,7 +132,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -152,7 +152,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
@@ -167,7 +167,7 @@ jobs:
     # upload to PyPI and make a release on every tag
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist

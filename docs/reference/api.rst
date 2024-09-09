@@ -196,21 +196,21 @@ and stderr streams, is sent directly to the terminal.
     at IOC startup, and no values with be saved to any backup files.
 
     .. seealso::
-        `softioc.builder` for how to designate a field for autosave.
 
-        :ref:`autosave`, the keyword argument used to initialise PVs with the VAL field tracked by autosave.
+        :ref:`autosave`, the builder keyword argument used to designate PV fields for autosave
 
-        `autosave_fields`, the keyword argument used to initialise PVs with designated fields tracked by autosave.
+        :class:`Autosave` for how to add fields to autosave inside a context manager.
 
     ..  class:: Autosave
 
-        ..  method:: __init__(autosave=True, autosave_fields=None)
+        ..  method:: __init__(autosave=True)
 
             To be called as a context manager. Any PVs that are created inside
-            the context manager have the arguments ``autosave`` and ``autosave_fields``
-            passed to them automatically, where ``autosave_fields`` is an optional list of
-            field names. If the PV already has autosave_fields set, the lists of fields get
-            combined.
+            the context manager have the fields passed to the ``autosave`` argument of 
+            the context manager added to autosave tracking. The options for ``autosave``
+            are identical to the ones described in the builder keyword argument
+            :ref:`autosave`. If a PV already has :ref:`autosave` set, the two lists of fields
+            get combined into a single set.
 
 
 
@@ -337,24 +337,24 @@ and stderr streams, is sent directly to the terminal.
     :ref:`autosave`
     ~~~~~~~~~~~~~~~
 
-    Available on all record types. When set to `True` it marks the record
-    value for automatic periodic backing up to a file. Set to `False` by
-    default. When the IOC is restarted and a backup file exists, the value is
+    Available on all record types. 
+    Resoles to a list of string field names, when not empty it marks the record
+    fields for automatic periodic backing up to a file. Set to `False` by
+    default. When the IOC is restarted and a backup file exists, the saved values are
     loaded from this file when :func:`~softioc.builder.LoadDatabase` is called.
-    The saved value takes priority over any value
-    given in `initial_value`. No backing up will occur unless autosave is
+    The saved values takes priority over any initial field value passed to the PV
+    in `initial_value` or ``**fields``. No backing up will occur unless autosave is
     enabled and configured with :func:`~softioc.autosave.configure`.
+
+    The options for the argument are:
+
+        * ``True``, which is equivalent to ``["VAL"]``
+        * ``False``, which is equivalent to ``[]`` and disables autosave tracking for the PV
+        * A list of field names such as ``["VAL", "LOPR", "HOPR"]``, note that ``"VAL"`` must be explicitly provided
+        * A single field name such as ``"EGU"`` which is equivalent to passing ``["EGU"]``.
 
     .. seealso::
         :func:`~softioc.autosave.configure` for discussion on how to configure saving.
-
-    .. _autosave_fields:
-
-    `autosave_fields`
-    ~~~~~~~~~~~~~~~~~
-
-    A list of strings of record fields belonging to the PV (e.g. ["EGU", "PREC"])
-    to be saved to and loaded from a backup file. Empty by default.
 
 
 For all of these functions any EPICS database field can be assigned a value by

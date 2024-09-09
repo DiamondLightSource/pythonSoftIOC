@@ -80,40 +80,41 @@ def _shutdown_autosave_thread(worker):
     worker.join()
 
 
-def add_pv_to_autosave(pv, name, kargs):
+def _parse_autosave_fields(fields):
+    if fields is False:
+        return []
+    elif fields is True:
+        return ["VAL"]
+    elif isinstance(fields, list):
+        return fields
+    elif isinstance(fields, str):
+        return [fields]
+    else:
+        raise ValueError(f"Could not parse autosave fields argument: {fields}")
+
+
+def add_pv_to_autosave(pv, name, fields):
     """Configures a PV for autosave
 
     Args:
         pv: a PV object inheriting ProcessDeviceSupportCore
         name: the key by which the PV value is saved to and loaded from a
             backup. This is typically the same as the PV name.
-        kargs: a dictionary containing the optional keys "autosave", a boolean
-            used to add the VAL field to autosave backups, and
-            "autosave_fields", a list of string field names to save to the
-            backup file.
+        fields: used to determine which fields of a PV are tracked by autosave.
+            The allowed options are a single string such as "VAL" or "EGU",
+            a list of strings such as ["VAL", "EGU"], a boolean True which
+            evaluates to ["VAL"] or False to track no fields. If the PV is
+            created inside an Autosave context manager, the fields passed to the
+            context manager are also tracked by autosave.
     """
-
     context = _AutosaveContext()
+    fields = set(_parse_autosave_fields(fields))
     # instantiate to get thread local class variables via instance
-    if context._in_cm:
-        # non-None autosave argument to PV takes priority over context manager
-        autosave_karg = kargs.pop("autosave", None)
-        save_val = (
-            autosave_karg
-            if autosave_karg is not None
-            else context._val
-        )
-        save_fields = (
-            kargs.pop("autosave_fields", []) + context._fields
-        )
-    else:
-        save_val = kargs.pop("autosave", False)
-        save_fields = kargs.pop("autosave_fields", [])
-    if save_val:
-        Autosave._pvs[name] = _AutosavePV(pv)
-    if save_fields:
-        for field in save_fields:
-            Autosave._pvs[f"{name}.{field}"] = _AutosavePV(pv, field)
+    if context._in_cm:  # _fields should always be a list if in context manager
+        fields.update(context._fields)
+    for field in fields:
+        field_name = name if field == "VAL" else f"{name}.{field}"
+        Autosave._pvs[field_name] = _AutosavePV(pv, field)
 
 
 def load_autosave():
@@ -121,8 +122,8 @@ def load_autosave():
 
 
 class _AutosavePV:
-    def __init__(self, pv, field=None):
-        if not field or field == "VAL":
+    def __init__(self, pv, field):
+        if field == "VAL":
             self.get = pv.get
             self.set = pv.set
         else:
@@ -153,28 +154,26 @@ def _get_backup_sav_path():
     sav_path = _get_current_sav_path()
     return sav_path.parent / (sav_path.name + ".bu")
 
+
 class _AutosaveContext(threading.local):
     _instance = None
     _lock = threading.Lock()
-    _val = None
     _fields = None
     _in_cm = False
-    def __new__(cls, val=None, fields=None):
+
+    def __new__(cls, fields=None):
         if cls._instance is None:
             with cls._lock:
                 if not cls._instance:
                     cls._instance = super().__new__(cls)
-        if cls._instance._in_cm:
-            if val is not None:
-                cls._instance._val = val
-            if fields is not None:
-                cls._instance._fields = fields or []
+        if cls._instance._in_cm and fields is not None:
+            cls._instance._fields = fields or []
         return cls._instance
 
     def reset(self):
         self._fields = None
-        self._val = None
         self._in_cm = False
+
 
 class Autosave:
     _pvs = {}
@@ -183,15 +182,27 @@ class Autosave:
     _stop_event = threading.Event()
     _loop_started = False
 
-    def __init__(self, autosave=None, autosave_fields=None):
+    def __init__(self, fields=True):
+        """
+        When called as a context manager, any PVs created in the context have
+        the fields provided by the fields argument added to autosave backups.
+
+        Args:
+            fields: a list of string field names to be periodically saved to a
+            backup file, which are loaded from on IOC restart.
+            The allowed options are a single string such as "VAL" or "EGU",
+            a list of strings such as ["VAL", "EGU"], a boolean True which
+            evaluates to ["VAL"] or False to track no additional fields.
+            If the autosave keyword is already specified in a PV's
+            initialisation, the list of fields to track are combined.
+        """
         context = _AutosaveContext()
         if context._in_cm:
             raise RuntimeError(
-                "Can not instantiate Autosave when already in context manager")
-        if autosave is not None:
-            context._val = autosave
-        if autosave_fields is not None:
-            context._fields = autosave_fields
+                "Can not instantiate Autosave when already in context manager"
+            )
+        fields = _parse_autosave_fields(fields)
+        context._fields = fields
 
     def __enter__(self):
         context = _AutosaveContext()

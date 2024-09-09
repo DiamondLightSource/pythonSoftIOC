@@ -20,7 +20,6 @@ def reset_autosave_setup_teardown():
     default_tb = autosave.AutosaveConfig.timestamped_backups
     default_pvs = autosave.Autosave._pvs.copy()
     default_state = autosave.Autosave._last_saved_state.copy()
-    default_cm_save_val = autosave._AutosaveContext._val
     default_cm_save_fields = autosave._AutosaveContext._fields
     default_instance = autosave._AutosaveContext._instance
     yield
@@ -32,7 +31,6 @@ def reset_autosave_setup_teardown():
     autosave.Autosave._pvs = default_pvs
     autosave.Autosave._last_saved_state = default_state
     autosave.Autosave._stop_event = threading.Event()
-    autosave._AutosaveContext._val = default_cm_save_val
     autosave._AutosaveContext._fields = default_cm_save_fields
     autosave._AutosaveContext._instance = default_instance
 
@@ -142,8 +140,8 @@ def test_all_record_types_saveable(tmp_path):
 
 
 def test_can_save_fields(tmp_path):
-    builder.aOut("SAVEVAL", autosave=True, autosave_fields=["DISA"])
-    builder.aOut("DONTSAVEVAL", autosave_fields=["SCAN"])
+    builder.aOut("SAVEVAL", autosave=["VAL", "DISA"])
+    builder.aOut("DONTSAVEVAL", autosave=["SCAN"])
     # we need to patch get_field as we can't call builder.LoadDatabase()
     # and softioc.iocInit() in unit tests
     with patch(
@@ -219,11 +217,11 @@ def test_autosave_key_names(tmp_path):
 
 
 def test_context_manager(tmp_path):
-    builder.aOut("MANUAL", autosave=True, autosave_fields=["EGU"])
-    with autosave.Autosave(True, ["PINI"]):
+    builder.aOut("MANUAL", autosave=["VAL", "EGU"])
+    with autosave.Autosave(["VAL", "PINI"]):
         builder.aOut("AUTOMATIC")
         builder.aOut(
-            "AUTOMATIC-OVERRIDDEN", autosave=False, autosave_fields=["SCAN"]
+            "AUTOMATIC-EXTRA-FIELD", autosave=["SCAN"]
         )
     autosave.configure(tmp_path, DEVICE_NAME)
     with patch(
@@ -237,9 +235,9 @@ def test_context_manager(tmp_path):
         assert "MANUAL.EGU" in saved
         assert "AUTOMATIC" in saved
         assert "AUTOMATIC.PINI" in saved
-        assert "AUTOMATIC-OVERRIDDEN" not in saved
-        assert "AUTOMATIC-OVERRIDDEN.SCAN" in saved
-        assert "AUTOMATIC-OVERRIDDEN.PINI" in saved
+        assert "AUTOMATIC-EXTRA-FIELD" in saved
+        assert "AUTOMATIC-EXTRA-FIELD.SCAN" in saved
+        assert "AUTOMATIC-EXTRA-FIELD.PINI" in saved
 
 
 def check_all_record_types_load_properly(device_name, autosave_dir, conn):
@@ -401,9 +399,9 @@ def check_autosave_field_names_contain_device_prefix(
     device_name, tmp_path, conn
 ):
     autosave.configure(tmp_path, device_name, save_period=1)
-    builder.aOut("BEFORE", autosave=True, autosave_fields=["EGU"])
+    builder.aOut("BEFORE", autosave=["VAL", "EGU"])
     builder.SetDeviceName(device_name)
-    builder.aOut("AFTER", autosave=True, autosave_fields=["EGU"])
+    builder.aOut("AFTER", autosave=["VAL", "EGU"])
     builder.LoadDatabase()
     softioc.iocInit()
     time.sleep(2)
@@ -438,7 +436,7 @@ def test_context_manager_thread_safety(tmp_path):
     pv_thread_in_cm = threading.Thread(
         target=create_pv_in_thread, args=["PV-FROM-THREAD-DURING", 0])
     pv_thread_before_cm.start()
-    with autosave.Autosave(True, ["EGU"]):
+    with autosave.Autosave(["VAL", "EGU"]):
         builder.aOut("PV-FROM-CM")
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
@@ -451,9 +449,9 @@ def test_context_manager_thread_safety(tmp_path):
 
 def test_nested_context_managers_raises(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
-    with autosave.Autosave(False, ["SCAN"]):
+    with autosave.Autosave(["SCAN"]):
         with pytest.raises(RuntimeError):
-            with autosave.Autosave(True, []):
+            with autosave.Autosave(False):
                 builder.aOut("MY-PV")
         with pytest.raises(RuntimeError):
             autosave.Autosave()

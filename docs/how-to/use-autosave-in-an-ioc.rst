@@ -10,10 +10,12 @@ Example IOC
 .. literalinclude:: ../examples/example_autosave_ioc.py
 
 Records are instantiated as normal and configured for automatic loading and
-periodic saving to a backup file with the keyword arguments ``autosave`` and ``autosave_fields``.
-Records with ``autosave=True`` (``False`` by default) have their
-VAL fields backed up. Additional record fields in a list passed to ``autosave_fields`` will be backed
-up - note that this applies even when ``autosave`` is ``False``.
+periodic saving to a backup file with use of the keyword argument ``autosave``.
+``autosave`` resolves to a list of strings, which are the names of fields to be
+tracked by autosave. By default ``autosave=False``, which disables autosave for that PV.
+Setting ``autosave=True`` is equivalent to passing ``["VAL"]``. Note that ``"VAL"`` must be
+explicitly passed when tracking other fields, e.g. ``["VAL", "LOPR", "HOPR"]``.
+``autosave`` can also accept a single string field name as an argument.
 
 The field values get written into a yaml-formatted file containing key-value pairs.
 By default the keys are the same as the full PV name, including any device name specified
@@ -26,10 +28,11 @@ set to 30.0 by default. The directory must exist, and should be configured with 
 read/write permissions for the user running the IOC.
 
 IOC developers should only need to interface with autosave via the :func:`~softioc.autosave.configure()`
-method and the ``autosave`` and ``autosave_fields`` keyword arguments. Alternatively,
+method and the ``autosave`` keyword argument. Alternatively,
 PVs can be instantiated inside the :class:`~softioc.autosave.Autosave()` context manager, which 
-automatically passes the arguments ``autosave`` and ``autosave_fields`` to any PVs created
-inside the context manager. If the PV already has ``autosave_fields`` set, the lists
+automatically passes the ``autosave`` argument to any PVs created
+inside the context manager. If any fields are already specified by the ``autosave`` keyword
+argument of PV's initialisation call the lists
 of fields get combined. All other module members are intended for internal use only.
 
 In normal operation, loading from a backup is performed once during the
@@ -44,7 +47,7 @@ the backup file.
 If autosave is enabled and active, a timestamped copy of the latest existing autosave backup file is created
 when the IOC is restarted, e.g. ``<name>.softsav_240717-095004`` (timestamps are in the format yymmdd-HHMMSS).
 If you only wish to store one backup of the autosave file at a time, ``timestamped_backups=False``
-can be passed to :func:`~softioc.autosave.configure()`, this will create a backup file
+can be passed to :func:`~softioc.autosave.configure()` when it is called, this will create a backup file
 named ``<name>.softsav.bu``. To disable any autosaving, comment out the
 :func:`~softioc.autosave.configure()` call or pass it the keyword argument
 ``enabled=False``.

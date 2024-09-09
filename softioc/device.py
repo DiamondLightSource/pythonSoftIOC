@@ -55,7 +55,8 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
 
     # all record types can support autosave
     def __init__(self, name, **kargs):
-        autosave.add_pv_to_autosave(self, name, kargs)
+        autosave_fields = kargs.pop("autosave", False)
+        autosave.add_pv_to_autosave(self, name, autosave_fields)
         self.__super.__init__(name, **kargs)
 
     # Most subclasses (all except waveforms) define a ctypes constructor for the

@@ -81,7 +81,7 @@ def _shutdown_autosave_thread(worker):
 
 
 def _parse_autosave_fields(fields):
-    if fields is False:
+    if not fields:
         return []
     elif fields is True:
         return ["VAL"]
@@ -107,9 +107,12 @@ def add_pv_to_autosave(pv, name, fields):
             created inside an Autosave context manager, the fields passed to the
             context manager are also tracked by autosave.
     """
-    context = _AutosaveContext()
+    if fields is False:
+        # if autosave=False explicitly set, override context manager
+        return
     fields = set(_parse_autosave_fields(fields))
-    # instantiate to get thread local class variables via instance
+    # instantiate context to get thread local class variables via instance
+    context = _AutosaveContext()
     if context._in_cm:  # _fields should always be a list if in context manager
         fields.update(context._fields)
     for field in fields:

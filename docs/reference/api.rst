@@ -210,7 +210,9 @@ and stderr streams, is sent directly to the terminal.
             the context manager added to autosave tracking. The options for ``autosave``
             are identical to the ones described in the builder keyword argument
             :ref:`autosave`. If a PV already has :ref:`autosave` set, the two lists of fields
-            get combined into a single set.
+            get combined into a single set. If the PV's :ref:`autosave` keyword is set
+            explicitly to ``False``, the fields specified in the context manager's argument
+            are not tracked.
 
 
 
@@ -338,8 +340,8 @@ and stderr streams, is sent directly to the terminal.
     ~~~~~~~~~~~~~~~
 
     Available on all record types. 
-    Resoles to a list of string field names, when not empty it marks the record
-    fields for automatic periodic backing up to a file. Set to `False` by
+    Resolves to a list of string field names. When not empty it marks the record
+    fields for automatic periodic backing up to a file. Set to `None` by
     default. When the IOC is restarted and a backup file exists, the saved values are
     loaded from this file when :func:`~softioc.builder.LoadDatabase` is called.
     The saved values takes priority over any initial field value passed to the PV
@@ -349,12 +351,15 @@ and stderr streams, is sent directly to the terminal.
     The options for the argument are:
 
         * ``True``, which is equivalent to ``["VAL"]``
-        * ``False``, which is equivalent to ``[]`` and disables autosave tracking for the PV
+        * ``False``, which is equivalent to ``[]`` and disables all autosave tracking for the PV, even inside an :class:`~softioc.autosave.Autosave` context manager
+        * ``None``, similar to ``False`` but does not overload any fields specified in an :class:`~softioc.autosave.Autosave` context manager
         * A list of field names such as ``["VAL", "LOPR", "HOPR"]``, note that ``"VAL"`` must be explicitly provided
-        * A single field name such as ``"EGU"`` which is equivalent to passing ``["EGU"]``.
+        * A single field name such as ``"EGU"`` which is equivalent to passing ``["EGU"]``
 
     .. seealso::
         :func:`~softioc.autosave.configure` for discussion on how to configure saving.
+
+        :class:`~softioc.autosave.Autosave` for how to track PVs with autosave inside a context manager.
 
 
 For all of these functions any EPICS database field can be assigned a value by

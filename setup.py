@@ -104,8 +104,8 @@ setup(
     install_requires = [
         # Dependency version declared in pyproject.toml
         epicscorelibs.version.abi_requires(),
-        "pvxslibs>=1.2.2",
-        "numpy",
+        "pvxslibs>=1.2.4",
+        "numpy<2.0",
         "epicsdbbuilder>=1.4"
     ],
     zip_safe = False,  # setuptools_dso is not compatible with eggs!

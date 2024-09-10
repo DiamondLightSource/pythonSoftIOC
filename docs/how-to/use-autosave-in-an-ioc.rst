@@ -32,8 +32,8 @@ method and the ``autosave`` keyword argument. Alternatively,
 PVs can be instantiated inside the :class:`~softioc.autosave.Autosave()` context manager, which 
 automatically passes the ``autosave`` argument to any PVs created
 inside the context manager. If any fields are already specified by the ``autosave`` keyword
-argument of PV's initialisation call the lists
-of fields get combined. All other module members are intended for internal use only.
+argument of a PV's initialisation call the lists of fields to track get combined.
+All other module members are intended for internal use only.
 
 In normal operation, loading from a backup is performed once during the
 :func:`~softioc.builder.LoadDatabase()` call and periodic saving to the backup file begins when

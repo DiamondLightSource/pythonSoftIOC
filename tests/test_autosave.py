@@ -455,3 +455,30 @@ def test_nested_context_managers_raises(tmp_path):
                 builder.aOut("MY-PV")
         with pytest.raises(RuntimeError):
             autosave.Autosave()
+
+def test_autosave_arguments(tmp_path):
+    autosave.configure(tmp_path, DEVICE_NAME)
+    builder.aOut("TRUE", autosave=True)
+    builder.aOut("FIELDS", autosave=["LOPR", "HOPR"])
+    builder.aOut("FALSE", autosave=False)
+    assert set(autosave.Autosave._pvs) == {"TRUE", "FIELDS.LOPR", "FIELDS.HOPR"}
+    autosave.Autosave._pvs = {}
+    builder.ClearRecords()
+    with autosave.Autosave():  # True by default
+        builder.aOut("AUTO-TRUE", autosave=False)
+        builder.aOut("FIELDS", autosave=["LOPR", "HOPR"])
+    assert set(autosave.Autosave._pvs) == {
+        "AUTO-TRUE", "FIELDS", "FIELDS.LOPR", "FIELDS.HOPR"}
+    autosave.Autosave._pvs = {}
+    builder.ClearRecords()
+    with autosave.Autosave(["EGU"]):
+        builder.aOut("AUTO-FALSE")
+        builder.aOut("FIELDS", autosave=["PINI"])
+    assert set(autosave.Autosave._pvs) == {
+        "AUTO-FALSE.EGU", "FIELDS.EGU", "FIELDS.PINI"}
+    autosave.Autosave._pvs = {}
+    builder.ClearRecords()
+    with autosave.Autosave(False):
+        builder.aOut("AUTO-FALSE")
+        builder.aOut("AUTO-TRUE", autosave=True)
+    assert set(autosave.Autosave._pvs) == {"AUTO-TRUE"}

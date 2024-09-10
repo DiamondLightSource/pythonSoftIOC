@@ -461,7 +461,10 @@ def test_autosave_arguments(tmp_path):
     builder.aOut("TRUE", autosave=True)
     builder.aOut("FIELDS", autosave=["LOPR", "HOPR"])
     builder.aOut("FALSE", autosave=False)
-    assert set(autosave.Autosave._pvs) == {"TRUE", "FIELDS.LOPR", "FIELDS.HOPR"}
+    builder.aOut("SINGLE-FIELD", autosave="EGU")
+    builder.aOut("AUTO-VAL", autosave="VAL")
+    assert set(autosave.Autosave._pvs) == {
+        "TRUE", "FIELDS.LOPR", "FIELDS.HOPR", "SINGLE-FIELD.EGU", "AUTO-VAL"}
     autosave.Autosave._pvs = {}
     builder.ClearRecords()
     with autosave.Autosave():  # True by default
@@ -482,3 +485,8 @@ def test_autosave_arguments(tmp_path):
         builder.aOut("AUTO-FALSE")
         builder.aOut("AUTO-TRUE", autosave=True)
     assert set(autosave.Autosave._pvs) == {"AUTO-TRUE"}
+    autosave.Autosave._pvs = {}
+    builder.ClearRecords()
+    with autosave.Autosave("LOPR"):  # single field
+        builder.aOut("FIELDS", autosave="HOPR")
+    assert set(autosave.Autosave._pvs) == {"FIELDS.HOPR", "FIELDS.LOPR"}

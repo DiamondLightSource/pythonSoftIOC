@@ -46,7 +46,7 @@ jobs:
       - name: Upload Sdist
         uses: actions/upload-artifact@v4
         with:
-          name: dist-${{ matrix.os }}-${{ matrix.python }}
+          name: dist
           path: dist/*
 
   build:
@@ -55,6 +55,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python: [cp37, cp38, cp39, cp310]
+
+        exclude:
+          # MacOS 14.4.1 for arm64 doesn't support Python < 3.8
+          - os: macos-latest
+            python: "cp37"
 
         include:
           # Put coverage and results files in the project directory for mac
@@ -69,6 +74,9 @@ jobs:
           - os: ubuntu-latest
             cov_file: /output/coverage.xml
             results_file: /output/pytest-results.xml
+          # MacOS 13 required for Python < 3.8
+          - os: macos-13
+            python: "cp37"
 
     name: build/${{ matrix.os }}/${{ matrix.python }}
     runs-on: ${{ matrix.os }}
@@ -84,7 +92,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.7"
+          python-version: "3.12"
 
       - name: Install Python Dependencies
         # Pin cibuildwheel due to https://github.com/pypa/cibuildwheel/issues/962

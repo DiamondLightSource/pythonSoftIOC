@@ -1,5 +1,5 @@
 from conftest import get_multiprocessing_context, select_and_recv
-from softioc import autosave, builder, softioc, device_core
+from softioc import autosave, builder, softioc, device_core, asyncio_dispatcher
 from unittest.mock import patch
 import pytest
 import threading
@@ -356,7 +356,8 @@ def check_all_record_types_save_properly(device_name, autosave_dir, conn):
     builder.WaveformIn("WaveformIn", [1, 2, 3, 4], autosave=True)
     builder.WaveformOut("WaveformOut", [1, 2, 3, 4], autosave=True)
     builder.LoadDatabase()
-    softioc.iocInit()
+    dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+    softioc.iocInit(dispatcher)
     # wait long enough to ensure one save has occurred
     time.sleep(2)
     with open(autosave_dir / f"{device_name}.softsav", "r") as f:
@@ -403,7 +404,8 @@ def check_autosave_field_names_contain_device_prefix(
     builder.SetDeviceName(device_name)
     builder.aOut("AFTER", autosave=["VAL", "EGU"])
     builder.LoadDatabase()
-    softioc.iocInit()
+    dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+    softioc.iocInit(dispatcher)
     time.sleep(2)
     with open(tmp_path / f"{device_name}.softsav", "r") as f:
         saved = yaml.full_load(f)
@@ -427,6 +429,7 @@ def test_autosave_field_names_contain_device_prefix(tmp_path):
 def test_context_manager_thread_safety(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
+
     def create_pv_in_thread(name):
         in_cm_event.wait()
         builder.aOut(name, autosave=False)

@@ -426,17 +426,17 @@ def test_autosave_field_names_contain_device_prefix(tmp_path):
 
 def test_context_manager_thread_safety(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
-
-    def create_pv_in_thread(name, wait):
-        time.sleep(wait)
+    in_cm_event = threading.Event()
+    def create_pv_in_thread(name):
+        in_cm_event.wait()
         builder.aOut(name, autosave=False)
-
     pv_thread_before_cm = threading.Thread(
-        target=create_pv_in_thread, args=["PV-FROM-THREAD-BEFORE", 1])
+        target=create_pv_in_thread, args=["PV-FROM-THREAD-BEFORE"])
     pv_thread_in_cm = threading.Thread(
-        target=create_pv_in_thread, args=["PV-FROM-THREAD-DURING", 0])
+        target=create_pv_in_thread, args=["PV-FROM-THREAD-DURING"])
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
+        in_cm_event.set()
         builder.aOut("PV-FROM-CM")
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()

@@ -142,6 +142,80 @@ and stderr streams, is sent directly to the terminal.
 
 .. autoclass:: softioc.asyncio_dispatcher.AsyncioDispatcher
 
+.. automodule:: softioc.autosave
+
+    Configuring saving and loading of record fields with `softioc.autosave.configure`
+    ---------------------------------------------------------------------------------
+
+    ..  function:: configure(directory, name, save_period=30, timestamped_backups=True, enabled=True)
+
+        Used to configure settings for Autosave.
+        Backups are disabled by default unless this method is called. It must be
+        called prior to :func:`~softioc.builder.LoadDatabase`.
+
+    It has the following arguments:
+
+    .. _directory:
+
+    `directory`
+    ~~~~~~~~~~~
+    The directory where backup files should be saved to and loaded
+    from. This argument is required.
+
+    .. _name:
+
+
+    `name`
+    ~~~~~~
+    The file prefix used for naming the backup files. This is typically set to
+    be the same as the device prefix. The resulting file name will be
+    ``name``.softsav. This argument is required.
+
+    .. _save_period:
+
+    `save_period`
+    ~~~~~~~~~~~~~
+    The period in seconds between each backup attempt, 30.0 by default.
+    Backup files are only overwritten if any of the field values have changed
+    since the last backup.
+
+    .. _timestamped_backups:
+
+    `timestamped_backups`
+    ~~~~~~~~~~~~~~~~~~~~~
+    A boolean that is `True` by default, creates a backup of the latest existing
+    autosave file that is timestamped at the time that the autosave thread is
+    started. If set to `False`, the backup is not timestamped and gets overwritten
+    every time the IOC restarts.
+
+    .. _enabled:
+
+    `enabled`
+    ~~~~~~~~~
+    A boolean that is `True` by default, if `False` then no loading will occur
+    at IOC startup, and no values with be saved to any backup files.
+
+    .. seealso::
+
+        :ref:`autosave`, the builder keyword argument used to designate PV fields for autosave
+
+        :class:`Autosave` for how to add fields to autosave inside a context manager.
+
+    ..  class:: Autosave
+
+        ..  method:: __init__(autosave=True)
+
+            To be called as a context manager. Any PVs that are created inside
+            the context manager have the fields passed to the ``autosave`` argument of 
+            the context manager added to autosave tracking. The options for ``autosave``
+            are identical to the ones described in the builder keyword argument
+            :ref:`autosave`. If a PV already has :ref:`autosave` set, the two lists of fields
+            get combined into a single set. If the PV's :ref:`autosave` keyword is set
+            explicitly to ``False``, the fields specified in the context manager's argument
+            are not tracked.
+
+
+
 .. automodule:: softioc.builder
 
     Creating Records: `softioc.builder`
@@ -259,6 +333,34 @@ and stderr streams, is sent directly to the terminal.
 
     .. seealso::
         `SetBlocking` for configuring a global default blocking value
+
+    .. _autosave:
+
+    :ref:`autosave`
+    ~~~~~~~~~~~~~~~
+
+    Available on all record types. 
+    Resolves to a list of string field names. When not empty it marks the record
+    fields for automatic periodic backing up to a file. Set to `None` by
+    default. When the IOC is restarted and a backup file exists, the saved values are
+    loaded from this file when :func:`~softioc.builder.LoadDatabase` is called.
+    The saved values takes priority over any initial field value passed to the PV
+    in `initial_value` or ``**fields``. No backing up will occur unless autosave is
+    enabled and configured with :func:`~softioc.autosave.configure`.
+
+    The options for the argument are:
+
+        * ``True``, which is equivalent to ``["VAL"]``
+        * ``False``, which is equivalent to ``[]`` and disables all autosave tracking for the PV, even inside an :class:`~softioc.autosave.Autosave` context manager
+        * ``None``, similar to ``False`` but does not overload any fields specified in an :class:`~softioc.autosave.Autosave` context manager
+        * A list of field names such as ``["VAL", "LOPR", "HOPR"]``, note that ``"VAL"`` must be explicitly provided
+        * A single field name such as ``"EGU"`` which is equivalent to passing ``["EGU"]``
+
+    .. seealso::
+        :func:`~softioc.autosave.configure` for discussion on how to configure saving.
+
+        :class:`~softioc.autosave.Autosave` for how to track PVs with autosave inside a context manager.
+
 
 For all of these functions any EPICS database field can be assigned a value by
 passing it as a keyword argument for the corresponding field name (in upper

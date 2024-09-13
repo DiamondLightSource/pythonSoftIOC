@@ -24,7 +24,9 @@ class RecordWrapper(object):
         # have to maintain this separately from the corresponding device list.
         DeviceKeywords = [
             'on_update', 'on_update_name', 'validate', 'always_update',
-            'initial_value', '_wf_nelm', '_wf_dtype', 'blocking']
+            'initial_value', '_wf_nelm', '_wf_dtype', 'blocking',
+            'autosave'
+        ]
         device_kargs = {}
         for keyword in DeviceKeywords:
             if keyword in fields:

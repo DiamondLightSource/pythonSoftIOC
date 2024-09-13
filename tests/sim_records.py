@@ -14,7 +14,6 @@ if names.prefix:
     ioc_name = names.prefix[0]
 else:
     ioc_name = 'TS-DI-TEST-01'
-    SetDeviceName(ioc_name)
 
 def on_update(value):
     print('on_update', repr(value))
@@ -29,6 +28,7 @@ t_ao = None
 def create_records():
     global t_ai, t_ao
 
+    SetDeviceName(ioc_name)
     t_ai = aIn('AI', initial_value=12.34)
 
     boolIn('BOOLIN', 'True', 'False', initial_value=False)

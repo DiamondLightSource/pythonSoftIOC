@@ -3,7 +3,7 @@ import time
 import ctypes
 from ctypes import *
 import numpy
-
+from . import autosave
 from . import alarm
 from . import fields
 from .imports import (
@@ -53,6 +53,11 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     # from record init or processing
     _epics_rc_ = EPICS_OK
 
+    # all record types can support autosave
+    def __init__(self, name, **kargs):
+        autosave_fields = kargs.pop("autosave", None)
+        autosave.add_pv_to_autosave(self, name, autosave_fields)
+        self.__super.__init__(name, **kargs)
 
     # Most subclasses (all except waveforms) define a ctypes constructor for the
     # underlying EPICS compatible value.

@@ -3,6 +3,7 @@ import numpy
 
 from .device_core import RecordLookup
 from .softioc import dbLoadDatabase
+from .autosave import load_autosave
 
 from epicsdbbuilder import *
 
@@ -299,6 +300,7 @@ def LoadDatabase():
     '''This should be called after all the builder records have been created,
     but before calling iocInit().  The database is loaded into EPICS memory,
     ready for operation.'''
+    load_autosave()
     from tempfile import mkstemp
     fd, database = mkstemp('.db')
     os.close(fd)

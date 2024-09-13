@@ -4,7 +4,7 @@ import atexit
 from ctypes import *
 from tempfile import NamedTemporaryFile
 
-from . import imports, device
+from . import autosave, imports, device
 from . import cothread_dispatcher
 
 __all__ = ['dbLoadDatabase', 'iocInit', 'interactive_ioc']
@@ -34,6 +34,7 @@ def iocInit(dispatcher=None):
     # Set the dispatcher for record processing callbacks
     device.dispatcher = dispatcher
     imports.iocInit()
+    autosave.start_autosave_thread()
 
 
 def safeEpicsExit(code=0):

@@ -22,7 +22,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: "3.7"
 
       - name: Install Python Dependencies
         run: pip install flake8
@@ -56,14 +56,10 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-13]
         python: [cp37, cp38, cp39, cp310, cp311, cp312]
 
-        exclude:
-          # MacOS 14.4.1 for arm64 doesn't support Python < 3.8
-          - os: macos-latest
-            python: "cp37"
 
         include:
           # Put coverage and results files in the project directory for mac
-          - os: macos-latest
+          - os: macos-13
             cov_file: "{project}/dist/coverage.xml"
             results_file: "{project}/dist/pytest-results.xml"
           # And for windows
@@ -74,11 +70,6 @@ jobs:
           - os: ubuntu-latest
             cov_file: /output/coverage.xml
             results_file: /output/pytest-results.xml
-          # MacOS 13 required for Python < 3.8
-          - os: macos-13
-            python: "cp37"
-            cov_file: "{project}/dist/coverage.xml"
-            results_file: "{project}/dist/pytest-results.xml"
 
     name: build/${{ matrix.os }}/${{ matrix.python }}
     runs-on: ${{ matrix.os }}
@@ -125,23 +116,6 @@ jobs:
         with:
           name: ${{ matrix.os }}/${{ matrix.python }}
           directory: dist
-
-  publish-test-results:
-    name: Publish Unit Tests Results
-    needs: build
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          files: artifacts/**/*.xml
 
   test-sdist:
     needs: [sdist]

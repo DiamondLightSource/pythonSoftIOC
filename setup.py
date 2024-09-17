@@ -104,8 +104,8 @@ setup(
     install_requires = [
         # Dependency version declared in pyproject.toml
         epicscorelibs.version.abi_requires(),
-        "pvxslibs>=1.2.4",
-        "numpy<2.0",
+        "pvxslibs>=1.3.2a2",
+        "numpy",
         "epicsdbbuilder>=1.4",
         "pyyaml>=6.0"
     ],

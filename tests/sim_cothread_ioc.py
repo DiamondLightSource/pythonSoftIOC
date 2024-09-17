@@ -4,7 +4,7 @@ import sys
 
 from softioc import softioc, builder, pvlog
 
-from conftest import ADDRESS, select_and_recv
+from conftest import ADDRESS, log, select_and_recv
 
 if __name__ == "__main__":
     with Client(ADDRESS) as conn:

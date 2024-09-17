@@ -2,7 +2,7 @@ import signal
 
 from multiprocessing.connection import Listener
 
-from conftest import requires_cothread, ADDRESS, select_and_recv
+from conftest import requires_cothread, ADDRESS, log, select_and_recv
 
 @requires_cothread
 def test_cothread_ioc(cothread_ioc):
@@ -12,8 +12,9 @@ def test_cothread_ioc(cothread_ioc):
     pre = cothread_ioc.pv_prefix
 
     with Listener(ADDRESS) as listener, listener.accept() as conn:
-
+        log("test_cothread_ioc wait for Ready")
         select_and_recv(conn, "R")  # "Ready"
+        log("test_cothread_ioc Ready received")
 
         # Start
         assert caget(pre + ":UPTIME").startswith("00:00:0")
@@ -31,9 +32,12 @@ def test_cothread_ioc(cothread_ioc):
         with Context("pva") as ctx:
             assert ctx.get(pre + ":STRINGOUT") == "something"
 
+        log("test_cothread_ioc sending Done")
         conn.send("D")  # "Done"
 
+        log("test_cothread_ioc waiting for Done")
         select_and_recv(conn, "D")  # "Done"
+        log("test_cothread_ioc received Done")
 
         # Stop
         cothread_ioc.proc.send_signal(signal.SIGINT)

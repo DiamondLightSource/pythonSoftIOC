@@ -42,7 +42,7 @@ def create_random_prefix():
     return "".join(random.choice(string.ascii_uppercase) for _ in range(12))
 
 # Can't use logging as it's not multiprocess safe, and
-# alteratives are overkill
+# alternatives are overkill
 def log(*args):
     print(datetime.now().strftime("%H:%M:%S"), *args)
 

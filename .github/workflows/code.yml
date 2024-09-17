@@ -126,13 +126,6 @@ jobs:
           name: ${{ matrix.os }}/${{ matrix.python }}
           directory: dist
 
-      - name: Upload Unit Test Results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Unit Test Results (${{ matrix.os }}-${{ matrix.python }})
-          path: dist/pytest-results.xml
-
   publish-test-results:
     name: Publish Unit Tests Results
     needs: build

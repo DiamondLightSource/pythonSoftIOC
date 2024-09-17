@@ -7,6 +7,7 @@ from softioc import softioc, builder, pvlog
 from conftest import ADDRESS, log, select_and_recv
 
 if __name__ == "__main__":
+    log("sim_cothread_ioc starting")
     with Client(ADDRESS) as conn:
         import cothread
 
@@ -18,16 +19,24 @@ if __name__ == "__main__":
 
         import sim_records
 
+        log("sim_cothread_ioc records created")
+
         # Run the IOC
         builder.LoadDatabase()
         softioc.iocInit()
 
+        log("sim_cothread_ioc ready")
+
         conn.send("R")  # "Ready"
+
+        log("sim_cothread_ioc waiting for Done")
 
         select_and_recv(conn, "D")  # "Done"
         # Attempt to ensure all buffers flushed - C code (from `import pvlog`)
         # may not be affected by these calls...
         sys.stdout.flush()
         sys.stderr.flush()
+
+        log("sim_cothread_ioc sending Done")
 
         conn.send("D")  # "Ready"

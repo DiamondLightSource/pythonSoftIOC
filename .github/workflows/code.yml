@@ -56,7 +56,6 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-13]
         python: [cp37, cp38, cp39, cp310, cp311, cp312]
 
-
         include:
           # Put coverage and results files in the project directory for mac
           - os: macos-13
@@ -124,9 +123,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13]
         python: [cp37, cp38, cp39, cp310, cp311, cp312]
-
     runs-on: ${{ matrix.os }}
-
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -163,3 +160,32 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pypi_token }}
         run: pipx run twine upload dist/*
+
+  # Check that the master branches of various upstream dependencies are
+  # still compatible when used together
+  master_branch_test:
+    runs-on: "ubuntu-latest"
+    # TODO: Add if == scheduled run
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+        with:
+          # require history to get back to last tag for version number of branches
+          fetch-depth: 0
+          submodules: true
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install master versions
+        # Note the install order here: By installing p4p first, then pvxs and epicscorelibs using the --no-warn-conflicts
+        # flag, we can bypass the dependency mismatch which would otherwise be present. We know that the master branches
+        # *should* always work together, so it's ok to ignore the warnings.
+        run: |
+          pip install git+https://github.com/epics-base/p4p.git
+          pip install --no-warn-conflicts git+https://github.com/epics-base/pvxs.git git+https://github.com/epics-base/epicscorelibs.git
+          pip install -e .[dev]
+          pip freeze
+          python -m pytest

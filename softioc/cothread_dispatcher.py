@@ -1,3 +1,5 @@
+import inspect
+import logging
 
 class CothreadDispatcher:
     def __init__(self, dispatcher = None):
@@ -28,7 +30,15 @@ class CothreadDispatcher:
             completion = None,
             completion_args=()):
         def wrapper():
-            func(*func_args)
-            if completion:
-                completion(*completion_args)
+            try:
+                func(*func_args)
+            except Exception:
+                logging.exception("Exception when running dispatched callback")
+            finally:
+                if completion:
+                    completion(*completion_args)
+
+        assert not inspect.iscoroutinefunction(func)
+        assert not inspect.iscoroutinefunction(completion)
+
         self.__dispatcher(wrapper)

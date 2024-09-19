@@ -84,10 +84,11 @@ class AsyncioDispatcher:
                 ret = func(*func_args)
                 if inspect.isawaitable(ret):
                     await ret
-                if completion:
-                    completion(*completion_args)
             except Exception:
                 logging.exception("Exception when running dispatched callback")
+            finally:
+                if completion:
+                    completion(*completion_args)
         asyncio.run_coroutine_threadsafe(async_wrapper(), self.loop)
 
     def __enter__(self):

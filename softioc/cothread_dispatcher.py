@@ -38,4 +38,7 @@ class CothreadDispatcher:
                 if completion:
                     completion(*completion_args)
 
+        assert not inspect.iscoroutinefunction(func)
+        assert not inspect.iscoroutinefunction(completion)
+
         self.__dispatcher(wrapper)

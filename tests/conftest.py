@@ -6,8 +6,19 @@ import random
 import string
 import subprocess
 import sys
+from packaging.version import Version
 from typing import Any
 import pytest
+
+# It is necessary to ensure we always import cothread.catools before aioca as
+# doing this import will cause an EPICS context to be created, and it will also
+# register an atexit function to delete it.
+# If we were to import aioca first it would create an EPICS context, note it has
+# created it, then try to delete it in its own atexit function which will
+# collide with cothread's attempts to do the same (despite the fact in this
+# configuration cothread did not create the context)
+if os.name != "nt":
+    import cothread.catools
 
 from softioc import builder
 from softioc.builder import ClearRecords, SetDeviceName, GetRecordNames
@@ -73,12 +84,17 @@ def cothread_ioc():
 
 
 def aioca_cleanup():
-    from aioca import purge_channel_caches, _catools
+    from aioca import purge_channel_caches, _catools, __version__
     # Unregister the aioca atexit handler as it conflicts with the one installed
     # by cothread. If we don't do this we get a seg fault. This is not a problem
     # in production as we won't mix aioca and cothread, but we do mix them in
     # the tests so need to do this.
-    atexit.unregister(_catools._Context._destroy_context)
+    # In aioca 1.8 the atexit function was changed to no longer cause this
+    # issue, when coupled with ensuring cothread is always imported first.
+    if Version(__version__) < Version("1.8"):
+        unregister_func = _catools._Context._destroy_context
+        atexit.unregister(unregister_func)
+
     # purge the channels before the event loop goes
     purge_channel_caches()
 

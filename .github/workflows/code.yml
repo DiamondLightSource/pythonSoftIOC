@@ -95,7 +95,11 @@ jobs:
         env:
           CIBW_BUILD: ${{ matrix.python }}*64
           CIBW_TEST_EXTRAS: dev
-          CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }}
+          # Added a sleep command afterwards to let all cleanup finish; sometimes
+          # cibuildwheel reports it cannot clean up the temp dir used for testing,
+          # and fails the build. Sleeping seems to give pytest enough time to
+          # fully clean up.
+          CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }} && sleep 2
           # Run with faulthandler and -s in the hope we get a stack trace on seg fault on windows...
           CIBW_TEST_COMMAND_WINDOWS: python -X faulthandler -m pytest -s {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }}
           # Disable auditwheel as it isn't compatible with setuptools_dso approach

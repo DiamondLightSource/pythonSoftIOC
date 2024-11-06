@@ -167,3 +167,32 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pypi_token }}
         run: pipx run twine upload dist/*
+
+  # Check that the master branches of various upstream dependencies are
+  # still compatible when used together
+  master_branch_test:
+    if: ${{ github.event_name == 'schedule' }}
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+        with:
+          # require history to get back to last tag for version number of branches
+          fetch-depth: 0
+          submodules: true
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install master versions
+        run: |
+          pip install git+https://github.com/epics-base/p4p.git git+https://github.com/epics-base/pvxs.git git+https://github.com/epics-base/epicscorelibs.git
+          pip install git+https://github.com/DiamondLightSource/aioca git+https://github.com/DiamondLightSource/cothread
+          pip install -e .[dev]
+          pip freeze
+
+      - name: Run tests
+        run: |
+          python -m pytest

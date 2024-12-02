@@ -30,13 +30,13 @@ def reset_autosave_setup_teardown():
     autosave._AutosaveContext._instance = default_instance
 
 
-def create_many_threads(tmp_path):
+def test_create_many_threads(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
     def create_pv_in_thread(name):
         in_cm_event.wait()
-        builder.aOut(name, autosave=False)
+        builder.aOut(name, autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
 
     threads: List[threading.Thread] = []
     for i in range(1,50):
@@ -46,10 +46,10 @@ def create_many_threads(tmp_path):
     [x.start() for x in threads]
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
     [x.join() for x in threads]
 
-def original_test_1(tmp_path):
+def test_original_test_1(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -63,7 +63,7 @@ def original_test_1(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()
@@ -73,7 +73,7 @@ def original_test_1(tmp_path):
     assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
     assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
 
-def original_test_2(tmp_path):
+def test_original_test_2(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -87,7 +87,7 @@ def original_test_2(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()
@@ -97,7 +97,7 @@ def original_test_2(tmp_path):
     assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
     assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
 
-def original_test_3(tmp_path):
+def test_original_test_3(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -111,7 +111,7 @@ def original_test_3(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()
@@ -121,7 +121,7 @@ def original_test_3(tmp_path):
     assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
     assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
 
-def original_test_4(tmp_path):
+def test_original_test_4(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -135,7 +135,7 @@ def original_test_4(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()
@@ -145,7 +145,7 @@ def original_test_4(tmp_path):
     assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
     assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
 
-def original_test_5(tmp_path):
+def test_original_test_5(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -159,7 +159,7 @@ def original_test_5(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()
@@ -169,7 +169,7 @@ def original_test_5(tmp_path):
     assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
     assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
 
-def original_test_6(tmp_path):
+def test_original_test_6(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -183,7 +183,7 @@ def original_test_6(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()
@@ -193,7 +193,7 @@ def original_test_6(tmp_path):
     assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
     assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
 
-def original_test_7(tmp_path):
+def test_original_test_7(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -207,7 +207,7 @@ def original_test_7(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()
@@ -217,7 +217,7 @@ def original_test_7(tmp_path):
     assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
     assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
 
-def original_test_8(tmp_path):
+def test_original_test_8(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -231,7 +231,7 @@ def original_test_8(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()
@@ -241,7 +241,7 @@ def original_test_8(tmp_path):
     assert device_core.LookupRecord("PV-FROM-THREAD-BEFORE")
     assert device_core.LookupRecord("PV-FROM-THREAD-DURING")
 
-def original_test_9(tmp_path):
+def test_original_test_9(tmp_path):
     autosave.configure(tmp_path, DEVICE_NAME)
     in_cm_event = threading.Event()
 
@@ -255,7 +255,7 @@ def original_test_9(tmp_path):
     pv_thread_before_cm.start()
     with autosave.Autosave(["VAL", "EGU"]):
         in_cm_event.set()
-        builder.aOut("PV-FROM-CM")
+        builder.aOut("PV-FROM-CM", autosave=False, DRVL=1, DRVH=2, EGU="A", PREC=1, EGUF=2, EGUL=5, HOPR=10, LOPR=20, DESC="ABC", HIHI=1, HIGH=2, LOW=3, LOLO=4, ADEL=1, MDEL=2, )
         pv_thread_in_cm.start()
         pv_thread_in_cm.join()
     pv_thread_before_cm.join()

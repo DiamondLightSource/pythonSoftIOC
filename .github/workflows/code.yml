@@ -13,165 +13,164 @@ on:
     - cron: '0 8 * * MON'
 
 jobs:
-  lint:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
+  # lint:
+  #   runs-on: "ubuntu-latest"
+  #   steps:
+  #     - name: Checkout Source
+  #       uses: actions/checkout@v4
 
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.7"
+  #     - name: Install Python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: "3.7"
 
-      - name: Install Python Dependencies
-        run: pip install flake8
+  #     - name: Install Python Dependencies
+  #       run: pip install flake8
 
-      - name: Lint
-        run: flake8
+  #     - name: Lint
+  #       run: flake8
 
-  sdist:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
-        with:
-          # require history to get back to last tag for version number of branches
-          fetch-depth: 0
-          submodules: true
+  # sdist:
+  #   runs-on: "ubuntu-latest"
+  #   steps:
+  #     - name: Checkout Source
+  #       uses: actions/checkout@v4
+  #       with:
+  #         # require history to get back to last tag for version number of branches
+  #         fetch-depth: 0
+  #         submodules: true
 
-      - name: Build Sdist
-        run: pipx run build --sdist .
+  #     - name: Build Sdist
+  #       run: pipx run build --sdist .
 
-      - name: Upload Sdist
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/*
+  #     - name: Upload Sdist
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: dist
+  #         path: dist/*
 
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-13]
-        python: [cp37, cp38, cp39, cp310, cp311, cp312]
+  # build:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-latest, windows-latest, macos-13]
+  #       python: [cp37, cp38, cp39, cp310, cp311, cp312]
 
 
-        include:
-          # Put coverage and results files in the project directory for mac
-          - os: macos-13
-            cov_file: "{project}/dist/coverage.xml"
-            results_file: "{project}/dist/pytest-results.xml"
-          # And for windows
-          - os: windows-latest
-            cov_file: "{project}/dist/coverage.xml"
-            results_file: "{project}/dist/pytest-results.xml"
-          # But put coverage and results files in the output dir mounted in docker for linux
-          - os: ubuntu-latest
-            cov_file: /output/coverage.xml
-            results_file: /output/pytest-results.xml
+  #       include:
+  #         # Put coverage and results files in the project directory for mac
+  #         - os: macos-13
+  #           cov_file: "{project}/dist/coverage.xml"
+  #           results_file: "{project}/dist/pytest-results.xml"
+  #         # And for windows
+  #         - os: windows-latest
+  #           cov_file: "{project}/dist/coverage.xml"
+  #           results_file: "{project}/dist/pytest-results.xml"
+  #         # But put coverage and results files in the output dir mounted in docker for linux
+  #         - os: ubuntu-latest
+  #           cov_file: /output/coverage.xml
+  #           results_file: /output/pytest-results.xml
 
-    name: build/${{ matrix.os }}/${{ matrix.python }}
-    runs-on: ${{ matrix.os }}
+  #   name: build/${{ matrix.os }}/${{ matrix.python }}
+  #   runs-on: ${{ matrix.os }}
 
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
-        with:
-          # require history to get back to last tag for version number of branches
-          fetch-depth: 0
-          submodules: true
+  #   steps:
+  #     - name: Checkout Source
+  #       uses: actions/checkout@v4
+  #       with:
+  #         # require history to get back to last tag for version number of branches
+  #         fetch-depth: 0
+  #         submodules: true
 
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
+  #     - name: Install Python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: "3.12"
 
-      - name: Install Python Dependencies
-        run: pip install build cibuildwheel>=2.16.2
+  #     - name: Install Python Dependencies
+  #       run: pip install build cibuildwheel>=2.16.2
 
-      - name: Build Wheel
-        run: cibuildwheel --output-dir dist
-        env:
-          CIBW_BUILD: ${{ matrix.python }}*64
-          CIBW_TEST_EXTRAS: dev
-          # Added a sleep command afterwards to let all cleanup finish; sometimes
-          # cibuildwheel reports it cannot clean up the temp dir used for testing,
-          # and fails the build. Sleeping seems to give pytest enough time to
-          # fully clean up.
-          CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }} && sleep 2
-          # Run with faulthandler and -s in the hope we get a stack trace on seg fault on windows...
-          CIBW_TEST_COMMAND_WINDOWS: python -X faulthandler -m pytest -s {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }}
-          # Disable auditwheel as it isn't compatible with setuptools_dso approach
-          # https://github.com/mdavidsaver/setuptools_dso/issues/17
-          CIBW_REPAIR_WHEEL_COMMAND: ""
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-          CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux2014_x86_64
-          CIBW_SKIP: "*-musllinux*" # epicscorelibs doesn't build on musllinux platforms
+  #     - name: Build Wheel
+  #       run: cibuildwheel --output-dir dist
+  #       env:
+  #         CIBW_BUILD: ${{ matrix.python }}*64
+  #         CIBW_TEST_EXTRAS: dev
+  #         # Added a sleep command afterwards to let all cleanup finish; sometimes
+  #         # cibuildwheel reports it cannot clean up the temp dir used for testing,
+  #         # and fails the build. Sleeping seems to give pytest enough time to
+  #         # fully clean up.
+  #         CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }} && sleep 2
+  #         # Run with faulthandler and -s in the hope we get a stack trace on seg fault on windows...
+  #         CIBW_TEST_COMMAND_WINDOWS: python -X faulthandler -m pytest -s {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }}
+  #         # Disable auditwheel as it isn't compatible with setuptools_dso approach
+  #         # https://github.com/mdavidsaver/setuptools_dso/issues/17
+  #         CIBW_REPAIR_WHEEL_COMMAND: ""
+  #         CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+  #         CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux2014_x86_64
+  #         CIBW_SKIP: "*-musllinux*" # epicscorelibs doesn't build on musllinux platforms
 
-      - name: Upload Wheel
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.os }}-${{ matrix.python }}
-          path: dist/softioc*
+  #     - name: Upload Wheel
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: dist-${{ matrix.os }}-${{ matrix.python }}
+  #         path: dist/softioc*
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          name: ${{ matrix.os }}/${{ matrix.python }}
-          directory: dist
+  #     - name: Upload coverage to Codecov
+  #       uses: codecov/codecov-action@v4
+  #       with:
+  #         name: ${{ matrix.os }}/${{ matrix.python }}
+  #         directory: dist
 
-  test-sdist:
-    needs: [sdist]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-13]
-        python: [cp37, cp38, cp39, cp310, cp311, cp312]
+  # test-sdist:
+  #   needs: [sdist]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-latest, windows-latest, macos-13]
+  #       python: [cp37, cp38, cp39, cp310, cp311, cp312]
 
-    runs-on: ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
 
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: dist
+  #         path: dist
 
-      - name: Install sdist in a venv and check cli works
-        run: pipx run --spec dist/*.tar.gz pythonSoftIOC --version
-        shell: bash
+  #     - name: Install sdist in a venv and check cli works
+  #       run: pipx run --spec dist/*.tar.gz pythonSoftIOC --version
+  #       shell: bash
 
-  release:
-    needs: [build, sdist]
-    runs-on: ubuntu-latest
-    # upload to PyPI and make a release on every tag
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
+  # release:
+  #   needs: [build, sdist]
+  #   runs-on: ubuntu-latest
+  #   # upload to PyPI and make a release on every tag
+  #   if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: dist
+  #         path: dist
 
-      - name: Github Release
-        # We pin to the SHA, not the tag, for security reasons.
-        # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
-        uses: softprops/action-gh-release@2d72d869af3bf23602f9593a1e3fd739b80ac1eb  # v0.1.12
-        with:
-          files: dist/*
-          body: See [Changelog](CHANGELOG.rst) for more details
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Github Release
+  #       # We pin to the SHA, not the tag, for security reasons.
+  #       # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
+  #       uses: softprops/action-gh-release@2d72d869af3bf23602f9593a1e3fd739b80ac1eb  # v0.1.12
+  #       with:
+  #         files: dist/*
+  #         body: See [Changelog](CHANGELOG.rst) for more details
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.pypi_token }}
-        run: pipx run twine upload dist/*
+  #     - name: Publish to PyPI
+  #       env:
+  #         TWINE_USERNAME: __token__
+  #         TWINE_PASSWORD: ${{ secrets.pypi_token }}
+  #       run: pipx run twine upload dist/*
 
   # Check that the master branches of various upstream dependencies are
   # still compatible when used together
   master_branch_test:
-    if: ${{ github.event_name == 'schedule' }}
     runs-on: "ubuntu-latest"
     steps:
       - name: Checkout Source

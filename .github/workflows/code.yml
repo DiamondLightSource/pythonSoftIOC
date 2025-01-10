@@ -171,7 +171,7 @@ jobs:
   # Check that the master branches of various upstream dependencies are
   # still compatible when used together
   master_branch_test:
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
@@ -186,9 +186,10 @@ jobs:
           python-version: "3.12"
 
       - name: Install master versions
+      #
+      # pip install git+https://github.com/epics-base/p4p.git git+https://github.com/epics-base/pvxs.git git+https://github.com/epics-base/epicscorelibs.git
+      # pip install git+https://github.com/DiamondLightSource/aioca git+https://github.com/DiamondLightSource/cothread
         run: |
-          pip install git+https://github.com/epics-base/p4p.git git+https://github.com/epics-base/pvxs.git git+https://github.com/epics-base/epicscorelibs.git
-          pip install git+https://github.com/DiamondLightSource/aioca git+https://github.com/DiamondLightSource/cothread
           pip install -e .[dev]
           pip freeze
 

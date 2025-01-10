@@ -190,6 +190,7 @@ jobs:
       # pip install git+https://github.com/epics-base/p4p.git git+https://github.com/epics-base/pvxs.git git+https://github.com/epics-base/epicscorelibs.git
       # pip install git+https://github.com/DiamondLightSource/aioca git+https://github.com/DiamondLightSource/cothread
         run: |
+          pip install git+https://github.com/epics-base/epicscorelibs.git
           pip install -e .[dev]
           pip freeze
 

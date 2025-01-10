@@ -171,7 +171,7 @@ jobs:
   # Check that the master branches of various upstream dependencies are
   # still compatible when used together
   master_branch_test:
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
@@ -189,7 +189,6 @@ jobs:
         run: |
           pip install git+https://github.com/epics-base/p4p.git git+https://github.com/epics-base/pvxs.git git+https://github.com/epics-base/epicscorelibs.git
           pip install git+https://github.com/DiamondLightSource/aioca git+https://github.com/DiamondLightSource/cothread
-          pip install Pygments==2.18.0 pytest-asyncio==0.25.0 setuptools==75.6.0
           pip install -e .[dev]
           pip freeze
 

@@ -194,6 +194,11 @@ jobs:
           pip install -e .[dev]
           pip freeze
 
-      - name: Run tests
-        run: |
+      # - name: Run tests
+      #   run: |
+      #     python -m pytest
+      - name: CI Core DUmper
+        uses: mdavidsaver/ci-core-dumper@master
+        runs: |
+          ulimit -c unlimited
           python -m pytest

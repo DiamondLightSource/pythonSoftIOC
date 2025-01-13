@@ -204,6 +204,10 @@ jobs:
     name: My Job
     steps:
       - uses: actions/checkout@v4
+        with:
+          # require history to get back to last tag for version number of branches
+          fetch-depth: 0
+          submodules: true
       - uses: mdavidsaver/ci-core-dumper@master
       - run: |
          ulimit -c unlimited

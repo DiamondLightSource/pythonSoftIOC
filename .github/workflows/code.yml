@@ -194,11 +194,20 @@ jobs:
           pip install -e .[dev]
           pip freeze
 
-      # - name: Run tests
-      #   run: |
-      #     python -m pytest
-      - name: CI Core DUmper
-        uses: mdavidsaver/ci-core-dumper@master
-        runs: |
-          ulimit -c unlimited
+      - name: Run tests
+        run: |
           python -m pytest
+
+
+  test-ci-dumper:
+    runs-on: "ubuntu-latest"
+    name: My Job
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mdavidsaver/ci-core-dumper@master
+      - run: |
+         ulimit -c unlimited
+         pip install git+https://github.com/epics-base/epicscorelibs.git
+         pip install -e .[dev]
+         pip freeze
+         python -m pytest

@@ -294,7 +294,7 @@ def record_value_asserts(
     # This function is shared between functions that may pass in either a
     # native Python type, or the value returned from p4p, which must be
     # unwrapped
-    if type(actual_value) == p4p.nt.enum.ntenum:
+    if type(actual_value) is p4p.nt.enum.ntenum:
         actual_val_type = type(actual_value.raw["value"].get("index"))
     elif isinstance(actual_value, p4p.nt.scalar.ntwrappercommon):
         actual_val_type = type(actual_value.raw["value"])
@@ -302,7 +302,7 @@ def record_value_asserts(
         actual_val_type = type(actual_value)
 
     try:
-        if type(expected_value) == float and isnan(expected_value):
+        if type(expected_value) is float and isnan(expected_value):
             assert isnan(actual_value)  # NaN != Nan, so needs special case
         elif creation_func in [builder.WaveformOut, builder.WaveformIn]:
             assert numpy.array_equal(actual_value, expected_value)

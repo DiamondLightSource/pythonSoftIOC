@@ -324,7 +324,6 @@ def ClearRecords():
 
 SetSimpleRecordNames(None, ':')
 
-SetDeviceName = SetPrefix
 def SetDeviceName(name):
     SetPrefix(name)
 

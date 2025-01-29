@@ -71,6 +71,11 @@ jobs:
             cov_file: /output/coverage.xml
             results_file: /output/pytest-results.xml
 
+          - os: macos-latest
+            python: [cp38, cp39, cp310, cp311, cp312]
+            cov_file: "{project}/dist/coverage.xml"
+            results_file: "{project}/dist/pytest-results.xml"
+
     name: build/${{ matrix.os }}/${{ matrix.python }}
     runs-on: ${{ matrix.os }}
 

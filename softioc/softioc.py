@@ -288,13 +288,16 @@ command_names.append('exit')
 
 def dbLoadDatabase(database, path = None, substitutions = None):
     '''Loads a database file and applies any given substitutions.'''
+    print("dbLoadDatabase START")
     imports.dbLoadDatabase(database, path, substitutions)
+    print("dbLoadDatabase END")
 
 
 def _add_records_from_file(dirname, file, substitutions):
     # This is very naive, it loads all includes before their parents which
     # possibly can put them out of order, but it works well enough for
     # devIocStats
+    print("_add_records_from_file START")
     with open(os.path.join(dirname, file)) as f:
         lines, include_subs = [], ''
         for line in f.readlines():
@@ -310,24 +313,33 @@ def _add_records_from_file(dirname, file, substitutions):
                     subs = substitutions + ', ' + include_subs
                 else:
                     subs = substitutions + include_subs
+                print("_add_records_from_file recursing")
                 _add_records_from_file(dirname, line.split('"')[1], subs)
+                print("_add_records_from_file recursion returned")
             else:
                 # A record line
                 lines.append(line)
         # Write a tempfile and load it
         with NamedTemporaryFile(suffix='.db', delete=False) as f:
             f.write(os.linesep.join(lines).encode())
+        print(f"_add_records_from_file calling dbLoadDatabase with name={f.name} substitutions={substitutions}")
         dbLoadDatabase(f.name, substitutions=substitutions)
+        print("_add_records_from_file dbLoadDatabase returned")
         os.unlink(f.name)
+
+    print("_add_records_from_file END")
 
 
 def devIocStats(ioc_name):
     '''This will load a template for the devIocStats library with the specified
     IOC name. This should be called before `iocInit`'''
+    print("devIocStats START")
     substitutions = 'IOCNAME=' + ioc_name + ', TODFORMAT=%m/%d/%Y %H:%M:%S'
     iocstats_dir = os.path.join(
         os.path.dirname(__file__), 'iocStats', 'iocAdmin', 'Db')
+    print("devIocStats calling _add_records_from_file")
     _add_records_from_file(iocstats_dir, 'ioc.template', substitutions)
+    print("devIocStats END")
 
 
 def interactive_ioc(context = {}, call_exit = True):

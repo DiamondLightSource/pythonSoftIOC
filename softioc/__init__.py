@@ -22,12 +22,9 @@ from ._version_git import __version__
 iocshRegisterCommon()
 base_dbd_path = os.path.join(epicscorelibs.path.base_path, 'dbd')
 dbLoadDatabase('base.dbd', base_dbd_path, None)
-dbLoadDatabase('pvxsIoc.dbd', pvxslibs.path.dbd_path, None)
 iocStats = os.path.join(os.path.dirname(__file__), "iocStats", "devIocStats")
 dbLoadDatabase('devIocStats.dbd', iocStats, None)
 
-ctypes.CDLL(find_dso('pvxslibs.lib.pvxsIoc'), ctypes.RTLD_GLOBAL)
-os.environ.setdefault('PVXS_QSRV_ENABLE', 'YES')
 if registerRecordDeviceDriver(pdbbase):
     raise RuntimeError('Error registering')
 

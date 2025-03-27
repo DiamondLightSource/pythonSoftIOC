@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a1e9d3213ef5b3b13ab3dc1f032d14f2d32eb2293e6dda1f773356cc9da8ce70"
+            "sha256": "3de736bf110af1d77f0f31569339aaa126619efb770d1269e4b0e90fce4bb32d"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -105,7 +105,7 @@
                 "sha256:fbfcae4243cb2ee24a0c3dda801903794cd805befe656626ff24410d9422539d",
                 "sha256:fd4b41b40f041579af05885dd02cda2829999c0a5fd8dc6471afb7114aded120"
             ],
-            "version": "==7.0.7.99.1.2a1"
+            "version": "==7.0.7.99.1.1a3"
         },
         "epicsdbbuilder": {
             "hashes": [
@@ -474,7 +474,7 @@
                 "sha256:fbfcae4243cb2ee24a0c3dda801903794cd805befe656626ff24410d9422539d",
                 "sha256:fd4b41b40f041579af05885dd02cda2829999c0a5fd8dc6471afb7114aded120"
             ],
-            "version": "==7.0.7.99.1.2a1"
+            "version": "==7.0.7.99.1.1a3"
         },
         "epicsdbbuilder": {
             "hashes": [

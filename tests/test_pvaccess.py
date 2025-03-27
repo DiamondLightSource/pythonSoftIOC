@@ -12,7 +12,7 @@ from conftest import (
     get_multiprocessing_context,
 )
 
-from softioc import builder, softioc
+from softioc import asyncio_dispatcher, builder, softioc
 
 
 class TestPVAccess:
@@ -26,8 +26,9 @@ class TestPVAccess:
 
         builder.aOut(self.record_name, initial_value=self.record_value)
 
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
         builder.LoadDatabase()
-        softioc.iocInit(enable_pva=use_pva)
+        softioc.iocInit(dispatcher=dispatcher, enable_pva=use_pva)
 
         conn.send("R")  # "Ready"
         log("CHILD: Sent R over Connection to Parent")

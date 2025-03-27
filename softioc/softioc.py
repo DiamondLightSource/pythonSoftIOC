@@ -6,7 +6,7 @@ from ctypes import *
 from tempfile import NamedTemporaryFile
 
 import pvxslibs.path
-from epicscorelibs.ioc import registerRecordDeviceDriver, pdbbase
+from epicscorelibs.ioc import pdbbase
 from setuptools_dso.runtime import find_dso
 
 from . import autosave, imports, device
@@ -44,8 +44,7 @@ def iocInit(dispatcher=None, enable_pva=True):
         dbLoadDatabase('pvxsIoc.dbd', pvxslibs.path.dbd_path, None)
         ctypes.CDLL(find_dso('pvxslibs.lib.pvxsIoc'), ctypes.RTLD_GLOBAL)
 
-        if registerRecordDeviceDriver(pdbbase):
-            raise RuntimeError('Error registering')
+        imports.registerRecordDeviceDriver(pdbbase)
 
     imports.iocInit()
     autosave.start_autosave_thread()

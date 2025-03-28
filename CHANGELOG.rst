@@ -27,6 +27,7 @@ Changed:
 - `AsyncioDispatcher cleanup tasks atexit <../../pull/138>`_
 - `Ensure returned numpy arrays are not writeable <../../pull/164>`_
 - `Ensure records do not get stuck in processing state <../../pull/175>`_
+- `Remove __super attribute <../../pull/187>`_
 
 Fixed:
 

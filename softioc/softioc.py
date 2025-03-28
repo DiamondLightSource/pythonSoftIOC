@@ -1,8 +1,13 @@
+import ctypes
 import os
 import sys
 import atexit
 from ctypes import *
 from tempfile import NamedTemporaryFile
+
+import pvxslibs.path
+from epicscorelibs.ioc import pdbbase
+from setuptools_dso.runtime import find_dso
 
 from . import autosave, imports, device
 from . import cothread_dispatcher
@@ -16,14 +21,15 @@ def epicsAtPyExit():
     imports.epicsExitCallAtExits()
 
 
-def iocInit(dispatcher=None):
+def iocInit(dispatcher=None, enable_pva=True):
     '''This must be called exactly once after loading all EPICS database files.
     After this point the EPICS IOC is running and serving PVs.
 
     Args:
         dispatcher: A callable with signature ``dispatcher(func, *args)``. Will
-            be called in response to caput on a record. If not supplied use
-            `cothread` as a dispatcher.
+            be called in response to caput on a record. If not supplied uses
+            ``cothread`` as the dispatcher.
+        enable_pva: Specify whether to enable the PV Access Server in this IOC.
 
     See Also:
         `softioc.asyncio_dispatcher` is a dispatcher for `asyncio` applications
@@ -33,6 +39,13 @@ def iocInit(dispatcher=None):
         dispatcher = cothread_dispatcher.CothreadDispatcher()
     # Set the dispatcher for record processing callbacks
     device.dispatcher = dispatcher
+
+    if enable_pva:
+        dbLoadDatabase('pvxsIoc.dbd', pvxslibs.path.dbd_path, None)
+        ctypes.CDLL(find_dso('pvxslibs.lib.pvxsIoc'), ctypes.RTLD_GLOBAL)
+
+        imports.registerRecordDeviceDriver(pdbbase)
+
     imports.iocInit()
     autosave.start_autosave_thread()
 

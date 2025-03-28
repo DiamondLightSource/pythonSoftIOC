@@ -105,6 +105,9 @@ epicsExitCallAtExits = Com.epicsExitCallAtExits
 epicsExitCallAtExits.argtypes = ()
 epicsExitCallAtExits.restype = None
 
+registerRecordDeviceDriver = dbCore.registerAllRecordDeviceDrivers
+registerRecordDeviceDriver.argtypes = (c_void_p,)
+registerRecordDeviceDriver.errcheck = expect_success
 
 __all__ = [
     'get_field_offsets',

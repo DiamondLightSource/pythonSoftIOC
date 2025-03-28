@@ -57,7 +57,7 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
     def __init__(self, name, **kargs):
         autosave_fields = kargs.pop("autosave", None)
         autosave.add_pv_to_autosave(self, name, autosave_fields)
-        self.__super.__init__(name, **kargs)
+        super().__init__(name, **kargs)
 
     # Most subclasses (all except waveforms) define a ctypes constructor for the
     # underlying EPICS compatible value.
@@ -127,7 +127,7 @@ class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
         #    The tuple contains everything needed to be written: the value,
         # severity, alarm and optional timestamp.
         self._value = (value, alarm.NO_ALARM, alarm.UDF_ALARM, None)
-        self.__super.__init__(name, **kargs)
+        super().__init__(name, **kargs)
 
     def _process(self, record):
         # For input process we copy the value stored in the instance to the
@@ -197,7 +197,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         if self._blocking:
             self._callback = create_callback_capsule()
 
-        self.__super.__init__(name, **kargs)
+        super().__init__(name, **kargs)
 
     def init_record(self, record):
         '''Special record initialisation for out records only: implements
@@ -385,7 +385,7 @@ class ai(ProcessDeviceSupportIn):
         # Because we're returning NO_CONVERT we need to do the .UDF updating
         # ourself (otherwise the record support layer does this).
         record.UDF = int(numpy.isnan(self._value[0]))
-        return self.__super._process(record)
+        return super()._process(record)
 
 class ao(ProcessDeviceSupportOut):
     _record_type_ = 'ao'
@@ -439,11 +439,11 @@ class WaveformBase(ProcessDeviceSupportCore):
     def __init__(self, name, _wf_nelm, _wf_dtype, **kargs):
         self._dtype = _wf_dtype
         self._nelm = _wf_nelm
-        self.__super.__init__(name, **kargs)
+        super().__init__(name, **kargs)
 
     def init_record(self, record):
         self._dbf_type_ = record.FTVL
-        return self.__super.init_record(record)
+        return super().init_record(record)
 
     def _read_value(self, record):
         nord = record.NORD

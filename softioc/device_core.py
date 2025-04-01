@@ -1,46 +1,11 @@
 from __future__ import print_function
 
-import sys
 from . import imports
 from .fields import RecordFactory
 from ctypes import *
 
 
-# Black magic lifted from six.py (http://pypi.python.org/pypi/six/) to replace
-# use of __metaclass__ for metaclass definition
-def with_metaclass(meta, *bases):
-    class metaclass(meta):
-        def __new__(cls, name, this_bases, d):
-            return meta(name, bases, d)
-    return type.__new__(metaclass, 'temporary_class', (), {})
-
-
-class InitClass(type):
-    def __new__(cls, name, bases, dict):
-        if '__init_class__' in dict:
-            dict['__init_class__'] = classmethod(dict['__init_class__'])
-        return type.__new__(cls, name, bases, dict)
-
-    def __init__(cls, name, bases, dict):
-        type.__init__(cls, name, bases, dict)
-        # Binds self.__super.method to the appropriate superclass method
-        setattr(cls, '_%s__super' % name.lstrip('_'), super(cls))
-        # Binds cls.__super_cls().method to the appropriate superclass
-        # class method.  Unfortunately the .__super form doesn't work
-        # with class methods, only instance methods.
-        setattr(
-            cls, '_%s__super_cls' % name,
-            classmethod(lambda child: super(cls, child)))
-        # Finally call the class initialisatio nmethod.
-        cls.__init_class__()
-
-class DeviceCommon(with_metaclass(InitClass)):
-    '''Adds support for an __init_class__ method called when the class or any
-    of its subclasses is constructed.  Also adds auto-super functionality
-    (see iocbuilder.support.autosuper).'''
-
-    def __init_class__(cls): pass
-
+class DeviceCommon:
     # By requiring that DeviceCommon be a common base class for the entire
     # Python device hierarchy, we can use this __init__ to test for unused
     # keyword arguments.
@@ -83,19 +48,15 @@ class DeviceSupportCore(DeviceCommon):
     # treatment) are then bound to the appropriate class instance and the
     # appropriate method is invoked.
 
-    def __init_class__(cls):
+    def __init_subclass__(cls):
         '''Record support initialisation, called once during class
         initialisation for each sub-class.  This registers record support for
         the specified device name.'''
+
         if not hasattr(cls, '_record_type_'):
             # If no record type has been specified then we're a base class
             # with nothing to do.
             return
-
-        # Create an empty device directory.
-        # (Potentially this belongs in a mix-in for resolving the linkage
-        # between record and instances, but for now this is hard-wired here.)
-        cls.__device_directory = {}
 
         # Convert the list of fields into a dictionary suitable for record
         # lookup.
@@ -194,7 +155,7 @@ class DeviceSupportCore(DeviceCommon):
         # a call to get_ioinit_info.  This is only a trivial attempt to
         # reduce resource consumption.
         self.__ioscanpvt = imports.IOSCANPVT()
-        self.__super.__init__(name, **kargs)
+        super().__init__(name, **kargs)
 
 
     def init_record(self, record):
@@ -245,7 +206,7 @@ class RecordLookup(DeviceCommon):
             'Record %s already registered' % name
         self._name = name
         self._RecordDirectory[name] = self
-        self.__super.__init__(name, **kargs)
+        super().__init__(name, **kargs)
 
 
 LookupRecord = RecordLookup.LookupRecord

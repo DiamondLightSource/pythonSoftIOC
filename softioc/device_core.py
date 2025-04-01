@@ -5,7 +5,7 @@ from .fields import RecordFactory
 from ctypes import *
 
 
-class DeviceCommon():
+class DeviceCommon:
     # By requiring that DeviceCommon be a common base class for the entire
     # Python device hierarchy, we can use this __init__ to test for unused
     # keyword arguments.

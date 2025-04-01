@@ -10,6 +10,11 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Nothing yet
+
+4.6.0_ - 2025-04-01
+-------------------
+
 Added:
 
 - `Add autosave support to all records and record fields <../../pull/163>`_
@@ -224,7 +229,9 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 .. _Unreleased:
-    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.5.0...HEAD
+    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.6.0...HEAD
+.. _4.6.0:
+    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.5.0...4.6.0
 .. _4.5.0:
     https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.4.0...4.5.0
 .. _4.4.0:

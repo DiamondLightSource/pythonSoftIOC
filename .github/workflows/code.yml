@@ -149,8 +149,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: dist
+          pattern: dist*
           path: dist
+          merge-multiple: true
 
       - name: Github Release
         # We pin to the SHA, not the tag, for security reasons.

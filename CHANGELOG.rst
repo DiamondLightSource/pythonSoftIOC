@@ -12,6 +12,13 @@ Unreleased_
 
 Nothing yet
 
+4.6.1_ - 2025-04-22
+-------------------
+
+Fixed:
+
+- `Fix releasing wheels for all platforms <../../pull/189>`_
+
 4.6.0_ - 2025-04-01
 -------------------
 
@@ -229,7 +236,9 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 .. _Unreleased:
-    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.6.0...HEAD
+    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.6.1...HEAD
+.. _4.6.1:
+    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.6.0...4.6.1
 .. _4.6.0:
     https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.5.0...4.6.0
 .. _4.5.0:

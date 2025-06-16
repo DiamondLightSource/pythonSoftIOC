@@ -88,7 +88,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install Python Dependencies
-        run: pip install build cibuildwheel>=2.16.2
+        # cibuildwheel 3.0.0 dropped support for Python 3.7. We still want to
+        # support 3.7 for the time being.
+        run: pip install build cibuildwheel==2.23.3
 
       - name: Build Wheel
         run: cibuildwheel --output-dir dist

@@ -198,7 +198,7 @@ jobs:
 
       - name: Install master versions
         run: |
-          pip install git+https://github.com/epics-base/epicscorelibs.git@fix-compiler-detection -e .[dev]
+          pip install --pre -e .[dev]
           pip freeze
 
       - name: Run tests

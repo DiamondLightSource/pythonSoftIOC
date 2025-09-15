@@ -46,8 +46,12 @@ if __name__ == "__main__":
         conn.send("R")  # "Ready"
 
         # Make sure coverage is written on epicsExit
-        from pytest_cov.embed import cleanup
-        sys._run_exitfuncs = cleanup
+        try:
+            from pytest_cov.embed import cleanup
+            sys._run_exitfuncs = cleanup
+        except ImportError:
+            # Note that pytest_cov.embed no longer exists in pytest_cov>=7.0.0
+            pass
 
         select_and_recv(conn, "D")  # "Done"
         # Attempt to ensure all buffers flushed - C code (from `import pvlog`)

@@ -134,7 +134,7 @@ def enable_code_coverage():
     try:
         from pytest_cov.embed import cleanup_on_sigterm
     except ImportError:
-        pass
+        pass  # Note that pytest_cov.embed no longer exists in pytest_cov>=7.0.0
     else:
         cleanup_on_sigterm()
 

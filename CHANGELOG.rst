@@ -10,7 +10,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
-Nothing yet
+Added:
+
+- `Add support to change the callback buffer limit <../../pull/194>`_
 
 4.6.1_ - 2025-04-22
 -------------------

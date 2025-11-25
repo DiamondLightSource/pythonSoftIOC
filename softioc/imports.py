@@ -86,6 +86,9 @@ dbLoadDatabase = dbCore.dbLoadDatabase
 dbLoadDatabase.argtypes = (auto_encode, auto_encode, auto_encode)
 dbLoadDatabase.errcheck = expect_success
 
+callbackSetQueueSize = dbCore.callbackSetQueueSize
+callbackSetQueueSize.argtypes = (c_int,)
+callbackSetQueueSize.errcheck = expect_success
 
 # unsigned short recGblResetAlarms(void *precord)
 #
@@ -116,5 +119,6 @@ __all__ = [
     'registryDeviceSupportAdd',
     'IOSCANPVT', 'scanIoRequest', 'scanIoInit',
     'dbLoadDatabase',
+    'callbackSetQueueSize',
     'recGblResetAlarms',
 ]

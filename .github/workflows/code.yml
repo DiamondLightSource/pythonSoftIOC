@@ -191,8 +191,8 @@ jobs:
 
       - name: Install master versions
         run: |
-          pip install git+https://github.com/epics-base/p4p.git git+https://github.com/epics-base/pvxs.git git+https://github.com/epics-base/epicscorelibs.git
-          pip install git+https://github.com/DiamondLightSource/aioca git+https://github.com/DiamondLightSource/cothread
+          pip install --pre git+https://github.com/epics-base/p4p.git git+https://github.com/epics-base/pvxs.git git+https://github.com/epics-base/epicscorelibs.git
+          pip install --pre git+https://github.com/DiamondLightSource/aioca git+https://github.com/DiamondLightSource/cothread
           pip install -e .[dev]
           pip freeze
 

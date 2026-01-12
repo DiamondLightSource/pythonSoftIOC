@@ -133,7 +133,10 @@ async def test_asyncio_ioc_override(asyncio_ioc_override):
 def test_asyncio_dispatcher_event_loop():
     """Test that passing a non-running event loop to the AsyncioDispatcher
     raises an exception"""
-    event_loop = asyncio.get_event_loop()
+    try:
+        event_loop = asyncio.get_event_loop()
+    except RuntimeError:
+        event_loop = asyncio.new_event_loop()
     with pytest.raises(ValueError):
         AsyncioDispatcher(loop=event_loop)
 

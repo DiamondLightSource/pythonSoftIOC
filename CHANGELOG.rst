@@ -14,6 +14,10 @@ Added:
 
 - `Add support to change the callback buffer limit <../../pull/194>`_
 
+Fixed:
+
+- `Update and fix iocStats <../../pull/199>`_
+
 4.6.1_ - 2025-04-22
 -------------------
 

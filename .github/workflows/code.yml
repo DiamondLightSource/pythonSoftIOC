@@ -90,7 +90,12 @@ jobs:
       - name: Install Python Dependencies
         # cibuildwheel 3.0.0 dropped support for Python 3.7. We still want to
         # support 3.7 for the time being.
-        run: pip install build cibuildwheel==2.23.3
+        # Python 3.14 isn't supported on lower versions of cibuildwheel, so conditionally install when required
+        run: |
+          pip install build
+          [ ${{matrix.python }} == "cp314" ] && pip install cibuildwheel || pip install cibuildwheel==2.23.3
+          pip freeze
+        shell: bash
 
       - name: Build Wheel
         run: cibuildwheel --output-dir dist

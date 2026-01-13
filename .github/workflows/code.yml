@@ -71,6 +71,12 @@ jobs:
             cov_file: /output/coverage.xml
             results_file: /output/pytest-results.xml
 
+        exclude:
+          # Exclude Windows + Python 3.9 as p4p can't build there, due to numpy bug #27224
+          # which was never ported back to the 2.0.* numpy release stream.
+          - os: windows-latest
+            python: cp39
+
     name: build/${{ matrix.os }}/${{ matrix.python }}
     runs-on: ${{ matrix.os }}
 
@@ -135,6 +141,12 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-15-intel]
         python: [cp37, cp38, cp39, cp310, cp311, cp312, cp313]
+
+        exclude:
+          # Exclude Windows + Python 3.9 as p4p can't build there, due to numpy bug #27224
+          # which was never ported back to the 2.0.* numpy release stream.
+          - os: windows-latest
+            python: cp39
 
     runs-on: ${{ matrix.os }}
 

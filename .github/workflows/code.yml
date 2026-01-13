@@ -54,7 +54,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-15-intel]
-        python: [cp37, cp38, cp39, cp310, cp311, cp312]
+        python: [cp37, cp38, cp39, cp310, cp311, cp312, cp313]
 
 
         include:
@@ -70,6 +70,12 @@ jobs:
           - os: ubuntu-latest
             cov_file: /output/coverage.xml
             results_file: /output/pytest-results.xml
+
+        exclude:
+          # Exclude Windows + Python 3.9 as p4p can't build there, due to numpy bug #27224
+          # which was never ported back to the 2.0.* numpy release stream.
+          - os: windows-latest
+            python: cp39
 
     name: build/${{ matrix.os }}/${{ matrix.python }}
     runs-on: ${{ matrix.os }}
@@ -90,7 +96,12 @@ jobs:
       - name: Install Python Dependencies
         # cibuildwheel 3.0.0 dropped support for Python 3.7. We still want to
         # support 3.7 for the time being.
-        run: pip install build cibuildwheel==2.23.3
+        # Python 3.14 isn't supported on lower versions of cibuildwheel, so conditionally install when required
+        run: |
+          pip install build
+          [ ${{matrix.python }} == "cp314" ] && pip install cibuildwheel || pip install cibuildwheel==2.23.3
+          pip freeze
+        shell: bash
 
       - name: Build Wheel
         run: cibuildwheel --output-dir dist
@@ -129,7 +140,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-15-intel]
-        python: [cp37, cp38, cp39, cp310, cp311, cp312]
+        python: [cp37, cp38, cp39, cp310, cp311, cp312, cp313]
+
+        exclude:
+          # Exclude Windows + Python 3.9 as p4p can't build there, due to numpy bug #27224
+          # which was never ported back to the 2.0.* numpy release stream.
+          - os: windows-latest
+            python: cp39
 
     runs-on: ${{ matrix.os }}
 

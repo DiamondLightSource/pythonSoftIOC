@@ -37,7 +37,10 @@ if __name__ == "__main__":
 
         # Run the IOC
         builder.LoadDatabase()
-        event_loop = asyncio.get_event_loop()
+        try:
+            event_loop = asyncio.get_event_loop()
+        except RuntimeError:
+            event_loop = asyncio.new_event_loop()
         worker = threading.Thread(target=event_loop.run_forever)
         worker.daemon = True
         worker.start()
@@ -49,6 +52,7 @@ if __name__ == "__main__":
         try:
             from pytest_cov.embed import cleanup
             sys._run_exitfuncs = cleanup
+
         except ImportError:
             # Note that pytest_cov.embed no longer exists in pytest_cov>=7.0.0
             pass

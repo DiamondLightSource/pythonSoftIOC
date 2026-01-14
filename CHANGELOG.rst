@@ -10,6 +10,11 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Nothing yet!
+
+4.7.0_ - 2026-01-14
+-------------------
+
 Added:
 
 - `Add support to change the callback buffer limit <../../pull/194>`_
@@ -242,7 +247,9 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 .. _Unreleased:
-    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.6.1...HEAD
+    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.7.0...HEAD
+.. _4.7.0:
+    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.6.1...4.7.0
 .. _4.6.1:
     https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.6.0...4.6.1
 .. _4.6.0:

@@ -63,6 +63,7 @@ Table Of Contents
     how-to/make-publishable-ioc
     how-to/read-data-from-ioc
     how-to/use-soft-records
+    how-to/build-softioc-with-uv
 
 .. toctree::
     :caption: Explanations

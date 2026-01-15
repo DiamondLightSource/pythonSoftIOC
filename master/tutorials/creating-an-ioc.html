@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating an IOC &mdash; pythonSoftIOC 4.5.0+22.g8c4b516 documentation</title>
+  <title>Creating an IOC &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -55,9 +55,11 @@
 <p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -68,7 +70,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
@@ -146,7 +148,7 @@ functionality for Python soft IOCs and are the ones that are normally used.</p>
 asynchronous operations.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> doesn’t work on Windows or on a Mac M1. You can use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a>
+<p><a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> doesn’t work on Windows or on a Mac M1. You can use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a>
 instead by following <a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html"><span class="doc">Use asyncio in an IOC</span></a></p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ai</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">aIn</span><span class="p">(</span><span class="s1">&#39;AI&#39;</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
@@ -224,7 +226,7 @@ and read the value on <code class="docutils literal notranslate"><span class="pr
 <p>See the documentation of <a class="reference internal" href="../reference/api.html#module-softioc.builder" title="softioc.builder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> for details, but an overview is
 provided here.</p>
 <p>PVs are created internally and dynamically using functionality provided by
-<a class="reference external" href="https://dls-controls.github.io/epicsdbbuilder/master/api.html#module-epicsdbbuilder" title="(in EPICS Database Builder v1.5)"><code class="xref any docutils literal notranslate"><span class="pre">epicsdbbuilder</span></code></a>, which in this context simply provides mechanisms for
+<a class="reference external" href="https://diamondlightsource.github.io/epicsdbbuilder/master/api.html#module-epicsdbbuilder" title="(in EPICS Database Builder v1.5)"><code class="xref any docutils literal notranslate"><span class="pre">epicsdbbuilder</span></code></a>, which in this context simply provides mechanisms for
 creating <code class="docutils literal notranslate"><span class="pre">.db</span></code> files, but <a class="reference internal" href="../reference/api.html#module-softioc.builder" title="softioc.builder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a> also binds each created PV to
 a special <code class="docutils literal notranslate"><span class="pre">Python</span></code> device – this allows PV processing to be hooked into
 Python support.</p>

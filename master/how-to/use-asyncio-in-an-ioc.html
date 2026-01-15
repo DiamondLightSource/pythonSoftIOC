@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 4.5.0+22.g8c4b516 documentation</title>
+  <title>Use asyncio in an IOC &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Create a Publishable IOC" href="make-publishable-ioc.html" />
+    <link rel="next" title="Use softioc.autosave in an IOC" href="use-autosave-in-an-ioc.html" />
     <link rel="prev" title="Creating an IOC" href="../tutorials/creating-an-ioc.html" /> 
 </head>
 
@@ -55,9 +55,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#asynchronous-channel-access">Asynchronous Channel Access</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -68,7 +70,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
@@ -97,9 +99,9 @@
            <div itemprop="articleBody">
              
   <section id="use-asyncio-in-an-ioc">
-<h1>Use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> in an IOC<a class="headerlink" href="#use-asyncio-in-an-ioc" title="Permalink to this headline"></a></h1>
+<h1>Use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> in an IOC<a class="headerlink" href="#use-asyncio-in-an-ioc" title="Permalink to this headline"></a></h1>
 <p><a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a> shows how to create a pythonSoftIOC using the
-<a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> library. This page shows how to create one using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a></p>
+<a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> library. This page shows how to create one using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a></p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="../explanations/asyncio-cothread-differences.html"><span class="doc">What are the differences between asyncio and cothread?</span></a> for the differences and why
@@ -139,7 +141,7 @@ you would use one over the other</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">dispatcher</span></code> is created and passed to <a class="reference internal" href="../reference/api.html#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref py py-func docutils literal notranslate"><span class="pre">iocInit()</span></code></a>. This is what
-allows the use of <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> functions in this IOC. It contains a new event loop to handle
+allows the use of <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> functions in this IOC. It contains a new event loop to handle
 this.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">update</span></code> function will increment the value of <code class="docutils literal notranslate"><span class="pre">ai</span></code> once per second,
 sleeping that coroutine between updates.
@@ -153,7 +155,7 @@ shell open. The values of the PVs can be queried using the methods defined in th
 <section id="asynchronous-channel-access">
 <h2>Asynchronous Channel Access<a class="headerlink" href="#asynchronous-channel-access" title="Permalink to this headline"></a></h2>
 <p>PVs can be retrieved externally from a PV in an asynchronous manner by using the
-<a class="reference external" href="https://dls-controls.github.io/aioca/master/api.html#module-aioca" title="(in aioca vmaster)"><code class="xref any docutils literal notranslate"><span class="pre">aioca</span></code></a> module. It provides <code class="docutils literal notranslate"><span class="pre">await</span></code>-able implementations of <code class="docutils literal notranslate"><span class="pre">caget</span></code>,
+<a class="reference external" href="https://diamondlightsource.github.io/aioca/master/api.html#module-aioca" title="(in aioca vmaster)"><code class="xref any docutils literal notranslate"><span class="pre">aioca</span></code></a> module. It provides <code class="docutils literal notranslate"><span class="pre">await</span></code>-able implementations of <code class="docutils literal notranslate"><span class="pre">caget</span></code>,
 <code class="docutils literal notranslate"><span class="pre">caput</span></code>, etc. See that module for more information.</p>
 </section>
 </section>
@@ -163,7 +165,7 @@ shell open. The values of the PVs can be queried using the methods defined in th
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../tutorials/creating-an-ioc.html" class="btn btn-neutral float-left" title="Creating an IOC" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="make-publishable-ioc.html" class="btn btn-neutral float-right" title="Create a Publishable IOC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="use-autosave-in-an-ioc.html" class="btn btn-neutral float-right" title="Use softioc.autosave in an IOC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

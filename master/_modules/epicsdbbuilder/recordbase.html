@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>epicsdbbuilder.recordbase &mdash; pythonSoftIOC 4.5.0+22.g8c4b516 documentation</title>
+  <title>epicsdbbuilder.recordbase &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -48,9 +48,11 @@
 <p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -61,7 +63,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
@@ -302,7 +304,7 @@
             <span class="c1"># ensure we convert record pointers into links.  It&#39;s unlikely</span>
             <span class="c1"># that this will have unfortunate side effects elsewhere, but it&#39;s</span>
             <span class="c1"># always possible...</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;ValidateLater&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__ValidateField</span><span class="p">(</span><span class="n">fieldname</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
@@ -424,7 +426,7 @@
 <span class="c1"># Some helper routines for building links</span>
 
 <div class="viewcode-block" id="PP"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.PP">[docs]</a><span class="k">def</span> <span class="nf">PP</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;Process Passive&quot;: any record update through a PP output link will be</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;Process Passive&quot;: any record update through a PP output link will be</span>
 <span class="sd">    processed if its scan is Passive.</span>
 
 <span class="sd">    Example (Python source)</span>
@@ -438,7 +440,7 @@
     <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;PP&#39;</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">CA</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;Channel Access&quot;: a CA (input or output) link will be treated as</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;Channel Access&quot;: a CA (input or output) link will be treated as</span>
 <span class="sd">    a channel access link regardless whether it is a DB link or not.</span>
 
 <span class="sd">    Example (Python source)</span>
@@ -453,7 +455,7 @@
 
 
 <div class="viewcode-block" id="CP"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.CP">[docs]</a><span class="k">def</span> <span class="nf">CP</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;Channel Process&quot;: a CP input link will cause the linking record</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;Channel Process&quot;: a CP input link will cause the linking record</span>
 <span class="sd">    to process any time the linked record is updated.</span>
 
 <span class="sd">    Example (Python source)</span>
@@ -467,7 +469,7 @@
     <span class="k">return</span> <span class="n">record</span><span class="p">(</span><span class="s1">&#39;CP&#39;</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">CPP</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;Channel Process if Passive&quot;: a CP input link will be treated as</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;Channel Process if Passive&quot;: a CP input link will be treated as</span>
 <span class="sd">    a channel access link and if the linking record is passive,</span>
 <span class="sd">    the linking passive record will be processed any time the linked record</span>
 <span class="sd">    is updated.</span>
@@ -484,7 +486,7 @@
 
 
 <div class="viewcode-block" id="MS"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.MS">[docs]</a><span class="k">def</span> <span class="nf">MS</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;Maximise Severity&quot;: any alarm state on the linked record is propagated</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;Maximise Severity&quot;: any alarm state on the linked record is propagated</span>
 <span class="sd">    to the linking record. When propagated, the alarm status will become</span>
 <span class="sd">    `LINK_ALARM`.</span>
 
@@ -500,7 +502,7 @@
 
 
 <span class="k">def</span> <span class="nf">MSS</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;Maximise Status and Severity&quot;: both alarm status and alarm severity</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;Maximise Status and Severity&quot;: both alarm status and alarm severity</span>
 <span class="sd">    on the linked record are propagated to the linking record.</span>
 
 <span class="sd">    Example (Python source)</span>
@@ -515,7 +517,7 @@
 
 
 <span class="k">def</span> <span class="nf">MSI</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;Maximise Severity if Invalid&quot;: propagate an alarm state on the linked</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;Maximise Severity if Invalid&quot;: propagate an alarm state on the linked</span>
 <span class="sd">    record only if the alarm severity is `INVALID_ALARM`.</span>
 <span class="sd">    When propagated, the alarm status will become `LINK_ALARM`.</span>
 
@@ -531,7 +533,7 @@
 
 
 <span class="k">def</span> <span class="nf">NMS</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;Non-Maximise Severity&quot;: no alarm is propagated.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;Non-Maximise Severity&quot;: no alarm is propagated.</span>
 <span class="sd">    This is the default behavior of EPICS links.</span>
 
 <span class="sd">    Example (Python source)</span>
@@ -546,7 +548,7 @@
 
 
 <div class="viewcode-block" id="NP"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.NP">[docs]</a><span class="k">def</span> <span class="nf">NP</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;No Process&quot;: the linked record is not processed.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;No Process&quot;: the linked record is not processed.</span>
 <span class="sd">    This is the default behavior of EPICS links.</span>
 
 <span class="sd">    Example (Python source)</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; pythonSoftIOC 4.5.0+22.g8c4b516 documentation</title>
+  <title>Index &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -48,9 +48,11 @@
 <p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -61,7 +63,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
@@ -92,7 +94,8 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
@@ -111,6 +114,14 @@
  | <a href="#W"><strong>W</strong></a>
  
 </div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api.html#softioc.autosave.Autosave.__init__">__init__() (softioc.autosave.Autosave method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -123,6 +134,8 @@
       <li><a href="reference/api.html#softioc.builder.aOut">aOut() (in module softioc.builder)</a>
 </li>
       <li><a href="reference/api.html#softioc.asyncio_dispatcher.AsyncioDispatcher">AsyncioDispatcher (class in softioc.asyncio_dispatcher)</a>
+</li>
+      <li><a href="reference/api.html#softioc.autosave.Autosave">Autosave (class in softioc.autosave)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -148,9 +161,11 @@
 </li>
       <li><a href="reference/api.html#softioc.builder.ClearRecords">ClearRecords() (in module softioc.builder)</a>
 </li>
+      <li><a href="reference/api.html#softioc.alarm.COMM_ALARM">COMM_ALARM (in module softioc.alarm)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/api.html#softioc.alarm.COMM_ALARM">COMM_ALARM (in module softioc.alarm)</a>
+      <li><a href="reference/api.html#softioc.autosave.configure">configure() (in module softioc.autosave)</a>
 </li>
       <li><a href="reference/api.html#softioc.alarm.COS_ALARM">COS_ALARM (in module softioc.alarm)</a>
 </li>
@@ -308,6 +323,8 @@
 </li>
         <li><a href="reference/api.html#module-softioc.asyncio_dispatcher">softioc.asyncio_dispatcher</a>
 </li>
+        <li><a href="reference/api.html#module-softioc.autosave">softioc.autosave</a>
+</li>
         <li><a href="reference/api.html#module-softioc.builder">softioc.builder</a>
 </li>
         <li><a href="reference/api.html#module-softioc.device">softioc.device</a>
@@ -410,10 +427,10 @@
         <li><a href="reference/api.html#module-softioc">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/api.html#softioc.softioc.__version__">softioc.__version__ (in module softioc)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     softioc.alarm
 
@@ -426,6 +443,13 @@
 
       <ul>
         <li><a href="reference/api.html#module-softioc.asyncio_dispatcher">module</a>
+</li>
+      </ul></li>
+      <li>
+    softioc.autosave
+
+      <ul>
+        <li><a href="reference/api.html#module-softioc.autosave">module</a>
 </li>
       </ul></li>
       <li>

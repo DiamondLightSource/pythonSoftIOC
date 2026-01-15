@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>softioc.autosave &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/softioc-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+            <a href="../../index.html" class="icon icon-home"> pythonSoftIOC
+            <img src="../../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                master
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/asyncio-cothread-differences.html">What are the differences between <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code>?</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: rgb(7, 43, 93)" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pythonSoftIOC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>softioc.autosave</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for softioc.autosave</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">atexit</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">rename</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">copy2</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="n">SAV_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;softsav&quot;</span>
+<span class="n">SAVB_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;softsavB&quot;</span>
+<span class="n">DEFAULT_SAVE_PERIOD</span> <span class="o">=</span> <span class="mf">30.0</span>
+
+
+<span class="k">def</span> <span class="nf">_ndarray_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_sequence</span><span class="p">(</span>
+        <span class="s2">&quot;tag:yaml.org,2002:seq&quot;</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">flow_style</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+
+<span class="n">yaml</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">_ndarray_representer</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">Dumper</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="configure"><a class="viewcode-back" href="../../reference/api.html#softioc.autosave.configure">[docs]</a><span class="k">def</span> <span class="nf">configure</span><span class="p">(</span>
+    <span class="n">directory</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">save_period</span><span class="o">=</span><span class="n">DEFAULT_SAVE_PERIOD</span><span class="p">,</span>
+    <span class="n">timestamped_backups</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This should be called before initialising the IOC. Configures the</span>
+<span class="sd">    autosave thread for periodic backing up of PV values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory: string or Path giving directory path where autosave backup</span>
+<span class="sd">            files are saved and loaded.</span>
+<span class="sd">        name: string name of the root used for naming backup files. This</span>
+<span class="sd">            is usually the same as the device name.</span>
+<span class="sd">        save_period: time in seconds between backups. Backups are only performed</span>
+<span class="sd">            if PV values have changed.</span>
+<span class="sd">        timestamped_backups: boolean which determines if backups of existing</span>
+<span class="sd">            autosave files are timestamped on IOC restart. True by default, if</span>
+<span class="sd">            False then backups get overwritten on each IOC restart.</span>
+<span class="sd">        enabled: boolean which enables or disables autosave, set to True by</span>
+<span class="sd">            default, or False if configure not called.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">directory_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">directory_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> is not a valid autosave directory&quot;</span>
+        <span class="p">)</span>
+    <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">directory_path</span>
+    <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">timestamped_backups</span> <span class="o">=</span> <span class="n">timestamped_backups</span>
+    <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">save_period</span> <span class="o">=</span> <span class="n">save_period</span>
+    <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="n">enabled</span>
+    <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">device_name</span> <span class="o">=</span> <span class="n">name</span></div>
+
+
+<span class="k">class</span> <span class="nc">AutosaveConfig</span><span class="p">:</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">device_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">timestamped_backups</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">save_period</span> <span class="o">=</span> <span class="n">DEFAULT_SAVE_PERIOD</span>
+    <span class="n">enabled</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">start_autosave_thread</span><span class="p">():</span>
+    <span class="n">worker</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">Autosave</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">_shutdown_autosave_thread</span><span class="p">,</span> <span class="n">worker</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_shutdown_autosave_thread</span><span class="p">(</span><span class="n">worker</span><span class="p">):</span>
+    <span class="n">Autosave</span><span class="o">.</span><span class="n">_stop</span><span class="p">()</span>
+    <span class="n">worker</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_autosave_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">elif</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;VAL&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fields</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">fields</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not parse autosave fields argument: </span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">add_pv_to_autosave</span><span class="p">(</span><span class="n">pv</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configures a PV for autosave</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pv: a PV object inheriting ProcessDeviceSupportCore</span>
+<span class="sd">        name: the key by which the PV value is saved to and loaded from a</span>
+<span class="sd">            backup. This is typically the same as the PV name.</span>
+<span class="sd">        fields: used to determine which fields of a PV are tracked by autosave.</span>
+<span class="sd">            The allowed options are a single string such as &quot;VAL&quot; or &quot;EGU&quot;,</span>
+<span class="sd">            a list of strings such as [&quot;VAL&quot;, &quot;EGU&quot;], a boolean True which</span>
+<span class="sd">            evaluates to [&quot;VAL&quot;] or False to track no fields. If the PV is</span>
+<span class="sd">            created inside an Autosave context manager, the fields passed to the</span>
+<span class="sd">            context manager are also tracked by autosave.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="c1"># if autosave=False explicitly set, override context manager</span>
+        <span class="k">return</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_parse_autosave_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">))</span>
+    <span class="c1"># instantiate context to get thread local class variables via instance</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">_AutosaveContext</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">context</span><span class="o">.</span><span class="n">_in_cm</span><span class="p">:</span>  <span class="c1"># _fields should always be a list if in context manager</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="n">field_name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">&quot;VAL&quot;</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">Autosave</span><span class="o">.</span><span class="n">_pvs</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_AutosavePV</span><span class="p">(</span><span class="n">pv</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">load_autosave</span><span class="p">():</span>
+    <span class="n">Autosave</span><span class="o">.</span><span class="n">_load</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">_AutosavePV</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">&quot;VAL&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">get</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">set</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">val</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="n">pv</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_current_sav_path</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">SAV_SUFFIX</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_tmp_sav_path</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">SAVB_SUFFIX</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_timestamped_backup_sav_path</span><span class="p">(</span><span class="n">timestamp</span><span class="p">):</span>
+    <span class="n">sav_path</span> <span class="o">=</span> <span class="n">_get_current_sav_path</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">sav_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">sav_path</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;_%y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_backup_sav_path</span><span class="p">():</span>
+    <span class="n">sav_path</span> <span class="o">=</span> <span class="n">_get_current_sav_path</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">sav_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="p">(</span><span class="n">sav_path</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.bu&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_AutosaveContext</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">):</span>
+    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="n">_fields</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_in_cm</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">:</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_in_cm</span> <span class="ow">and</span> <span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">fields</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_in_cm</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="Autosave"><a class="viewcode-back" href="../../reference/api.html#softioc.autosave.Autosave">[docs]</a><span class="k">class</span> <span class="nc">Autosave</span><span class="p">:</span>
+    <span class="n">_pvs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_last_saved_state</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_last_saved_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">_stop_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+    <span class="n">_loop_started</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Autosave.__init__"><a class="viewcode-back" href="../../reference/api.html#softioc.autosave.Autosave.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        When called as a context manager, any PVs created in the context have</span>
+<span class="sd">        the fields provided by the fields argument added to autosave backups.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fields: a list of string field names to be periodically saved to a</span>
+<span class="sd">            backup file, which are loaded from on IOC restart.</span>
+<span class="sd">            The allowed options are a single string such as &quot;VAL&quot; or &quot;EGU&quot;,</span>
+<span class="sd">            a list of strings such as [&quot;VAL&quot;, &quot;EGU&quot;], a boolean True which</span>
+<span class="sd">            evaluates to [&quot;VAL&quot;] or False to track no additional fields.</span>
+<span class="sd">            If the autosave keyword is already specified in a PV&#39;s</span>
+<span class="sd">            initialisation, the list of fields to track are combined.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">_AutosaveContext</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">context</span><span class="o">.</span><span class="n">_in_cm</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Can not instantiate Autosave when already in context manager&quot;</span>
+            <span class="p">)</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">_parse_autosave_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">fields</span></div>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">_AutosaveContext</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">_in_cm</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">_AutosaveContext</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__backup_sav_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not back up autosave as </span><span class="si">{</span><span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span><span class="si">}</span><span class="s2"> is&quot;</span>
+                <span class="s2">&quot; not a valid directory&quot;</span><span class="p">,</span>
+                <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">sav_path</span> <span class="o">=</span> <span class="n">_get_current_sav_path</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">timestamped_backups</span><span class="p">:</span>
+            <span class="n">backup_path</span> <span class="o">=</span> <span class="n">_get_timestamped_backup_sav_path</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_last_saved_time</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">backup_path</span> <span class="o">=</span> <span class="n">_get_backup_sav_path</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">sav_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="n">copy2</span><span class="p">(</span><span class="n">sav_path</span><span class="p">,</span> <span class="n">backup_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not back up autosave, </span><span class="si">{</span><span class="n">sav_path</span><span class="si">}</span><span class="s2"> is not a file&quot;</span><span class="p">,</span>
+                <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_state</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">pv_field</span><span class="p">,</span> <span class="n">pv</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_pvs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">state</span><span class="p">[</span><span class="n">pv_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception getting </span><span class="si">{</span><span class="n">pv_field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__set_pvs_from_saved_state</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">pv_field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_last_saved_state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pv</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_pvs</span><span class="p">[</span><span class="n">pv_field</span><span class="p">]</span>
+                <span class="n">pv</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Exception setting </span><span class="si">{</span><span class="n">pv_field</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__state_changed</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_last_saved_state</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="n">state</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="c1"># checks equality for builtins and numpy arrays</span>
+            <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_last_saved_state</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">state</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_save</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__get_state</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__state_changed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+            <span class="n">sav_path</span> <span class="o">=</span> <span class="n">_get_current_sav_path</span><span class="p">()</span>
+            <span class="n">tmp_path</span> <span class="o">=</span> <span class="n">_get_tmp_sav_path</span><span class="p">()</span>
+            <span class="c1"># write to temporary file first then use atomic os.rename</span>
+            <span class="c1"># to safely update stored state</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backup</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">backup</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">rename</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">sav_path</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_last_saved_state</span> <span class="o">=</span> <span class="n">state</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_last_saved_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">enabled</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_pvs</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">device_name</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Device name is not known to autosave thread, &quot;</span>
+                <span class="s2">&quot;call autosave.configure() with keyword argument name&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Autosave directory is not known, call &quot;</span>
+                <span class="s2">&quot;autosave.configure() with keyword argument directory&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">directory</span><span class="si">}</span><span class="s2"> is not a valid autosave directory&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__backup_sav_file</span><span class="p">()</span>
+        <span class="n">sav_path</span> <span class="o">=</span> <span class="n">_get_current_sav_path</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sav_path</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">sav_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not load autosave values from file </span><span class="si">{</span><span class="n">sav_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">sav_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_last_saved_state</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">full_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__set_pvs_from_saved_state</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_stop</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_loop</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">enabled</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_pvs</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_loop_started</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_loop_started</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">AutosaveConfig</span><span class="o">.</span><span class="n">save_period</span><span class="p">)</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_save</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>  <span class="c1"># Stop requested</span>
+                    <span class="k">return</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2008, Diamond Light Source.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+   
+  <div id="other-versions-div" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" style="visibility: hidden">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Other Versions</span>
+      master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl id="other-versions-dl"/>
+    </div>
+  </div>
+  <script>
+    function addVersion(name) {
+      var dd = document.createElement("dd");
+      var a = document.createElement("a");
+      a.href = "../../../" + name;
+      a.innerText = name;
+      dd.appendChild(a);
+      document.getElementById('other-versions-dl').appendChild(dd);
+    }
+    // Get versions.txt and add a version for each line
+    fetch("../../../versions.txt").then(response => {
+      if (response.ok) {
+        document.getElementById('other-versions-div').style.visibility = "visible";
+        return response.text().then(text => text.split(/\r?\n/).forEach(addVersion))
+      }
+    });
+  </script>
+
+
+</body>
+</html>

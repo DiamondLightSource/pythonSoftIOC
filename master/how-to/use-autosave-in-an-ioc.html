@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Use softioc.autosave in an IOC &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Create a Publishable IOC" href="make-publishable-ioc.html" />
+    <link rel="prev" title="Use asyncio in an IOC" href="use-asyncio-in-an-ioc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+            <a href="../index.html" class="icon icon-home"> pythonSoftIOC
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                master
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example-ioc">Example IOC</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read-data-from-ioc.html">Read data from an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/asyncio-cothread-differences.html">What are the differences between <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code>?</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: rgb(7, 43, 93)" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonSoftIOC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/how-to/use-autosave-in-an-ioc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="use-softioc-autosave-in-an-ioc">
+<h1>Use <a class="reference internal" href="../reference/api.html#module-softioc.autosave" title="softioc.autosave"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.autosave</span></code></a> in an IOC<a class="headerlink" href="#use-softioc-autosave-in-an-ioc" title="Permalink to this headline"></a></h1>
+<p><a class="reference internal" href="../tutorials/creating-an-ioc.html"><span class="doc">Creating an IOC</span></a> shows how to create a pythonSoftIOC.</p>
+<section id="example-ioc">
+<h2>Example IOC<a class="headerlink" href="#example-ioc" title="Permalink to this headline"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">softioc</span> <span class="kn">import</span> <span class="n">autosave</span><span class="p">,</span> <span class="n">builder</span><span class="p">,</span> <span class="n">softioc</span>
+<span class="kn">import</span> <span class="nn">cothread</span>
+
+<span class="c1"># Set the record prefix</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">SetDeviceName</span><span class="p">(</span><span class="s2">&quot;MY-DEVICE-PREFIX&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create records, set some of them to autosave, also save some of their fields</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">aOut</span><span class="p">(</span><span class="s2">&quot;AO&quot;</span><span class="p">,</span> <span class="n">autosave</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">aIn</span><span class="p">(</span><span class="s2">&quot;AI&quot;</span><span class="p">,</span> <span class="n">autosave</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;PREC&quot;</span><span class="p">,</span> <span class="s2">&quot;EGU&quot;</span><span class="p">])</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">boolIn</span><span class="p">(</span><span class="s2">&quot;BO&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">WaveformIn</span><span class="p">(</span><span class="s2">&quot;WAVEFORMIN&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">autosave</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">autosave</span><span class="o">.</span><span class="n">Autosave</span><span class="p">([</span><span class="s2">&quot;VAL&quot;</span><span class="p">,</span> <span class="s2">&quot;LOPR&quot;</span><span class="p">,</span> <span class="s2">&quot;HOPR&quot;</span><span class="p">]):</span>
+    <span class="n">builder</span><span class="o">.</span><span class="n">aOut</span><span class="p">(</span><span class="s2">&quot;AUTOMATIC-AO&quot;</span><span class="p">,</span> <span class="n">autosave</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EGU&quot;</span><span class="p">])</span>
+<span class="n">seconds</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">longOut</span><span class="p">(</span><span class="s2">&quot;SECONDSRUN&quot;</span><span class="p">,</span> <span class="n">autosave</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">autosave</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;/tmp/autosave-data&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MY-DEVICE-PREFIX&quot;</span><span class="p">,</span>
+    <span class="n">save_period</span><span class="o">=</span><span class="mf">5.0</span>
+<span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">LoadDatabase</span><span class="p">()</span>
+<span class="n">softioc</span><span class="o">.</span><span class="n">iocInit</span><span class="p">()</span>
+
+<span class="c1"># Start processes required to be run after iocInit</span>
+<span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">cothread</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">seconds</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">seconds</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">cothread</span><span class="o">.</span><span class="n">Spawn</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+
+<span class="n">softioc</span><span class="o">.</span><span class="n">interactive_ioc</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Records are instantiated as normal and configured for automatic loading and
+periodic saving to a backup file with use of the keyword argument <code class="docutils literal notranslate"><span class="pre">autosave</span></code>.
+<code class="docutils literal notranslate"><span class="pre">autosave</span></code> resolves to a list of strings, which are the names of fields to be
+tracked by autosave. By default <code class="docutils literal notranslate"><span class="pre">autosave=False</span></code>, which disables autosave for that PV.
+Setting <code class="docutils literal notranslate"><span class="pre">autosave=True</span></code> is equivalent to passing <code class="docutils literal notranslate"><span class="pre">[&quot;VAL&quot;]</span></code>. Note that <code class="docutils literal notranslate"><span class="pre">&quot;VAL&quot;</span></code> must be
+explicitly passed when tracking other fields, e.g. <code class="docutils literal notranslate"><span class="pre">[&quot;VAL&quot;,</span> <span class="pre">&quot;LOPR&quot;,</span> <span class="pre">&quot;HOPR&quot;]</span></code>.
+<code class="docutils literal notranslate"><span class="pre">autosave</span></code> can also accept a single string field name as an argument.</p>
+<p>The field values get written into a yaml-formatted file containing key-value pairs.
+By default the keys are the same as the full PV name, including any device name specified
+in <a class="reference internal" href="../reference/api.html#softioc.builder.SetDeviceName" title="softioc.builder.SetDeviceName"><code class="xref py py-func docutils literal notranslate"><span class="pre">SetDeviceName()</span></code></a>.</p>
+<p>Autosave is disabled until <a class="reference internal" href="../reference/api.html#softioc.autosave.configure" title="softioc.autosave.configure"><code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code></a> is called. The first two arguments,
+<code class="docutils literal notranslate"><span class="pre">directory</span></code> and <code class="docutils literal notranslate"><span class="pre">name</span></code> are required. Backup files are periodically written into
+<code class="docutils literal notranslate"><span class="pre">directory</span></code> with the name <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.softsav</span></code> every <code class="docutils literal notranslate"><span class="pre">save_period</span></code> seconds,
+set to 30.0 by default. The directory must exist, and should be configured with the appropriate
+read/write permissions for the user running the IOC.</p>
+<p>IOC developers should only need to interface with autosave via the <a class="reference internal" href="../reference/api.html#softioc.autosave.configure" title="softioc.autosave.configure"><code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code></a>
+method and the <code class="docutils literal notranslate"><span class="pre">autosave</span></code> keyword argument. Alternatively,
+PVs can be instantiated inside the <a class="reference internal" href="../reference/api.html#softioc.autosave.Autosave" title="softioc.autosave.Autosave"><code class="xref py py-class docutils literal notranslate"><span class="pre">Autosave()</span></code></a> context manager, which
+automatically passes the <code class="docutils literal notranslate"><span class="pre">autosave</span></code> argument to any PVs created
+inside the context manager. If any fields are already specified by the <code class="docutils literal notranslate"><span class="pre">autosave</span></code> keyword
+argument of a PV’s initialisation call the lists of fields to track get combined.
+All other module members are intended for internal use only.</p>
+<p>In normal operation, loading from a backup is performed once during the
+<a class="reference internal" href="../reference/api.html#softioc.builder.LoadDatabase" title="softioc.builder.LoadDatabase"><code class="xref py py-func docutils literal notranslate"><span class="pre">LoadDatabase()</span></code></a> call and periodic saving to the backup file begins when
+<a class="reference internal" href="../reference/api.html#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref py py-func docutils literal notranslate"><span class="pre">iocInit()</span></code></a> is called, provided that any PVs are configured to be saved.
+Currently, manual loading from a backup at runtime after ioc initialisation is not supported.
+Saving only occurs when any of the saved field values have changed since the last save.
+Users are discouraged from manually editing the backup files while the
+IOC is running so that the internal state of the autosave thread is consistent with
+the backup file.</p>
+<p>If autosave is enabled and active, a timestamped copy of the latest existing autosave backup file is created
+when the IOC is restarted, e.g. <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.softsav_240717-095004</span></code> (timestamps are in the format yymmdd-HHMMSS).
+If you only wish to store one backup of the autosave file at a time, <code class="docutils literal notranslate"><span class="pre">timestamped_backups=False</span></code>
+can be passed to <a class="reference internal" href="../reference/api.html#softioc.autosave.configure" title="softioc.autosave.configure"><code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code></a> when it is called, this will create a backup file
+named <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.softsav.bu</span></code>. To disable any autosaving, comment out the
+<a class="reference internal" href="../reference/api.html#softioc.autosave.configure" title="softioc.autosave.configure"><code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code></a> call or pass it the keyword argument
+<code class="docutils literal notranslate"><span class="pre">enabled=False</span></code>.</p>
+<p>The resulting backup file after running the example IOC for about 30 seconds is the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">AI</span><span class="o">.</span><span class="n">EGU</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+<span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">AI</span><span class="o">.</span><span class="n">PREC</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span>
+<span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">AO</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">AUTOMATIC</span><span class="o">-</span><span class="n">AO</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">AUTOMATIC</span><span class="o">-</span><span class="n">AO</span><span class="o">.</span><span class="n">EGU</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+<span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">AUTOMATIC</span><span class="o">-</span><span class="n">AO</span><span class="o">.</span><span class="n">HOPR</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span>
+<span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">AUTOMATIC</span><span class="o">-</span><span class="n">AO</span><span class="o">.</span><span class="n">LOPR</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span>
+<span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">SECONDSRUN</span><span class="p">:</span> <span class="mi">29</span>
+<span class="n">MY</span><span class="o">-</span><span class="n">DEVICE</span><span class="o">-</span><span class="n">PREFIX</span><span class="p">:</span><span class="n">WAVEFORMIN</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If the IOC is stopped and restarted, the SECONDSRUN record will load its saved
+value of 29 from the backup.
+All non-VAL fields are stored as strings. Waveform type records holding arrays
+are cast into lists before saving.</p>
+<p>This example IOC uses cothread, but autosave works identically when using
+an asyncio dispatcher.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="use-asyncio-in-an-ioc.html" class="btn btn-neutral float-left" title="Use asyncio in an IOC" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="make-publishable-ioc.html" class="btn btn-neutral float-right" title="Create a Publishable IOC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2008, Diamond Light Source.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+   
+  <div id="other-versions-div" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" style="visibility: hidden">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Other Versions</span>
+      master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl id="other-versions-dl"/>
+    </div>
+  </div>
+  <script>
+    function addVersion(name) {
+      var dd = document.createElement("dd");
+      var a = document.createElement("a");
+      a.href = "../../" + name;
+      a.innerText = name;
+      dd.appendChild(a);
+      document.getElementById('other-versions-dl').appendChild(dd);
+    }
+    // Get versions.txt and add a version for each line
+    fetch("../../versions.txt").then(response => {
+      if (response.ok) {
+        document.getElementById('other-versions-div').style.visibility = "visible";
+        return response.text().then(text => text.split(/\r?\n/).forEach(addVersion))
+      }
+    });
+  </script>
+
+
+</body>
+</html>

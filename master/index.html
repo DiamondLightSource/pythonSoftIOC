@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pythonSoftIOC &mdash; pythonSoftIOC 4.5.0+22.g8c4b516 documentation</title>
+  <title>pythonSoftIOC &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -50,9 +50,11 @@
 <p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -63,7 +65,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
@@ -93,28 +95,28 @@
              
   <section id="pythonsoftioc">
 <h1>pythonSoftIOC<a class="headerlink" href="#pythonsoftioc" title="Permalink to this headline"></a></h1>
-<p><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/actions?query=workflow%3A%22Code+CI%22"><img alt="Code CI" src="https://github.com/dls-controls/pythonSoftIOC/workflows/Code%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/actions?query=workflow%3A%22Docs+CI%22"><img alt="Docs CI" src="https://github.com/dls-controls/pythonSoftIOC/workflows/Docs%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://codecov.io/gh/dls-controls/pythonSoftIOC"><img alt="Test Coverage" src="https://codecov.io/gh/dls-controls/pythonSoftIOC/branch/master/graph/badge.svg" /></a> <a class="reference external" href="https://pypi.org/project/softioc"><img alt="Latest PyPI version" src="https://img.shields.io/pypi/v/softioc.svg" /></a> <a class="reference external" href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a></p>
+<p><a class="reference external" href="https://github.com/DiamondLightSource/pythonSoftIOC/actions?query=workflow%3A%22Code+CI%22"><img alt="Code CI" src="https://github.com/DiamondLightSource/pythonSoftIOC/workflows/Code%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://github.com/DiamondLightSource/pythonSoftIOC/actions?query=workflow%3A%22Docs+CI%22"><img alt="Docs CI" src="https://github.com/DiamondLightSource/pythonSoftIOC/workflows/Docs%20CI/badge.svg?branch=master" /></a> <a class="reference external" href="https://codecov.io/gh/DiamondLightSource/pythonSoftIOC"><img alt="Test Coverage" src="https://codecov.io/gh/DiamondLightSource/pythonSoftIOC/branch/master/graph/badge.svg" /></a> <a class="reference external" href="https://pypi.org/project/softioc"><img alt="Latest PyPI version" src="https://img.shields.io/pypi/v/softioc.svg" /></a> <a class="reference external" href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a></p>
 <p>This module allows an EPICS IOC with Python Device Support to be run from within
 the Python interpreter. Records can be programmatically created and arbitrary
 Python code run to update them and respond to caputs. It supports cothread and
 asyncio for concurrency. PVs are served over Channel Access and PVAccess.</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 16%" />
-<col style="width: 84%" />
+<col style="width: 15%" />
+<col style="width: 85%" />
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p>PyPI</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">softioc</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Source code</p></td>
-<td><p><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC">https://github.com/dls-controls/pythonSoftIOC</a></p></td>
+<td><p><a class="reference external" href="https://github.com/DiamondLightSource/pythonSoftIOC">https://github.com/DiamondLightSource/pythonSoftIOC</a></p></td>
 </tr>
 <tr class="row-odd"><td><p>Documentation</p></td>
-<td><p><a class="reference external" href="https://dls-controls.github.io/pythonSoftIOC">https://dls-controls.github.io/pythonSoftIOC</a></p></td>
+<td><p><a class="reference external" href="https://DiamondLightSource.github.io/pythonSoftIOC">https://DiamondLightSource.github.io/pythonSoftIOC</a></p></td>
 </tr>
 <tr class="row-even"><td><p>Changelog</p></td>
-<td><p><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst</a></p></td>
+<td><p><a class="reference external" href="https://github.com/DiamondLightSource/pythonSoftIOC/blob/master/CHANGELOG.rst">https://github.com/DiamondLightSource/pythonSoftIOC/blob/master/CHANGELOG.rst</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -185,9 +187,11 @@ the side-bar.</p>
 <p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound" id="id2">
@@ -202,7 +206,7 @@ the side-bar.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 </div>

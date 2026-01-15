@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; pythonSoftIOC 4.5.0+22.g8c4b516 documentation</title>
+  <title>API &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
@@ -51,9 +51,11 @@
 <p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -66,6 +68,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#softioc"><code class="docutils literal notranslate"><span class="pre">softioc</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#top-level-ioc-interface-softioc-softioc">Top Level IOC Interface: <code class="xref any docutils literal notranslate"><span class="pre">softioc.softioc</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#asyncio-dispatcher-softioc-asyncio-dispatcher">Asyncio Dispatcher: <code class="xref any docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-saving-and-loading-of-record-fields-with-softioc-autosave-configure">Configuring saving and loading of record fields with <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave.configure</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#directory"><code class="xref any docutils literal notranslate"><span class="pre">directory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#name"><code class="xref any docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#save-period"><code class="xref any docutils literal notranslate"><span class="pre">save_period</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#timestamped-backups"><code class="xref any docutils literal notranslate"><span class="pre">timestamped_backups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enabled"><code class="xref any docutils literal notranslate"><span class="pre">enabled</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-records-softioc-builder">Creating Records: <code class="xref any docutils literal notranslate"><span class="pre">softioc.builder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#initial-value"><code class="xref any docutils literal notranslate"><span class="pre">initial_value</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#status-severity"><code class="xref any docutils literal notranslate"><span class="pre">status,</span> <span class="pre">severity</span></code></a></li>
@@ -74,6 +84,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#validate"><code class="xref any docutils literal notranslate"><span class="pre">validate</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#always-update"><code class="xref any docutils literal notranslate"><span class="pre">always_update</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#blocking"><code class="xref any docutils literal notranslate"><span class="pre">blocking</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autosave"><span class="xref std std-ref">autosave</span></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#alarm-value-definitions-softioc-alarm">Alarm Value Definitions: <code class="xref any docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a></li>
@@ -84,7 +95,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
@@ -124,7 +135,7 @@ in the creation of IOCs:</p>
 interactive EPICS commands are wrapped and can be made available through the
 interpreter by invoking the interpreter through this module.</p>
 </dd>
-<dt><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a></dt><dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based applications instead of the default
+<dt><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a></dt><dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based applications instead of the default
 <a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> one</p>
 </dd>
 <dt><a class="reference internal" href="#module-softioc.alarm" title="softioc.alarm"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a></dt><dd><p>This module simply contains definitions for severity and alarm values taken
@@ -148,14 +159,14 @@ record fields.</p>
 </dd>
 <dt><a class="reference internal" href="#module-softioc.device" title="softioc.device"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.device</span></code></a></dt><dd><p>Implements <code class="docutils literal notranslate"><span class="pre">Python</span></code> device support for all the record types supported.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">softioc.pythonSoftIoc</span></code></dt><dd><p>Implements <a class="reference external" href="https://dls-controls.github.io/epicsdbbuilder/master/api.html#module-epicsdbbuilder" title="(in EPICS Database Builder v1.5)"><code class="xref any docutils literal notranslate"><span class="pre">epicsdbbuilder</span></code></a> interface for all of the <code class="docutils literal notranslate"><span class="pre">Python</span></code> records.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">softioc.pythonSoftIoc</span></code></dt><dd><p>Implements <a class="reference external" href="https://diamondlightsource.github.io/epicsdbbuilder/master/api.html#module-epicsdbbuilder" title="(in EPICS Database Builder v1.5)"><code class="xref any docutils literal notranslate"><span class="pre">epicsdbbuilder</span></code></a> interface for all of the <code class="docutils literal notranslate"><span class="pre">Python</span></code> records.</p>
 </dd>
 </dl>
 </section>
 <dl class="py data">
 <dt class="sig sig-object py" id="softioc.softioc.__version__">
-<span class="sig-prename descclassname"><span class="pre">softioc.</span></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#softioc.softioc.__version__" title="Permalink to this definition"></a></dt>
-<dd><p>Version number as calculated by <a class="reference external" href="https://github.com/dls-controls/versiongit">https://github.com/dls-controls/versiongit</a></p>
+<span class="sig-prename descclassname"><span class="pre">softioc.</span></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#softioc.softioc.__version__" title="Permalink to this definition"></a></dt>
+<dd><p>Version number as calculated by <a class="reference external" href="https://github.com/DiamondLightSource/versiongit">https://github.com/DiamondLightSource/versiongit</a></p>
 </dd></dl>
 
 <span class="target" id="module-softioc.softioc"></span><section id="top-level-ioc-interface-softioc-softioc">
@@ -165,19 +176,22 @@ importing <code class="docutils literal notranslate"><span class="pre">*</span><
 </section>
 <dl class="py function">
 <dt class="sig sig-object py" id="softioc.softioc.iocInit">
-<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">iocInit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dispatcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#iocInit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.iocInit" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">softioc.softioc.</span></span><span class="sig-name descname"><span class="pre">iocInit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dispatcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_pva</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/softioc.html#iocInit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.softioc.iocInit" title="Permalink to this definition"></a></dt>
 <dd><p>This must be called exactly once after loading all EPICS database files.
 After this point the EPICS IOC is running and serving PVs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>dispatcher</strong> – A callable with signature <code class="docutils literal notranslate"><span class="pre">dispatcher(func,</span> <span class="pre">*args)</span></code>. Will
-be called in response to caput on a record. If not supplied use
-<a class="reference external" href="https://diamondlightsource.github.io/cothread/master/user/cothread.html#cothread" title="(in cothread vmaster)"><code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">the</span> <span class="pre">cothread</span> <span class="pre">Library</span></code></a> as a dispatcher.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dispatcher</strong> – A callable with signature <code class="docutils literal notranslate"><span class="pre">dispatcher(func,</span> <span class="pre">*args)</span></code>. Will
+be called in response to caput on a record. If not supplied uses
+<code class="docutils literal notranslate"><span class="pre">cothread</span></code> as the dispatcher.</p></li>
+<li><p><strong>enable_pva</strong> – Specify whether to enable the PV Access Server in this IOC.</p></li>
+</ul>
 </dd>
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a> is a dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> applications</p>
+<p><a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a> is a dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> applications</p>
 </div>
 </dd></dl>
 
@@ -213,7 +227,7 @@ IOC name. This should be called before <a class="reference internal" href="#soft
 <li><p><strong>context</strong> – A dictionary of values that will be made available to the
 interactive Python shell together with a number of EPICS test
 functions</p></li>
-<li><p><strong>call_exit</strong> – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a>, the IOC will be terminated by calling epicsExit
+<li><p><strong>call_exit</strong> – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a>, the IOC will be terminated by calling epicsExit
 which means that <a class="reference internal" href="#softioc.softioc.interactive_ioc" title="softioc.softioc.interactive_ioc"><code class="xref any py py-func docutils literal notranslate"><span class="pre">interactive_ioc</span></code></a> will not return</p></li>
 </ul>
 </dd>
@@ -436,13 +450,13 @@ terminate immediately.</p>
 
 <span class="target" id="module-softioc.asyncio_dispatcher"></span><section id="asyncio-dispatcher-softioc-asyncio-dispatcher">
 <h2>Asyncio Dispatcher: <a class="reference internal" href="#module-softioc.asyncio_dispatcher" title="softioc.asyncio_dispatcher"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.asyncio_dispatcher</span></code></a><a class="headerlink" href="#asyncio-dispatcher-softioc-asyncio-dispatcher" title="Permalink to this headline"></a></h2>
-<p>If your application uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then this module gives an alternative
+<p>If your application uses <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> then this module gives an alternative
 dispatcher for caput requests.</p>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="softioc.asyncio_dispatcher.AsyncioDispatcher">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">softioc.asyncio_dispatcher.</span></span><span class="sig-name descname"><span class="pre">AsyncioDispatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/asyncio_dispatcher.html#AsyncioDispatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.asyncio_dispatcher.AsyncioDispatcher" title="Permalink to this definition"></a></dt>
-<dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based IOCs, suitable to be passed to
+<dd><p>A dispatcher for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code></a> based IOCs, suitable to be passed to
 <a class="reference internal" href="#softioc.softioc.iocInit" title="softioc.softioc.iocInit"><code class="xref any py py-func docutils literal notranslate"><span class="pre">softioc.iocInit</span></code></a>. Means that <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> callback functions can be
 async.</p>
 <p>If a <code class="docutils literal notranslate"><span class="pre">loop</span></code> is provided it must already be running. Otherwise a new
@@ -451,6 +465,70 @@ Event Loop will be created and run in a dedicated thread.
 <p>For a clean exit, call <code class="docutils literal notranslate"><span class="pre">softioc.interactive_ioc(...,</span> <span class="pre">call_exit=False)</span></code></p>
 </dd></dl>
 
+<span class="target" id="module-softioc.autosave"></span><section id="configuring-saving-and-loading-of-record-fields-with-softioc-autosave-configure">
+<h2>Configuring saving and loading of record fields with <a class="reference internal" href="#softioc.autosave.configure" title="softioc.autosave.configure"><code class="xref any py py-func docutils literal notranslate"><span class="pre">softioc.autosave.configure</span></code></a><a class="headerlink" href="#configuring-saving-and-loading-of-record-fields-with-softioc-autosave-configure" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="softioc.autosave.configure">
+<span class="sig-prename descclassname"><span class="pre">softioc.autosave.</span></span><span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamped_backups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/autosave.html#configure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.autosave.configure" title="Permalink to this definition"></a></dt>
+<dd><p>Used to configure settings for Autosave.
+Backups are disabled by default unless this method is called. It must be
+called prior to <a class="reference internal" href="#softioc.builder.LoadDatabase" title="softioc.builder.LoadDatabase"><code class="xref py py-func docutils literal notranslate"><span class="pre">LoadDatabase()</span></code></a>.</p>
+</dd></dl>
+
+<p>It has the following arguments:</p>
+<section id="directory">
+<span id="id2"></span><h3><a class="reference internal" href="#directory"><span class="std std-ref">directory</span></a><a class="headerlink" href="#directory" title="Permalink to this headline"></a></h3>
+<p>The directory where backup files should be saved to and loaded
+from. This argument is required.</p>
+</section>
+<section id="name">
+<span id="id3"></span><h3><a class="reference internal" href="#name"><span class="std std-ref">name</span></a><a class="headerlink" href="#name" title="Permalink to this headline"></a></h3>
+<p>The file prefix used for naming the backup files. This is typically set to
+be the same as the device prefix. The resulting file name will be
+<code class="docutils literal notranslate"><span class="pre">name</span></code>.softsav. This argument is required.</p>
+</section>
+<section id="save-period">
+<span id="id4"></span><h3><a class="reference internal" href="#save-period"><span class="std std-ref">save_period</span></a><a class="headerlink" href="#save-period" title="Permalink to this headline"></a></h3>
+<p>The period in seconds between each backup attempt, 30.0 by default.
+Backup files are only overwritten if any of the field values have changed
+since the last backup.</p>
+</section>
+<section id="timestamped-backups">
+<span id="id5"></span><h3><a class="reference internal" href="#timestamped-backups"><span class="std std-ref">timestamped_backups</span></a><a class="headerlink" href="#timestamped-backups" title="Permalink to this headline"></a></h3>
+<p>A boolean that is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a> by default, creates a backup of the latest existing
+autosave file that is timestamped at the time that the autosave thread is
+started. If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, the backup is not timestamped and gets overwritten
+every time the IOC restarts.</p>
+</section>
+<section id="enabled">
+<span id="id6"></span><h3><a class="reference internal" href="#enabled"><span class="std std-ref">enabled</span></a><a class="headerlink" href="#enabled" title="Permalink to this headline"></a></h3>
+<p>A boolean that is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a> by default, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a> then no loading will occur
+at IOC startup, and no values with be saved to any backup files.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#autosave"><span class="std std-ref">autosave</span></a>, the builder keyword argument used to designate PV fields for autosave</p>
+<p><a class="reference internal" href="#softioc.autosave.Autosave" title="softioc.autosave.Autosave"><code class="xref py py-class docutils literal notranslate"><span class="pre">Autosave</span></code></a> for how to add fields to autosave inside a context manager.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="softioc.autosave.Autosave">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">softioc.autosave.</span></span><span class="sig-name descname"><span class="pre">Autosave</span></span><a class="reference internal" href="../_modules/softioc/autosave.html#Autosave"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.autosave.Autosave" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="softioc.autosave.Autosave.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">autosave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/autosave.html#Autosave.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.autosave.Autosave.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>To be called as a context manager. Any PVs that are created inside
+the context manager have the fields passed to the <code class="docutils literal notranslate"><span class="pre">autosave</span></code> argument of
+the context manager added to autosave tracking. The options for <code class="docutils literal notranslate"><span class="pre">autosave</span></code>
+are identical to the ones described in the builder keyword argument
+<a class="reference internal" href="#autosave"><span class="std std-ref">autosave</span></a>. If a PV already has <a class="reference internal" href="#autosave"><span class="std std-ref">autosave</span></a> set, the two lists of fields
+get combined into a single set. If the PV’s <a class="reference internal" href="#autosave"><span class="std std-ref">autosave</span></a> keyword is set
+explicitly to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the fields specified in the context manager’s argument
+are not tracked.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
 <span class="target" id="module-softioc.builder"></span><section id="creating-records-softioc-builder">
 <h2>Creating Records: <a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.builder</span></code></a><a class="headerlink" href="#creating-records-softioc-builder" title="Permalink to this headline"></a></h2>
 <p>This module publishes functions for creating records.  All of the other methods
@@ -468,18 +546,18 @@ record.</p>
 <p>The following optional keyword arguments are available for all of these
 functions:</p>
 <section id="initial-value">
-<span id="id2"></span><h3><a class="reference internal" href="#initial-value"><span class="std std-ref">initial_value</span></a><a class="headerlink" href="#initial-value" title="Permalink to this headline"></a></h3>
+<span id="id7"></span><h3><a class="reference internal" href="#initial-value"><span class="std std-ref">initial_value</span></a><a class="headerlink" href="#initial-value" title="Permalink to this headline"></a></h3>
 <p>This is used to specify an initial value for each record.</p>
 </section>
 <section id="status-severity">
-<span id="id3"></span><h3><a class="reference internal" href="#status-severity"><span class="std std-ref">status, severity</span></a><a class="headerlink" href="#status-severity" title="Permalink to this headline"></a></h3>
+<span id="id8"></span><h3><a class="reference internal" href="#status-severity"><span class="std std-ref">status, severity</span></a><a class="headerlink" href="#status-severity" title="Permalink to this headline"></a></h3>
 <p>Only available on IN records. These can be used with the alarm value enums
 from <a class="reference internal" href="#module-softioc.alarm" title="softioc.alarm"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">softioc.alarm</span></code></a> to set the initial alarm state and severity of a record.</p>
 <p>These are not useful unless <code class="docutils literal notranslate"><span class="pre">PINI</span></code> is set to <code class="docutils literal notranslate"><span class="pre">NO</span></code>, as otherwise the record
 will be processed on initialization and the alarm status will be reset.</p>
 </section>
 <section id="on-update">
-<span id="id4"></span><h3><a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a><a class="headerlink" href="#on-update" title="Permalink to this headline"></a></h3>
+<span id="id9"></span><h3><a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a><a class="headerlink" href="#on-update" title="Permalink to this headline"></a></h3>
 <p>This is only available on OUT records (including those created by
 <a class="reference internal" href="#softioc.builder.WaveformOut" title="softioc.builder.WaveformOut"><code class="xref py py-func docutils literal notranslate"><span class="pre">WaveformOut()</span></code></a>).  This specifies a function that will be called after
 record processing has completed.</p>
@@ -496,19 +574,19 @@ one callback is dispatched at a time, so if a callback blocks it will delay
 <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> callbacks for other records.</p>
 </section>
 <section id="on-update-name">
-<span id="id5"></span><h3><a class="reference internal" href="#on-update-name"><span class="std std-ref">on_update_name</span></a><a class="headerlink" href="#on-update-name" title="Permalink to this headline"></a></h3>
+<span id="id10"></span><h3><a class="reference internal" href="#on-update-name"><span class="std std-ref">on_update_name</span></a><a class="headerlink" href="#on-update-name" title="Permalink to this headline"></a></h3>
 <p>This is an alternative form of <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> with the same behaviour: note
 that at most one of <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a> and <a class="reference internal" href="#on-update-name"><span class="std std-ref">on_update_name</span></a> may be passed.  The
 difference is that <a class="reference internal" href="#on-update-name"><span class="std std-ref">on_update_name</span></a> is called with the record name as its
 second argument after the value as the first argument.</p>
 </section>
 <section id="validate">
-<span id="id6"></span><h3><a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a><a class="headerlink" href="#validate" title="Permalink to this headline"></a></h3>
+<span id="id11"></span><h3><a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a><a class="headerlink" href="#validate" title="Permalink to this headline"></a></h3>
 <p>Also only available on OUT records, specifies a function called during
 record processing. If used this should be set to a callable taking two
 arguments.  The first argument will be the record object, and the second
 will be the new value being written.  The <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> function can reject
-the update by returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a> or accept it by returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+the update by returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a> or accept it by returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This function is called asynchronously on a thread determined by
@@ -517,24 +595,50 @@ callback.</p>
 </div>
 </section>
 <section id="always-update">
-<span id="id7"></span><h3><a class="reference internal" href="#always-update"><span class="std std-ref">always_update</span></a><a class="headerlink" href="#always-update" title="Permalink to this headline"></a></h3>
+<span id="id12"></span><h3><a class="reference internal" href="#always-update"><span class="std std-ref">always_update</span></a><a class="headerlink" href="#always-update" title="Permalink to this headline"></a></h3>
 <p>Again only on OUT records, determines whether record writes which don’t
 change the existing value are passed through.  If this field is not set then
 writing to <code class="docutils literal notranslate"><span class="pre">.PROC</span></code> will have no visible effect.</p>
-<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, in which case updates to the record
+<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, in which case updates to the record
 which don’t change its value will be discarded.  In particular this means
 that such updates don’t call <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> or <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>.</p>
 </section>
 <section id="blocking">
-<span id="id8"></span><h3><a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a><a class="headerlink" href="#blocking" title="Permalink to this headline"></a></h3>
-<p>Only available on OUT records. When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a> the record will set the
+<span id="id13"></span><h3><a class="reference internal" href="#blocking"><span class="std std-ref">blocking</span></a><a class="headerlink" href="#blocking" title="Permalink to this headline"></a></h3>
+<p>Only available on OUT records. When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">True</span></code></a> the record will set the
 <code class="docutils literal notranslate"><span class="pre">PACT</span></code> field when processing is ongoing. This means that <code class="docutils literal notranslate"><span class="pre">caput</span></code> and
 similar tools can correctly wait for processing to complete.</p>
-<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, to retain compatibility with previous
+<p>This flag defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>, to retain compatibility with previous
 versions.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="#softioc.builder.SetBlocking" title="softioc.builder.SetBlocking"><code class="xref any py py-func docutils literal notranslate"><span class="pre">SetBlocking</span></code></a> for configuring a global default blocking value</p>
+</div>
+</section>
+<section id="autosave">
+<span id="id14"></span><h3><a class="reference internal" href="#autosave"><span class="std std-ref">autosave</span></a><a class="headerlink" href="#autosave" title="Permalink to this headline"></a></h3>
+<p>Available on all record types.
+Resolves to a list of string field names. When not empty it marks the record
+fields for automatic periodic backing up to a file. Set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">None</span></code></a> by
+default. When the IOC is restarted and a backup file exists, the saved values are
+loaded from this file when <a class="reference internal" href="#softioc.builder.LoadDatabase" title="softioc.builder.LoadDatabase"><code class="xref py py-func docutils literal notranslate"><span class="pre">LoadDatabase()</span></code></a> is called.
+The saved values takes priority over any initial field value passed to the PV
+in <a class="reference internal" href="#initial-value"><span class="std std-ref">initial_value</span></a> or <code class="docutils literal notranslate"><span class="pre">**fields</span></code>. No backing up will occur unless autosave is
+enabled and configured with <a class="reference internal" href="#softioc.autosave.configure" title="softioc.autosave.configure"><code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code></a>.</p>
+<p>The options for the argument are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>, which is equivalent to <code class="docutils literal notranslate"><span class="pre">[&quot;VAL&quot;]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>, which is equivalent to <code class="docutils literal notranslate"><span class="pre">[]</span></code> and disables all autosave tracking for the PV, even inside an <a class="reference internal" href="#softioc.autosave.Autosave" title="softioc.autosave.Autosave"><code class="xref py py-class docutils literal notranslate"><span class="pre">Autosave</span></code></a> context manager</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>, similar to <code class="docutils literal notranslate"><span class="pre">False</span></code> but does not overload any fields specified in an <a class="reference internal" href="#softioc.autosave.Autosave" title="softioc.autosave.Autosave"><code class="xref py py-class docutils literal notranslate"><span class="pre">Autosave</span></code></a> context manager</p></li>
+<li><p>A list of field names such as <code class="docutils literal notranslate"><span class="pre">[&quot;VAL&quot;,</span> <span class="pre">&quot;LOPR&quot;,</span> <span class="pre">&quot;HOPR&quot;]</span></code>, note that <code class="docutils literal notranslate"><span class="pre">&quot;VAL&quot;</span></code> must be explicitly provided</p></li>
+<li><p>A single field name such as <code class="docutils literal notranslate"><span class="pre">&quot;EGU&quot;</span></code> which is equivalent to passing <code class="docutils literal notranslate"><span class="pre">[&quot;EGU&quot;]</span></code></p></li>
+</ul>
+</div></blockquote>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#softioc.autosave.configure" title="softioc.autosave.configure"><code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code></a> for discussion on how to configure saving.</p>
+<p><a class="reference internal" href="#softioc.autosave.Autosave" title="softioc.autosave.Autosave"><code class="xref py py-class docutils literal notranslate"><span class="pre">Autosave</span></code></a> for how to track PVs with autosave inside a context manager.</p>
 </div>
 </section>
 </section>
@@ -735,7 +839,7 @@ appropriate processing attributes to the link.  These are not normally used.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="softioc.builder.records">
 <span class="sig-prename descclassname"><span class="pre">softioc.builder.</span></span><span class="sig-name descname"><span class="pre">records</span></span><a class="headerlink" href="#softioc.builder.records" title="Permalink to this definition"></a></dt>
-<dd><p>This is the <a class="reference external" href="https://dls-controls.github.io/epicsdbbuilder/master/api.html#epicsdbbuilder.records" title="(in EPICS Database Builder v1.5)"><code class="xref any docutils literal notranslate"><span class="pre">epicsdbbuilder.records</span></code></a> object, and is populated with
+<dd><p>This is the <a class="reference external" href="https://diamondlightsource.github.io/epicsdbbuilder/master/api.html#epicsdbbuilder.records" title="(in EPICS Database Builder v1.5)"><code class="xref any docutils literal notranslate"><span class="pre">epicsdbbuilder.records</span></code></a> object, and is populated with
 functions named after each available record type.  Records created with
 these calls are created with soft device support and Python is not involved
 in their processing.</p>
@@ -887,7 +991,7 @@ class which provides the methods documented below.</p>
 <a class="reference internal" href="#module-softioc.builder" title="softioc.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">builder</span></code></a> methods have been used) then the record will be
 processed by EPICS and the given value will be published to all users.</p>
 <p>Optionally an explicit timestamp can be set.  This is a value in seconds
-in the Unix epoch, as returned by <a class="reference external" href="https://docs.python.org/3/library/time.html#time.time" title="(in Python v3.12)"><code class="xref py py-func docutils literal notranslate"><span class="pre">time.time()</span></code></a>.  This argument only
+in the Unix epoch, as returned by <a class="reference external" href="https://docs.python.org/3/library/time.html#time.time" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">time.time()</span></code></a>.  This argument only
 has any effect if <code class="docutils literal notranslate"><span class="pre">TSE</span> <span class="pre">=</span> <span class="pre">-2</span></code> was set when the record was created.</p>
 <p>Note that when calling <a class="reference internal" href="#softioc.device.ProcessDeviceSupportIn.set" title="softioc.device.ProcessDeviceSupportIn.set"><code class="xref py py-func docutils literal notranslate"><span class="pre">set()</span></code></a> for a waveform record the value is
 always copied immediately – this avoids accidents with mutable values.</p>
@@ -950,7 +1054,7 @@ records support the following methods.</p>
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NO_ALARM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/softioc/device.html#ProcessDeviceSupportOut.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#softioc.device.ProcessDeviceSupportOut.set" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the stored value and severity status.  By default this will
 trigger record processing, and so will cause any associated <a class="reference internal" href="#on-update"><span class="std std-ref">on_update</span></a>
-and <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> methods to be called.  If <code class="docutils literal notranslate"><span class="pre">process</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>
+and <a class="reference internal" href="#validate"><span class="std std-ref">validate</span></a> methods to be called.  If <code class="docutils literal notranslate"><span class="pre">process</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref any docutils literal notranslate"><span class="pre">False</span></code></a>
 then neither of these methods will be called, but the value will still
 be updated.</p>
 </dd></dl>

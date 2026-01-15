@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building pythonSoftIOC with uv &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/softioc-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Why use pythonSoftIOC?" href="../explanations/why-use-pythonSoftIOC.html" />
+    <link rel="prev" title="Use soft records in an IOC" href="use-soft-records.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+            <a href="../index.html" class="icon icon-home"> pythonSoftIOC
+            <img src="../_static/softioc-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                master
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/installation.html">Installation Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="make-publishable-ioc.html">Create a Publishable IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read-data-from-ioc.html">Read data from an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/asyncio-cothread-differences.html">What are the differences between <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code>?</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: rgb(7, 43, 93)" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pythonSoftIOC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/how-to/build-softioc-with-uv.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="building-pythonsoftioc-with-uv">
+<h1>Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code><a class="headerlink" href="#building-pythonsoftioc-with-uv" title="Permalink to this headline"></a></h1>
+<p>There are some issues when using the <code class="docutils literal notranslate"><span class="pre">uv</span></code> tool to build pythonSoftIOC, which
+may happen if you try and use this package on an architecture or Python version
+where we do not supply pre-built wheels.</p>
+<p>If you see an <code class="docutils literal notranslate"><span class="pre">ImportError</span></code> that looks like this when running your application:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">src</span><span class="o">/</span><span class="n">techui_builder</span><span class="o">/</span><span class="n">builder</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span> <span class="nn">softioc.builder</span> <span class="kn">import</span> <span class="n">records</span>
+<span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">venv</span><span class="o">-</span><span class="k">for</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">eyh46967</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">temp</span><span class="o">/</span><span class="n">techui</span><span class="o">-</span><span class="n">builder</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.13</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">softioc</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span> <span class="nn">.imports</span> <span class="kn">import</span> <span class="n">dbLoadDatabase</span><span class="p">,</span> <span class="n">registerRecordDeviceDriver</span>
+<span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">venv</span><span class="o">-</span><span class="k">for</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">eyh46967</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">temp</span><span class="o">/</span><span class="n">techui</span><span class="o">-</span><span class="n">builder</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.13</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">softioc</span><span class="o">/</span><span class="n">imports</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_extension</span>
+<span class="n">E</span>   <span class="ne">ImportError</span><span class="p">:</span> <span class="n">libdbCore</span><span class="o">.</span><span class="n">so</span><span class="mf">.7.0.10.99.0</span><span class="p">:</span> <span class="n">cannot</span> <span class="nb">open</span> <span class="n">shared</span> <span class="nb">object</span> <span class="n">file</span><span class="p">:</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
+</pre></div>
+</div>
+<p>Then you need to add these lines to your <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">tool</span><span class="o">.</span><span class="n">uv</span><span class="o">.</span><span class="n">extra</span><span class="o">-</span><span class="n">build</span><span class="o">-</span><span class="n">dependencies</span><span class="p">]</span>
+<span class="n">softioc</span> <span class="o">=</span> <span class="p">[{</span> <span class="n">requirement</span> <span class="o">=</span> <span class="s2">&quot;epicscorelibs&quot;</span><span class="p">,</span> <span class="n">match</span><span class="o">-</span><span class="n">runtime</span> <span class="o">=</span> <span class="n">true</span> <span class="p">}]</span>
+</pre></div>
+</div>
+<p>This will tell <code class="docutils literal notranslate"><span class="pre">uv</span></code> to do additional dependency checking between build-time and
+run-time environments, ensuring the same version of <code class="docutils literal notranslate"><span class="pre">epicscorelibs</span></code> is used
+in both.</p>
+<p>See discussion in <a class="reference external" href="https://github.com/astral-sh/uv/issues/17378">uv issue #17378</a>.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="use-soft-records.html" class="btn btn-neutral float-left" title="Use soft records in an IOC" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../explanations/why-use-pythonSoftIOC.html" class="btn btn-neutral float-right" title="Why use pythonSoftIOC?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2008, Diamond Light Source.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+   
+  <div id="other-versions-div" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" style="visibility: hidden">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Other Versions</span>
+      master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl id="other-versions-dl"/>
+    </div>
+  </div>
+  <script>
+    function addVersion(name) {
+      var dd = document.createElement("dd");
+      var a = document.createElement("a");
+      a.href = "../../" + name;
+      a.innerText = name;
+      dd.appendChild(a);
+      document.getElementById('other-versions-dl').appendChild(dd);
+    }
+    // Get versions.txt and add a version for each line
+    fetch("../../versions.txt").then(response => {
+      if (response.ok) {
+        document.getElementById('other-versions-div').style.visibility = "visible";
+        return response.text().then(text => text.split(/\r?\n/).forEach(addVersion))
+      }
+    });
+  </script>
+
+
+</body>
+</html>

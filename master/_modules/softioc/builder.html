@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.builder &mdash; pythonSoftIOC 4.5.0+22.g8c4b516 documentation</title>
+  <title>softioc.builder &mdash; pythonSoftIOC 4.7.0+2.g3451996 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -48,9 +48,11 @@
 <p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul>
@@ -61,7 +63,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/pythonSoftIOC/blob/master/CHANGELOG.rst">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
 
@@ -95,6 +97,7 @@
 
 <span class="kn">from</span> <span class="nn">.device_core</span> <span class="kn">import</span> <span class="n">RecordLookup</span>
 <span class="kn">from</span> <span class="nn">.softioc</span> <span class="kn">import</span> <span class="n">dbLoadDatabase</span>
+<span class="kn">from</span> <span class="nn">.autosave</span> <span class="kn">import</span> <span class="n">load_autosave</span>
 
 <span class="kn">from</span> <span class="nn">epicsdbbuilder</span> <span class="kn">import</span> <span class="o">*</span>
 
@@ -269,7 +272,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_length</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Helper function for getting &#39;length&#39; or &#39;NELM&#39; from arguments&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Helper function for getting &#39;length&#39; or &#39;NELM&#39; from arguments&#39;&#39;&#39;</span>
 
     <span class="k">if</span> <span class="s1">&#39;length&#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
         <span class="k">assert</span> <span class="s1">&#39;NELM&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">,</span> <span class="s1">&#39;Cannot specify NELM and length together&#39;</span>
@@ -282,7 +285,7 @@
 
 
 <span class="k">def</span> <span class="nf">_waveform</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Helper routine for waveform construction.  If a value is given it is</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Helper routine for waveform construction.  If a value is given it is</span>
 <span class="sd">    interpreted as an initial value and used to configure length and datatype</span>
 <span class="sd">    (unless these are overridden), otherwise length and datatype must be</span>
 <span class="sd">    specified.&#39;&#39;&#39;</span>
@@ -388,9 +391,10 @@
 <span class="c1">#  Support routines for builder</span>
 
 <div class="viewcode-block" id="LoadDatabase"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.LoadDatabase">[docs]</a><span class="k">def</span> <span class="nf">LoadDatabase</span><span class="p">():</span>
-    <span class="sd">&#39;&#39;&#39;This should be called after all the builder records have been created,</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;This should be called after all the builder records have been created,</span>
 <span class="sd">    but before calling iocInit().  The database is loaded into EPICS memory,</span>
 <span class="sd">    ready for operation.&#39;&#39;&#39;</span>
+    <span class="n">load_autosave</span><span class="p">()</span>
     <span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">mkstemp</span>
     <span class="n">fd</span><span class="p">,</span> <span class="n">database</span> <span class="o">=</span> <span class="n">mkstemp</span><span class="p">(</span><span class="s1">&#39;.db&#39;</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
@@ -402,7 +406,7 @@
 
 
 <div class="viewcode-block" id="ClearRecords"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.ClearRecords">[docs]</a><span class="k">def</span> <span class="nf">ClearRecords</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Delete all created record information, allowing new record creation&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete all created record information, allowing new record creation&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">pythonSoftIoc</span><span class="o">.</span><span class="n">RecordWrapper</span><span class="o">.</span><span class="n">is_builder_reset</span><span class="p">(),</span> \
         <span class="s1">&#39;Record database has already been loaded&#39;</span>
     <span class="n">RecordLookup</span><span class="o">.</span><span class="n">_RecordDirectory</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -414,7 +418,6 @@
 
 <span class="n">SetSimpleRecordNames</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
 
-<span class="n">SetDeviceName</span> <span class="o">=</span> <span class="n">SetPrefix</span>
 <div class="viewcode-block" id="SetDeviceName"><a class="viewcode-back" href="../../reference/api.html#softioc.builder.SetDeviceName">[docs]</a><span class="k">def</span> <span class="nf">SetDeviceName</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="n">SetPrefix</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 

@@ -41,7 +41,7 @@ jobs:
         run: mv build/html ".github/pages/${GITHUB_REF##*/}"
 
       - name: Publish Docs to gh-pages
-        if: github.ref_type == 'tag' || github.ref_name == 'main'
+        if: github.ref_type == 'tag' || github.ref_name == 'main' || github.ref_name == 'master'
         # We pin to the SHA, not the tag, for security reasons.
         # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
         uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0

@@ -1360,7 +1360,7 @@ class TestAlarms:
     records = [
         (builder.aIn, "AI_AlarmPV"),
         (builder.boolIn, "BI_AlarmPV"),
-        (builder.int64Out, "I64I_AlarmPV"),
+        (builder.int64In, "I64I_AlarmPV"),
         (builder.longIn, "LI_AlarmPV"),
         (builder.mbbIn, "MBBI_AlarmPV"),
         (builder.stringIn, "SI_AlarmPV"),

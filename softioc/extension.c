@@ -93,16 +93,17 @@ static PyObject *get_field_offsets(PyObject *self, PyObject *args)
 }
 
 
-/* Updates PV field with integrated db lookup.  Safer to do this in C as we need
- * an intermediate copy of the dbAddr structure, which changes size between
- * EPICS releases. */
-static PyObject *db_put_field(PyObject *self, PyObject *args)
+/* This is our own re-implementation of EPICS's dbPutField function.
+We do this to allow us to control when dbProcess is called. We use the
+same logicical flow as the original function. */
+static PyObject *db_put_field_process(PyObject *self, PyObject *args)
 {
     const char *name;
     short dbrType;
     PyObject *buffer_ptr;
     long length;
-    if (!PyArg_ParseTuple(args, "shOl", &name, &dbrType, &buffer_ptr, &length))
+    short process;
+    if (!PyArg_ParseTuple(args, "shOlh", &name, &dbrType, &buffer_ptr, &length, &process))
         return NULL;
     void *pbuffer = PyLong_AsVoidPtr(buffer_ptr);
     if (!pbuffer)
@@ -112,6 +113,8 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
     if (dbNameToAddr(name, &dbAddr))
         return PyErr_Format(
             PyExc_RuntimeError, "dbNameToAddr failed for %s", name);
+
+    struct dbCommon *precord = dbAddr.precord;
 
     long put_result;
     /* There are two important locks to consider at this point: The Global
@@ -125,7 +128,22 @@ static PyObject *db_put_field(PyObject *self, PyObject *args)
      * EPICS call, to avoid potential deadlocks.
      * See https://github.com/DiamondLightSource/pythonSoftIOC/issues/119. */
     Py_BEGIN_ALLOW_THREADS
-    put_result = dbPutField(&dbAddr, dbrType, pbuffer, length);
+    dbScanLock(precord);
+    put_result = dbPut(&dbAddr, dbrType, pbuffer, length);
+
+    if (put_result == 0 && process)
+    {
+        if (precord->pact)
+        {
+            precord->rpro = TRUE;
+        }
+        else
+        {
+            dbProcess(precord);
+        }
+    }
+
+    dbScanUnlock(precord);
     Py_END_ALLOW_THREADS
     if (put_result)
         return PyErr_Format(
@@ -314,7 +332,7 @@ static struct PyMethodDef softioc_methods[] = {
      "Get a map of DBF names to values"},
     {"get_field_offsets",  get_field_offsets, METH_VARARGS,
      "Get offset, size and type for each record field"},
-    {"db_put_field",  db_put_field, METH_VARARGS,
+    {"db_put_field_process",  db_put_field_process, METH_VARARGS,
      "Put a database field to a value"},
     {"db_get_field",  db_get_field, METH_VARARGS,
      "Get a database field's value"},

@@ -19,9 +19,12 @@ def get_field_offsets(record_type):
     '''Return {field_name: (offset, size, field_type)}'''
     return _extension.get_field_offsets(record_type)
 
-def db_put_field(name, dbr_type, pbuffer, length):
-    '''Put field where pbuffer is void* pointer. Returns None.'''
-    return _extension.db_put_field(name, dbr_type, pbuffer, length)
+def db_put_field_process(name, dbr_type, pbuffer, length, process):
+    '''Put field where pbuffer is void* pointer, conditionally processing
+    the record. Returns None.'''
+    return _extension.db_put_field_process(
+        name, dbr_type, pbuffer, length, process
+    )
 
 def db_get_field(name, dbr_type, pbuffer, length):
     '''Get field where pbuffer is void* pointer. Returns None.'''

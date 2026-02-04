@@ -11,7 +11,7 @@ from .imports import (
     dbLoadDatabase,
     signal_processing_complete,
     recGblResetAlarms,
-    db_put_field,
+    db_put_field_process,
     db_get_field,
 )
 from .device_core import DeviceSupportCore, RecordLookup
@@ -108,7 +108,7 @@ class ProcessDeviceSupportCore(DeviceSupportCore, RecordLookup):
         data = (c_char * 40)()
         data.value = str(value).encode() + b'\0'
         name = self._name + '.' + field
-        db_put_field(name, fields.DBF_STRING, addressof(data), 1)
+        db_put_field_process(name, fields.DBF_STRING, addressof(data), 1, True)
 
 class ProcessDeviceSupportIn(ProcessDeviceSupportCore):
     _link_ = 'INP'
@@ -178,7 +178,6 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
 
         self.__validate = kargs.pop('validate', None)
         self.__always_update = kargs.pop('always_update', False)
-        self.__enable_write = True
 
         if 'initial_value' in kargs:
             value = self._value_to_epics(kargs.pop('initial_value'))
@@ -239,8 +238,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             return EPICS_OK
 
         python_value = self._epics_to_value(value)
-        if self.__enable_write and self.__validate and \
-                not self.__validate(self, python_value):
+        if self.__validate and not self.__validate(self, python_value):
             # Asynchronous validation rejects value, so restore the last good
             # value.
             self._write_value(record, self._value[0])
@@ -249,7 +247,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             # Value is good.  Hang onto it, let users know the value has changed
             self._value = (value, severity, alarm)
             record.UDF = 0
-            if self.__on_update and self.__enable_write:
+            if self.__on_update:
                 record.PACT = self._blocking
                 dispatcher(
                     self.__on_update,
@@ -287,9 +285,15 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
         else:
             # The array parameter is used to keep the raw pointer alive
             dbf_code, length, data, array = self._value_to_dbr(value)
-            self.__enable_write = process
-            db_put_field(_record.NAME, dbf_code, data, length)
-            self.__enable_write = True
+
+            # If we do process we instead do this inside _process, allowing
+            # validation to potentially refuse the update.
+            # However if we do not process, we must do this here to keep the
+            # Python and EPICS values in line
+            if not process:
+                self._value = (value, severity, alarm)
+
+            db_put_field_process(_record.NAME, dbf_code, data, length, process)
 
     def get(self):
         return self._epics_to_value(self._value[0])

@@ -10,7 +10,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
-Nothing yet!
+Fixed:
+
+- `Fix infinite loop when setting record's own value from on_update callback <../../pull/202>`_
 
 4.7.0_ - 2026-01-14
 -------------------

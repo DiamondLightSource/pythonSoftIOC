@@ -380,10 +380,12 @@ class TestValidate:
 
     def validate_always_pass(self, record, new_val):
         """Validation method that always allows changes"""
+        log("VALIDATE: Returning True")
         return True
 
     def validate_always_fail(self, record, new_val):
         """Validation method that always rejects changes"""
+        log("VALIDATE: Returning False")
         return False
 
     def validate_ioc_test_func(
@@ -444,7 +446,6 @@ class TestValidate:
         try:
             # Wait for message that IOC has started
             select_and_recv(parent_conn, "R")
-
 
             # Suppress potential spurious warnings
             _channel_cache.purge()
@@ -681,6 +682,95 @@ class TestOnUpdate:
         """Test that on_update works correctly for all out records when
         always_update is True and the put'ed value is always different"""
         self.on_update_runner(out_records, True, False)
+
+    def on_update_recursive_set_test_func(
+        self, device_name, conn
+    ):
+        log("CHILD: Child started")
+
+        builder.SetDeviceName(device_name)
+
+        async def on_update_func(new_val):
+            log("CHILD: on_update_func started")
+            record.set(0, process=False)
+            conn.send("C")  # "Callback"
+            log("CHILD: on_update_func ended")
+
+        record = builder.Action(
+            "ACTION",
+            on_update=on_update_func,
+            blocking=True,
+            initial_value=1  # A non-zero value, to check it changes
+        )
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        conn.send("R")  # "Ready"
+
+        log("CHILD: Sent R over Connection to Parent")
+
+        # Keep process alive while main thread runs CAGET
+        if conn.poll(TIMEOUT):
+            val = conn.recv()
+            assert val == "D", "Did not receive expected Done character"
+
+        log("CHILD: Received exit command, child exiting")
+
+    async def test_on_update_recursive_set(self):
+        """Test that on_update functions correctly when the on_update
+        callback sets the value of the record again (with process=False).
+        See issue #201"""
+
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = ctx.Process(
+            target=self.on_update_recursive_set_test_func,
+            args=(device_name, child_conn),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from aioca import caget, caput
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            log("PARENT: received R command")
+
+            record = f"{device_name}:ACTION"
+
+            val = await caget(record)
+
+            assert val == 1, "ACTION record did not start with value 1"
+
+            await caput(record, 1, wait=True)
+
+            val = await caget(record)
+
+            assert val == 0, "ACTION record did not return to zero value"
+
+            # Expect one "C"
+            select_and_recv(parent_conn, "C")
+
+            # ...But if we receive another we know there's a problem
+            if parent_conn.poll(5):  # Shorter timeout to make this quicker
+                pytest.fail("Received unexpected second message")
+
+        finally:
+            log("PARENT:Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")
 
 
 
@@ -1457,6 +1547,95 @@ class TestAlarms:
                 assert ret_val.status == self.status, \
                     f"Status mismatch for record {name}"
 
+
+        finally:
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+
+
+class TestProcess:
+    """Tests related to processing - checking values are as expected
+    between the EPICS and Python layers. """
+
+    test_result_rec = "TestResult"
+
+
+    def process_test_function(self, device_name, conn, process):
+        builder.SetDeviceName(device_name)
+
+        rec = builder.longOut("TEST", initial_value=5)
+
+        # Record to indicate success/failure
+        bi = builder.boolIn(self.test_result_rec, ZNAM="FAILED", ONAM="SUCCESS")
+
+        builder.LoadDatabase()
+        softioc.iocInit()
+
+        # Prove value changes from .set call
+        rec.set(10, process=process)
+
+        conn.send("R")  # "Ready"
+        log("CHILD: Sent R over Connection to Parent")
+
+        select_and_recv(conn, "R")
+
+        val = rec.get()
+        log(f"CHILD: record value is {val}")
+
+        # value should be that which was set by .set()
+        if val == 10:
+            bi.set(1)
+        else:
+            bi.set(0)
+
+        # Keep process alive while main thread works.
+        while (True):
+            if conn.poll(TIMEOUT):
+                val = conn.recv()
+                if val == "D":  # "Done"
+                    break
+
+    @requires_cothread
+    @pytest.mark.parametrize("process", [True, False])
+    def test_set_alarm_severity_status(self, process):
+        """Test that set_alarm function allows setting severity and status"""
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        process = ctx.Process(
+            target=self.process_test_function,
+            args=(device_name, child_conn, process),
+        )
+
+        process.start()
+
+        from cothread.catools import caget, _channel_cache
+        from cothread import Sleep
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            # Suppress potential spurious warnings
+            _channel_cache.purge()
+
+            record = device_name + ":TEST"
+            val = caget(record, timeout=TIMEOUT)
+
+            assert val == 10
+
+            parent_conn.send("R")  # "Ready"
+
+            Sleep(0.5)  # Give child time to process update
+
+            result_record = device_name + f":{self.test_result_rec}"
+            val = caget(result_record)
+
+            assert val == 1, "Success record indicates failure"
 
         finally:
             # Suppress potential spurious warnings

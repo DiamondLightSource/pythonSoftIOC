@@ -94,8 +94,8 @@ static PyObject *get_field_offsets(PyObject *self, PyObject *args)
 
 
 /* This is our own re-implementation of EPICS's dbPutField function.
-We do this to allow us to control when dbProcess is called. We use the
-same logicical flow as the original function. */
+ * We do this to allow us to control when dbProcess is called. We use the
+ * same logicical flow as the original function. */
 static PyObject *db_put_field_process(PyObject *self, PyObject *args)
 {
     const char *name;
@@ -103,7 +103,8 @@ static PyObject *db_put_field_process(PyObject *self, PyObject *args)
     PyObject *buffer_ptr;
     long length;
     short process;
-    if (!PyArg_ParseTuple(args, "shOlh", &name, &dbrType, &buffer_ptr, &length, &process))
+    if (!PyArg_ParseTuple(args, "shOlh",
+            &name, &dbrType, &buffer_ptr, &length, &process))
         return NULL;
     void *pbuffer = PyLong_AsVoidPtr(buffer_ptr);
     if (!pbuffer)
@@ -134,13 +135,9 @@ static PyObject *db_put_field_process(PyObject *self, PyObject *args)
     if (put_result == 0 && process)
     {
         if (precord->pact)
-        {
             precord->rpro = TRUE;
-        }
         else
-        {
             dbProcess(precord);
-        }
     }
 
     dbScanUnlock(precord);

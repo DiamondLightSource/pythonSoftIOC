@@ -68,3 +68,4 @@ cov.xml
 
 # VSCode
 /.vscode/*.log
+venv*

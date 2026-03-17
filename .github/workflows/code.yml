@@ -99,7 +99,7 @@ jobs:
         # Python 3.14 isn't supported on lower versions of cibuildwheel, so conditionally install when required
         run: |
           pip install build
-          [ ${{matrix.python }} == "cp314" ] && pip install cibuildwheel || pip install cibuildwheel==2.23.3
+          [ ${{matrix.python }} == "cp314" ] && pip install cibuildwheel || pip install cibuildwheel==2.23.4
           pip freeze
         shell: bash
 

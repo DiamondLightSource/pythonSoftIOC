@@ -34,6 +34,12 @@ def install_pv_logging(acf_file):
     '''Install pv logging'''
     _extension.install_pv_logging(acf_file)
 
+def register_field_write_listener(callback):
+    '''CLS extension: register a Python callable for all CA/PVA field writes.
+    callback(channel_name: str, value_str: str) is called after each write.
+    '''
+    _extension.register_field_write_listener(callback)
+
 def create_callback_capsule():
     return _extension.create_callback_capsule()
 

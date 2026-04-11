@@ -114,6 +114,15 @@ def asyncio_ioc_override():
     ioc.kill()
     aioca_cleanup()
 
+
+@pytest.fixture
+def field_callbacks_ioc():
+    """Start a subprocess IOC that registers on_field_change callbacks."""
+    ioc = SubprocessIOC("sim_field_callbacks_ioc.py")
+    yield ioc
+    ioc.kill()
+    aioca_cleanup()
+
 def reset_device_name():
     if GetRecordNames().prefix:
         SetDeviceName("")

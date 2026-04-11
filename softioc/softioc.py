@@ -46,8 +46,20 @@ def iocInit(dispatcher=None, enable_pva=True):
 
         imports.registerRecordDeviceDriver(pdbbase)
 
+    # CLS extension: ensure access security is configured before iocInit.
+    # Importing pvlog triggers asSetFilename(access.acf) and registers
+    # the original caput print-logging hook — we preserve that behavior.
+    # The TRAPWRITE rule in access.acf is required for asTrapWrite
+    # listeners (including our field-write callbacks) to fire.
+    from . import pvlog  # noqa: F401  — side-effect import sets ACF
+
     imports.iocInit()
     autosave.start_autosave_thread()
+
+    # CLS extension: register the Python-level field-write dispatcher now
+    # that the IOC is running and access security is active.
+    from .field_monitor import install_field_monitor
+    install_field_monitor()
 
 
 def safeEpicsExit(code=0):

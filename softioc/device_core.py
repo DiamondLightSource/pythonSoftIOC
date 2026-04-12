@@ -170,8 +170,10 @@ class DeviceSupportCore(DeviceCommon):
 
         Args:
             field: EPICS field name (e.g. ``"SCAN"``, ``"VAL"``,
-                ``"DISA"``).  Use ``"*"`` to receive notifications for
-                **every** field write on this record.
+                ``"DISA"``), a list of field names
+                (e.g. ``["SCAN", "DRVH", "DRVL"]``), or ``"*"`` to
+                receive notifications for **every** field write on this
+                record.
             callback: ``callback(record_name, field_name, value_string)``
                 called after each matching write.  *value_string* is the
                 new value formatted by EPICS as a ``DBR_STRING``.
@@ -186,6 +188,10 @@ class DeviceSupportCore(DeviceCommon):
             and internal ``record.set()`` calls bypass asTrapWrite and
             will **not** trigger callbacks.
         '''
+        if isinstance(field, (list, tuple)):
+            for f in field:
+                self.on_field_change(f, callback)
+            return
         field = field.upper() if field != "*" else "*"
         self.__field_callbacks.setdefault(field, []).append(callback)
 
@@ -199,6 +205,48 @@ class DeviceSupportCore(DeviceCommon):
         callbacks.
         '''
         return {k: list(v) for k, v in self.__field_callbacks.items()}
+
+    def remove_field_callback(self, field, callback):
+        '''Remove a specific *callback* previously registered for *field*.
+
+        Args:
+            field: Field name (e.g. ``"SCAN"``) or ``"*"``.
+            callback: The exact callable that was passed to
+                :meth:`on_field_change`.
+
+        Raises:
+            ValueError: If *callback* is not registered for *field*.
+        '''
+        field = field.upper() if field != "*" else "*"
+        try:
+            self.__field_callbacks[field].remove(callback)
+        except (KeyError, ValueError):
+            raise ValueError(
+                f"Callback not registered for field {field!r}")
+        # Clean up empty lists to keep the dict tidy.
+        if not self.__field_callbacks[field]:
+            del self.__field_callbacks[field]
+
+    def clear_field_callbacks(self, field=None):
+        '''Remove all field-change callbacks, or all for a single *field*.
+
+        Args:
+            field: If ``None`` (default), remove **all** callbacks on
+                this record.  Otherwise, remove only those registered for
+                the given field name (or ``"*"``).
+
+        Raises:
+            KeyError: If *field* is given but has no registered callbacks.
+        '''
+        if field is None:
+            self.__field_callbacks.clear()
+        else:
+            field = field.upper() if field != "*" else "*"
+            try:
+                del self.__field_callbacks[field]
+            except KeyError:
+                raise KeyError(
+                    f"No callbacks registered for field {field!r}")
 
     def _get_field_callbacks(self, field):
         '''Return the list of callbacks for *field*, including wildcards.
@@ -234,9 +282,39 @@ class DeviceSupportCore(DeviceCommon):
             record.NSTA = alarm
 
     def trigger(self):
-        '''Call this to trigger processing for records with I/O Intr scan.'''
+        '''Trigger immediate record processing.
+
+        Uses scanIoRequest for I/O Intr records (fast path).
+        Falls back to scanOnce for records on any other SCAN setting.
+
+        Only one path fires per call: scanIoRequest returns non-zero
+        when the record is on the I/O Intr scan list, so scanOnce is
+        skipped.  When the record has been moved to a different scan
+        list scanIoRequest returns zero and scanOnce takes over.
+
+        Known limitation — periodic SCAN and double processing:
+
+        When SCAN is set to a periodic rate (e.g. "1 second"), the
+        EPICS scan thread calls dbProcess on its own schedule, and
+        set() also calls scanOnce → dbProcess.  The record is
+        processed by both paths.  dbScanLock serialises access and
+        recGblCheckDeadband prevents duplicate monitors when the
+        value has not changed, so this is harmless in practice but
+        does result in extra processing cycles.
+
+        To avoid this, use ``iocInit(auto_reset_scan=True)``.
+        The C hook resets SCAN back to I/O Intr after forwarding
+        the requested rate to the Python callback, so the record
+        stays on the I/O Intr scan list and scanIoRequest remains
+        the only processing path.  Passive writes are exempt from
+        the reset (they are a deliberate "stop updating" command).
+        '''
+        queued = False
         if self.__ioscanpvt:
-            imports.scanIoRequest(self.__ioscanpvt)
+            queued = imports.scanIoRequest(self.__ioscanpvt)
+        if not queued and hasattr(self, '_record') \
+                and self._record is not None:
+            imports.scan_once(self._record.record.value)
 
 
 

@@ -30,15 +30,38 @@ def db_get_field(name, dbr_type, pbuffer, length):
     '''Get field where pbuffer is void* pointer. Returns None.'''
     return _extension.db_get_field(name, dbr_type, pbuffer, length)
 
-def install_pv_logging(acf_file):
-    '''Install pv logging'''
-    _extension.install_pv_logging(acf_file)
+def install_pv_logging(acf_file, log_puts=True):
+    '''Load access security file and optionally install caput printf logging.
 
-def register_field_write_listener(callback):
+    The ACF file must contain a TRAPWRITE rule for asTrapWrite listeners
+    (including CLS field-write callbacks) to fire.
+
+    Args:
+        acf_file: Path to the access security configuration file.
+        log_puts: If True (default), register the EpicsPvPutHook that
+            prints caput operations to stdout.  Set to False to load the
+            ACF without the printf overhead.
+    '''
+    _extension.install_pv_logging(acf_file, log_puts)
+
+def register_field_write_listener(callback, auto_reset_scan=False):
     '''CLS extension: register a Python callable for all CA/PVA field writes.
     callback(channel_name: str, value_str: str) is called after each write.
+
+    Args:
+        callback: Python callable receiving (channel_name, value_string).
+        auto_reset_scan: If True, the C layer resets SCAN back to
+            "I/O Intr" after every non-Passive SCAN write, eliminating
+            periodic-scan contention.  Default False.
     '''
-    _extension.register_field_write_listener(callback)
+    _extension.register_field_write_listener(callback, auto_reset_scan)
+
+def scan_once(record):
+    '''CLS extension: queue immediate record processing via scanOnce().
+    Works regardless of the record's current SCAN setting.
+    record is the integer address of the dbCommon pointer.
+    '''
+    _extension.scan_once(record)
 
 def create_callback_capsule():
     return _extension.create_callback_capsule()
@@ -89,7 +112,7 @@ scanIoInit.restype = None
 
 scanIoRequest = dbCore.scanIoRequest
 scanIoRequest.argtypes = (IOSCANPVT,)
-scanIoRequest.restype = None
+scanIoRequest.restype = c_uint
 
 dbLoadDatabase = dbCore.dbLoadDatabase
 dbLoadDatabase.argtypes = (auto_encode, auto_encode, auto_encode)

@@ -21,7 +21,8 @@ def epicsAtPyExit():
     imports.epicsExitCallAtExits()
 
 
-def iocInit(dispatcher=None, enable_pva=True):
+def iocInit(dispatcher=None, enable_pva=True, log_puts=True,
+            auto_reset_scan=False):
     '''This must be called exactly once after loading all EPICS database files.
     After this point the EPICS IOC is running and serving PVs.
 
@@ -30,6 +31,13 @@ def iocInit(dispatcher=None, enable_pva=True):
             be called in response to caput on a record. If not supplied uses
             ``cothread`` as the dispatcher.
         enable_pva: Specify whether to enable the PV Access Server in this IOC.
+        log_puts: If True (default), register the caput printf logger that
+            prints every CA/PVA put to stdout.  Set to False to disable the
+            printf output while still loading the access-security file needed
+            for field-change callbacks.
+        auto_reset_scan: If True, the C layer resets SCAN back to "I/O Intr"
+            after every non-Passive SCAN write, making SCAN a latched command.
+            Default False.
 
     See Also:
         `softioc.asyncio_dispatcher` is a dispatcher for `asyncio` applications
@@ -47,11 +55,13 @@ def iocInit(dispatcher=None, enable_pva=True):
         imports.registerRecordDeviceDriver(pdbbase)
 
     # CLS extension: ensure access security is configured before iocInit.
-    # Importing pvlog triggers asSetFilename(access.acf) and registers
-    # the original caput print-logging hook — we preserve that behavior.
     # The TRAPWRITE rule in access.acf is required for asTrapWrite
     # listeners (including our field-write callbacks) to fire.
-    from . import pvlog  # noqa: F401  — side-effect import sets ACF
+    # The log_puts flag controls whether the printf caput logger is
+    # registered — defaults to True for backward compatibility.
+    _acf_file = os.path.join(
+        os.path.dirname(__file__), 'access.acf')
+    imports.install_pv_logging(_acf_file, log_puts=log_puts)
 
     imports.iocInit()
     autosave.start_autosave_thread()
@@ -59,7 +69,7 @@ def iocInit(dispatcher=None, enable_pva=True):
     # CLS extension: register the Python-level field-write dispatcher now
     # that the IOC is running and access security is active.
     from .field_monitor import install_field_monitor
-    install_field_monitor()
+    install_field_monitor(auto_reset_scan=auto_reset_scan)
 
 
 def safeEpicsExit(code=0):

@@ -61,11 +61,17 @@ def _dispatch_field_write(channel_name, value_str):
             )
 
 
-def install_field_monitor():
+def install_field_monitor(auto_reset_scan=False):
     """Register :func:`_dispatch_field_write` with the C extension.
 
     Must be called **after** ``iocInit()`` and after the access-security
     file (containing the ``TRAPWRITE`` rule) has been loaded — both of
     which are handled automatically by :func:`softioc.iocInit`.
+
+    Args:
+        auto_reset_scan: If True, the C layer resets SCAN back to
+            "I/O Intr" after every non-Passive SCAN write, eliminating
+            periodic-scan contention.  Default False.
     """
-    imports.register_field_write_listener(_dispatch_field_write)
+    imports.register_field_write_listener(
+        _dispatch_field_write, auto_reset_scan=auto_reset_scan)

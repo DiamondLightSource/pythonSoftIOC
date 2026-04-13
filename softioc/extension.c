@@ -6,6 +6,8 @@
 #define db_accessHFORdb_accessC     // Needed to get correct DBF_ values
 #include <dbAccess.h>
 #include <dbFldTypes.h>
+#include <dbScan.h>
+#include <menuScan.h>
 #include <callback.h>
 #include <dbStaticLib.h>
 #include <asTrapWrite.h>
@@ -269,15 +271,114 @@ void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
 }
 
 
+/* Guard against double-registration of EpicsPvPutHook: asTrapWrite
+ * maintains a linked list of listeners, and registering the same function
+ * pointer twice would cause double printf output per write. */
+static int epics_pv_put_hook_installed = 0;
+
 static PyObject *install_pv_logging(PyObject *self, PyObject *args)
 {
     const char *acf_file;
+    int log_puts = 1;  /* default: register the printf hook (backward compat) */
 
-    if (!PyArg_ParseTuple(args, "s", &acf_file))
+    if (!PyArg_ParseTuple(args, "s|p", &acf_file, &log_puts))
         return NULL;
 
     asSetFilename(acf_file);
-    asTrapWriteRegisterListener(EpicsPvPutHook);
+    if (log_puts && !epics_pv_put_hook_installed) {
+        asTrapWriteRegisterListener(EpicsPvPutHook);
+        epics_pv_put_hook_installed = 1;
+    }
+    Py_RETURN_NONE;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* CLS extension: field-write callback support.
+ *
+ * A single Python callable (py_field_write_callback) is invoked for every
+ * CA/PVA field write that passes through asTrapWrite.  The Python layer
+ * (field_monitor.py) demultiplexes the call to per-record, per-field
+ * callbacks registered by on_field_change().
+ *
+ * This hook coexists with the original EpicsPvPutHook (print-logging)
+ * because asTrapWrite supports multiple registered listeners.
+ */
+
+/* Python callable: callback(channel_name: str, value_str: str) */
+static PyObject *py_field_write_callback = NULL;
+
+/* When non-zero, FieldWriteHook resets SCAN back to I/O Intr after
+ * forwarding the notification to Python — unless Passive was requested.
+ * This eliminates periodic-scan contention: SCAN acts as a latched
+ * command that Python reads and then the record returns to I/O Intr. */
+static int auto_reset_scan = 0;
+
+static void FieldWriteHook(struct asTrapWriteMessage *pmessage, int after)
+{
+    if (!after || !py_field_write_callback || py_field_write_callback == Py_None)
+        return;
+
+    struct dbChannel *pchan = pmessage->serverSpecific;
+    if (!pchan) return;
+
+    /* Channel name includes the field suffix, e.g. "MYPV.SCAN". */
+    const char *channel_name = dbChannelName(pchan);
+
+    /* Read the post-write value formatted as a human-readable string.
+     * MAX_STRING_SIZE (from EPICS base) is 40 — use a generous buffer
+     * to accommodate array-of-string fields that FormatValue handles. */
+    char value_str[MAX_STRING_SIZE + 1];
+    memset(value_str, 0, sizeof(value_str));
+    long len = 1;
+    long opts = 0;
+    dbGetField(&pchan->addr, DBR_STRING, value_str, &opts, &len, NULL);
+
+    /* Acquire the GIL and forward to Python. */
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    PyObject *result = PyObject_CallFunction(
+        py_field_write_callback, "ss", channel_name, value_str);
+    Py_XDECREF(result);
+    if (PyErr_Occurred())
+        PyErr_Print();
+    PyGILState_Release(gstate);
+
+    /* Auto-reset SCAN to I/O Intr after forwarding the notification,
+     * unless the client set Passive (meaning "stop updating"). */
+    if (auto_reset_scan) {
+        const char *dot = strrchr(channel_name, '.');
+        if (dot && strcmp(dot + 1, "SCAN") == 0
+                && strcmp(value_str, "Passive") != 0) {
+            epicsEnum16 io_intr = menuScanI_O_Intr;
+            dbScanLock(pchan->addr.precord);
+            dbPut(&pchan->addr, DBR_ENUM, &io_intr, 1);
+            dbScanUnlock(pchan->addr.precord);
+        }
+    }
+}
+
+/* Guard against double-registration of FieldWriteHook — same rationale
+ * as epics_pv_put_hook_installed above. */
+static int field_write_hook_installed = 0;
+
+static PyObject *register_field_write_listener(PyObject *self, PyObject *args)
+{
+    PyObject *callback;
+    int reset_scan = 0;
+    if (!PyArg_ParseTuple(args, "O|p", &callback, &reset_scan))
+        return NULL;
+    if (!PyCallable_Check(callback)) {
+        PyErr_SetString(PyExc_TypeError, "Argument must be callable");
+        return NULL;
+    }
+    Py_XDECREF(py_field_write_callback);
+    Py_INCREF(callback);
+    py_field_write_callback = callback;
+    auto_reset_scan = reset_scan;
+    if (!field_write_hook_installed) {
+        asTrapWriteRegisterListener(FieldWriteHook);
+        field_write_hook_installed = 1;
+    }
     Py_RETURN_NONE;
 }
 
@@ -322,6 +423,26 @@ static PyObject *signal_processing_complete(PyObject *self, PyObject *args)
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* CLS extension: scanOnce wrapper.
+ *
+ * Queues immediate record processing via the EPICS Base scanOnce() API,
+ * which works regardless of the record's current SCAN setting.
+ */
+
+static PyObject *scan_once(PyObject *self, PyObject *args)
+{
+    Py_ssize_t record_ptr;
+    if (!PyArg_ParseTuple(args, "n", &record_ptr))
+        return NULL;
+    dbCommon *precord = (dbCommon *)record_ptr;
+    Py_BEGIN_ALLOW_THREADS
+    scanOnce(precord);
+    Py_END_ALLOW_THREADS
+    Py_RETURN_NONE;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* Initialisation. */
 
 static struct PyMethodDef softioc_methods[] = {
@@ -339,6 +460,10 @@ static struct PyMethodDef softioc_methods[] = {
      "Inform EPICS that asynchronous record processing has completed"},
     {"create_callback_capsule",  create_callback_capsule, METH_VARARGS,
      "Create a CALLBACK structure inside a PyCapsule"},
+    {"register_field_write_listener",  register_field_write_listener, METH_VARARGS,
+     "Register a Python callable for all CA/PVA field writes (CLS extension)"},
+    {"scan_once",  scan_once, METH_VARARGS,
+     "Queue immediate record processing via scanOnce() (CLS extension)"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

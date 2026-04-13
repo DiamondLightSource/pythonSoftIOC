@@ -59,10 +59,12 @@ def log(*args):
 
 
 class SubprocessIOC:
-    def __init__(self, ioc_py):
+    def __init__(self, ioc_py, extra_args=None):
         self.pv_prefix = create_random_prefix()
         sim_ioc = os.path.join(os.path.dirname(__file__), ioc_py)
         cmd = [sys.executable, sim_ioc, self.pv_prefix]
+        if extra_args:
+            cmd.extend(extra_args)
         self.proc = subprocess.Popen(
             cmd, stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -110,6 +112,53 @@ def asyncio_ioc():
 @pytest.fixture
 def asyncio_ioc_override():
     ioc = SubprocessIOC("sim_asyncio_ioc_override.py")
+    yield ioc
+    ioc.kill()
+    aioca_cleanup()
+
+
+@pytest.fixture
+def field_callbacks_ioc():
+    """Start a subprocess IOC that registers on_field_change callbacks."""
+    ioc = SubprocessIOC("sim_field_callbacks_ioc.py")
+    yield ioc
+    ioc.kill()
+    aioca_cleanup()
+
+
+@pytest.fixture
+def field_behavior_ioc():
+    """Start a subprocess IOC for field-behavior tests."""
+    ioc = SubprocessIOC("sim_field_behavior_ioc.py")
+    yield ioc
+    ioc.kill()
+    aioca_cleanup()
+
+
+@pytest.fixture
+def universal_set_ioc():
+    """Start a subprocess IOC for universal set() tests."""
+    ioc = SubprocessIOC("sim_universal_set_ioc.py")
+    yield ioc
+    ioc.kill()
+    aioca_cleanup()
+
+
+@pytest.fixture
+def callback_refinements_ioc():
+    """Start a subprocess IOC for callback refinement tests."""
+    ioc = SubprocessIOC("sim_callback_refinements_ioc.py")
+    yield ioc
+    ioc.kill()
+    aioca_cleanup()
+
+
+@pytest.fixture
+def auto_reset_scan_ioc():
+    """Start a subprocess IOC with auto_reset_scan enabled."""
+    ioc = SubprocessIOC(
+        "sim_callback_refinements_ioc.py",
+        extra_args=["--auto-reset-scan"])
     yield ioc
     ioc.kill()
     aioca_cleanup()

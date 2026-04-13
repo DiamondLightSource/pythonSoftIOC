@@ -155,7 +155,59 @@ class DeviceSupportCore(DeviceCommon):
         # a call to get_ioinit_info.  This is only a trivial attempt to
         # reduce resource consumption.
         self.__ioscanpvt = imports.IOSCANPVT()
+        # CLS: per-field callback registry.
+        # Keys are uppercase field names (e.g. "SCAN", "VAL") or the
+        # wildcard "*" which matches every field write.
+        # Values are lists of callables.
+        self.__field_callbacks = {}
         super().__init__(name, **kargs)
+
+    # ---- CLS extension: field-change callbacks ----------------------------
+
+    def on_field_change(self, field, callback):
+        '''Register *callback* to be invoked when *field* is written via
+        CA or PVA.
+
+        Args:
+            field: EPICS field name (e.g. ``"SCAN"``, ``"VAL"``,
+                ``"DISA"``).  Use ``"*"`` to receive notifications for
+                **every** field write on this record.
+            callback: ``callback(record_name, field_name, value_string)``
+                called after each matching write.  *value_string* is the
+                new value formatted by EPICS as a ``DBR_STRING``.
+
+        Multiple callbacks per field are supported; they are called in
+        registration order.  The same callable may be registered for
+        different fields.
+
+        Note:
+            Callbacks fire only for writes originating from Channel
+            Access or PV Access clients.  IOC-shell writes (``dbpf``)
+            and internal ``record.set()`` calls bypass asTrapWrite and
+            will **not** trigger callbacks.
+        '''
+        field = field.upper() if field != "*" else "*"
+        self.__field_callbacks.setdefault(field, []).append(callback)
+
+    @property
+    def field_callbacks(self):
+        '''Read-only view of the registered field-change callbacks.
+
+        Returns a dict mapping field names (and ``"*"``) to lists of
+        callables.  Modifying the returned dict has no effect on the
+        internal registry — use :meth:`on_field_change` to register new
+        callbacks.
+        '''
+        return {k: list(v) for k, v in self.__field_callbacks.items()}
+
+    def _get_field_callbacks(self, field):
+        '''Return the list of callbacks for *field*, including wildcards.
+
+        This is an internal helper used by :mod:`~softioc.field_monitor`.
+        '''
+        cbs = list(self.__field_callbacks.get(field, []))
+        cbs.extend(self.__field_callbacks.get("*", []))
+        return cbs
 
 
     def init_record(self, record):

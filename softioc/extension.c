@@ -283,6 +283,68 @@ static PyObject *install_pv_logging(PyObject *self, PyObject *args)
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* CLS extension: field-write callback support.
+ *
+ * A single Python callable (py_field_write_callback) is invoked for every
+ * CA/PVA field write that passes through asTrapWrite.  The Python layer
+ * (field_monitor.py) demultiplexes the call to per-record, per-field
+ * callbacks registered by on_field_change().
+ *
+ * This hook coexists with the original EpicsPvPutHook (print-logging)
+ * because asTrapWrite supports multiple registered listeners.
+ */
+
+/* Python callable: callback(channel_name: str, value_str: str) */
+static PyObject *py_field_write_callback = NULL;
+
+static void FieldWriteHook(struct asTrapWriteMessage *pmessage, int after)
+{
+    if (!after || !py_field_write_callback || py_field_write_callback == Py_None)
+        return;
+
+    struct dbChannel *pchan = pmessage->serverSpecific;
+    if (!pchan) return;
+
+    /* Channel name includes the field suffix, e.g. "MYPV.SCAN". */
+    const char *channel_name = dbChannelName(pchan);
+
+    /* Read the post-write value formatted as a human-readable string.
+     * MAX_STRING_SIZE (from EPICS base) is 40 — use a generous buffer
+     * to accommodate array-of-string fields that FormatValue handles. */
+    char value_str[MAX_STRING_SIZE + 1];
+    memset(value_str, 0, sizeof(value_str));
+    long len = 1;
+    long opts = 0;
+    dbGetField(&pchan->addr, DBR_STRING, value_str, &opts, &len, NULL);
+
+    /* Acquire the GIL and forward to Python. */
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    PyObject *result = PyObject_CallFunction(
+        py_field_write_callback, "ss", channel_name, value_str);
+    Py_XDECREF(result);
+    if (PyErr_Occurred())
+        PyErr_Print();
+    PyGILState_Release(gstate);
+}
+
+static PyObject *register_field_write_listener(PyObject *self, PyObject *args)
+{
+    PyObject *callback;
+    if (!PyArg_ParseTuple(args, "O", &callback))
+        return NULL;
+    if (!PyCallable_Check(callback)) {
+        PyErr_SetString(PyExc_TypeError, "Argument must be callable");
+        return NULL;
+    }
+    Py_XDECREF(py_field_write_callback);
+    Py_INCREF(callback);
+    py_field_write_callback = callback;
+    asTrapWriteRegisterListener(FieldWriteHook);
+    Py_RETURN_NONE;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* Process callback support. */
 
 #define CAPSULE_NAME "ProcessDeviceSupportOut.callback"
@@ -339,6 +401,8 @@ static struct PyMethodDef softioc_methods[] = {
      "Inform EPICS that asynchronous record processing has completed"},
     {"create_callback_capsule",  create_callback_capsule, METH_VARARGS,
      "Create a CALLBACK structure inside a PyCapsule"},
+    {"register_field_write_listener",  register_field_write_listener, METH_VARARGS,
+     "Register a Python callable for all CA/PVA field writes (CLS extension)"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

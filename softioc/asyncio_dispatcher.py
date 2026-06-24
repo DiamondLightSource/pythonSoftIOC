@@ -60,6 +60,9 @@ class AsyncioDispatcher:
 
         stop_event.wait()
 
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
     async def __inloop(self, started):
         self.loop = asyncio.get_running_loop()
         self.__interrupt = asyncio.Event()

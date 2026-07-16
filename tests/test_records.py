@@ -683,8 +683,8 @@ class TestOnUpdate:
         always_update is True and the put'ed value is always different"""
         self.on_update_runner(out_records, True, False)
 
-    def on_update_recursive_set_test_func(
-        self, device_name, conn, severity, alarm
+    def on_update_recursive_set_value_test_func(
+        self, device_name, conn,
     ):
         log("CHILD: Child started")
 
@@ -692,7 +692,7 @@ class TestOnUpdate:
 
         async def on_update_func(new_val):
             log("CHILD: on_update_func started")
-            record.set(0, process=False, severity=severity, alarm=alarm)
+            record.set(0, process=False)
             conn.send("C")  # "Callback"
             log("CHILD: on_update_func ended")
 
@@ -729,8 +729,8 @@ class TestOnUpdate:
         device_name = create_random_prefix()
 
         process = ctx.Process(
-            target=self.on_update_recursive_set_test_func,
-            args=(device_name, child_conn, alarm.NO_ALARM, alarm.NO_ALARM),
+            target=self.on_update_recursive_set_value_test_func,
+            args=(device_name, child_conn),
         )
 
         process.start()
@@ -773,10 +773,58 @@ class TestOnUpdate:
                 pytest.fail("Process did not terminate")
 
 
+    def on_update_recursive_set_alarm_test_func(
+        self, device_name, conn, severity, alrm
+    ):
+        log("CHILD: Child started")
+
+        builder.SetDeviceName(device_name)
+
+        async def on_update_func(new_val):
+            log(f"CHILD: on_update_func started value {new_val}")
+            if new_val == 2:
+                record.set(
+                    new_val,
+                    process=False,
+                    severity=severity,
+                    alarm=alrm
+                )
+            elif new_val == 3:
+                record.set(
+                    new_val,
+                    process=False,
+                    severity=alarm.NO_ALARM,
+                    alarm=alarm.NO_ALARM
+                )
+            conn.send("C")  # "Callback"
+            log("CHILD: on_update_func ended")
+
+        record = builder.longOut(
+            "ACTION",
+            on_update=on_update_func,
+            blocking=True,
+            initial_value=1  # A non-zero value, to check it changes
+        )
+
+        dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+        builder.LoadDatabase()
+        softioc.iocInit(dispatcher)
+
+        conn.send("R")  # "Ready"
+
+        log("CHILD: Sent R over Connection to Parent")
+
+        # Keep process alive while main thread runs CAGET
+        if conn.poll(TIMEOUT):
+            val = conn.recv()
+            assert val == "D", "Did not receive expected Done character"
+
+        log("CHILD: Received exit command, child exiting")
+
     async def test_on_update_recursive_set_alarm(self):
         """Test that on_update sets alarms correctly when the on_update
         callback sets the value of the record again (with process=False).
-        See issue #201"""
+        See PR #209"""
 
         ctx = get_multiprocessing_context()
         parent_conn, child_conn = ctx.Pipe()
@@ -787,7 +835,7 @@ class TestOnUpdate:
         expected_alarm = alarm.HIGH_ALARM  # arbitrary choice
 
         process = ctx.Process(
-            target=self.on_update_recursive_set_test_func,
+            target=self.on_update_recursive_set_alarm_test_func,
             args=(device_name, child_conn, expected_sevr, expected_alarm),
         )
 
@@ -809,8 +857,8 @@ class TestOnUpdate:
 
             assert val == 1, "ACTION record did not start with value 1"
 
-            await caput(record, 1, wait=True)
-
+            # Trigger callback to set alarm states
+            await caput(record, 2, wait=True)
 
             sevr = await caget(record + ".SEVR")
             assert sevr == expected_sevr
@@ -819,6 +867,18 @@ class TestOnUpdate:
             assert sevr == expected_alarm
 
             # Expect one "C"
+            select_and_recv(parent_conn, "C")
+
+            # Trigger another callback to clear alarm states
+            await caput(record, 3, wait=True)
+
+            sevr = await caget(record + ".SEVR")
+            assert sevr == alarm.NO_ALARM
+
+            sevr = await caget(record + ".STAT")
+            assert sevr == alarm.NO_ALARM
+
+            # Expect second "C"
             select_and_recv(parent_conn, "C")
 
             # ...But if we receive another we know there's a problem

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.device &mdash; pythonSoftIOC 4.7.0+10.g1711080 documentation</title>
+  <title>softioc.device &mdash; pythonSoftIOC 4.7.0+14.ge59476a documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
@@ -385,6 +385,13 @@
             <span class="c1"># However if we do not process, we must do this here to keep the</span>
             <span class="c1"># Python and EPICS values in line</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">process</span><span class="p">:</span>
+                <span class="c1"># Normally a call to dbProcess would handle setting/re-setting</span>
+                <span class="c1"># alarm levels for us, however if we are not processing we</span>
+                <span class="c1"># obviously can&#39;t rely on that. Hence we have to do it</span>
+                <span class="c1"># ourselves. We don&#39;t use `process_severity` as we want to</span>
+                <span class="c1"># unconditionally set these, regardless of previous severity.</span>
+                <span class="n">_record</span><span class="o">.</span><span class="n">NSEV</span> <span class="o">=</span> <span class="n">severity</span>
+                <span class="n">_record</span><span class="o">.</span><span class="n">NSTA</span> <span class="o">=</span> <span class="n">alarm</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">severity</span><span class="p">,</span> <span class="n">alarm</span><span class="p">)</span>
 
             <span class="n">db_put_field_process</span><span class="p">(</span><span class="n">_record</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span> <span class="n">dbf_code</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">process</span><span class="p">)</span></div>

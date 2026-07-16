@@ -684,7 +684,7 @@ class TestOnUpdate:
         self.on_update_runner(out_records, True, False)
 
     def on_update_recursive_set_test_func(
-        self, device_name, conn
+        self, device_name, conn, severity, alarm
     ):
         log("CHILD: Child started")
 
@@ -692,7 +692,7 @@ class TestOnUpdate:
 
         async def on_update_func(new_val):
             log("CHILD: on_update_func started")
-            record.set(0, process=False)
+            record.set(0, process=False, severity=severity, alarm=alarm)
             conn.send("C")  # "Callback"
             log("CHILD: on_update_func ended")
 
@@ -718,8 +718,8 @@ class TestOnUpdate:
 
         log("CHILD: Received exit command, child exiting")
 
-    async def test_on_update_recursive_set(self):
-        """Test that on_update functions correctly when the on_update
+    async def test_on_update_recursive_set_value(self):
+        """Test that on_update sets values correctly when the on_update
         callback sets the value of the record again (with process=False).
         See issue #201"""
 
@@ -730,7 +730,7 @@ class TestOnUpdate:
 
         process = ctx.Process(
             target=self.on_update_recursive_set_test_func,
-            args=(device_name, child_conn),
+            args=(device_name, child_conn, alarm.NO_ALARM, alarm.NO_ALARM),
         )
 
         process.start()
@@ -756,6 +756,67 @@ class TestOnUpdate:
             val = await caget(record)
 
             assert val == 0, "ACTION record did not return to zero value"
+
+            # Expect one "C"
+            select_and_recv(parent_conn, "C")
+
+            # ...But if we receive another we know there's a problem
+            if parent_conn.poll(5):  # Shorter timeout to make this quicker
+                pytest.fail("Received unexpected second message")
+
+        finally:
+            log("PARENT:Sending Done command to child")
+            parent_conn.send("D")  # "Done"
+            process.join(timeout=TIMEOUT)
+            log(f"PARENT: Join completed with exitcode {process.exitcode}")
+            if process.exitcode is None:
+                pytest.fail("Process did not terminate")
+
+
+    async def test_on_update_recursive_set_alarm(self):
+        """Test that on_update sets alarms correctly when the on_update
+        callback sets the value of the record again (with process=False).
+        See issue #201"""
+
+        ctx = get_multiprocessing_context()
+        parent_conn, child_conn = ctx.Pipe()
+
+        device_name = create_random_prefix()
+
+        expected_sevr = alarm.MAJOR_ALARM
+        expected_alarm = alarm.HIGH_ALARM  # arbitrary choice
+
+        process = ctx.Process(
+            target=self.on_update_recursive_set_test_func,
+            args=(device_name, child_conn, expected_sevr, expected_alarm),
+        )
+
+        process.start()
+
+        log("PARENT: Child started, waiting for R command")
+
+        from aioca import caget, caput
+
+        try:
+            # Wait for message that IOC has started
+            select_and_recv(parent_conn, "R")
+
+            log("PARENT: received R command")
+
+            record = f"{device_name}:ACTION"
+
+            val = await caget(record)
+
+            assert val == 1, "ACTION record did not start with value 1"
+
+            await caput(record, 1, wait=True)
+
+
+            sevr = await caget(record + ".SEVR")
+            assert sevr == expected_sevr
+
+            sevr = await caget(record + ".STAT")
+            assert sevr == expected_alarm
 
             # Expect one "C"
             select_and_recv(parent_conn, "C")

@@ -291,6 +291,7 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             # However if we do not process, we must do this here to keep the
             # Python and EPICS values in line
             if not process:
+                self.process_severity(_record, severity, alarm)
                 self._value = (value, severity, alarm)
 
             db_put_field_process(_record.NAME, dbf_code, data, length, process)

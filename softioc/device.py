@@ -291,6 +291,13 @@ class ProcessDeviceSupportOut(ProcessDeviceSupportCore):
             # However if we do not process, we must do this here to keep the
             # Python and EPICS values in line
             if not process:
+                # Normally a call to dbProcess would handle setting/re-setting
+                # alarm levels for us, however if we are not processing we
+                # obviously can't rely on that. Hence we have to do it
+                # ourselves. We don't use `process_severity` as we want to
+                # unconditionally set these, regardless of previous severity.
+                _record.NSEV = severity
+                _record.NSTA = alarm
                 self._value = (value, severity, alarm)
 
             db_put_field_process(_record.NAME, dbf_code, data, length, process)

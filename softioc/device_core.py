@@ -177,6 +177,9 @@ class DeviceSupportCore(DeviceCommon):
 
     def process_severity(self, record, severity, alarm):
         '''Support routine to implement alarm processing.'''
+        # This matches the logic in the EPICS function recGblSetSevr, which
+        # always maximises severity. This is called as part of EPICS record
+        # processing
         if severity > record.NSEV:
             record.NSEV = severity
             record.NSTA = alarm

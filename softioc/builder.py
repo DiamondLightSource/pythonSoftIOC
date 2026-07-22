@@ -1,6 +1,7 @@
 import os
 import numpy
 
+from . import alias
 from .device_core import RecordLookup
 from .softioc import dbLoadDatabase
 from .autosave import load_autosave
@@ -317,6 +318,33 @@ def ClearRecords():
         'Record database has already been loaded'
     RecordLookup._RecordDirectory.clear()
     ResetRecords()
+    alias.forget_all()
+
+
+# ----------------------------------------------------------------------------
+# Support for record aliases.
+
+def Alias(name, alias_name):
+    '''Adds alias_name as an alias for the record called name.  Both name
+    and alias_name may be given relative to the current device name (see
+    SetDeviceName), or as absolute names if they contain a colon.
+
+    The target record must already have been created earlier in this
+    session.'''
+    alias.create_alias(name, alias_name)
+
+
+def AddDeviceAlias(prefix):
+    '''Registers prefix as an alias for the current device name: every
+    record subsequently created under the current device will also be
+    given an alias under prefix instead of the device name, including any
+    of that record's own aliases.  Like SetDeviceName, this only affects
+    records created after the call, not ones already created.  Must be
+    called after SetDeviceName.  Alias prefix registrations are cleared
+    whenever the device name changes.'''
+    assert GetRecordNames().prefix, \
+        'Must call SetDeviceName() before AddDeviceAlias()'
+    alias.add_device_alias(prefix)
 
 
 # ----------------------------------------------------------------------------
@@ -325,9 +353,11 @@ def ClearRecords():
 SetSimpleRecordNames(None, ':')
 
 def SetDeviceName(name):
+    alias.clear_device_aliases()
     SetPrefix(name)
 
 def UnsetDevice():
+    alias.clear_device_aliases()
     SetPrefix(None)
 
 
@@ -347,6 +377,7 @@ __all__ = [
     # Other builder support functions
     'LoadDatabase', 'ClearRecords',
     'SetDeviceName', 'UnsetDevice',
+    'Alias', 'AddDeviceAlias',
     # Device support functions
     'SetBlocking'
 ]

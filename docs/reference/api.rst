@@ -99,6 +99,7 @@ Test Facilities`_ documentation for more details of each function.
 
 ..  autofunction:: dba
 ..  autofunction:: dbl
+..  autofunction:: dbla
 ..  autofunction:: dbnr
 ..  autofunction:: dbgrep
 ..  autofunction:: dbgf
@@ -361,6 +362,23 @@ and stderr streams, is sent directly to the terminal.
 
         :class:`~softioc.autosave.Autosave` for how to track PVs with autosave inside a context manager.
 
+    .. _alias:
+
+    `alias`
+    ~~~~~~~
+
+    Available on all record types.  If given, registers an additional alias
+    name for the record just created, equivalent to calling :func:`Alias`
+    with the name of the record just created and this value immediately
+    afterwards.  As with :func:`Alias`, this may be given relative to the
+    current device name, or as an absolute name if it contains a colon.
+
+    .. seealso::
+        `Alias` for creating an alias for an arbitrary existing record.
+
+        `AddDeviceAlias` for automatically aliasing every record under the
+        current device.
+
 
 For all of these functions any EPICS database field can be assigned a value by
 passing it as a keyword argument for the corresponding field name (in upper
@@ -507,6 +525,38 @@ record creation function.
     This can optionally be called after completing the creation of records to
     prevent the accidential creation of records with the currently set device
     name.
+
+..  function:: Alias(name, alias_name)
+
+    Adds ``alias_name`` as an alias for the record called ``name``.  Both
+    ``name`` and ``alias_name`` may be given relative to the current device
+    name (see `SetDeviceName`), or as absolute names if they contain a
+    colon.
+
+    The target record must already have been created earlier in this
+    session; aliasing a record that will only be created later, or one
+    that only exists in some other already-running IOC, is not supported.
+
+    .. seealso::
+        `alias` for adding an alias at the point a record is created.
+
+..  function:: AddDeviceAlias(prefix)
+
+    Registers ``prefix`` as an alias for the current device name: every
+    record subsequently created under the current device will also be
+    given an alias with ``prefix`` in place of the device name -- including
+    any relative alias names given via the `alias` parameter or `Alias`
+    function, which are aliased again under ``prefix`` rather than chained
+    onto the original alias.  For example, if the device name is ``foo``
+    and, after calling ``AddDeviceAlias("test")``, a PV called ``bar`` is
+    created with ``alias="baz"``, the result is a record ``foo:bar`` with
+    aliases ``foo:baz``, ``test:bar`` and ``test:baz`` -- all four names
+    refer to the same record.
+
+    Like `SetDeviceName`, this only affects records (and their aliases)
+    created *after* the call, not ones already created.  Must be called
+    after `SetDeviceName`.  Alias prefix registrations are cleared whenever
+    the device name changes.
 
 .. function:: SetBlocking(blocking)
 

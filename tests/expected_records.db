@@ -145,6 +145,7 @@ record(stringout, "TS-DI-TEST-01:STRINGOUT")
     field(DTYP, "Python")
     field(OMSL, "supervisory")
     field(OUT,  "@TS-DI-TEST-01:STRINGOUT")
+    alias("TS-DI-TEST-01:STRINGOUT_ALIAS")
 }
 
 record(waveform, "TS-DI-TEST-01:WAVEFORM")

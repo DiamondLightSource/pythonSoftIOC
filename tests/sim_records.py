@@ -42,7 +42,9 @@ def create_records():
 
     boolOut('BOOLOUT', 'Zero', 'One', initial_value=True, on_update=on_update)
     longOut('LONGOUT', initial_value=2008, on_update=on_update)
-    stringOut('STRINGOUT', initial_value='watevah', on_update=on_update)
+    stringOut(
+        'STRINGOUT', initial_value='watevah', on_update=on_update,
+        alias='STRINGOUT_ALIAS')
     mbbOut('MBBO', 'Ein', 'Zwei', 'Drei', initial_value=1)
 
     def update_sin_wf(value):

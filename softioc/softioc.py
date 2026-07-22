@@ -110,6 +110,12 @@ Prints the names of records in the database matching pattern.  If a (space
 separated) list of fields is also given then the values of the fields are also
 printed.''')
 
+ExportTest('dbla', (auto_encode,), ('',), '''\
+dbla(pattern='')
+
+Prints "alias -> record" for each alias in the database whose name matches
+pattern (or all aliases if pattern is empty).''')
+
 ExportTest('dbnr', (c_int,), (0,), '''\
 dbnr(all=0)
 

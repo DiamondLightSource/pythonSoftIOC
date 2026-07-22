@@ -10,6 +10,14 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Added:
+
+- Add support for EPICS record aliases: an ``alias`` keyword argument on
+  record creation functions, a standalone ``Alias`` function, and an
+  ``AddDeviceAlias`` function for aliasing every record under a device.
+- Add the ``dbla`` command (list record aliases) to the ``interactive_ioc``
+  shell.
+
 Fixed:
 
 - `Correctly set alarms during blocking processing <../../pull/209>`_

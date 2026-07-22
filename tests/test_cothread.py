@@ -27,6 +27,10 @@ def test_cothread_ioc(cothread_ioc):
         assert caget(pre + ":STRINGOUT") == "watevah"
         caput(pre + ":STRINGOUT", "something", wait=True)
         assert caget(pre + ":STRINGOUT") == "something"
+        # STRINGOUT alias: same underlying record, reached by a different name
+        assert caget(pre + ":STRINGOUT_ALIAS") == "something"
+        caput(pre + ":STRINGOUT_ALIAS", "watevah", wait=True)
+        assert caget(pre + ":STRINGOUT") == "watevah"
         # Check pvaccess works
         from p4p.client.cothread import Context
         with Context("pva") as ctx:

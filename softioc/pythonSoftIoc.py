@@ -5,7 +5,7 @@ iocbuilder in this way, but it makes structural sense this way.'''
 
 
 import epicsdbbuilder
-from . import device
+from . import alias, device
 
 
 class RecordWrapper(object):
@@ -32,8 +32,14 @@ class RecordWrapper(object):
             if keyword in fields:
                 device_kargs[keyword] = fields.pop(keyword)
 
+        record_alias = fields.pop('alias', None)
+
+        alias.check_record_name(name)
         record = builder(name, **fields)
         record.address = '@' + record.name
+        if record_alias is not None:
+            alias.add_alias(record, record_alias)
+        alias.register_record(record)
         self.__set('__builder', record)
         self.__set('__device',  device(record.name, **device_kargs))
         self.__Instances.append(self)

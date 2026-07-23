@@ -10,6 +10,11 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
+Nothing yet!
+
+4.7.1_ - 2026-07-23
+-------------------
+
 Fixed:
 
 - `Correctly set alarms during blocking processing <../../pull/209>`_
@@ -250,7 +255,9 @@ Added:
 Last release as an EPICS module rather than a Python package
 
 .. _Unreleased:
-    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.7.0...HEAD
+    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.7.1...HEAD
+.. _4.7.1:
+    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.7.0...4.7.1
 .. _4.7.0:
     https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.6.1...4.7.0
 .. _4.6.1:

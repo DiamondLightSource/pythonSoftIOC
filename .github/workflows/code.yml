@@ -58,17 +58,14 @@ jobs:
 
 
         include:
-          # Put coverage and results files in the project directory for mac
+          # Put results files in the project directory for mac
           - os: macos-15-intel
-            cov_file: "{project}/dist/coverage.xml"
             results_file: "{project}/dist/pytest-results.xml"
           # And for windows
           - os: windows-latest
-            cov_file: "{project}/dist/coverage.xml"
             results_file: "{project}/dist/pytest-results.xml"
-          # But put coverage and results files in the output dir mounted in docker for linux
+          # But put results files in the output dir mounted in docker for linux
           - os: ubuntu-latest
-            cov_file: /output/coverage.xml
             results_file: /output/pytest-results.xml
 
         exclude:
@@ -112,9 +109,9 @@ jobs:
           # cibuildwheel reports it cannot clean up the temp dir used for testing,
           # and fails the build. Sleeping seems to give pytest enough time to
           # fully clean up.
-          CIBW_TEST_COMMAND: pytest {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }} && sleep 2
+          CIBW_TEST_COMMAND: pytest {project}/tests --junit-xml=${{ matrix.results_file }} && sleep 2
           # Run with faulthandler and -s in the hope we get a stack trace on seg fault on windows...
-          CIBW_TEST_COMMAND_WINDOWS: python -X faulthandler -m pytest -s {project}/tests --cov-report xml:${{ matrix.cov_file }} --junit-xml=${{ matrix.results_file }}
+          CIBW_TEST_COMMAND_WINDOWS: python -X faulthandler -m pytest -s {project}/tests --junit-xml=${{ matrix.results_file }}
           # Disable auditwheel as it isn't compatible with setuptools_dso approach
           # https://github.com/mdavidsaver/setuptools_dso/issues/17
           CIBW_REPAIR_WHEEL_COMMAND: ""
@@ -129,12 +126,6 @@ jobs:
         with:
           name: dist-${{ matrix.os }}-${{ matrix.python }}
           path: dist/softioc*
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          name: ${{ matrix.os }}/${{ matrix.python }}
-          directory: dist
 
   test-sdist:
     needs: [sdist]

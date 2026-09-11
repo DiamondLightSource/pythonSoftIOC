@@ -10,7 +10,7 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
-Nothing yet!
+- `Add Python3.14 non-free-threading builds <../../pull/212>`_
 
 4.7.1_ - 2026-07-23
 -------------------

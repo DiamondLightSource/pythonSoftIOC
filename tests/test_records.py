@@ -1513,6 +1513,7 @@ class TestRecursiveSet:
 
         from aioca import caput, camonitor
 
+        i = 0
         try:
             # Wait for message that IOC has started
             select_and_recv(parent_conn, "R")

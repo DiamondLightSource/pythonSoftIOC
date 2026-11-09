@@ -34,7 +34,13 @@ jobs:
           pipenv install --dev --deploy --python $(which python) && pipenv graph
 
       - name: Build Docs
-        run: pipenv run docs
+        run: |
+          pipenv run python -c "import epicscorelibs.version; print(epicscorelibs.version.version)"
+          pipenv run python -c "import p4p; print(p4p.version)"
+          pipenv run python -c "import pvxslibs.version; print(pvxslibs.version.version)"
+          pipenv run python -c "import aioca; print(aioca.__version__)"
+          pipenv run python -c "import cothread; print(cothread.__version__)"
+          pipenv run docs
 
       - name: Move to versioned directory
         # e.g. master or 0.1.2

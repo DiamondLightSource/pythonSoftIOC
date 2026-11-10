@@ -17,9 +17,12 @@ Changed:
   pydata-sphinx-theme docs and a reusable-workflow CI layout. Wheels are
   still built and tested with cibuildwheel.
 - Version numbers are now calculated by setuptools_scm.
+- The ``dev`` extra is replaced by a ``dev`` dependency group: use ``uv sync``
+  to install a development environment.
 
 Removed:
 
+- The ``dev`` extra, see above.
 - Support for Python 3.7 to 3.10. Python 3.11 or later is now required.
 
 .. _python-copier-template: https://github.com/DiamondLightSource/python-copier-template

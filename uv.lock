@@ -8,6 +8,9 @@ resolution-markers = [
     "python_full_version < '3.11.5'",
 ]
 
+[manifest]
+build-constraints = [{ name = "epicscorelibs", specifier = "==7.0.10.99.0.2" }]
+
 [[package]]
 name = "accessible-pygments"
 version = "0.0.5"

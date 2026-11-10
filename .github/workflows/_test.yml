@@ -14,6 +14,9 @@ env:
   # https://github.com/pytest-dev/pytest/issues/2042
   PY_IGNORE_IMPORTMISMATCH: "1"
   UV_PYTHON: ${{ inputs.python-version }}
+  # Use the latest uv-managed patch release rather than the runner's system
+  # python: cothread segfaults in the tests on CPython 3.14.4 (fine on 3.14.5+)
+  UV_PYTHON_PREFERENCE: only-managed
 
 jobs:
   run:

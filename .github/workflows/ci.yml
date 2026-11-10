@@ -41,8 +41,9 @@ jobs:
     uses: ./.github/workflows/_pypi.yml
     permissions:
       id-token: write
-    # Pass the pypi_token secret through, if it is unset trusted publishing is used
-    secrets: inherit
+    secrets:
+      # If unset, trusted publishing is used
+      pypi_token: ${{ secrets.pypi_token }}
 
   release:
     needs: [dist, test, docs]

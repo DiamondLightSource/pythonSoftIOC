@@ -1,10 +1,7 @@
 {
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.organizeImports": "explicit"
-    },
+    "editor.formatOnSave": false,
     "files.insertFinalNewline": true,
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",

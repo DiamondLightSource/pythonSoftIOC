@@ -1,5 +1,9 @@
 on:
   workflow_call:
+    secrets:
+      pypi_token:
+        description: PyPI API token, if unset trusted publishing is used
+        required: false
 
 jobs:
   upload:

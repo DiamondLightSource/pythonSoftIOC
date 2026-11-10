@@ -4,7 +4,7 @@ Installation Tutorial
 .. note::
 
     For installation inside DLS, please see the internal documentation on
-    ``dls-python3`` and ``pipenv``. Although these instructions will work
+    ``dls-python3``. Although these instructions will work
     inside DLS, they are intended for external use.
 
     If you want to contribute to the library itself, please following
@@ -13,7 +13,7 @@ Installation Tutorial
 Check your version of python
 ----------------------------
 
-You will need python 3.7 or later. You can check your version of python by
+You will need python 3.11 or later. You can check your version of python by
 typing into a terminal::
 
     python3 --version
@@ -43,7 +43,7 @@ the first tutorial::
 If you require a feature that is not currently released you can also install
 from github::
 
-    python3 -m pip install git+git://github.com/DiamondLightSource/pythonSoftIOC.git
+    python3 -m pip install git+https://github.com/DiamondLightSource/pythonSoftIOC.git
 
 The library should now be installed and the commandline interface on your path.
 You can check the version that has been installed by typing::

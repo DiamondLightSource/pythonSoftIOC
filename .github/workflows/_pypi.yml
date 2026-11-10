@@ -1,0 +1,22 @@
+on:
+  workflow_call:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    environment: release
+
+    steps:
+      - name: Download sdist and wheel artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: dist-*
+          path: dist
+          merge-multiple: true
+
+      - name: Publish to PyPI using trusted publishing
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: false
+          # Use the pypi_token secret if set, otherwise trusted publishing
+          password: ${{ secrets.pypi_token }}

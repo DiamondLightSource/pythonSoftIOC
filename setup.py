@@ -1,19 +1,13 @@
+# Metadata is in pyproject.toml, this file only defines the C extension and the
+# dependencies that need computing at build time.
+# The version is calculated by setuptools_scm.
 import os
-import sys
 
 from setuptools.command.develop import develop
 import epicscorelibs.path
 import epicscorelibs.version
 from setuptools_dso import Extension, setup
 from epicscorelibs.config import get_config_var
-
-# Place the directory containing _version_git on the path
-TOP = os.path.dirname(os.path.abspath(__file__))
-for d in os.listdir(TOP):
-    if os.path.exists(os.path.join(TOP, d, "_version_git.py")):
-        sys.path.append(os.path.join(TOP, d))
-
-from _version_git import __version__, get_cmdclass  # noqa
 
 sources = ['softioc/extension.c']
 
@@ -98,16 +92,16 @@ class Develop(develop):
 
 
 setup(
-    cmdclass=dict(develop=Develop, **get_cmdclass()),
-    version=__version__,
+    cmdclass=dict(develop=Develop),
     ext_modules = [ext],
+    # Declared as dynamic in pyproject.toml
     install_requires = [
-        # Dependency version declared in pyproject.toml
+        # Pin to the ABI of the epicscorelibs we were built against, the
+        # build-time requirement is declared in pyproject.toml
         epicscorelibs.version.abi_requires(),
         "pvxslibs>=1.3.2a2",
         "numpy",
         "epicsdbbuilder>=1.4",
         "pyyaml>=6.0"
     ],
-    zip_safe = False,  # setuptools_dso is not compatible with eggs!
 )

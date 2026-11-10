@@ -10,7 +10,19 @@ Versioning <https://semver.org/spec/v2.0.0.html>`_.
 Unreleased_
 -----------
 
-Nothing yet!
+Changed:
+
+- Adopt the `python-copier-template`_: pyproject.toml metadata, uv.lock
+  instead of Pipfile, ruff instead of flake8, pyright, pre-commit, tox,
+  pydata-sphinx-theme docs and a reusable-workflow CI layout. Wheels are
+  still built and tested with cibuildwheel.
+- Version numbers are now calculated by setuptools_scm.
+
+Removed:
+
+- Support for Python 3.7 to 3.10. Python 3.11 or later is now required.
+
+.. _python-copier-template: https://github.com/DiamondLightSource/python-copier-template
 
 4.7.2_ - 2026-09-11
 -------------------

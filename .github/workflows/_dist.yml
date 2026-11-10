@@ -1,0 +1,118 @@
+# Unlike the python-copier-template's _dist.yml this builds binary wheels of the
+# C extension for each platform and python version with cibuildwheel, and tests
+# each wheel with the full test suite.
+on:
+  workflow_call:
+
+jobs:
+  sdist:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Need this to get version number from last tag
+          fetch-depth: 0
+          # iocStats sources are needed in the sdist
+          submodules: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.2
+
+      - name: Build sdist
+        run: >
+          export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct) &&
+          uv build --sdist
+
+      - name: Upload sdist as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist-sdist
+          path: dist
+
+      - name: Check for packaging errors
+        run: uvx twine check --strict dist/*
+
+  wheels:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-15-intel]
+        python: [cp311, cp312, cp313, cp314]
+
+        include:
+          # Put results files in the project directory for mac
+          - os: macos-15-intel
+            results_file: "{project}/dist/pytest-results.xml"
+          # And for windows
+          - os: windows-latest
+            results_file: "{project}/dist/pytest-results.xml"
+          # But put results files in the output dir mounted in docker for linux
+          - os: ubuntu-latest
+            results_file: /output/pytest-results.xml
+
+    name: wheels/${{ matrix.os }}/${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Need this to get version number from last tag
+          fetch-depth: 0
+          # iocStats is needed to build the extension
+          submodules: true
+
+      - name: Build and test wheel
+        uses: pypa/cibuildwheel@v4.3.5
+        with:
+          output-dir: dist
+        env:
+          CIBW_BUILD: ${{ matrix.python }}*64
+          CIBW_TEST_GROUPS: dev
+          # Added a sleep command afterwards to let all cleanup finish; sometimes
+          # cibuildwheel reports it cannot clean up the temp dir used for testing,
+          # and fails the build. Sleeping seems to give pytest enough time to
+          # fully clean up.
+          CIBW_TEST_COMMAND: pytest {project}/tests --junit-xml=${{ matrix.results_file }} && sleep 2
+          # Run with faulthandler and -s in the hope we get a stack trace on seg fault on windows...
+          CIBW_TEST_COMMAND_WINDOWS: python -X faulthandler -m pytest -s {project}/tests --junit-xml=${{ matrix.results_file }}
+          # Disable auditwheel as it isn't compatible with setuptools_dso approach
+          # https://github.com/mdavidsaver/setuptools_dso/issues/17
+          CIBW_REPAIR_WHEEL_COMMAND: ""
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+          CIBW_ENVIRONMENT_LINUX: SETUPTOOLS_DSO_PLAT_NAME=manylinux2014_x86_64
+          # epicscorelibs doesn't build on musllinux platforms
+          # Ensure we never use free-threaded variants, as we (and our EPICS python dependencies) do not support it
+          CIBW_SKIP: "*-musllinux* cp3??t-*"
+
+      - name: Upload wheel as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist-${{ matrix.os }}-${{ matrix.python }}
+          path: dist/softioc*
+
+  test-sdist:
+    needs: [sdist]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-15-intel]
+        python: ["3.11", "3.12", "3.13", "3.14"]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Download sdist artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: dist-sdist
+          path: dist
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.2
+
+      - name: Install sdist in a venv and check cli works
+        run: uvx --python ${{ matrix.python }} --from "$(ls dist/*.tar.gz)" pythonSoftIOC --version
+        shell: bash

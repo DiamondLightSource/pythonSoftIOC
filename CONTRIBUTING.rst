@@ -16,12 +16,23 @@ Running the tests
 
 To get the source source code and run the unit tests, run::
 
-    $ git clone git://github.com/DiamondLightSource/pythonSoftIoc.git
-    $ cd pythonSoftIoc
-    $ git submodule init
-    $ git submodule update
-    $ pipenv install --dev
-    $ pipenv run tests
+    $ git clone --recurse-submodules https://github.com/DiamondLightSource/pythonSoftIOC.git
+    $ cd pythonSoftIOC
+    $ uv sync
+    $ uv run tox -e tests
+
+``uv sync`` builds the extension and installs it, with the ``dev`` dependency
+group, into a virtual environment. ``uv run tox -p`` runs the tests, lint, type
+checking and docs build in parallel.
+
+This project was created using the `python-copier-template`_; its
+`how-to guides`_ describe common tasks such as setting up a developer
+environment and installing the pre-commit hooks.
+
+.. _python-copier-template:
+    https://github.com/DiamondLightSource/python-copier-template
+.. _how-to guides:
+    https://diamondlightsource.github.io/python-copier-template/5.5.0/how-to.html
 
 While 100% code coverage does not make a library bug-free, it significantly
 reduces the number of easily caught bugs! Please make sure coverage remains the
@@ -36,22 +47,23 @@ C files and built libraries. If it is necessary to update any of them, the
 safest way to do that is::
 
     $ Ensure all changes are committed/saved/backed up
-    $ pipenv run gitclean
-    $ pipenv --rm
-    $ rm Pipfile.lock
-    $ Update dependencies in setup.cfg / pyproject.toml
-    $ pipenv install --dev
+    $ git clean -fdX
+    $ Update dependencies in pyproject.toml / setup.py
+    $ uv lock --upgrade
+    $ uv sync
 
 Code Styling
 ------------
 
 The code in this repository conforms to standards set by the following tools:
 
-- flake8_ for style checks
+- ruff_ for style checks
+- pyright_ for type checks
 
-.. _flake8: http://flake8.pycqa.org/en/latest/
+.. _ruff: https://docs.astral.sh/ruff/
+.. _pyright: https://microsoft.github.io/pyright/
 
-These tests will be run on code when running ``pipenv run tests`` and also
+These are run by ``uv run tox -e pre-commit,type-checking`` and also
 automatically at check in. Please read the tool documentation for details
 on how to fix the errors it reports.
 
@@ -75,7 +87,7 @@ Docs follow the underlining convention::
 
 You can build the docs from the project directory by running::
 
-    $ pipenv run docs
+    $ uv run tox -e docs
     $ firefox build/html/index.html
 
 
@@ -90,5 +102,4 @@ To make a new release, please follow this checklist:
 - Push to github and the actions will make a release on pypi
 - Push to internal gitlab but do not release from there
 - Run ``dls-py3 download-one-dependency softioc <release>``
-- Run ``cp Pipfile.lock /dls_sw/work/python3/RHEL7-x86_64/distributions/softioc-<release>.Pipfile.lock``
 - Run ``dls-release.py -a python3ext softioc <release>``

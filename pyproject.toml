@@ -1,3 +1,237 @@
 [build-system]
-requires = ["setuptools", "wheel", "setuptools_dso>=2.1", "epicscorelibs>=7.0.7.99.1.1a3"]
-build-backend = "setuptools.build_meta:__legacy__"
+requires = [
+    "setuptools>=64",
+    "setuptools_scm[toml]>=8",
+    "setuptools_dso>=2.1",
+    "epicscorelibs>=7.0.7.99.1.1a3",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "softioc"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+description = "Embed an EPICS IOC in a Python process"
+# dependencies are set in setup.py as they include an epicscorelibs ABI pin
+# computed at build time by epicscorelibs.version.abi_requires()
+dynamic = ["version", "dependencies"]
+license.file = "LICENSE"
+readme = "README.rst"
+requires-python = ">=3.11"
+
+[project.optional-dependencies]
+# Useful extras for use at DLS
+useful = ["cothread", "scipy", "aioca>=1.6"]
+
+[dependency-groups]
+dev = [
+    "aioca>=1.6",
+    "cothread; sys_platform != 'win32'",
+    "myst-parser",
+    "p4p>=4.2.0a2",
+    "pre-commit",
+    "pydata-sphinx-theme>=0.12",
+    "pyright",
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+    "sphinx-autobuild",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "tox-uv",
+    "types-mock",
+]
+
+[project.scripts]
+pythonSoftIOC = "softioc.__main__:main"
+
+[project.urls]
+GitHub = "https://github.com/DiamondLightSource/pythonSoftIOC"
+
+[[project.authors]] # Further authors may be added by duplicating this section
+email = "Michael.Abbott@diamond.ac.uk"
+name = "Michael Abbott"
+
+[tool.setuptools]
+packages = ["softioc"]
+# Only ship the package-data below in wheels, not every file in git
+include-package-data = false
+zip-safe = false # setuptools_dso is not compatible with eggs!
+
+[tool.setuptools.package-data]
+softioc = [
+    "access.acf",
+    "device.dbd",
+    "iocStats/devIocStats/*",
+    "iocStats/iocAdmin/Db/*",
+    # Include the OS specific files in the sdist, even
+    # if not packaged by setup.py (as we only build sdist on one arch)
+    "iocStats/devIocStats/os/default/*",
+    "iocStats/devIocStats/os/posix/*",
+    "iocStats/devIocStats/os/Darwin/*",
+    "iocStats/devIocStats/os/WIN32/*",
+    "iocStats/devIocStats/os/Linux/*",
+]
+
+[tool.uv]
+# Minimum uv to fix eMudhra CA cert incident (see discuss.python.org/t/109576)
+required-version = ">=0.13.5"
+
+[tool.setuptools_scm]
+version_file = "softioc/_version.py"
+
+[tool.pyright]
+# The codebase is largely untyped, so use "basic" rather than the template's
+# "standard" and turn off the rules it currently violates.
+# Temporary: tighten this up in a follow-up PR
+typeCheckingMode = "basic"
+reportMissingImports = false # Ignore missing stubs in imported modules
+# iocStats is a git submodule of third party code
+exclude = ["softioc/iocStats"]
+reportArgumentType = false
+reportAssignmentType = false
+reportAttributeAccessIssue = false
+reportOperatorIssue = false
+reportOptionalCall = false
+reportOptionalMemberAccess = false
+reportOptionalSubscript = false
+reportUndefinedVariable = false # names from `from x import *`
+reportUnusedExpression = false
+reportWildcardImportFromLibrary = false
+
+[tool.pytest.ini_options]
+# Run pytest with all our checkers, and don't spam us with massive tracebacks on error
+addopts = """
+    --tb=native -vv --doctest-modules --ignore=softioc/iocStats
+    """
+# Enables all discovered async tests and fixtures to be automatically marked as
+# async, even if they don't have a specific marker
+# https://github.com/pytest-dev/pytest-asyncio#auto-mode
+asyncio_mode = "auto"
+# The template's filterwarnings = "error" is not used yet as the tests raise
+# warnings (e.g. unclosed files) that need fixing first
+# Doctest python code in softioc docstrings, test functions in tests
+testpaths = "softioc tests"
+
+[tool.tox]
+skipsdist = true
+# envs to runs automatically with tox -p
+env_list = ["pre-commit", "type-checking", "tests", "docs"]
+
+[tool.tox.env_run_base]
+# Pass all environment variables to the test environments
+passenv = ["*"]
+
+[tool.tox.env.pre-commit]
+description = "Run pre-commit on all files"
+commands = [
+    [
+        "pre-commit",
+        "run",
+        "--all-files",
+        "--show-diff-on-failure",
+        { replace = "posargs", default = [
+        ], extend = true },
+    ],
+]
+
+[tool.tox.env.type-checking]
+description = "Run pyright"
+commands = [
+    [
+        "pyright",
+        "--pythonpath",
+        "{env:VIRTUAL_ENV}/bin/python",
+        "softioc",
+        "tests",
+        { replace = "posargs", default = [
+        ], extend = true },
+    ],
+]
+
+[tool.tox.env.tests]
+# Coverage is not collected as it interferes with cothread, see
+# https://github.com/DiamondLightSource/cothread/issues/73
+description = "Run tests"
+commands = [
+    [
+        "pytest",
+        { replace = "posargs", default = [
+        ], extend = true },
+    ],
+]
+
+[tool.tox.env.docs]
+description = "Run docs build with clean environment"
+commands = [
+    [
+        "sphinx-build",
+        "--fresh-env",
+        "--show-traceback",
+        "--fail-on-warning",
+        "--keep-going",
+        "docs",
+        "build/html",
+        { replace = "posargs", default = [
+        ], extend = true },
+    ],
+]
+
+[tool.tox.env.docs-autobuild]
+description = "Run docs with autobuild on change"
+commands = [
+    [
+        "sphinx-autobuild",
+        "--show-traceback",
+        "--watch",
+        "README.rst",
+        "docs",
+        "build/html",
+        { replace = "posargs", default = [
+        ], extend = true },
+    ],
+]
+
+[tool.ruff]
+src = [".", "tests"]
+line-length = 88
+lint.select = [
+    "B",   # flake8-bugbear - https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
+    "C4",  # flake8-comprehensions - https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
+    "E",   # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
+    "F",   # pyflakes rules - https://docs.astral.sh/ruff/rules/#pyflakes-f
+    "N",   # pep8-naming - https://docs.astral.sh/ruff/rules/#pep8-naming-n
+    "W",   # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#warning-w
+    "I",   # isort - https://docs.astral.sh/ruff/rules/#isort-i
+    "UP",  # pyupgrade - https://docs.astral.sh/ruff/rules/#pyupgrade-up
+    "SLF", # self - https://docs.astral.sh/ruff/settings/#lintflake8-self
+]
+# iocStats is a git submodule of third party code
+extend-exclude = ["softioc/iocStats"]
+lint.ignore = [
+    # Permanent: the public API uses camelCase names like aOut and SetDeviceName
+    "N",
+    # Permanent: allow `from module import *` re-exports, as under flake8
+    "F401",
+    "F403",
+    "F405",
+    # Temporary, see #214: fix these in a follow-up PR then remove them here
+    "I001",
+    "UP",
+    "SLF001",
+    "B",
+    "C4",
+    "E721",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# By default, private member access is allowed in tests
+# See https://github.com/DiamondLightSource/python-copier-template/issues/154
+# Remove this line to forbid private member access in tests
+"tests/**/*" = ["SLF001"]

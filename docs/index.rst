@@ -72,6 +72,7 @@ Table Of Contents
 
     explanations/why-use-pythonSoftIOC
     explanations/asyncio-cothread-differences
+    explanations/decisions
 
 .. toctree::
     :caption: Reference

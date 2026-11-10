@@ -1,7 +1,7 @@
 pythonSoftIOC
 =============
 
-|code_ci| |docs_ci| |coverage| |pypi_version| |license|
+|ci| |coverage| |pypi_version| |license|
 
 
 This module allows an EPICS IOC with Python Device Support to be run from within
@@ -47,13 +47,9 @@ A simple example of the use of this library:
     # Finally leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
 
-.. |code_ci| image:: https://github.com/DiamondLightSource/pythonSoftIOC/workflows/Code%20CI/badge.svg?branch=master
-    :target: https://github.com/DiamondLightSource/pythonSoftIOC/actions?query=workflow%3A%22Code+CI%22
-    :alt: Code CI
-
-.. |docs_ci| image:: https://github.com/DiamondLightSource/pythonSoftIOC/workflows/Docs%20CI/badge.svg?branch=master
-    :target: https://github.com/DiamondLightSource/pythonSoftIOC/actions?query=workflow%3A%22Docs+CI%22
-    :alt: Docs CI
+.. |ci| image:: https://github.com/DiamondLightSource/pythonSoftIOC/actions/workflows/ci.yml/badge.svg?branch=master
+    :target: https://github.com/DiamondLightSource/pythonSoftIOC/actions/workflows/ci.yml
+    :alt: CI
 
 .. |coverage| image:: https://codecov.io/gh/DiamondLightSource/pythonSoftIOC/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/DiamondLightSource/pythonSoftIOC

@@ -22,6 +22,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+**/_version.py
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -41,16 +42,33 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
-*,cover
-*.mypy_cache
-*.pytest_cache
 cov.xml
+.pytest_cache/
+.mypy_cache/
 
-# DLS build dir and virtual environment
-/prefix/
-/venv/
-/lightweight-venv/
-/installed.files
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+docs/_api
+
+# PyBuilder
+target/
+
+# likely venv names
+.venv*
+venv*
+
+# further build artifacts
+lockfiles/
+
+# ruff cache
+.ruff_cache/
 
 # Docs output
 /docs/papers/*/*.aux
@@ -61,10 +79,6 @@ cov.xml
 /docs/papers/*/*.toc
 /docs/papers/*/*.vrb
 
-# setup.py develop (via pipenv install) places this link here
-# so editable installs work. Related:
+# setup.py develop places this link here so editable installs work. Related:
 # https://github.com/mdavidsaver/setuptools_dso/issues/11
 /epicscorelibs
-
-# VSCode
-/.vscode/*.log

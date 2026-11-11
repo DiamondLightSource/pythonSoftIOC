@@ -85,7 +85,7 @@ docstrings of the API.
 Docs follow the underlining convention:
 
 ```
-Headling 1 (page title)
+Heading 1 (page title)
 =======================
 
 Heading 2

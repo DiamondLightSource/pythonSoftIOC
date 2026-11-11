@@ -83,11 +83,15 @@ softioc = [
 [tool.uv]
 # Minimum uv to fix eMudhra CA cert incident (see discuss.python.org/t/109576)
 required-version = ">=0.13.5"
+# This pin only affects uv.lock and the uv dev environment (uv sync).
+# Released wheels and sdists (cibuildwheel, pip) use the epicscorelibs floor in
+# [build-system] requires, so they always build against the newest
+# epicscorelibs and need no edit here.
 # softioc's dependencies include an ABI pin computed by setup.py from the
-# epicscorelibs it is built against. Pin that build-time epicscorelibs so the
-# metadata recorded in uv.lock doesn't change whenever a new epicscorelibs is
-# released, and the editable extension is built against the locked runtime
-# version. Bump this together with epicscorelibs in uv.lock.
+# epicscorelibs it is built against, so without this pin uv.lock would change
+# whenever a new epicscorelibs is released.
+# To move the dev environment to a newer epicscorelibs, edit this one pin, then
+# run `uv lock --upgrade-package epicscorelibs`. Renovate does not bump it.
 build-constraint-dependencies = ["epicscorelibs==7.0.10.99.0.2"]
 
 [tool.setuptools_scm]

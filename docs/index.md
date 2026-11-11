@@ -2,9 +2,12 @@
 html_theme.sidebar_secondary.remove: true
 ---
 
-```{include} ../README.rst
-:parser: rst
-:end-before: when included in index.md
+# pythonSoftIOC
+
+```{eval-rst}
+.. include:: ../README.rst
+    :start-after: replaced by the title in docs/index.md
+    :end-before: when included in index.md
 ```
 
 

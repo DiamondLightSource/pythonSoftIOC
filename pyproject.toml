@@ -60,6 +60,7 @@ name = "Michael Abbott"
 
 [tool.setuptools]
 packages = ["softioc"]
+package-dir = { "" = "src" }
 # Only ship the package-data below in wheels, not every file in git
 include-package-data = false
 zip-safe = false # setuptools_dso is not compatible with eggs!
@@ -90,7 +91,7 @@ required-version = ">=0.13.5"
 build-constraint-dependencies = ["epicscorelibs==7.0.10.99.0.2"]
 
 [tool.setuptools_scm]
-version_file = "softioc/_version.py"
+version_file = "src/softioc/_version.py"
 
 [tool.pyright]
 # The codebase is largely untyped, so use "basic" rather than the template's
@@ -99,7 +100,7 @@ version_file = "softioc/_version.py"
 typeCheckingMode = "basic"
 reportMissingImports = false # Ignore missing stubs in imported modules
 # iocStats is a git submodule of third party code
-exclude = ["softioc/iocStats"]
+exclude = ["src/softioc/iocStats"]
 reportArgumentType = false
 reportAssignmentType = false
 reportAttributeAccessIssue = false
@@ -114,7 +115,7 @@ reportWildcardImportFromLibrary = false
 [tool.pytest.ini_options]
 # Run pytest with all our checkers, and don't spam us with massive tracebacks on error
 addopts = """
-    --tb=native -vv --doctest-modules --ignore=softioc/iocStats
+    --tb=native -vv --doctest-modules --ignore=src/softioc/iocStats
     """
 # Enables all discovered async tests and fixtures to be automatically marked as
 # async, even if they don't have a specific marker
@@ -122,8 +123,8 @@ addopts = """
 asyncio_mode = "auto"
 # The template's filterwarnings = "error" is not used yet as the tests raise
 # warnings (e.g. unclosed files) that need fixing first, see #215
-# Doctest python code in softioc docstrings, test functions in tests
-testpaths = "softioc tests"
+# Doctest python code in src docstrings, test functions in tests
+testpaths = "src tests"
 
 [tool.tox]
 skipsdist = true
@@ -154,7 +155,7 @@ commands = [
         "pyright",
         "--pythonpath",
         "{env:VIRTUAL_ENV}/bin/python",
-        "softioc",
+        "src",
         "tests",
         { replace = "posargs", default = [
         ], extend = true },
@@ -205,7 +206,7 @@ commands = [
 ]
 
 [tool.ruff]
-src = [".", "tests"]
+src = ["src", "tests"]
 line-length = 88
 lint.select = [
     "B",   # flake8-bugbear - https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
@@ -219,7 +220,7 @@ lint.select = [
     "SLF", # self - https://docs.astral.sh/ruff/settings/#lintflake8-self
 ]
 # iocStats is a git submodule of third party code
-extend-exclude = ["softioc/iocStats"]
+extend-exclude = ["src/softioc/iocStats"]
 lint.ignore = [
     # Permanent: the public API uses camelCase names like aOut and SetDeviceName
     "N",

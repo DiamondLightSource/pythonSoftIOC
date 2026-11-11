@@ -81,4 +81,4 @@ lockfiles/
 
 # setup.py develop places this link here so editable installs work. Related:
 # https://github.com/mdavidsaver/setuptools_dso/issues/11
-/epicscorelibs
+/src/epicscorelibs

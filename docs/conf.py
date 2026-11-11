@@ -201,14 +201,6 @@ html_show_copyright = True
 html_logo = "images/softioc-logo.svg"
 html_favicon = "images/softioc-favicon.ico"
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
-
-# Add some CSS classes for columns and other tweaks in a custom css file
-html_css_files = ["theme_overrides.css"]
-
 # Common links that should be available on every page
 rst_epilog = """
 .. _epicscorelibs: https://github.com/mdavidsaver/epicscorelibs

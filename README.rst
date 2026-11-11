@@ -65,6 +65,6 @@ A simple example of the use of this library:
 
 ..
     Anything below this line is used when viewing README.rst and will be replaced
-    when included in index.rst
+    when included in index.md
 
 See https://DiamondLightSource.github.io/pythonSoftIOC for more detailed documentation.

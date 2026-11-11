@@ -1,31 +1,13 @@
 Changelog
 =========
 
-All notable changes to this project will be documented in this file.
+This file is frozen at 4.7.2. Releases after 4.7.2 are documented in
+`GitHub Releases <https://github.com/DiamondLightSource/pythonSoftIOC/releases>`_,
+with release notes generated from the titles of the merged pull requests.
 
-The format is based on `Keep a Changelog
+The entries below follow the format of `Keep a Changelog
 <https://keepachangelog.com/en/1.0.0/>`_, and this project adheres to `Semantic
 Versioning <https://semver.org/spec/v2.0.0.html>`_.
-
-Unreleased_
------------
-
-Changed:
-
-- Adopt the `python-copier-template`_: pyproject.toml metadata, uv.lock
-  instead of Pipfile, ruff instead of flake8, pyright, pre-commit, tox,
-  pydata-sphinx-theme docs and a reusable-workflow CI layout. Wheels are
-  still built and tested with cibuildwheel.
-- Version numbers are now calculated by setuptools_scm.
-- The ``dev`` extra is replaced by a ``dev`` dependency group: use ``uv sync``
-  to install a development environment.
-
-Removed:
-
-- The ``dev`` extra, see above.
-- Support for Python 3.7 to 3.10. Python 3.11 or later is now required.
-
-.. _python-copier-template: https://github.com/DiamondLightSource/python-copier-template
 
 4.7.2_ - 2026-09-11
 -------------------
@@ -274,8 +256,6 @@ Added:
 
 Last release as an EPICS module rather than a Python package
 
-.. _Unreleased:
-    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.7.2...HEAD
 .. _4.7.2:
     https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.7.1...4.7.2
 .. _4.7.1:

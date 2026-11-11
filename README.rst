@@ -13,7 +13,7 @@ asyncio for concurrency. PVs are served over Channel Access and PVAccess.
 PyPI           ``pip install softioc``
 Source code    https://github.com/DiamondLightSource/pythonSoftIOC
 Documentation  https://DiamondLightSource.github.io/pythonSoftIOC
-Changelog      https://github.com/DiamondLightSource/pythonSoftIOC/blob/master/CHANGELOG.rst
+Releases       https://github.com/DiamondLightSource/pythonSoftIOC/releases
 ============== ==============================================================
 
 A simple example of the use of this library:

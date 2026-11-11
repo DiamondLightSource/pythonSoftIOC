@@ -1,12 +1,9 @@
 {
-    "editor.defaultFormatter": "ms-python.python",
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true,
-    "python.testing.pytestArgs": [],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.languageServer": "Pylance",
-    "files.trimTrailingWhitespace": true,
-    "files.trimFinalNewlines": true,
+    "editor.formatOnSave": false,
+    "files.insertFinalNewline": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+    },
 }

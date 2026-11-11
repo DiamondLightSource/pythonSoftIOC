@@ -94,5 +94,3 @@ to mix `asyncio` and `cothread`, it's messy and tricky to get right. Better to
 keep to one if possible.
 
 .. _aio-libs: https://github.com/aio-libs
-
-

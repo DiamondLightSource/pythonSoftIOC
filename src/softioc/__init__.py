@@ -12,7 +12,7 @@ import epicscorelibs.path.cothread  # noqa
 # This import will also pull in the extension, which is needed
 # before we call iocshRegisterCommon
 from .imports import dbLoadDatabase, registerRecordDeviceDriver
-from ._version_git import __version__
+from ._version import __version__
 
 # Need to do this before calling anything in device.py
 iocshRegisterCommon()

@@ -1,16 +1,13 @@
 Changelog
 =========
 
-All notable changes to this project will be documented in this file.
+This file is frozen at 4.7.2. Releases after 4.7.2 are documented in
+`GitHub Releases <https://github.com/DiamondLightSource/pythonSoftIOC/releases>`_,
+with release notes generated from the titles of the merged pull requests.
 
-The format is based on `Keep a Changelog
+The entries below follow the format of `Keep a Changelog
 <https://keepachangelog.com/en/1.0.0/>`_, and this project adheres to `Semantic
 Versioning <https://semver.org/spec/v2.0.0.html>`_.
-
-Unreleased_
------------
-
-Nothing yet!
 
 4.7.2_ - 2026-09-11
 -------------------
@@ -259,8 +256,6 @@ Added:
 
 Last release as an EPICS module rather than a Python package
 
-.. _Unreleased:
-    https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.7.2...HEAD
 .. _4.7.2:
     https://github.com/DiamondLightSource/pythonSoftIOC/compare/4.7.1...4.7.2
 .. _4.7.1:

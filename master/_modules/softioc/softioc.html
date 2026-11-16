@@ -1,122 +1,491 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>softioc.softioc &mdash; pythonSoftIOC 4.7.1+6.g4cb7ce4 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
-    <link rel="shortcut icon" href="../../_static/softioc-favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>softioc.softioc &#8212; pythonSoftIOC 4.7.3.dev13+gab929c817 documentation</title>
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/js/theme.js"></script>
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../_static/documentation_options.js?v=cf44b09b"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=30646c52"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/softioc/softioc';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://DiamondLightSource.github.io/pythonSoftIOC/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'master';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/softioc-favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
-</head>
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="master" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
-            <a href="../../index.html" class="icon icon-home"> pythonSoftIOC
-            <img src="../../_static/softioc-logo.svg" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                master
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/installation.html">Installation Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating-an-ioc.html">Creating an IOC</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-asyncio-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> in an IOC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-autosave-in-an-ioc.html">Use <code class="xref any docutils literal notranslate"><span class="pre">softioc.autosave</span></code> in an IOC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../how-to/make-publishable-ioc.html">Create a Publishable IOC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../how-to/read-data-from-ioc.html">Read data from an IOC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../how-to/use-soft-records.html">Use soft records in an IOC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../how-to/build-softioc-with-uv.html">Building pythonSoftIOC with <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../explanations/why-use-pythonSoftIOC.html">Why use pythonSoftIOC?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../explanations/asyncio-cothread-differences.html">What are the differences between <code class="xref any docutils literal notranslate"><span class="pre">asyncio</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">cothread</span></code>?</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../reference/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../reference/changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: rgb(7, 43, 93)" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">pythonSoftIOC</a>
-      </nav>
+  
+    
+  
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>softioc.softioc</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/softioc-logo.svg" class="logo__image only-light" alt=""/>
+    <img src="../../_static/softioc-logo.svg" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">pythonSoftIOC</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to.html">
+    How-to Guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../explanations.html">
+    Explanations
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference.html">
+    Reference
+  </a>
+</li>
+
   </ul>
-  <hr/>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/DiamondLightSource/pythonSoftIOC" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/softioc" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-cube fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to.html">
+    How-to Guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../explanations.html">
+    Explanations
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/DiamondLightSource/pythonSoftIOC" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/softioc" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-cube fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">softioc.softioc</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <h1>Source code for softioc.softioc</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">ctypes</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">atexit</span>
-<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ctypes</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">atexit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ctypes</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
 
-<span class="kn">import</span> <span class="nn">pvxslibs.path</span>
-<span class="kn">from</span> <span class="nn">epicscorelibs.ioc</span> <span class="kn">import</span> <span class="n">pdbbase</span>
-<span class="kn">from</span> <span class="nn">setuptools_dso.runtime</span> <span class="kn">import</span> <span class="n">find_dso</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pvxslibs.path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">epicscorelibs.ioc</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdbbase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">setuptools_dso.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_dso</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">autosave</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">device</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">cothread_dispatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">autosave</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">cothread_dispatcher</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dbLoadDatabase&#39;</span><span class="p">,</span> <span class="s1">&#39;iocInit&#39;</span><span class="p">,</span> <span class="s1">&#39;interactive_ioc&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'dbLoadDatabase'</span><span class="p">,</span> <span class="s1">'iocInit'</span><span class="p">,</span> <span class="s1">'interactive_ioc'</span><span class="p">]</span>
 
 
 <span class="c1"># tie in epicsAtExit() to interpreter lifecycle</span>
 <span class="nd">@atexit</span><span class="o">.</span><span class="n">register</span>
-<span class="k">def</span> <span class="nf">epicsAtPyExit</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">epicsAtPyExit</span><span class="p">():</span>
     <span class="n">imports</span><span class="o">.</span><span class="n">epicsExitCallAtExits</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="iocInit"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.iocInit">[docs]</a><span class="k">def</span> <span class="nf">iocInit</span><span class="p">(</span><span class="n">dispatcher</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enable_pva</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;This must be called exactly once after loading all EPICS database files.</span>
+<div class="viewcode-block" id="iocInit">
+<a class="viewcode-back" href="../../reference/api.html#softioc.softioc.iocInit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">iocInit</span><span class="p">(</span><span class="n">dispatcher</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enable_pva</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">'''This must be called exactly once after loading all EPICS database files.</span>
 <span class="sd">    After this point the EPICS IOC is running and serving PVs.</span>
 
 <span class="sd">    Args:</span>
@@ -127,7 +496,7 @@
 
 <span class="sd">    See Also:</span>
 <span class="sd">        `softioc.asyncio_dispatcher` is a dispatcher for `asyncio` applications</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">if</span> <span class="n">dispatcher</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Fallback to cothread</span>
         <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">cothread_dispatcher</span><span class="o">.</span><span class="n">CothreadDispatcher</span><span class="p">()</span>
@@ -135,8 +504,8 @@
     <span class="n">device</span><span class="o">.</span><span class="n">dispatcher</span> <span class="o">=</span> <span class="n">dispatcher</span>
 
     <span class="k">if</span> <span class="n">enable_pva</span><span class="p">:</span>
-        <span class="n">dbLoadDatabase</span><span class="p">(</span><span class="s1">&#39;pvxsIoc.dbd&#39;</span><span class="p">,</span> <span class="n">pvxslibs</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dbd_path</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="n">find_dso</span><span class="p">(</span><span class="s1">&#39;pvxslibs.lib.pvxsIoc&#39;</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">RTLD_GLOBAL</span><span class="p">)</span>
+        <span class="n">dbLoadDatabase</span><span class="p">(</span><span class="s1">'pvxsIoc.dbd'</span><span class="p">,</span> <span class="n">pvxslibs</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dbd_path</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="n">find_dso</span><span class="p">(</span><span class="s1">'pvxslibs.lib.pvxsIoc'</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">RTLD_GLOBAL</span><span class="p">)</span>
 
         <span class="n">imports</span><span class="o">.</span><span class="n">registerRecordDeviceDriver</span><span class="p">(</span><span class="n">pdbbase</span><span class="p">)</span>
 
@@ -144,18 +513,19 @@
     <span class="n">autosave</span><span class="o">.</span><span class="n">start_autosave_thread</span><span class="p">()</span></div>
 
 
-<span class="k">def</span> <span class="nf">safeEpicsExit</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Calls epicsExit() after ensuring Python exit handlers called.&#39;&#39;&#39;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;exitfunc&#39;</span><span class="p">):</span>  <span class="c1"># py 2.x</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">safeEpicsExit</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">'''Calls epicsExit() after ensuring Python exit handlers called.'''</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">'exitfunc'</span><span class="p">):</span>  <span class="c1"># py 2.x</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Calling epicsExit() will bypass any atexit exit handlers, so call</span>
             <span class="c1"># them explicitly now.</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exitfunc</span><span class="p">()</span>
         <span class="k">finally</span><span class="p">:</span>
-            <span class="c1"># Make sure we don&#39;t try the exit handlers more than once!</span>
+            <span class="c1"># Make sure we don't try the exit handlers more than once!</span>
             <span class="k">del</span> <span class="n">sys</span><span class="o">.</span><span class="n">exitfunc</span>
 
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">atexit</span><span class="p">,</span> <span class="s1">&#39;_run_exitfuncs&#39;</span><span class="p">):</span>  <span class="c1"># py 3.x</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">atexit</span><span class="p">,</span> <span class="s1">'_run_exitfuncs'</span><span class="p">):</span>  <span class="c1"># py 3.x</span>
         <span class="n">atexit</span><span class="o">.</span><span class="n">_run_exitfuncs</span><span class="p">()</span>
 
     <span class="c1"># calls epicsExitCallAtExits()</span>
@@ -168,7 +538,7 @@
 
 
 <span class="c1"># IOC Test facilities</span>
-<span class="k">def</span> <span class="nf">ExportTest</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">argtypes</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="p">(),</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;no description yet&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ExportTest</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">argtypes</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="p">(),</span> <span class="n">description</span><span class="o">=</span><span class="s1">'no description yet'</span><span class="p">,</span>
                <span class="n">lib</span><span class="o">=</span><span class="n">imports</span><span class="o">.</span><span class="n">dbCore</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
     <span class="n">f</span><span class="o">.</span><span class="n">argtypes</span> <span class="o">=</span> <span class="n">argtypes</span>
@@ -176,7 +546,7 @@
 
     <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">argtypes</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">call_f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call_f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="n">missing</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">missing</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Add in the missing arguments from the given defaults</span>
@@ -192,40 +562,40 @@
 <span class="n">auto_encode</span> <span class="o">=</span> <span class="n">imports</span><span class="o">.</span><span class="n">auto_encode</span>
 
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dba&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dba'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dba(field)</span>
 
-<span class="s1">Prints value of each field in dbAddr structure associated with field.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Prints value of each field in dbAddr structure associated with field.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbl&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
-<span class="s1">dbl(pattern=&#39;&#39;, fields=&#39;&#39;)</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbl'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="s1">''</span><span class="p">),</span> <span class="s1">'''</span><span class="se">\</span>
+<span class="s1">dbl(pattern='', fields='')</span>
 
 <span class="s1">Prints the names of records in the database matching pattern.  If a (space</span>
 <span class="s1">separated) list of fields is also given then the values of the fields are also</span>
-<span class="s1">printed.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">printed.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbnr&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbnr'</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbnr(all=0)</span>
 
-<span class="s1">Print number of records of each record type.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Print number of records of each record type.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbgrep&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbgrep'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbgrep(pattern)</span>
 
 <span class="s1">Lists all record names that match the pattern. * matches any number of</span>
-<span class="s1">characters in a record name.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">characters in a record name.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbgf&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbgf'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbgf(field)</span>
 
-<span class="s1">Prints field type and value.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Prints field type and value.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbpf&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbpf'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbpf(field, value)</span>
 
-<span class="s1">Writes the given value into the field.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Writes the given value into the field.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbpr&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbpr'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbpr(record, interest=0)</span>
 
 <span class="s1">Prints all the fields in record up to the indicated interest level:</span>
@@ -236,66 +606,66 @@
 <span class="s1">2 System developer fields of major interest</span>
 <span class="s1">3 System developer fields of minor interest</span>
 <span class="s1">4 All other fields</span>
-<span class="s1">= ========================================================&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">= ========================================================'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbtr&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbtr'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbtr(record)</span>
 
-<span class="s1">Tests processing of the specified record.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Tests processing of the specified record.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbtgf&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbtgf'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbtgf(field_name)</span>
 
 <span class="s1">This performs a dbNameToAddr and then calls dbGetField with all possible request</span>
 <span class="s1">types and options. It prints the results of each call. This routine is of most</span>
-<span class="s1">interest to system developers for testing database access.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">interest to system developers for testing database access.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbtpf&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbtpf'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbtpf(field_name, value)</span>
 
 <span class="s1">This command performs a dbNameToAddr, then calls dbPutField, followed by dbgf</span>
 <span class="s1">for each possible request type. This routine is of interest to system developers</span>
-<span class="s1">for testing database access.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">for testing database access.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbtpn&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbtpn'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbtpn(field, value)</span>
 
 <span class="s1">This command performs a dbProcessNotify request. If a non-null value argument</span>
 <span class="s1">string is provided it issues a putProcessRequest to the named record; if no</span>
 <span class="s1">value is provided it issues a processGetRequest. This routine is mainly of</span>
-<span class="s1">interest to system developers for testing database access.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">interest to system developers for testing database access.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbior&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
-<span class="s1">dbior(driver=&#39;&#39;, interest=0)</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbior'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="mi">0</span><span class="p">,),</span> <span class="s1">'''</span><span class="se">\</span>
+<span class="s1">dbior(driver='', interest=0)</span>
 
 <span class="s1">Prints driver reports for the selected driver (or all drivers if driver is</span>
-<span class="s1">omitted) at the given interest level.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">omitted) at the given interest level.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbhcr&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbhcr'</span><span class="p">,</span> <span class="p">(),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbhcr()</span>
 
-<span class="s1">Prints hardware configuration report.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Prints hardware configuration report.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;gft&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'gft'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">gft(field)</span>
 
-<span class="s1">Get Field Test for old database access&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Get Field Test for old database access'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;pft&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'pft'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">pft(field, value)</span>
 
-<span class="s1">Put Field Test for old database access&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Put Field Test for old database access'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;tpn&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'tpn'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">tpn(field, value)</span>
 
-<span class="s1">Test Process Notify for old database access&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Test Process Notify for old database access'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dblsr&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dblsr'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dblsr(recordname, level)</span>
 
 <span class="s1">This command generates a report showing the lock set to which each record</span>
-<span class="s1">belongs. If recordname is 0, &quot;&quot;, or &quot;*&quot; all records are shown, otherwise only</span>
+<span class="s1">belongs. If recordname is 0, "", or "*" all records are shown, otherwise only</span>
 <span class="s1">records in the same lock set as recordname are shown.</span>
 
 <span class="s1">level can have the following values:</span>
@@ -304,33 +674,33 @@
 <span class="s1">0 Show lock set information only</span>
 <span class="s1">1 Show each record in the lock set</span>
 <span class="s1">2 Show each record and all database links in the lock set</span>
-<span class="s1">= =======================================================&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">= ======================================================='''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbLockShowLocked&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbLockShowLocked'</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbLockShowLocked(level)</span>
 
 <span class="s1">This command generates a report showing all locked locksets, the records they</span>
 <span class="s1">contain, the lockset state and the thread that currently owns the lockset. The</span>
 <span class="s1">level argument is passed to epicsMutexShow to adjust the information reported</span>
-<span class="s1">about each locked epicsMutex.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">about each locked epicsMutex.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;scanppl&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_double</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'scanppl'</span><span class="p">,</span> <span class="p">(</span><span class="n">c_double</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">scanppl(rate=0.0)</span>
 
-<span class="s1">Prints all records with the selected scan rate (or all if rate=0).&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Prints all records with the selected scan rate (or all if rate=0).'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;scanpel&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'scanpel'</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">scanpel(event=0)</span>
 
-<span class="s1">Prints all records with selected event number (or all if event=0).&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Prints all records with selected event number (or all if event=0).'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;scanpiol&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'scanpiol'</span><span class="p">,</span> <span class="p">(),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">scanpiol()</span>
 
-<span class="s1">Prints all records in the I/O event scan lists.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">Prints all records in the I/O event scan lists.'''</span><span class="p">)</span>
 
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;casr&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'casr'</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">casr(level=0)</span>
 
 <span class="s1">Channel Access Server Report - print information regarding all connected CA</span>
@@ -339,16 +709,16 @@
 <span class="s1">= ==================================================================</span>
 <span class="s1">0 Show a one line summary of each connected client</span>
 <span class="s1">1 Show additional information for each client</span>
-<span class="s1">2 Also show additional information about the server&#39;s free resources</span>
+<span class="s1">2 Also show additional information about the server's free resources</span>
 <span class="s1">= ==================================================================</span>
-<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbel&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbel'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbel(record_name)</span>
 
-<span class="s1">This routine prints the Channel Access event list for the specified record.&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">This routine prints the Channel Access event list for the specified record.'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;dbcar&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'dbcar'</span><span class="p">,</span> <span class="p">(</span><span class="n">auto_encode</span><span class="p">,</span> <span class="n">c_int</span><span class="p">),</span> <span class="p">(</span><span class="s2">"*"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">dbcar(record_name, level)</span>
 
 <span class="s1">Database to channel access report. This command generates a report showing</span>
@@ -363,82 +733,90 @@
 <span class="s1">1 Show summary and each CA link that is not connected.</span>
 <span class="s1">2 Show summary and status of each CA link</span>
 <span class="s1">= ==================================================================</span>
-<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">'''</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;generalTimeReport&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'generalTimeReport'</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">generalTimeReport(int level)</span>
 
 <span class="s1">This routine displays the time providers and their priority levels that have</span>
 <span class="s1">registered with the General Time subsystem for both current and event times. At</span>
-<span class="s1">level 1 it also shows the current time as obtained from each provider.&#39;&#39;&#39;</span><span class="p">,</span>
+<span class="s1">level 1 it also shows the current time as obtained from each provider.'''</span><span class="p">,</span>
            <span class="n">lib</span><span class="o">=</span><span class="n">imports</span><span class="o">.</span><span class="n">Com</span><span class="p">)</span>
 
-<span class="n">ExportTest</span><span class="p">(</span><span class="s1">&#39;eltc&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="n">ExportTest</span><span class="p">(</span><span class="s1">'eltc'</span><span class="p">,</span> <span class="p">(</span><span class="n">c_int</span><span class="p">,),</span> <span class="p">(),</span> <span class="s1">'''</span><span class="se">\</span>
 <span class="s1">eltc(noYes)</span>
 
 <span class="s1">This determines if error messages are displayed on the IOC console. 0 means no</span>
-<span class="s1">and any other value means yes.&#39;&#39;&#39;</span><span class="p">,</span>
+<span class="s1">and any other value means yes.'''</span><span class="p">,</span>
            <span class="n">lib</span><span class="o">=</span><span class="n">imports</span><span class="o">.</span><span class="n">Com</span><span class="p">)</span>
 
 
 <span class="c1"># Hacked up exit object so that when soft IOC framework sends us an exit command</span>
 <span class="c1"># we actually exit.</span>
-<span class="k">class</span> <span class="nc">Exiter</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># hack to exit when &quot;called&quot; with no parenthesis</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Exiter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># hack to exit when "called" with no parenthesis</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 
 <span class="n">exit</span> <span class="o">=</span> <span class="n">Exiter</span><span class="p">()</span>
-<span class="n">command_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;exit&#39;</span><span class="p">)</span>
+<span class="n">command_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'exit'</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="dbLoadDatabase"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.dbLoadDatabase">[docs]</a><span class="k">def</span> <span class="nf">dbLoadDatabase</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">substitutions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Loads a database file and applies any given substitutions.&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="dbLoadDatabase">
+<a class="viewcode-back" href="../../reference/api.html#softioc.softioc.dbLoadDatabase">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dbLoadDatabase</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">substitutions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">'''Loads a database file and applies any given substitutions.'''</span>
     <span class="n">imports</span><span class="o">.</span><span class="n">dbLoadDatabase</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_add_records_from_file</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">):</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_records_from_file</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">):</span>
     <span class="c1"># This is very naive, it loads all includes before their parents which</span>
     <span class="c1"># possibly can put them out of order, but it works well enough for</span>
     <span class="c1"># devIocStats</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">lines</span><span class="p">,</span> <span class="n">include_subs</span> <span class="o">=</span> <span class="p">[],</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">lines</span><span class="p">,</span> <span class="n">include_subs</span> <span class="o">=</span> <span class="p">[],</span> <span class="s1">''</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;substitute&#39;</span><span class="p">):</span>
-                <span class="c1"># substitute &quot;QUEUE=scanOnce, QUEUE_CAPS=SCANONCE&quot;</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'substitute'</span><span class="p">):</span>
+                <span class="c1"># substitute "QUEUE=scanOnce, QUEUE_CAPS=SCANONCE"</span>
                 <span class="c1"># keep hold of the substitutions</span>
-                <span class="n">include_subs</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;include&#39;</span><span class="p">):</span>
-                <span class="c1"># include &quot;iocQueue.db&quot;</span>
+                <span class="n">include_subs</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'"'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'include'</span><span class="p">):</span>
+                <span class="c1"># include "iocQueue.db"</span>
                 <span class="n">subs</span> <span class="o">=</span> <span class="n">substitutions</span>
                 <span class="k">if</span> <span class="n">substitutions</span> <span class="ow">and</span> <span class="n">include_subs</span><span class="p">:</span>
-                    <span class="n">subs</span> <span class="o">=</span> <span class="n">substitutions</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="n">include_subs</span>
+                    <span class="n">subs</span> <span class="o">=</span> <span class="n">substitutions</span> <span class="o">+</span> <span class="s1">', '</span> <span class="o">+</span> <span class="n">include_subs</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">subs</span> <span class="o">=</span> <span class="n">substitutions</span> <span class="o">+</span> <span class="n">include_subs</span>
-                <span class="n">_add_records_from_file</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">subs</span><span class="p">)</span>
+                <span class="n">_add_records_from_file</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'"'</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">subs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># A record line</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="c1"># Write a tempfile and load it</span>
-        <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.db&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">'.db'</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
         <span class="n">dbLoadDatabase</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">substitutions</span><span class="o">=</span><span class="n">substitutions</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="devIocStats"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.devIocStats">[docs]</a><span class="k">def</span> <span class="nf">devIocStats</span><span class="p">(</span><span class="n">ioc_name</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;This will load a template for the devIocStats library with the specified</span>
-<span class="sd">    IOC name. This should be called before `iocInit`&#39;&#39;&#39;</span>
-    <span class="n">substitutions</span> <span class="o">=</span> <span class="s1">&#39;IOCNAME=&#39;</span> <span class="o">+</span> <span class="n">ioc_name</span> <span class="o">+</span> <span class="s1">&#39;, TODFORMAT=%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span>
+<div class="viewcode-block" id="devIocStats">
+<a class="viewcode-back" href="../../reference/api.html#softioc.softioc.devIocStats">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">devIocStats</span><span class="p">(</span><span class="n">ioc_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">'''This will load a template for the devIocStats library with the specified</span>
+<span class="sd">    IOC name. This should be called before `iocInit`'''</span>
+    <span class="n">substitutions</span> <span class="o">=</span> <span class="s1">'IOCNAME='</span> <span class="o">+</span> <span class="n">ioc_name</span> <span class="o">+</span> <span class="s1">', TODFORMAT=%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S'</span>
     <span class="n">iocstats_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;iocStats&#39;</span><span class="p">,</span> <span class="s1">&#39;iocAdmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Db&#39;</span><span class="p">)</span>
-    <span class="n">_add_records_from_file</span><span class="p">(</span><span class="n">iocstats_dir</span><span class="p">,</span> <span class="s1">&#39;ioc.template&#39;</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">)</span></div>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">'iocStats'</span><span class="p">,</span> <span class="s1">'iocAdmin'</span><span class="p">,</span> <span class="s1">'Db'</span><span class="p">)</span>
+    <span class="n">_add_records_from_file</span><span class="p">(</span><span class="n">iocstats_dir</span><span class="p">,</span> <span class="s1">'ioc.template'</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="interactive_ioc"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.interactive_ioc">[docs]</a><span class="k">def</span> <span class="nf">interactive_ioc</span><span class="p">(</span><span class="n">context</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">call_exit</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Fires up the interactive IOC prompt with the given context.</span>
+
+<div class="viewcode-block" id="interactive_ioc">
+<a class="viewcode-back" href="../../reference/api.html#softioc.softioc.interactive_ioc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interactive_ioc</span><span class="p">(</span><span class="n">context</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">call_exit</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">'''Fires up the interactive IOC prompt with the given context.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        context: A dictionary of values that will be made available to the</span>
@@ -446,13 +824,13 @@
 <span class="sd">            functions</span>
 <span class="sd">        call_exit: If `True`, the IOC will be terminated by calling epicsExit</span>
 <span class="sd">            which means that `interactive_ioc` will not return</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="c1"># Add all our commands to the given context.</span>
     <span class="n">exports</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">command_names</span><span class="p">)</span>
-    <span class="kn">import</span> <span class="nn">code</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">code</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">code</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">local</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">exports</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">),</span> <span class="n">exitmsg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">code</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">local</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">exports</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">),</span> <span class="n">exitmsg</span> <span class="o">=</span> <span class="s1">''</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">SystemExit</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">call_exit</span><span class="p">:</span>
             <span class="n">safeEpicsExit</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
@@ -462,66 +840,80 @@
         <span class="n">safeEpicsExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="non_interactive_ioc"><a class="viewcode-back" href="../../reference/api.html#softioc.softioc.non_interactive_ioc">[docs]</a><span class="k">def</span> <span class="nf">non_interactive_ioc</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Function to run the IOC in non-interactive mode. This mode is useful for</span>
+
+<div class="viewcode-block" id="non_interactive_ioc">
+<a class="viewcode-back" href="../../reference/api.html#softioc.softioc.non_interactive_ioc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">non_interactive_ioc</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">'''Function to run the IOC in non-interactive mode. This mode is useful for</span>
 <span class="sd">    running the IOC as a background process without user interaction.</span>
 <span class="sd">    This function expects a stop signal. When it receives one, the IOC stops.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">device</span><span class="o">.</span><span class="n">dispatcher</span><span class="o">.</span><span class="n">wait_for_quit</span><span class="p">()</span>
     <span class="n">safeEpicsExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
 </pre></div>
 
-           </div>
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
           </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2008, Diamond Light Source.</p>
-  </div>
-
-   
-
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script>
-   
-  <div id="other-versions-div" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" style="visibility: hidden">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Other Versions</span>
-      master
-      <span class="fa fa-caret-down"></span>
-    </span>
-    <div class="rst-other-versions">
-      <dl id="other-versions-dl"/>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
     </div>
   </div>
-  <script>
-    function addVersion(name) {
-      var dd = document.createElement("dd");
-      var a = document.createElement("a");
-      a.href = "../../../" + name;
-      a.innerText = name;
-      dd.appendChild(a);
-      document.getElementById('other-versions-dl').appendChild(dd);
-    }
-    // Get versions.txt and add a version for each line
-    fetch("../../../versions.txt").then(response => {
-      if (response.ok) {
-        document.getElementById('other-versions-div').style.visibility = "visible";
-        return response.text().then(text => text.split(/\r?\n/).forEach(addVersion))
-      }
-    });
-  </script>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
 
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
 
-</body>
+  <p class="copyright">
+    
+      © Copyright 2008, Diamond Light Source.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
 </html>

@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: softioc
+  title: pythonSoftIOC
+  description: Embed an EPICS IOC in a Python process
+spec:
+  type: library
+  lifecycle: production
+  owner: group:default/accelerator-controls

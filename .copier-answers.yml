@@ -1,0 +1,19 @@
+# Changes here will be overwritten by Copier
+_commit: 5.5.0
+_src_path: https://github.com/DiamondLightSource/python-copier-template.git
+author_email: Michael.Abbott@diamond.ac.uk
+author_name: Michael Abbott
+component_lifecycle: production
+component_owner: group:default/accelerator-controls
+component_type: library
+description: Embed an EPICS IOC in a Python process
+distribution_name: softioc
+docker: false
+docs_type: sphinx
+git_platform: github.com
+github_org: DiamondLightSource
+package_name: softioc
+pypi: true
+repo_name: pythonSoftIOC
+strict_typing: false
+type_checker: pyright

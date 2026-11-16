@@ -1,7 +1,24 @@
 pythonSoftIOC
 =============
 
-|code_ci| |docs_ci| |coverage| |pypi_version| |license|
+..
+    Anything above this line is replaced by the title in docs/index.md
+
+.. image:: https://github.com/DiamondLightSource/pythonSoftIOC/actions/workflows/ci.yml/badge.svg?branch=master
+    :target: https://github.com/DiamondLightSource/pythonSoftIOC/actions/workflows/ci.yml
+    :alt: CI
+
+.. image:: https://codecov.io/gh/DiamondLightSource/pythonSoftIOC/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/DiamondLightSource/pythonSoftIOC
+    :alt: Test Coverage
+
+.. image:: https://img.shields.io/pypi/v/softioc.svg
+    :target: https://pypi.org/project/softioc
+    :alt: Latest PyPI version
+
+.. image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
+    :target: https://opensource.org/licenses/Apache-2.0
+    :alt: Apache License
 
 
 This module allows an EPICS IOC with Python Device Support to be run from within
@@ -13,7 +30,7 @@ asyncio for concurrency. PVs are served over Channel Access and PVAccess.
 PyPI           ``pip install softioc``
 Source code    https://github.com/DiamondLightSource/pythonSoftIOC
 Documentation  https://DiamondLightSource.github.io/pythonSoftIOC
-Changelog      https://github.com/DiamondLightSource/pythonSoftIOC/blob/master/CHANGELOG.rst
+Releases       https://github.com/DiamondLightSource/pythonSoftIOC/releases
 ============== ==============================================================
 
 A simple example of the use of this library:
@@ -47,28 +64,8 @@ A simple example of the use of this library:
     # Finally leave the IOC running with an interactive shell.
     softioc.interactive_ioc(globals())
 
-.. |code_ci| image:: https://github.com/DiamondLightSource/pythonSoftIOC/workflows/Code%20CI/badge.svg?branch=master
-    :target: https://github.com/DiamondLightSource/pythonSoftIOC/actions?query=workflow%3A%22Code+CI%22
-    :alt: Code CI
-
-.. |docs_ci| image:: https://github.com/DiamondLightSource/pythonSoftIOC/workflows/Docs%20CI/badge.svg?branch=master
-    :target: https://github.com/DiamondLightSource/pythonSoftIOC/actions?query=workflow%3A%22Docs+CI%22
-    :alt: Docs CI
-
-.. |coverage| image:: https://codecov.io/gh/DiamondLightSource/pythonSoftIOC/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/DiamondLightSource/pythonSoftIOC
-    :alt: Test Coverage
-
-.. |pypi_version| image:: https://img.shields.io/pypi/v/softioc.svg
-    :target: https://pypi.org/project/softioc
-    :alt: Latest PyPI version
-
-.. |license| image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
-    :target: https://opensource.org/licenses/Apache-2.0
-    :alt: Apache License
-
 ..
     Anything below this line is used when viewing README.rst and will be replaced
-    when included in index.rst
+    when included in index.md
 
 See https://DiamondLightSource.github.io/pythonSoftIOC for more detailed documentation.

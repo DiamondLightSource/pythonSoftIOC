@@ -1,0 +1,38 @@
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        description: The version of python to install, default is from .python-version file
+        default: ""
+      runs-on:
+        type: string
+        description: The runner to run this job on
+        required: true
+
+env:
+  # https://github.com/pytest-dev/pytest/issues/2042
+  PY_IGNORE_IMPORTMISMATCH: "1"
+  UV_PYTHON: ${{ inputs.python-version }}
+  # Use the latest uv-managed patch release rather than the runner's system
+  # python: cothread segfaults in the tests on CPython 3.14.4 (fine on 3.14.5+)
+  UV_PYTHON_PREFERENCE: only-managed
+
+jobs:
+  run:
+    runs-on: ${{ inputs.runs-on }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Need this to get version number from last tag
+          fetch-depth: 0
+          # iocStats is needed to build the extension
+          submodules: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.2
+
+      - name: Run tests
+        run: uv run --locked tox -e tests

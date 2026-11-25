@@ -118,8 +118,14 @@ reportWildcardImportFromLibrary = false
 
 [tool.pytest.ini_options]
 # Run pytest with all our checkers, and don't spam us with massive tracebacks on error
+# -p no:platformdirs: loading the pytest plugin from platformdirs 4.14.8 (pulled
+# in by tox, virtualenv and pre-commit; 4.14.5 was fine) makes the test run
+# segfault in test_asyncio_ioc on macOS x86_64 with Python 3.14
+# This is likely only a stop-gap, as other incremental Python dependency updates
+# may well just trigger the same issue again later
 addopts = """
     --tb=native -vv --doctest-modules --ignore=src/softioc/iocStats
+    -p no:platformdirs
     """
 # Enables all discovered async tests and fixtures to be automatically marked as
 # async, even if they don't have a specific marker
